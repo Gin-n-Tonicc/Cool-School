@@ -1,14 +1,9 @@
 package com.coolSchool.CoolSchool.exceptions.user;
 
-import com.coolSchool.CoolSchool.exceptions.ApiException;
-import com.coolSchool.CoolSchool.models.entity.User;
-import jakarta.validation.ConstraintValidator;
+import com.coolSchool.CoolSchool.exceptions.common.ApiException;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.springframework.http.HttpStatus;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 

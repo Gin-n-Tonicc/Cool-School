@@ -1,4 +1,4 @@
-package com.coolSchool.CoolSchool.exceptions;
+package com.coolSchool.CoolSchool.exceptions.common;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

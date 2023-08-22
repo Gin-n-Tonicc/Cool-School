@@ -1,8 +1,8 @@
 package com.coolSchool.CoolSchool.exceptions.handlers;
 
-import com.coolSchool.CoolSchool.exceptions.AccessDeniedException;
-import com.coolSchool.CoolSchool.exceptions.ApiException;
-import com.coolSchool.CoolSchool.exceptions.InternalServerErrorException;
+import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
+import com.coolSchool.CoolSchool.exceptions.common.ApiException;
+import com.coolSchool.CoolSchool.exceptions.common.InternalServerErrorException;
 import com.coolSchool.CoolSchool.exceptions.user.UserLoginException;
 import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
 import com.coolSchool.CoolSchool.utils.ApiExceptionParser;
@@ -12,8 +12,6 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.time.LocalDateTime;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {

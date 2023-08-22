@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.exceptions.user;
 
-import com.coolSchool.CoolSchool.exceptions.ApiException;
+import com.coolSchool.CoolSchool.exceptions.common.ApiException;
 import org.springframework.http.HttpStatus;
 
 public class UserNotFoundException extends ApiException {

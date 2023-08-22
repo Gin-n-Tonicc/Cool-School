@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.utils;
 
-import com.coolSchool.CoolSchool.exceptions.ApiException;
+import com.coolSchool.CoolSchool.exceptions.common.ApiException;
 import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
 
 import java.time.LocalDateTime;
