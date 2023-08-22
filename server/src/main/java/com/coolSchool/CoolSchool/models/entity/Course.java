@@ -24,4 +24,6 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+    @Column(name = "is_deleted")
+    private boolean deleted;
 }

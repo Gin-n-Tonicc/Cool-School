@@ -7,20 +7,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "users_courses")
-public class UserCourse {
+@Table(name = "task_submissions")
+public class TaskSubmission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
     @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "task_id")
+    private Task task;
+    @ManyToOne
+    @JoinColumn(name = "file_id")
+    private File file;
     @Column(name = "is_deleted")
     private boolean deleted;
 }

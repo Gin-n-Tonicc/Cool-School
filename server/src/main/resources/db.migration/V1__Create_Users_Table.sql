@@ -8,6 +8,7 @@ CREATE TABLE _users (
     username VARCHAR(255) NOT NULL,
     role VARCHAR(255) NOT NULL,
     file_id INT,
+    is_deleted TINYINT(1) DEFAULT FALSE,
     FOREIGN KEY (file_id) REFERENCES files(id)
 );
 

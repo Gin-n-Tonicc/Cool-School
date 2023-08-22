@@ -47,6 +47,8 @@ public class User implements UserDetails {
   @ManyToOne
   @JoinColumn(name = "file_id")
   private File profilePic;
+  @Column(name = "is_deleted")
+  private boolean deleted;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {

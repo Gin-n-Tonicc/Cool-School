@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Timer;
 
 @Entity
 @Data
@@ -27,4 +26,6 @@ public class Quiz {
     @ManyToOne
     @JoinColumn(name = "subsection_id")
     private CourseSubsection subsection;
+    @Column(name = "is_deleted")
+    private boolean deleted;
 }

@@ -22,4 +22,6 @@ public class Resource {
     @ManyToOne
     @JoinColumn(name = "subsection_id")
     private CourseSubsection subsection;
+    @Column(name = "is_deleted")
+    private boolean deleted;
 }

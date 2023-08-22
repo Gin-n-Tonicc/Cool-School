@@ -20,4 +20,6 @@ public class CourseSubsection {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+    @Column(name = "is_deleted")
+    private boolean deleted;
 }

@@ -22,4 +22,6 @@ public class File {
     @NotNull
     @Enumerated(EnumType.STRING)
     private FileType type;
+    @Column(name = "is_deleted")
+    private boolean deleted;
 }
