@@ -1,0 +1,25 @@
+package com.coolSchool.CoolSchool.models.entity;
+
+import com.coolSchool.CoolSchool.enums.FileType;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@NoArgsConstructor
+@Table(name = "files")
+public class File {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+    @NotNull(message = "The name of the file should not be null!")
+    private String name;
+    @NotNull(message = "The url of the file should not be null!")
+    private String url;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private FileType type;
+}

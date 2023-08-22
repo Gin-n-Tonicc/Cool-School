@@ -1,15 +1,12 @@
 package com.coolSchool.CoolSchool.models.entity;
-
 import com.coolSchool.CoolSchool.enums.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.util.Collection;
 import java.util.List;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,18 +23,30 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
+  @NotNull(message = "The name should not be null!")
   private String firstname;
+  @NotNull(message = "The name should not be null!")
   private String lastname;
+  @Email
+  @NotNull(message = "The email should not be null!")
   private String email;
+  @NotNull(message = "The password should not be null!")
   private String password;
-
+  @NotNull(message = "The address should not be null!")
+  private String address;
+  @NotNull(message = "The username should not be null!")
+  private String username;
+  @NotNull()
   @Enumerated(EnumType.STRING)
   private Role role;
 
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
+  @ManyToOne
+  @JoinColumn(name = "file_id")
+  private File profilePic;
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
