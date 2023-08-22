@@ -3,6 +3,7 @@ package com.coolSchool.CoolSchool.exceptions.handlers;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
 import com.coolSchool.CoolSchool.utils.ApiExceptionParser;
+import com.coolSchool.CoolSchool.utils.ObjectMapperHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,11 +27,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AuthenticationException e) throws IOException {
-        ExceptionResponse exceptionResponse = ApiExceptionParser.parseException(new AccessDeniedException());
-        httpServletResponse.setStatus(exceptionResponse.getStatusCode());
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-        ServletOutputStream out = httpServletResponse.getOutputStream();
-        objectMapper.writeValue(out, exceptionResponse);
+        ObjectMapperHelper
+                .writeExceptionToObjectMapper(
+                        objectMapper,
+                        new AccessDeniedException(),
+                        httpServletResponse
+                );
     }
 }
