@@ -1,6 +1,8 @@
 spring:
+  jackson:
+    default-property-inclusion: non_null
   datasource:
-    url: jdbc:mysql://localhost:3306/cool_school
+    url: jdbc:mysql://localhost:3306/cool-school?autoreconnect=true&createDatabaseIfNotExist=true&characterEncoding=utf8
     username: root
     password: root1234
     driver-class-name: com.mysql.cj.jdbc.Driver

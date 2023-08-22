@@ -31,18 +31,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void revokeAllUserTokens(User user) {
-        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-
-        if (validUserTokens.isEmpty()) {
-            return;
-        }
-
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-
-        tokenRepository.saveAll(validUserTokens);
+        tokenRepository.deleteAll(tokenRepository.findAllByUser(user));
     }
 
     @Override

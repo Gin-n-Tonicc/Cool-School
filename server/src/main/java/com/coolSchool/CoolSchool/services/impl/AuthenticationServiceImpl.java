@@ -1,20 +1,25 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
+import com.coolSchool.CoolSchool.models.dto.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.services.AuthenticationService;
 import com.coolSchool.CoolSchool.services.JwtService;
 import com.coolSchool.CoolSchool.services.TokenService;
 import com.coolSchool.CoolSchool.services.UserService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   private final TokenService tokenService;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+  private final ModelMapper modelMapper;
 
   @Override
   public AuthenticationResponse register(RegisterRequest request) {
@@ -32,9 +38,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     tokenService.saveToken(user, jwtToken);
 
-    return AuthenticationResponse.builder()
+    return AuthenticationResponse
+            .builder()
             .accessToken(jwtToken)
             .refreshToken(refreshToken)
+            .user(modelMapper.map(user, PublicUserDTO.class))
             .build();
   }
 
@@ -55,9 +63,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     tokenService.revokeAllUserTokens(user);
     tokenService.saveToken(user, jwtToken);
 
-    return AuthenticationResponse.builder()
+    return AuthenticationResponse
+            .builder()
             .accessToken(jwtToken)
             .refreshToken(refreshToken)
+            .user(modelMapper.map(user, PublicUserDTO.class))
             .build();
   }
 
@@ -69,29 +79,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      return null;
+      throw new InvalidTokenException();
     }
 
     final String refreshToken = authHeader.substring(7);
-    final String userEmail = jwtService.extractUsername(refreshToken);
+
+    String userEmail;
+
+    try {
+      userEmail = jwtService.extractUsername(refreshToken);
+    } catch (JwtException exception) {
+      throw new InvalidTokenException();
+    }
 
     if (userEmail == null) {
-      return null;
+      throw new InvalidTokenException();
     }
 
     User user = userService.findByEmail(userEmail);
 
     if (!jwtService.isTokenValid(refreshToken, user)) {
-      return null;
+      throw new InvalidTokenException();
     }
 
     String accessToken = jwtService.generateToken(user);
+
     tokenService.revokeAllUserTokens(user);
     tokenService.saveToken(user, accessToken);
 
-    return AuthenticationResponse.builder()
-          .accessToken(accessToken)
-          .refreshToken(refreshToken)
-          .build();
+    return AuthenticationResponse
+            .builder()
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .build();
   }
 }

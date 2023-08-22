@@ -1,6 +1,8 @@
 package com.coolSchool.CoolSchool.config;
 
+import com.coolSchool.CoolSchool.exceptions.handlers.JwtAuthenticationEntryPoint;
 import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,20 +16,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.coolSchool.CoolSchool.enums.Permission.ADMIN_CREATE;
-import static com.coolSchool.CoolSchool.enums.Permission.ADMIN_DELETE;
-import static com.coolSchool.CoolSchool.enums.Permission.ADMIN_READ;
-import static com.coolSchool.CoolSchool.enums.Permission.ADMIN_UPDATE;
-import static com.coolSchool.CoolSchool.enums.Permission.MANAGER_CREATE;
-import static com.coolSchool.CoolSchool.enums.Permission.MANAGER_DELETE;
-import static com.coolSchool.CoolSchool.enums.Permission.MANAGER_READ;
-import static com.coolSchool.CoolSchool.enums.Permission.MANAGER_UPDATE;
+import static com.coolSchool.CoolSchool.enums.Permission.*;
 import static com.coolSchool.CoolSchool.enums.Role.ADMIN;
 import static com.coolSchool.CoolSchool.enums.Role.MANAGER;
-import static org.springframework.http.HttpMethod.DELETE;
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -38,12 +30,16 @@ public class SecurityConfiguration {
   private final JwtAuthenticationFilter jwtAuthFilter;
   private final AuthenticationProvider authenticationProvider;
   private final LogoutHandler logoutHandler;
+  private final ObjectMapper objectMapper;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .csrf()
         .disable()
+            .exceptionHandling()
+            .authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper))
+            .and()
         .authorizeHttpRequests()
         .requestMatchers(
                 "/api/v1/auth/**",
@@ -58,24 +54,14 @@ public class SecurityConfiguration {
                 "/webjars/**",
                 "/swagger-ui.html"
         )
-          .permitAll()
+            .permitAll()
 
 
         .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-
-
         .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
         .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
         .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
         .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
-
-
-       /* .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
-
-        .requestMatchers(GET, "/api/v1/admin/**").hasAuthority(ADMIN_READ.name())
-        .requestMatchers(POST, "/api/v1/admin/**").hasAuthority(ADMIN_CREATE.name())
-        .requestMatchers(PUT, "/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())
-        .requestMatchers(DELETE, "/api/v1/admin/**").hasAuthority(ADMIN_DELETE.name())*/
 
 
         .anyRequest()
@@ -89,8 +75,7 @@ public class SecurityConfiguration {
         .logout()
         .logoutUrl("/api/v1/auth/logout")
         .addLogoutHandler(logoutHandler)
-        .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-    ;
+        .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
 
     return http.build();
   }
