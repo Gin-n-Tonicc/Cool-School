@@ -16,27 +16,27 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class LogoutHandler implements org.springframework.security.web.authentication.logout.LogoutHandler {
 
-  private final TokenService tokenService;
-  private final ObjectMapper objectMapper;
+    private final TokenService tokenService;
+    private final ObjectMapper objectMapper;
 
-  @Override
-  public void logout(
-      HttpServletRequest request,
-      HttpServletResponse response,
-      Authentication authentication
-  ) {
-    final String authHeader = request.getHeader("Authorization");
+    @Override
+    public void logout(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+    ) {
+        final String authHeader = request.getHeader("Authorization");
 
-    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-      try {
-        ObjectMapperHelper.writeExceptionToObjectMapper(objectMapper, new InvalidTokenException(), response);
-        return;
-      } catch (IOException exception) {
-        return;
-      }
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            try {
+                ObjectMapperHelper.writeExceptionToObjectMapper(objectMapper, new InvalidTokenException(), response);
+                return;
+            } catch (IOException exception) {
+                return;
+            }
+        }
+
+        final String jwt = authHeader.substring(7);
+        tokenService.logoutToken(jwt);
     }
-
-    final String jwt = authHeader.substring(7);
-    tokenService.logoutToken(jwt);
-  }
 }

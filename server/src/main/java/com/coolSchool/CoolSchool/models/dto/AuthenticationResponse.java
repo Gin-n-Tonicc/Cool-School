@@ -1,7 +1,8 @@
 package com.coolSchool.CoolSchool.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -9,7 +10,7 @@ import java.io.Serializable;
 @Setter
 @Builder
 public class AuthenticationResponse implements Serializable {
-  private String accessToken;
-  private String refreshToken;
-  private PublicUserDTO user;
+    private String accessToken;
+    private String refreshToken;
+    private PublicUserDTO user;
 }
