@@ -20,9 +20,9 @@ public class UserCreateException extends ApiException {
     public UserCreateException(Set<ConstraintViolation<?>> validationErrors) {
         super(
                 validationErrors
-                .stream()
-                .map(x -> x.getPropertyPath() + " " + x.getMessage())
-                .collect(Collectors.joining("\n")),
+                        .stream()
+                        .map(x -> x.getPropertyPath() + " " + x.getMessage())
+                        .collect(Collectors.joining("\n")),
                 HttpStatus.NOT_FOUND
         );
     }

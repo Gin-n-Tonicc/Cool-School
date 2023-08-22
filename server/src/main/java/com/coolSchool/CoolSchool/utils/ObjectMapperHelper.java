@@ -1,6 +1,5 @@
 package com.coolSchool.CoolSchool.utils;
 
-import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.ApiException;
 import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;

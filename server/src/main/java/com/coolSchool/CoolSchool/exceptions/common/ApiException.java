@@ -17,5 +17,8 @@ public abstract class ApiException extends RuntimeException {
     private void setStatus(HttpStatus status) {
         this.status = status;
     }
-    private void setStatusCode(Integer statusCode) { this.statusCode = statusCode; }
+
+    private void setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
+    }
 }

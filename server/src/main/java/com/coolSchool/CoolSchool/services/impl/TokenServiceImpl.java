@@ -1,20 +1,14 @@
 package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.enums.TokenType;
-import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
-import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.CoolSchool.models.entity.Token;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.TokenRepository;
 import com.coolSchool.CoolSchool.services.TokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
