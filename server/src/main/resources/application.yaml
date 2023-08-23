@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/cool_school?autoreconnect=true&createDatabaseIfNotExist=true&characterEncoding=utf8
     username: root
-    password:
+    password: root1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   flyway:
       enabled: true
