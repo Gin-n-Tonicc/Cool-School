@@ -8,8 +8,7 @@ import com.coolSchool.CoolSchool.services.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -31,30 +30,20 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void revokeAllUserTokens(User user) {
-        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-
-        if (validUserTokens.isEmpty()) {
-            return;
-        }
-
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-
-        tokenRepository.saveAll(validUserTokens);
+        tokenRepository.deleteAll(tokenRepository.findAllByUser(user));
     }
 
     @Override
+    @Transactional
     public void logoutToken(String jwt) {
         Token storedToken = tokenRepository.findByToken(jwt)
                 .orElse(null);
 
-        if (storedToken != null) {
-            storedToken.setExpired(true);
-            storedToken.setRevoked(true);
-            tokenRepository.save(storedToken);
-            SecurityContextHolder.clearContext();
+        if (storedToken == null) {
+            return;
         }
+
+        revokeAllUserTokens(storedToken.getUser());
+        SecurityContextHolder.clearContext();
     }
 }

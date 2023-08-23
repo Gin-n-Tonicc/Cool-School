@@ -1,4 +1,6 @@
 spring:
+  jackson:
+    default-property-inclusion: non_null
   datasource:
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/cool_school?autoreconnect=true&createDatabaseIfNotExist=true&characterEncoding=utf8
     username: root
