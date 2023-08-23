@@ -2,7 +2,6 @@ package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.CoolSchool.exceptions.user.UserLoginException;
-import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
 import com.coolSchool.CoolSchool.models.dto.PublicUserDTO;

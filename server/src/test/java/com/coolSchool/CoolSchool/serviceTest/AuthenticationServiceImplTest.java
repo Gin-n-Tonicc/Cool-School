@@ -1,10 +1,5 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertThrows;
-
 import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
@@ -31,6 +26,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
 
 
 public class AuthenticationServiceImplTest {
@@ -131,6 +131,7 @@ public class AuthenticationServiceImplTest {
         when(jwtService.extractUsername(refreshToken)).thenThrow(JwtException.class);
         assertThrows(InvalidTokenException.class, () -> authenticationService.refreshToken(mockRequest, mockResponse));
     }
+
     @Test
     void testRefreshToken_ExceptionsNoAuthorizationHeader() {
         HttpServletRequest mockRequest = Mockito.mock(HttpServletRequest.class);
@@ -139,6 +140,7 @@ public class AuthenticationServiceImplTest {
         when(mockRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(null);
         assertThrows(InvalidTokenException.class, () -> authenticationService.refreshToken(mockRequest, mockResponse));
     }
+
     @Test
     void testRefreshToken_ExceptionsInvalidAuthorizationHeaderFormat() {
         HttpServletRequest mockRequest = Mockito.mock(HttpServletRequest.class);

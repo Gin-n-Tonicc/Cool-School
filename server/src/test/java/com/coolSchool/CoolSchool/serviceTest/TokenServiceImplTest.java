@@ -4,11 +4,11 @@ import com.coolSchool.CoolSchool.models.entity.Token;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.TokenRepository;
 import com.coolSchool.CoolSchool.services.impl.TokenServiceImpl;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Optional;

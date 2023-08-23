@@ -76,6 +76,7 @@ class UserServiceImplTest {
 
         verify(userRepository, times(1)).findByEmail(userEmail);
     }
+
     @Test
     public void testCreateUser_DataIntegrityViolationException() {
         RegisterRequest request = new RegisterRequest("John", "Doe", "john@example.com", "password");
