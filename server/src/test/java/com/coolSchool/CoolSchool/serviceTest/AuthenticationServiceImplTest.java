@@ -3,7 +3,9 @@ package com.coolSchool.CoolSchool.serviceTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertThrows;
 
+import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
 import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
@@ -13,6 +15,7 @@ import com.coolSchool.CoolSchool.services.JwtService;
 import com.coolSchool.CoolSchool.services.TokenService;
 import com.coolSchool.CoolSchool.services.UserService;
 import com.coolSchool.CoolSchool.services.impl.AuthenticationServiceImpl;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Assertions;
@@ -116,5 +119,32 @@ public class AuthenticationServiceImplTest {
         assertEquals("mockedAccessToken", response.getAccessToken());
         assertEquals(refreshToken, response.getRefreshToken());
 
+    }
+
+    @Test
+    void testRefreshToken_ExceptionsExtractingUsernamefromTokenThrowsJwtException() {
+        HttpServletRequest mockRequest = Mockito.mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = Mockito.mock(HttpServletResponse.class);
+
+        String refreshToken = "mockedInvalidRefreshToken";
+        when(mockRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + refreshToken);
+        when(jwtService.extractUsername(refreshToken)).thenThrow(JwtException.class);
+        assertThrows(InvalidTokenException.class, () -> authenticationService.refreshToken(mockRequest, mockResponse));
+    }
+    @Test
+    void testRefreshToken_ExceptionsNoAuthorizationHeader() {
+        HttpServletRequest mockRequest = Mockito.mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = Mockito.mock(HttpServletResponse.class);
+
+        when(mockRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn(null);
+        assertThrows(InvalidTokenException.class, () -> authenticationService.refreshToken(mockRequest, mockResponse));
+    }
+    @Test
+    void testRefreshToken_ExceptionsInvalidAuthorizationHeaderFormat() {
+        HttpServletRequest mockRequest = Mockito.mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = Mockito.mock(HttpServletResponse.class);
+
+        when(mockRequest.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("invalidTokenFormat");
+        assertThrows(InvalidTokenException.class, () -> authenticationService.refreshToken(mockRequest, mockResponse));
     }
 }
