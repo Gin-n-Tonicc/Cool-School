@@ -102,6 +102,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new InvalidTokenException();
         }
 
+        // Make sure token is a refresh token not an access token
+        // Saving only access tokens in DB
+        if (tokenService.findByToken(refreshToken) != null) {
+            throw new InvalidTokenException();
+        }
+
         User user = userService.findByEmail(userEmail);
 
         if (!jwtService.isTokenValid(refreshToken, user)) {
