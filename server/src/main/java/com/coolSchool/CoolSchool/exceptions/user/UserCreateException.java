@@ -13,7 +13,7 @@ public class UserCreateException extends ApiException {
                 isUnique
                         ? "User with the same email already exists"
                         : "Invalid user data",
-                HttpStatus.NOT_FOUND
+                HttpStatus.BAD_REQUEST
         );
     }
 
@@ -21,9 +21,9 @@ public class UserCreateException extends ApiException {
         super(
                 validationErrors
                         .stream()
-                        .map(x -> x.getPropertyPath() + " " + x.getMessage())
+                        .map(ConstraintViolation::getMessage)
                         .collect(Collectors.joining("\n")),
-                HttpStatus.NOT_FOUND
+                HttpStatus.BAD_REQUEST
         );
     }
 }

@@ -1,6 +1,8 @@
 package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
+import com.coolSchool.CoolSchool.exceptions.user.UserLoginException;
+import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
 import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
 import com.coolSchool.CoolSchool.models.dto.PublicUserDTO;
@@ -18,6 +20,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 
@@ -48,12 +51,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (AuthenticationException exception) {
+            throw new UserLoginException();
+        }
 
         User user = userService.findByEmail(request.getEmail());
 
