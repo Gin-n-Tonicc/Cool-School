@@ -1,19 +1,25 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
+import com.coolSchool.CoolSchool.exceptions.user.UserCreateException;
 import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.impl.UserServiceImpl;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -69,5 +75,33 @@ class UserServiceImplTest {
         assertThrows(UserNotFoundException.class, () -> userService.findByEmail(userEmail));
 
         verify(userRepository, times(1)).findByEmail(userEmail);
+    }
+    @Test
+    public void testCreateUser_DataIntegrityViolationException() {
+        RegisterRequest request = new RegisterRequest("John", "Doe", "john@example.com", "password");
+
+        when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenThrow(new DataIntegrityViolationException(""));
+
+        assertThrows(UserCreateException.class, () -> userService.createUser(request));
+
+        verify(passwordEncoder).encode(request.getPassword());
+        verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    public void testCreateUser_ConstraintViolationException() {
+        RegisterRequest request = new RegisterRequest("John", "Doe", "john@example.com", "password");
+
+        Set constraintViolations = Collections.singleton(mock(ConstraintViolation.class));
+        ConstraintViolationException exception = new ConstraintViolationException("Constraint violation", constraintViolations);
+
+        when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
+        when(userRepository.save(any(User.class))).thenThrow(exception);
+
+        assertThrows(UserCreateException.class, () -> userService.createUser(request));
+
+        verify(passwordEncoder).encode(request.getPassword());
+        verify(userRepository).save(any(User.class));
     }
 }
