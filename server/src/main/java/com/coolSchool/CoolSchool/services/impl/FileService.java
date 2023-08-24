@@ -24,15 +24,15 @@ public class FileService {
 
     public String saveFileAndGetUniqueFilename(MultipartFile file) throws IOException {
         String uniqueFilename = generateUniqueFilename(file.getOriginalFilename());
-        Files.copy(file.getInputStream(), createFilePath(uniqueFilename), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(file.getInputStream(), createFilePath(file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
         return uniqueFilename;
     }
 
-    private String generateUniqueFilename(String originalFilename) {
+    String generateUniqueFilename(String originalFilename) {
         return UUID.randomUUID().toString() + "_" + originalFilename;
     }
 
-    private Path createFilePath(String uniqueFilename) throws IOException {
+    Path createFilePath(String uniqueFilename) throws IOException {
         Path directoryPath = Paths.get(uploadDirectory);
         Files.createDirectories(directoryPath);
         return directoryPath.resolve(uniqueFilename);

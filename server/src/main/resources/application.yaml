@@ -24,4 +24,4 @@ application:
       refresh-token:
         expiration: 604800000 # 7 days
 upload:
-  directory: src/main/resources/static/uploads/
+  directory: server/src/main/resources/static/uploads
