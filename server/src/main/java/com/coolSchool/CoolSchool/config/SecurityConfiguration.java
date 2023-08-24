@@ -42,6 +42,7 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(
+                        "/api/v1/files/upload",
                         "/api/v1/auth/**",
                         "/v2/api-docs",
                         "/v3/api-docs",

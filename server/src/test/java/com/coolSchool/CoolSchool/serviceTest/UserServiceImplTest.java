@@ -79,7 +79,7 @@ class UserServiceImplTest {
 
     @Test
     public void testCreateUser_DataIntegrityViolationException() {
-        RegisterRequest request = new RegisterRequest("John", "Doe", "john@example.com", "password");
+        RegisterRequest request = new RegisterRequest();
 
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenThrow(new DataIntegrityViolationException(""));
@@ -92,7 +92,7 @@ class UserServiceImplTest {
 
     @Test
     public void testCreateUser_ConstraintViolationException() {
-        RegisterRequest request = new RegisterRequest("John", "Doe", "john@example.com", "password");
+        RegisterRequest request = new RegisterRequest();
 
         Set constraintViolations = Collections.singleton(mock(ConstraintViolation.class));
         ConstraintViolationException exception = new ConstraintViolationException("Constraint violation", constraintViolations);
