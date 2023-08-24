@@ -16,6 +16,11 @@ public class TokenServiceImpl implements TokenService {
     private final TokenRepository tokenRepository;
 
     @Override
+    public Token findByToken(String jwt) {
+        return tokenRepository.findByToken(jwt).orElse(null);
+    }
+
+    @Override
     public void saveToken(User user, String jwtToken) {
         Token token = Token.builder()
                 .user(user)
