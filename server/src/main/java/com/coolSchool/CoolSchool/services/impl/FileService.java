@@ -1,6 +1,5 @@
 package com.coolSchool.CoolSchool.services.impl;
 
-import com.coolSchool.CoolSchool.enums.FileType;
 import com.coolSchool.CoolSchool.models.entity.File;
 import com.coolSchool.CoolSchool.repositories.FileRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +43,8 @@ public class FileService {
         fileEntity.setName(file.getOriginalFilename());
         fileEntity.setUrl(uploadDirectory + file.getOriginalFilename());
         fileEntity.setDeleted(false);
-        fileEntity.setType(FileType.JPG);
+        System.out.println(file.getContentType());
+        fileEntity.setType(file.getContentType());
         fileRepository.save(fileEntity);
         return uniqueFilename;
     }
