@@ -1,8 +1,7 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.services.impl.FileService;
+import com.coolSchool.CoolSchool.services.impl.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,24 +13,17 @@ import java.io.IOException;
 @RequestMapping("/api/v1/files")
 public class FileController {
 
-    private final FileService fileService;
+    private final FileServiceImpl fileService;
 
     @Autowired
-    public FileController(FileService fileService) {
+    public FileController(FileServiceImpl fileService) {
         this.fileService = fileService;
     }
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        try {
-            fileService.uploadFile(file);
-            return ResponseEntity.ok("File uploaded successfully");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading the file");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        fileService.uploadFile(file);
+        return ResponseEntity.ok("File uploaded successfully");
     }
 
     @GetMapping("/{filename}")

@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.repositories.FileRepository;
-import com.coolSchool.CoolSchool.services.impl.FileService;
+import com.coolSchool.CoolSchool.services.impl.FileServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,7 +16,7 @@ import static org.testng.Assert.assertTrue;
 class FileServiceTest {
 
     @InjectMocks
-    private FileService fileService;
+    private FileServiceImpl fileService;
     @Mock
     private FileRepository fileRepository;
 

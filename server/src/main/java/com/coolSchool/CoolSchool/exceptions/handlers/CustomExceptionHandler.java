@@ -1,8 +1,6 @@
 package com.coolSchool.CoolSchool.exceptions.handlers;
 
-import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
-import com.coolSchool.CoolSchool.exceptions.common.ApiException;
-import com.coolSchool.CoolSchool.exceptions.common.InternalServerErrorException;
+import com.coolSchool.CoolSchool.exceptions.common.*;
 import com.coolSchool.CoolSchool.exceptions.user.UserLoginException;
 import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
 import com.coolSchool.CoolSchool.utils.ApiExceptionParser;
@@ -35,6 +33,21 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> handleBadCredentialsExceptions() {
         return handleApiExceptions(new UserLoginException());
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleFileNotFoundException(FileNotFoundException exception) {
+        return handleApiExceptions(new FileNotFoundException());
+    }
+
+    @ExceptionHandler(DirectoryCreationException.class)
+    public ResponseEntity<ExceptionResponse> handleDirectoryCreationException(DirectoryCreationException directoryCreationException) {
+        return handleApiExceptions(new DirectoryCreationException());
+    }
+
+    @ExceptionHandler(UnsupportedFileTypeException.class)
+    public ResponseEntity<ExceptionResponse> handleUnsupportedFileTypeException(UnsupportedFileTypeException unsupportedFileTypeException) {
+        return handleApiExceptions(new UnsupportedFileTypeException());
     }
 
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
