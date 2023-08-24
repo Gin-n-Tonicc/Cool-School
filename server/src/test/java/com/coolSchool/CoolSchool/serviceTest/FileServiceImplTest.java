@@ -13,7 +13,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
-class FileServiceTest {
+class FileServiceImplTest {
 
     @InjectMocks
     private FileServiceImpl fileService;
