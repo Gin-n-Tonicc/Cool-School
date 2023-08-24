@@ -1,6 +1,9 @@
 package com.coolSchool.CoolSchool.exceptions.handlers;
 
 import com.coolSchool.CoolSchool.exceptions.common.*;
+import com.coolSchool.CoolSchool.exceptions.files.DirectoryCreationException;
+import com.coolSchool.CoolSchool.exceptions.files.FileNotFoundException;
+import com.coolSchool.CoolSchool.exceptions.files.UnsupportedFileTypeException;
 import com.coolSchool.CoolSchool.exceptions.user.UserLoginException;
 import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
 import com.coolSchool.CoolSchool.utils.ApiExceptionParser;
