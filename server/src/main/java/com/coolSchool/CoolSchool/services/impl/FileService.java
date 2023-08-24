@@ -14,9 +14,9 @@ import java.util.UUID;
 @Service
 public class FileService {
 
+    private final FileRepository fileRepository;
     @Value("${upload.directory}")
     private String uploadDirectory;
-    private final FileRepository fileRepository;
 
     public FileService(FileRepository fileRepository) {
         this.fileRepository = fileRepository;
@@ -29,7 +29,7 @@ public class FileService {
     }
 
     String generateUniqueFilename(String originalFilename) {
-        return UUID.randomUUID().toString() + "_" + originalFilename;
+        return UUID.randomUUID() + "_" + originalFilename;
     }
 
     Path createFilePath(String uniqueFilename) throws IOException {
@@ -48,6 +48,7 @@ public class FileService {
         fileRepository.save(fileEntity);
         return uniqueFilename;
     }
+
     public byte[] getImageBytes(String imageName) throws IOException {
         try {
             return Files.readAllBytes(Paths.get(uploadDirectory, imageName));

@@ -2,19 +2,14 @@ package com.coolSchool.CoolSchool.controllers;
 
 import com.coolSchool.CoolSchool.services.impl.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/api/v1/files")
@@ -39,11 +34,27 @@ public class FileController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @GetMapping("/{imageName}")
-    public ResponseEntity<byte[]> getImage(@PathVariable String imageName) throws IOException {
-        byte[] imageBytes = fileService.getImageBytes(imageName);
+
+    @GetMapping("/{filename}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String filename) throws IOException {
+        byte[] imageBytes = fileService.getImageBytes(filename);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_JPEG);
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        String extension = filename.substring(filename.lastIndexOf(".") + 1);
+        if ("pdf".equalsIgnoreCase(extension)) {
+            mediaType = MediaType.APPLICATION_PDF;
+        } else if ("jpg".equalsIgnoreCase(extension) || "jpeg".equalsIgnoreCase(extension)) {
+            mediaType = MediaType.IMAGE_JPEG;
+        } else if ("png".equalsIgnoreCase(extension)) {
+            mediaType = MediaType.IMAGE_PNG;
+        } else if ("xlsx".equalsIgnoreCase(extension)) {
+            mediaType = MediaType.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        } else if ("xls".equalsIgnoreCase(extension)) {
+            mediaType = MediaType.valueOf("application/vnd.ms-excel");
+        } else if ("doc".equalsIgnoreCase(extension) || "docx".equalsIgnoreCase(extension)) {
+            mediaType = MediaType.valueOf("application/msword");
+        }
+        headers.setContentType(mediaType);
         return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
     }
 }
