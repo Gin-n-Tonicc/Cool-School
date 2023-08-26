@@ -78,7 +78,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void testCreateUser_DataIntegrityViolationException() {
+    void testCreateUser_DataIntegrityViolationException() {
         RegisterRequest request = new RegisterRequest();
 
         when(passwordEncoder.encode(request.getPassword())).thenReturn("encodedPassword");
@@ -91,7 +91,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    public void testCreateUser_ConstraintViolationException() {
+    void testCreateUser_ConstraintViolationException() {
         RegisterRequest request = new RegisterRequest();
 
         Set constraintViolations = Collections.singleton(mock(ConstraintViolation.class));
@@ -105,4 +105,5 @@ class UserServiceImplTest {
         verify(passwordEncoder).encode(request.getPassword());
         verify(userRepository).save(any(User.class));
     }
+
 }

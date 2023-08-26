@@ -74,7 +74,6 @@ public class QuizServiceImpl implements QuizService {
             if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
                 throw new ValidationQuizException(validationException.getConstraintViolations());
             }
-
             throw exception;
         }
     }
@@ -84,8 +83,8 @@ public class QuizServiceImpl implements QuizService {
         if (quiz.isPresent()) {
             quiz.get().setDeleted(true);
             quizRepository.save(quiz.get());
+        } else {
+            throw new QuizNotFoundException();
         }
-        throw new QuizNotFoundException();
-
     }
 }
