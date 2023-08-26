@@ -19,6 +19,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ExceptionResponse> handleRuntimeExceptions(RuntimeException exception) {
         // Log data
+        exception.printStackTrace();
         return handleApiExceptions(new InternalServerErrorException());
     }
 
@@ -36,21 +37,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> handleBadCredentialsExceptions() {
         return handleApiExceptions(new UserLoginException());
-    }
-
-    @ExceptionHandler(FileNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleFileNotFoundException(FileNotFoundException exception) {
-        return handleApiExceptions(new FileNotFoundException());
-    }
-
-    @ExceptionHandler(DirectoryCreationException.class)
-    public ResponseEntity<ExceptionResponse> handleDirectoryCreationException(DirectoryCreationException directoryCreationException) {
-        return handleApiExceptions(new DirectoryCreationException());
-    }
-
-    @ExceptionHandler(UnsupportedFileTypeException.class)
-    public ResponseEntity<ExceptionResponse> handleUnsupportedFileTypeException(UnsupportedFileTypeException unsupportedFileTypeException) {
-        return handleApiExceptions(new UnsupportedFileTypeException());
     }
 
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)

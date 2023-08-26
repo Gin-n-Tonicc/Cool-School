@@ -10,6 +10,8 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,13 +60,24 @@ public class QuizServiceImpl implements QuizService {
 
     public QuizDTO updateQuiz(Long id, QuizDTO quizDTO) {
         Optional<Quiz> existingQuizOptional = quizRepository.findByIdAndDeletedFalse(id);
-        if (existingQuizOptional.isPresent()) {
-            Quiz existingQuiz = existingQuizOptional.get();
-            modelMapper.map(quizDTO, existingQuiz);
+
+        if (existingQuizOptional.isEmpty()) {
+            throw new QuizNotFoundException();
+        }
+
+        Quiz existingQuiz = existingQuizOptional.get();
+        modelMapper.map(quizDTO, existingQuiz);
+
+        try {
             Quiz updatedQuiz = quizRepository.save(existingQuiz);
             return modelMapper.map(updatedQuiz, QuizDTO.class);
+        } catch (TransactionException exception) {
+            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
+                throw new ValidationQuizException(validationException.getConstraintViolations());
+            }
+
+            throw exception;
         }
-        throw new QuizNotFoundException();
     }
 
     public void deleteQuiz(Long id) {
