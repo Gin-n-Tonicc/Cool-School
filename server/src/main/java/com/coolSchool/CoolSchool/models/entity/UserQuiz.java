@@ -25,6 +25,6 @@ public class UserQuiz {
     private BigDecimal grade;
     private String feedback;
     private LocalDateTime completedAt;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

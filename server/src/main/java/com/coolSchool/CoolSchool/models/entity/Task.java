@@ -23,6 +23,6 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "subsection_id")
     private CourseSubsection subsection;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

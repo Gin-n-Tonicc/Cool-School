@@ -26,6 +26,6 @@ public class Message {
     private LocalDateTime sent_at;
     @NotNull(message = "The content of the message should not be null!")
     private String content;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

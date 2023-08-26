@@ -19,6 +19,6 @@ public class UserAnswer {
     @ManyToOne
     @JoinColumn(name = "answer_id")
     private Answer answer;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

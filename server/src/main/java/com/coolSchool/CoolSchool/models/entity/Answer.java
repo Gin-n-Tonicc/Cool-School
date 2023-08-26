@@ -18,6 +18,6 @@ public class Answer {
     @JoinColumn(name = "question_id")
     private Question question;
     private boolean isCorrect;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

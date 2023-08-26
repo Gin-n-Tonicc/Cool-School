@@ -21,6 +21,6 @@ public class UserCourse {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

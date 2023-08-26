@@ -5,6 +5,7 @@ CREATE TABLE user_quizzes (
     grade DECIMAL(10, 2),
     feedback TEXT,
     completedAt DATETIME,
+    attempt_limit INT,
     is_deleted TINYINT(1) DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
