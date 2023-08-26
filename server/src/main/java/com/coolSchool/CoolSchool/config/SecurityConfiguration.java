@@ -43,6 +43,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/files/upload",
+                        "/api/v1/quizzes/**",
                         "/api/v1/files/**",
                         "/api/v1/auth/**",
                         "/v2/api-docs",

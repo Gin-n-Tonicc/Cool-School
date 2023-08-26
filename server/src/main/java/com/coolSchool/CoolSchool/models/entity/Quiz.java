@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.models.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class Quiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+    @NotBlank(message = "The title of the quiz should not be blank!")
     @NotNull(message = "The title of the quiz should not be null!")
     private String title;
     private String description;
@@ -26,6 +28,6 @@ public class Quiz {
     @ManyToOne
     @JoinColumn(name = "subsection_id")
     private CourseSubsection subsection;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }
