@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import logo from '../../../images/logo.png';
 import './Header.scss';
 
@@ -9,9 +10,9 @@ export default function Header() {
           <div className="row align-items-center">
             <div className="col-lg-12">
               <nav className="navbar navbar-expand-lg navbar-light">
-                <a className="navbar-brand" href="index.html">
+                <Link to="/" className="navbar-brand">
                   <img className="site-logo" src={logo} alt="logo" />
-                </a>
+                </Link>
                 <button
                   className="navbar-toggler"
                   type="button"
@@ -28,24 +29,24 @@ export default function Header() {
                   id="navbarSupportedContent">
                   <ul className="navbar-nav align-items-center">
                     <li className="nav-item active">
-                      <a className="nav-link" href="index.html">
+                      <Link className="nav-link" to={'/'}>
                         Home
-                      </a>
+                      </Link>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="about.html">
+                      <Link className="nav-link" to={'/about'}>
                         About
-                      </a>
+                      </Link>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="cource.html">
+                      <Link className="nav-link" to={'/courses'}>
                         Courses
-                      </a>
+                      </Link>
                     </li>
                     <li className="nav-item">
-                      <a className="nav-link" href="blog.html">
+                      <Link className="nav-link" to={'/blog'}>
                         Blog
-                      </a>
+                      </Link>
                     </li>
                     <li className="nav-item dropdown">
                       <a

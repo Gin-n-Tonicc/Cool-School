@@ -45,7 +45,7 @@ export default function HomeBlog() {
         </div>
         <div className="row">
           {blogCards.map((x) => (
-            <HomeBlogCard {...x} />
+            <HomeBlogCard {...x} key={x.category} />
           ))}
         </div>
       </div>

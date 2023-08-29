@@ -51,7 +51,7 @@ export default function HomeCourses() {
         </div>
         <div className="row">
           {courses.map((x) => (
-            <HomeCourse {...x} />
+            <HomeCourse {...x} key={x.title} />
           ))}
         </div>
       </div>
