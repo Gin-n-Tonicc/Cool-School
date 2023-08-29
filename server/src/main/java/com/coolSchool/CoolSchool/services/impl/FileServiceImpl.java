@@ -26,8 +26,9 @@ public class FileServiceImpl implements FileService {
     @Value("${upload.directory}")
     public String uploadDirectory;
 
-    public FileServiceImpl(FileRepository fileRepository) {
+    public FileServiceImpl(FileRepository fileRepository, @Value("${upload.directory}") String uploadDirectory) {
         this.fileRepository = fileRepository;
+        this.uploadDirectory = uploadDirectory;
     }
 
     @Override
@@ -98,4 +99,5 @@ public class FileServiceImpl implements FileService {
         String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
         return FileType.getMediaTypeForExtension(extension);
     }
+
 }
