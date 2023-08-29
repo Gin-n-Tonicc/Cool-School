@@ -1,6 +1,5 @@
 package com.coolSchool.CoolSchool.models.entity;
 
-import com.coolSchool.CoolSchool.enums.FileType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -20,8 +19,7 @@ public class File {
     @NotNull(message = "The url of the file should not be null!")
     private String url;
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private FileType type;
+    private String type;
     @Column(name = "is_deleted")
     private boolean deleted;
 }
