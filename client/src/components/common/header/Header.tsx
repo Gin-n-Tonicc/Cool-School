@@ -1,11 +1,22 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../../../images/logo.png';
 import './Header.scss';
+import HeaderNavItem from './header-nav-item/HeaderNavItem';
 
 export default function Header() {
+  const location = useLocation();
+
+  let headerClasses = 'main_menu ';
+
+  if (location.pathname === '/') {
+    headerClasses += 'home_menu';
+  } else {
+    headerClasses += 'single_page_menu';
+  }
+
   return (
     <>
-      <header className="main_menu home_menu">
+      <header className={headerClasses}>
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-12">
@@ -28,26 +39,11 @@ export default function Header() {
                   className="collapse navbar-collapse main-menu-item justify-content-end"
                   id="navbarSupportedContent">
                   <ul className="navbar-nav align-items-center">
-                    <li className="nav-item active">
-                      <Link className="nav-link" to={'/'}>
-                        Home
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to={'/about'}>
-                        About
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to={'/courses'}>
-                        Courses
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to={'/blog'}>
-                        Blog
-                      </Link>
-                    </li>
+                    <HeaderNavItem text="Home" pathName="/" />
+                    <HeaderNavItem text="About" pathName="/about" />
+                    <HeaderNavItem text="Courses" pathName="/courses" />
+                    <HeaderNavItem text="Blog" pathName="/blog" />
+
                     <li className="nav-item dropdown">
                       <a
                         className="nav-link dropdown-toggle"
