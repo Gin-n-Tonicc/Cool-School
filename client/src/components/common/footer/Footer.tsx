@@ -75,7 +75,7 @@ export default function Footer() {
                   <span> Phone:</span> +2 36 265 (8060)
                 </p>
                 <p>
-                  <span> Email:</span> info@colorlib.com{' '}
+                  <span> Email:</span> info@TODO:add_email.com{' '}
                 </p>
               </div>
             </div>
@@ -90,12 +90,7 @@ export default function Footer() {
                 <div className="col-lg-12">
                   <p className="footer-text m-0">
                     Copyright &copy;
-                    {new Date().getFullYear()} All rights reserved | This
-                    template is made with{' '}
-                    <i className="ti-heart" aria-hidden="true"></i> by{' '}
-                    <a href="https://colorlib.com" target="_blank">
-                      Colorlib
-                    </a>
+                    {new Date().getFullYear()} All rights reserved
                   </p>
                 </div>
               </div>

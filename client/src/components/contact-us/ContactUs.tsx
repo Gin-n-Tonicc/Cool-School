@@ -92,7 +92,7 @@ export default function ContactUs() {
                   <i className="ti-email"></i>
                 </span>
                 <div className="media-body">
-                  <h3>support@colorlib.com</h3>
+                  <h3>support@TODO:add_email.com</h3>
                   <p>Send us your query anytime!</p>
                 </div>
               </div>
