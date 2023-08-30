@@ -27,12 +27,12 @@ public class QuizServiceImpl implements QuizService {
         this.modelMapper = modelMapper;
         this.validator = validator;
     }
-
+    @Override
     public List<QuizDTO> getAllQuizzes() {
         List<Quiz> quizzes = quizRepository.findByDeletedFalse();
         return quizzes.stream().map(quiz -> modelMapper.map(quiz, QuizDTO.class)).toList();
     }
-
+    @Override
     public QuizDTO getQuizById(Long id) {
         Optional<Quiz> quiz = quizRepository.findByIdAndDeletedFalse(id);
         if (quiz.isPresent()) {
@@ -40,14 +40,14 @@ public class QuizServiceImpl implements QuizService {
         }
         throw new QuizNotFoundException();
     }
-
+    @Override
     public List<QuizDTO> getQuizzesBySubsectionId(Long subsectionId) {
         List<Quiz> quizzes = quizRepository.findBySubsectionIdAndDeletedFalse(subsectionId);
         return quizzes.stream()
                 .map(quiz -> modelMapper.map(quiz, QuizDTO.class))
                 .collect(Collectors.toList());
     }
-
+    @Override
     public QuizDTO createQuiz(QuizDTO quizDTO) {
         try {
             quizRepository.save(modelMapper.map(quizDTO, Quiz.class));
@@ -56,7 +56,7 @@ public class QuizServiceImpl implements QuizService {
             throw new ValidationQuizException(exception.getConstraintViolations());
         }
     }
-
+    @Override
     public QuizDTO updateQuiz(Long id, QuizDTO quizDTO) {
         Optional<Quiz> existingQuizOptional = quizRepository.findByIdAndDeletedFalse(id);
 
@@ -77,7 +77,7 @@ public class QuizServiceImpl implements QuizService {
             throw exception;
         }
     }
-
+    @Override
     public void deleteQuiz(Long id) {
         Optional<Quiz> quiz = quizRepository.findByIdAndDeletedFalse(id);
         if (quiz.isPresent()) {

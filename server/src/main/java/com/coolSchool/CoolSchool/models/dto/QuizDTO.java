@@ -18,4 +18,5 @@ public class QuizDTO {
     private LocalDateTime endTime;
     private Duration timeLimit;
     private CourseSubsection subsection;
+    private Integer attemptLimit;
 }
