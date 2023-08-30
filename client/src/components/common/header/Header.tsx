@@ -45,7 +45,8 @@ export default function Header() {
                     <HeaderNavItem text="Courses" pathName="/courses" />
                     <HeaderNavItem text="Blog" pathName="/blog" />
 
-                    <li className="nav-item dropdown">
+                    {/* TODO: FINISH PAGES IN FUTURE */}
+                    {/* <li className="nav-item dropdown">
                       <a
                         className="nav-link dropdown-toggle"
                         href="blog.html"
@@ -66,7 +67,7 @@ export default function Header() {
                           Elements
                         </a>
                       </div>
-                    </li>
+                    </li> */}
                     <HeaderNavItem text="Contact" pathName="/contact" />
                     <li className="d-none d-lg-block">
                       <a className="btn_1" href="#">
