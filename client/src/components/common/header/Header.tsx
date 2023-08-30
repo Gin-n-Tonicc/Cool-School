@@ -66,11 +66,7 @@ export default function Header() {
                         </a>
                       </div>
                     </li>
-                    <li className="nav-item">
-                      <a className="nav-link" href="contact.html">
-                        Contact
-                      </a>
-                    </li>
+                    <HeaderNavItem text="Contact" pathName="/contact" />
                     <li className="d-none d-lg-block">
                       <a className="btn_1" href="#">
                         Get a Quote

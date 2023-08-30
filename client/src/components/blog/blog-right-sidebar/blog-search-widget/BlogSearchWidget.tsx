@@ -3,7 +3,7 @@ import './BlogSearchWidget.scss';
 export default function BlogSearchWidget() {
   return (
     <aside className="single_sidebar_widget search_widget">
-      <form action="#">
+      <form>
         <div className="form-group">
           <div className="input-group mb-3">
             <input

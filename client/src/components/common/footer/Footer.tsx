@@ -25,7 +25,7 @@ export default function Footer() {
                 Stay updated with our latest trends Seed heaven so said place
                 winged over given forth fruit.
               </p>
-              <form action="#">
+              <form>
                 <div className="form-group">
                   <div className="input-group mb-3">
                     <input

@@ -5,7 +5,7 @@ export default function BlogNewsletterWidget() {
     <aside className="single_sidebar_widget newsletter_widget">
       <h4 className="widget_title">Newsletter</h4>
 
-      <form action="#">
+      <form>
         <div className="form-group">
           <input
             type="email"
