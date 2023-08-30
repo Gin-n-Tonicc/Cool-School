@@ -1,0 +1,26 @@
+@import 'src/styles/style.scss';
+
+.blog_tag_cloud {
+  display: inline-block;
+
+  a {
+    display: inline-block;
+    border: 1px solid #eeeeee;
+    background: #fff;
+    padding: 4px 20px;
+    margin-bottom: 8px;
+    margin-right: 3px;
+    transition: all 0.3s ease 0s;
+    color: #888888;
+    font-size: 13px;
+
+    &:hover {
+      background: $btn_bg;
+      color: #fff !important;
+      -webkit-text-fill-color: #fff;
+      text-decoration: none;
+      -webkit-transition: 0.5s;
+      transition: 0.5s;
+    }
+  }
+}

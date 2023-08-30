@@ -1,0 +1,18 @@
+@import 'src/styles/style.scss';
+
+.blog_part {
+  padding-top: 0 !important;
+
+  @media #{$small_mobile} {
+    padding-bottom: 50px;
+  }
+  @media #{$large_mobile} {
+    padding-bottom: 50px;
+  }
+  @media #{$tab_device} {
+    padding-bottom: 50px;
+  }
+  @media #{$medium_device} {
+    padding-bottom: 50px;
+  }
+}
