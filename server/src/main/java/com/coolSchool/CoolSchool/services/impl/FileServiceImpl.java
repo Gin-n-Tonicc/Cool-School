@@ -26,14 +26,17 @@ public class FileServiceImpl implements FileService {
     @Value("${upload.directory}")
     public String uploadDirectory;
 
-    public FileServiceImpl(FileRepository fileRepository) {
+    public FileServiceImpl(FileRepository fileRepository, @Value("${upload.directory}") String uploadDirectory) {
         this.fileRepository = fileRepository;
+        this.uploadDirectory = uploadDirectory;
     }
 
+    @Override
     public String generateUniqueFilename(String originalFilename) {
         return UUID.randomUUID() + "_" + originalFilename;
     }
 
+    @Override
     public Path createFilePath(String uniqueFilename) {
         Path directoryPath = Paths.get(uploadDirectory);
         try {
@@ -44,6 +47,7 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    @Override
     public String uploadFile(MultipartFile file) {
         try {
             String originalFilename = file.getOriginalFilename();
@@ -61,12 +65,14 @@ public class FileServiceImpl implements FileService {
             fileEntity.setDeleted(false);
             fileEntity.setType(file.getContentType());
             fileRepository.save(fileEntity);
+
             return uniqueFilename;
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid argument.", e);
         }
     }
 
+    @Override
     public byte[] getFileBytes(String imageName) {
         try {
             return Files.readAllBytes(Paths.get(uploadDirectory, imageName));
@@ -77,6 +83,7 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    @Override
     public String saveFileAndGetUniqueFilename(MultipartFile file) {
         try {
             String uniqueFilename = generateUniqueFilename(file.getOriginalFilename());
@@ -87,8 +94,10 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    @Override
     public MediaType getMediaTypeForFile(String filename) {
         String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
         return FileType.getMediaTypeForExtension(extension);
     }
+
 }

@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.services.impl.FileServiceImpl;
+import com.coolSchool.CoolSchool.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +13,10 @@ import java.io.IOException;
 @RequestMapping("/api/v1/files")
 public class FileController {
 
-    private final FileServiceImpl fileService;
+    private final FileService fileService;
 
     @Autowired
-    public FileController(FileServiceImpl fileService) {
+    public FileController(FileService fileService) {
         this.fileService = fileService;
     }
 
