@@ -1,19 +1,26 @@
+import { Route, Routes } from 'react-router-dom';
+import Blog from './components/blog/Blog';
+import Footer from './components/common/footer/Footer';
+import Header from './components/common/header/Header';
+import ContactUs from './components/contact-us/ContactUs';
+import Courses from './components/courses/Courses';
+import Home from './components/home/Home';
+import NotFound from './components/not-found/NotFound';
+import './styles/style.scss';
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Footer />
+    </>
   );
 }
 

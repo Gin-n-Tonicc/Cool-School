@@ -1,0 +1,39 @@
+@import 'src/styles/style.scss';
+
+.search_widget {
+  .form-control {
+    height: 50px;
+    border-color: #f0e9ff;
+    font-size: 13px;
+    color: #999999;
+    padding-left: 20px;
+    border-radius: 0;
+    border-right: 0;
+
+    &::placeholder {
+      color: #999999;
+    }
+
+    &:focus {
+      border-color: #f0e9ff;
+      outline: 0;
+      box-shadow: none;
+    }
+  }
+
+  .input-group {
+    button {
+      background: $white_color;
+      border-left: 0;
+      border: 1px solid #f0e9ff;
+      padding: 4px 15px;
+      border-left: 0;
+
+      i,
+      span {
+        font-size: 14px;
+        color: #999999;
+      }
+    }
+  }
+}

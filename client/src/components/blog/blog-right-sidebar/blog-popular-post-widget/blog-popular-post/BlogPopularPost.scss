@@ -1,0 +1,33 @@
+@import 'src/styles/style.scss';
+
+.post_item {
+  .media-body {
+    justify-content: center;
+    align-self: center;
+    padding-left: 20px;
+
+    h3 {
+      font-size: 16px;
+      line-height: 20px;
+      margin-bottom: 6px;
+      transition: all 0.3s linear;
+    }
+
+    a {
+      // color: $title_color;
+      &:hover {
+        color: $white_color;
+      }
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 21px;
+      margin-bottom: 0px;
+    }
+  }
+
+  & + .post_item {
+    margin-top: 20px;
+  }
+}

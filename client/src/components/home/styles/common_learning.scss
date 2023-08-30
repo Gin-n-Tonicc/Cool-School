@@ -1,0 +1,359 @@
+@import 'src/styles/style.scss';
+
+.learning_part {
+  position: relative;
+  z-index: 99;
+  padding: 189px 0px 210px;
+  @media #{$small_mobile} {
+    padding: 70px 0px;
+  }
+  @media #{$large_mobile} {
+    padding: 70px 0px;
+  }
+  @media #{$tab_device} {
+    padding: 70px 0px;
+  }
+  @media #{$medium_device} {
+    padding: 70px 0px;
+  }
+  .learning_img {
+    @include background('../images/learning_img_bg.png');
+    background-size: 70% 100%;
+    background-position: left top;
+    position: absolute;
+    left: -134px;
+    bottom: -69px;
+    @media #{$small_mobile} {
+      position: inherit;
+      left: 0;
+      bottom: 0;
+      margin-bottom: 20px;
+    }
+    @media #{$large_mobile} {
+      position: inherit;
+      left: 0;
+      bottom: 0;
+      margin-bottom: 20px;
+    }
+    @media #{$tab_device} {
+      position: inherit;
+      left: 0;
+      bottom: 0;
+      margin-bottom: 20px;
+    }
+    @media #{$medium_device} {
+      bottom: -43px;
+      left: -80px;
+    }
+    img {
+      padding: 0px 53px 64px 50px;
+      @media #{$small_mobile} {
+        padding: 0;
+      }
+      @media #{$large_mobile} {
+        padding: 0;
+      }
+      @media #{$tab_device} {
+        padding: 0;
+      }
+      @media #{$medium_device} {
+      }
+    }
+  }
+
+  .learning_member_text {
+    @media #{$small_mobile} {
+      padding-left: 0;
+    }
+
+    @media #{$large_mobile} {
+      padding-left: 0;
+    }
+
+    @media #{$tab_device} {
+      padding-left: 0;
+    }
+
+    @media #{$medium_device} {
+      padding-left: 0;
+    }
+
+    h5 {
+      font-family: $font_stack_1;
+      color: #556172;
+      font-size: 14px;
+      font-weight: 500;
+      position: relative;
+      padding-left: 75px;
+      text-transform: uppercase;
+
+      &:after {
+        position: absolute;
+        left: 0;
+        top: 10px;
+        height: 2px;
+        width: 60px;
+        content: '';
+        background-color: $btn_bg;
+      }
+    }
+
+    h2 {
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 38px;
+      position: relative;
+      margin-top: 19px;
+
+      @media #{$small_mobile} {
+        font-size: 25px;
+        margin-bottom: 10px;
+        line-height: 35px;
+        margin-top: 15px;
+      }
+
+      @media #{$large_mobile} {
+        font-size: 25px;
+        margin-bottom: 10px;
+        line-height: 35px;
+        margin-top: 20px;
+      }
+
+      @media #{$tab_device} {
+        font-size: 25px;
+        margin-bottom: 10px;
+        line-height: 35px;
+        margin-top: 20px;
+      }
+
+      @media #{$medium_device} {
+        font-size: 28px;
+        margin-bottom: 20px;
+        line-height: 40px;
+      }
+    }
+
+    p {
+      line-height: 1.929;
+      margin-bottom: 7px;
+
+      @media #{$small_mobile} {
+        margin-bottom: 10px;
+      }
+
+      @media #{$large_mobile} {
+        margin-bottom: 20px;
+      }
+
+      @media #{$tab_device} {
+        margin-bottom: 20px;
+      }
+
+      @media #{$medium_device} {
+      }
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      margin-bottom: 30px;
+
+      @media #{$small_mobile} {
+        margin-bottom: 10px;
+      }
+
+      @media #{$large_mobile} {
+        margin-bottom: 20px;
+      }
+
+      @media #{$tab_device} {
+        margin-bottom: 20px;
+      }
+
+      @media #{$medium_device} {
+      }
+
+      li {
+        display: inline-block;
+        margin-bottom: 10px;
+        font-size: 14px;
+        padding-left: 33px;
+        padding-top: 12px;
+        color: $font_8;
+
+        @media #{$small_mobile} {
+          padding-left: 41px;
+          padding-top: 5px;
+        }
+
+        @media #{$large_mobile} {
+          padding-left: 41px;
+          padding-top: 5px;
+        }
+
+        @media #{$tab_device} {
+          padding-left: 41px;
+          padding-top: 5px;
+          display: block;
+        }
+
+        @media #{$medium_device} {
+          padding-left: 41px;
+        }
+
+        span {
+          margin-right: 17px;
+          font-size: 16px;
+          position: absolute;
+          left: 15px;
+          padding-top: 2px;
+
+          @media #{$small_mobile} {
+            padding-bottom: 15px;
+            position: absolute;
+            left: 15px;
+            padding-top: 12px;
+          }
+
+          @media #{$large_mobile} {
+            padding-bottom: 15px;
+            position: absolute;
+            left: 15px;
+            padding-top: 0px;
+          }
+
+          @media #{$tab_device} {
+            padding-bottom: 15px;
+            position: absolute;
+            left: 15px;
+          }
+
+          @media #{$medium_device} {
+            padding-bottom: 15px;
+            position: absolute;
+            left: 15px;
+            padding-top: 6px;
+          }
+        }
+      }
+    }
+
+    .btn_1 {
+      margin-top: 6px;
+    }
+  }
+}
+
+.advance_feature {
+  padding: 169px 0px 171px;
+  @media #{$small_mobile} {
+    padding: 0px 0px 70px;
+  }
+  @media #{$large_mobile} {
+    padding: 0px 0px 70px;
+  }
+  @media #{$tab_device} {
+    padding: 0px 0px 70px;
+  }
+  @media #{$medium_device} {
+    padding: 70px 0px;
+  }
+  .learning_img {
+    @include background('../images/advance_feature_bg.png');
+    background-size: 84% 100%;
+    background-position: right top;
+    left: 0;
+    bottom: -31px;
+    right: -82px;
+    top: -30px;
+    @media #{$small_mobile} {
+      position: inherit;
+      top: 0px;
+      left: 0;
+      bottom: 0;
+      margin-bottom: 20px;
+    }
+    @media #{$large_mobile} {
+      position: inherit;
+      left: 0;
+      bottom: auto;
+      top: 20px;
+      margin-bottom: 20px;
+    }
+    @media #{$tab_device} {
+      position: inherit;
+      left: 0;
+      bottom: 0;
+      margin-bottom: 20px;
+    }
+    @media #{$medium_device} {
+      position: inherit;
+      left: 0;
+      bottom: 0;
+      margin-bottom: 20px;
+    }
+    img {
+      padding: 0px 117px 0px 0px;
+      @media #{$small_mobile} {
+        padding: 0px;
+      }
+      @media #{$large_mobile} {
+        padding: 0;
+      }
+      @media #{$tab_device} {
+        padding: 0px;
+      }
+      @media #{$medium_device} {
+      }
+    }
+  }
+  .learning_member_text_iner {
+    span {
+      height: 60px;
+      width: 60px;
+      line-height: 60px;
+      border-radius: 50%;
+      background-color: #fdeae5;
+      display: inline-block;
+      text-align: center;
+      font-size: 22px;
+      margin-top: 55px;
+      margin-bottom: 25px;
+      @media #{$small_mobile} {
+        margin-top: 15px;
+        margin-bottom: 10px;
+      }
+      @media #{$large_mobile} {
+        margin-top: 15px;
+        margin-bottom: 10px;
+      }
+      @media #{$tab_device} {
+        margin-top: 15px;
+        margin-bottom: 10px;
+      }
+      @media #{$medium_device} {
+      }
+    }
+    .ti-stamp {
+      background-color: #fff0e0;
+    }
+    h4 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 17px;
+      @media #{$small_mobile} {
+        margin-bottom: 10px;
+      }
+      @media #{$large_mobile} {
+        margin-bottom: 10px;
+      }
+      @media #{$tab_device} {
+        margin-bottom: 10px;
+      }
+      @media #{$medium_device} {
+      }
+    }
+  }
+}
