@@ -1,8 +1,8 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
-import com.coolSchool.CoolSchool.controllers.QuestionController;
-import com.coolSchool.CoolSchool.models.dto.QuestionDTO;
-import com.coolSchool.CoolSchool.services.impl.QuestionServiceImpl;
+import com.coolSchool.CoolSchool.controllers.AnswerController;
+import com.coolSchool.CoolSchool.models.dto.AnswerDTO;
+import com.coolSchool.CoolSchool.services.impl.AnswerServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,29 +22,30 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
-@WebMvcTest(value = QuestionController.class,
+@WebMvcTest(value = AnswerController.class,
         useDefaultFilters = false,
         includeFilters = {
                 @ComponentScan.Filter(
                         type = FilterType.ASSIGNABLE_TYPE,
-                        value = QuestionController.class),
+                        value = AnswerController.class),
                 @ComponentScan.Filter(
                         type = FilterType.ASSIGNABLE_TYPE
                 )
         }
 )
-class QuestionControllerIntegrationTest {
+class AnswerControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
-    private QuestionServiceImpl questionService;
-    private List<QuestionDTO> questionList;
+    private AnswerServiceImpl answerService;
+    private List<AnswerDTO> answerList;
 
     @BeforeEach
     void setup() {
@@ -53,64 +54,65 @@ class QuestionControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        questionList = new ArrayList<>();
-        questionList.add(new QuestionDTO());
+        answerList = new ArrayList<>();
+        answerList.add(new AnswerDTO());
     }
 
     @Test
-    void testGetAllQuestions() throws Exception {
-        Mockito.when(questionService.getAllQuestions()).thenReturn(Collections.emptyList());
-        mockMvc.perform(get("/api/v1/questions/all"))
+    void testGetAllAnswers() throws Exception {
+        Mockito.when(answerService.getAllAnswers()).thenReturn(Collections.emptyList());
+        mockMvc.perform(get("/api/v1/answers/all"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    void testGetQuestionById() throws Exception {
-        Long questionId = 1L;
-        QuestionDTO question = new QuestionDTO();
+    void testGetAnswerById() throws Exception {
+        Long answerId = 1L;
+        AnswerDTO answer = new AnswerDTO();
 
-        Mockito.when(questionService.getQuestionById(questionId)).thenReturn(question);
+        Mockito.when(answerService.getAnswerById(answerId)).thenReturn(answer);
 
-        mockMvc.perform(get("/api/v1/questions/{id}", questionId))
+        mockMvc.perform(get("/api/v1/answers/{id}", answerId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    void testCreateQuestion() throws Exception {
-        QuestionDTO question = new QuestionDTO();
-        String questionJson = objectMapper.writeValueAsString(question);
+    void testCreateAnswer() throws Exception {
+        AnswerDTO answer = new AnswerDTO();
+        String answerJson = objectMapper.writeValueAsString(answer);
 
-        Mockito.when(questionService.createQuestion(Mockito.any(QuestionDTO.class))).thenReturn(question);
+        Mockito.when(answerService.createAnswer(Mockito.any(AnswerDTO.class))).thenReturn(answer);
 
-        mockMvc.perform(post("/api/v1/questions/create")
+        mockMvc.perform(post("/api/v1/answers/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(questionJson))
+                        .content(answerJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    void testUpdateQuestion() throws Exception {
-        Long questionId = 1L;
-        QuestionDTO updatedQuestion = new QuestionDTO();
-        String updatedQuestionJson = objectMapper.writeValueAsString(updatedQuestion);
+    void testUpdateAnswer() throws Exception {
+        Long answerId = 1L;
+        AnswerDTO updatedAnswer = new AnswerDTO();
+        String updatedAnswerJson = objectMapper.writeValueAsString(updatedAnswer);
 
-        Mockito.when(questionService.updateQuestion(Mockito.eq(questionId), Mockito.any(QuestionDTO.class)))
-                .thenReturn(updatedQuestion);
+        Mockito.when(answerService.updateAnswer(Mockito.eq(answerId), Mockito.any(AnswerDTO.class)))
+                .thenReturn(updatedAnswer);
 
-        mockMvc.perform(put("/api/v1/questions/{id}", questionId)
+        mockMvc.perform(put("/api/v1/answers/{id}", answerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(updatedQuestionJson))
+                        .content(updatedAnswerJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    void testDeleteQuestionById() throws Exception {
-        Long questionId = 1L;
-        mockMvc.perform(delete("/api/v1/questions/{id}", questionId))
+    void testDeleteAnswerById() throws Exception {
+        Long answerId = 1L;
+        mockMvc.perform(delete("/api/v1/answers/{id}", answerId))
                 .andExpect(status().isOk());
     }
 }
+
