@@ -146,7 +146,7 @@ class QuizServiceImplTest {
         when(quizRepository.findBySubsectionIdAndDeletedFalse(subsectionId)).thenReturn(quizzes);
         List<QuizDTO> quizDTOs = quizService.getQuizzesBySubsectionId(subsectionId);
         assertEquals(2, quizDTOs.size());
-        assertEquals(quiz1.getId(), quizDTOs.get(0).getSubsection().getId());
+        assertEquals(quiz1.getId(), quizDTOs.get(0).getSubsectionId());
     }
 
     @Test

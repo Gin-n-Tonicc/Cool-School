@@ -1,6 +1,5 @@
 package com.coolSchool.CoolSchool.models.dto;
 
-import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +11,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizDTO {
+    private Long id;
     private String title;
     private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Duration timeLimit;
-    private CourseSubsection subsection;
+    private Long subsectionId;
     private Integer attemptLimit;
 }

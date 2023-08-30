@@ -1,6 +1,5 @@
 package com.coolSchool.CoolSchool.models.dto;
 
-import com.coolSchool.CoolSchool.models.entity.Quiz;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionDTO {
+    private Long id;
     private BigDecimal marks;
     private String description;
-    private Quiz quiz;
+    private Long quizId;
 }

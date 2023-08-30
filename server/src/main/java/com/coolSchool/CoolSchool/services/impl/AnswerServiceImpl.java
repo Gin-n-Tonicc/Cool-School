@@ -45,8 +45,8 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public AnswerDTO createAnswer(AnswerDTO answerDTO) {
         try {
-            answerRepository.save(modelMapper.map(answerDTO, Answer.class));
-            return answerDTO;
+            Answer answerEntity = answerRepository.save(modelMapper.map(answerDTO, Answer.class));
+            return modelMapper.map(answerEntity, AnswerDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationAnswerException(exception.getConstraintViolations());
         }
@@ -64,6 +64,7 @@ public class AnswerServiceImpl implements AnswerService {
         modelMapper.map(answerDTO, existingAnswer);
 
         try {
+            existingAnswer.setId(id);
             Answer updatedAnswer = answerRepository.save(existingAnswer);
             return modelMapper.map(updatedAnswer, AnswerDTO.class);
         } catch (TransactionException exception) {

@@ -1,6 +1,5 @@
 package com.coolSchool.CoolSchool.models.dto;
 
-import com.coolSchool.CoolSchool.models.entity.Question;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnswerDTO {
+    private Long id;
     private String text;
-    private Question question;
+    private Long questionId;
     private boolean isCorrect;
 }

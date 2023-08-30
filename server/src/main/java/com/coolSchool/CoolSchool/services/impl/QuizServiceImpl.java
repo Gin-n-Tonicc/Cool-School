@@ -54,8 +54,8 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public QuizDTO createQuiz(QuizDTO quizDTO) {
         try {
-            quizRepository.save(modelMapper.map(quizDTO, Quiz.class));
-            return quizDTO;
+            Quiz quizEntity = quizRepository.save(modelMapper.map(quizDTO, Quiz.class));
+            return modelMapper.map(quizEntity, QuizDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationQuizException(exception.getConstraintViolations());
         }
@@ -73,6 +73,7 @@ public class QuizServiceImpl implements QuizService {
         modelMapper.map(quizDTO, existingQuiz);
 
         try {
+            existingQuiz.setId(id);
             Quiz updatedQuiz = quizRepository.save(existingQuiz);
             return modelMapper.map(updatedQuiz, QuizDTO.class);
         } catch (TransactionException exception) {

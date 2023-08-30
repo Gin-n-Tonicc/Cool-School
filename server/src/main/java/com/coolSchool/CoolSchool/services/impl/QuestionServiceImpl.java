@@ -45,8 +45,8 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public QuestionDTO createQuestion(QuestionDTO questionDTO) {
         try {
-            questionRepository.save(modelMapper.map(questionDTO, Question.class));
-            return questionDTO;
+            Question questionEntity = questionRepository.save(modelMapper.map(questionDTO, Question.class));
+            return modelMapper.map(questionEntity, QuestionDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationQuestionException(exception.getConstraintViolations());
         }
@@ -64,6 +64,7 @@ public class QuestionServiceImpl implements QuestionService {
         modelMapper.map(questionDTO, existingQuestion);
 
         try {
+            existingQuestion.setId(id);
             Question updatedQuestion = questionRepository.save(existingQuestion);
             return modelMapper.map(updatedQuestion, QuestionDTO.class);
         } catch (TransactionException exception) {
