@@ -1,8 +1,8 @@
-import './HomeCourse.scss';
+import './SpecialCourse.scss';
 import colorStar from './images/color_star.svg';
 import star from './images/star.svg';
 
-export interface HomeCourseProps {
+export interface SpecialCourseProps {
   titleSummary: string;
   title: string;
   price: number;
@@ -13,7 +13,7 @@ export interface HomeCourseProps {
   rating: number;
 }
 
-export default function HomeCourse(props: HomeCourseProps) {
+export default function SpecialCourse(props: SpecialCourseProps) {
   return (
     <div className="col-sm-6 col-lg-4">
       <div className="single_special_cource">

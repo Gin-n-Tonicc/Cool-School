@@ -1,8 +1,8 @@
-import HomeCourse, { HomeCourseProps } from './home-course/HomeCourse';
-import './HomeCourses.scss';
+import './SpecialCourses.scss';
+import HomeCourse, { SpecialCourseProps } from './special-course/SpecialCourse';
 
-export default function HomeCourses() {
-  const courses: HomeCourseProps[] = [
+export default function SpecialCourses() {
+  const courses: SpecialCourseProps[] = [
     {
       titleSummary: 'Web Development',
       title: 'Web Development',

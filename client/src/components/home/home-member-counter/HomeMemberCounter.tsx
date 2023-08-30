@@ -26,7 +26,7 @@ export default function HomeMemberCounter() {
           <div className="col-lg-3 col-sm-6">
             <div className="single_member_counter">
               <span className="counter">820</span>
-              <h4>Ofline Students</h4>
+              <h4>Offline Students</h4>
             </div>
           </div>
         </div>

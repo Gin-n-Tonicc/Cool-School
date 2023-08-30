@@ -1,14 +1,16 @@
+import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../../images/logo.png';
 import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
 
 export default function Header() {
+  const homeMenuPaths = useMemo(() => ['/'], []);
   const location = useLocation();
 
   let headerClasses = 'main_menu ';
 
-  if (location.pathname === '/') {
+  if (homeMenuPaths.includes(location.pathname)) {
     headerClasses += 'home_menu';
   } else {
     headerClasses += 'single_page_menu';
@@ -40,7 +42,6 @@ export default function Header() {
                   id="navbarSupportedContent">
                   <ul className="navbar-nav align-items-center">
                     <HeaderNavItem text="Home" pathName="/" />
-                    <HeaderNavItem text="About" pathName="/about" />
                     <HeaderNavItem text="Courses" pathName="/courses" />
                     <HeaderNavItem text="Blog" pathName="/blog" />
 
