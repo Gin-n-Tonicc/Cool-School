@@ -101,7 +101,7 @@ class FileServiceImplTest {
     @Test
     void testGetFileBytes() throws IOException {
         String imageName = "test-image.jpg";
-        String imageDirectory = "server/src/main/resources/static/uploads/";
+        String imageDirectory = "/server/src/main/resources/static/uploads/";
         Path imagePath = Path.of(imageDirectory, imageName);
         Files.createDirectories(imagePath.getParent());
         Files.write(imagePath, "Test image content".getBytes());

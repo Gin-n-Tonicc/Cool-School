@@ -1,4 +1,5 @@
 package com.coolSchool.CoolSchool.services.impl;
+
 import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
