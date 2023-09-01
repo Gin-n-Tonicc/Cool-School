@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserAnswerDTO {
     private Long id;
-    private Long user;
-    private Long answer;
+    private Long userId;
+    private Long answerId;
 }

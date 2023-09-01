@@ -10,38 +10,38 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/userUserAnswers")
+@RequestMapping("/api/v1/userAnswers")
 public class UserAnswerController {
-    private final UserAnswerServiceImpl userUserAnswerService;
+    private final UserAnswerServiceImpl userAnswerService;
 
-    public UserAnswerController(UserAnswerServiceImpl userUserAnswerService) {
-        this.userUserAnswerService = userUserAnswerService;
+    public UserAnswerController(UserAnswerServiceImpl userAnswerService) {
+        this.userAnswerService = userAnswerService;
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<UserAnswerDTO>> getAllUserAnswers() {
-        return ResponseEntity.ok(userUserAnswerService.getAllUserAnswers());
+        return ResponseEntity.ok(userAnswerService.getAllUserAnswers());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserAnswerDTO> getUserAnswerById(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.ok(userUserAnswerService.getUserAnswerById(id));
+        return ResponseEntity.ok(userAnswerService.getUserAnswerById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserAnswerDTO> createUserAnswer(@Valid @RequestBody UserAnswerDTO userUserAnswerDTO) {
-        UserAnswerDTO cratedUserAnswer = userUserAnswerService.createUserAnswer(userUserAnswerDTO);
+    public ResponseEntity<UserAnswerDTO> createUserAnswer(@Valid @RequestBody UserAnswerDTO userAnswerDTO) {
+        UserAnswerDTO cratedUserAnswer = userAnswerService.createUserAnswer(userAnswerDTO);
         return new ResponseEntity<>(cratedUserAnswer, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserAnswerDTO> updateUserAnswer(@PathVariable("id") Long id, @Valid @RequestBody UserAnswerDTO userUserAnswerDTO) {
-        return ResponseEntity.ok(userUserAnswerService.updateUserAnswer(id, userUserAnswerDTO));
+    public ResponseEntity<UserAnswerDTO> updateUserAnswer(@PathVariable("id") Long id, @Valid @RequestBody UserAnswerDTO userAnswerDTO) {
+        return ResponseEntity.ok(userAnswerService.updateUserAnswer(id, userAnswerDTO));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUserAnswerById(@PathVariable("id") Long id) {
-        userUserAnswerService.deleteUserAnswer(id);
+        userAnswerService.deleteUserAnswer(id);
         return ResponseEntity.ok("UserAnswer with id: " + id + " has been deleted successfully!");
     }
 }
