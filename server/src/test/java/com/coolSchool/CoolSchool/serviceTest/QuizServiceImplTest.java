@@ -41,7 +41,7 @@ class QuizServiceImplTest {
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
+        jakarta.validation.Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         quizService = new QuizServiceImpl(quizRepository, modelMapper, validator);
     }
 
@@ -161,7 +161,7 @@ class QuizServiceImplTest {
 
         when(quizRepository.save(any(Quiz.class))).thenThrow(constraintViolationException);
 
-        assertThrows(ValidationQuizException.class, () -> quizService.createQuiz(quizDTO));
+         assertThrows(ConstraintViolationException.class, ()  -> quizService.createQuiz(quizDTO));
     }
 
     @Test
