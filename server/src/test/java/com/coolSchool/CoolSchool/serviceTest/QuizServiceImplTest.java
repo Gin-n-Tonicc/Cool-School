@@ -161,7 +161,7 @@ class QuizServiceImplTest {
 
         when(quizRepository.save(any(Quiz.class))).thenThrow(constraintViolationException);
 
-        assertThrows(ValidationQuizException.class, () -> quizService.createQuiz(quizDTO));
+        assertThrows(ConstraintViolationException.class, () -> quizService.createQuiz(quizDTO));
     }
 
     @Test
