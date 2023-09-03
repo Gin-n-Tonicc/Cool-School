@@ -4,7 +4,9 @@ import com.coolSchool.CoolSchool.exceptions.userAnswer.UserAnswerNotFoundExcepti
 import com.coolSchool.CoolSchool.exceptions.userAnswer.ValidationUserAnswerException;
 import com.coolSchool.CoolSchool.models.dto.UserAnswerDTO;
 import com.coolSchool.CoolSchool.models.entity.UserAnswer;
+import com.coolSchool.CoolSchool.repositories.AnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
+import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.impl.UserAnswerServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -29,6 +31,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserAnswerServiceImplTest {
+    //TODO: FIX CREATE TESTS
 
     @Mock
     private UserAnswerRepository userAnswerRepository;
@@ -38,12 +41,16 @@ class UserAnswerServiceImplTest {
 
     private ModelMapper modelMapper;
     private Validator validator;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private AnswerRepository answerRepository;
 
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        userAnswerService = new UserAnswerServiceImpl(userAnswerRepository, modelMapper, validator);
+        userAnswerService = new UserAnswerServiceImpl(userAnswerRepository, modelMapper, answerRepository, userRepository, validator);
     }
 
     @Test

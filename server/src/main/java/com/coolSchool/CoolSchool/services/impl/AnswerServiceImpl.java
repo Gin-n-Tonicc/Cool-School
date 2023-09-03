@@ -4,6 +4,8 @@ import com.coolSchool.CoolSchool.exceptions.answer.AnswerNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.answer.ValidationAnswerException;
 import com.coolSchool.CoolSchool.models.dto.AnswerDTO;
 import com.coolSchool.CoolSchool.models.entity.Answer;
+import com.coolSchool.CoolSchool.models.entity.UserAnswer;
+import com.coolSchool.CoolSchool.models.entity.UserQuiz;
 import com.coolSchool.CoolSchool.repositories.AnswerRepository;
 import com.coolSchool.CoolSchool.services.AnswerService;
 import jakarta.validation.ConstraintViolationException;

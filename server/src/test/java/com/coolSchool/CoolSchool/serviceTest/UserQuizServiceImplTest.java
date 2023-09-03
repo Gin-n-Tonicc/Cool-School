@@ -4,8 +4,10 @@ import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
 import com.coolSchool.CoolSchool.models.entity.UserQuiz;
+import com.coolSchool.CoolSchool.repositories.QuizRepository;
 import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserQuizRepository;
+import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.impl.UserQuizServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -28,7 +30,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserQuizServiceImplTest {
-
+    //TODO: FIX CREATE TESTS
     @Mock
     private UserQuizRepository userQuizRepository;
 
@@ -36,12 +38,15 @@ class UserQuizServiceImplTest {
     private UserQuizServiceImpl userQuizService;
 
     private ModelMapper modelMapper;
+    @Mock
+    private QuizRepository quizRepository;
+    @Mock
+    private UserRepository userRepository;
     private Validator validator;
-    private final UserAnswerRepository userAnswerRepository;
+    @Mock
+    private UserAnswerRepository userAnswerRepository;
 
-    UserQuizServiceImplTest(UserAnswerRepository userAnswerRepository) {
-        this.userAnswerRepository = userAnswerRepository;
-    }
+
 
     @BeforeEach
     void setUp() {
