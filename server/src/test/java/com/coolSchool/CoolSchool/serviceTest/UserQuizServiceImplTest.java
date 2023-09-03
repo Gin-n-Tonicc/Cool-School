@@ -47,7 +47,6 @@ class UserQuizServiceImplTest {
     private UserAnswerRepository userAnswerRepository;
 
 
-
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();

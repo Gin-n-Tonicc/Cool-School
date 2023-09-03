@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.exceptions.userQuiz.NoMoreAttemptsForUserQuiz;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
@@ -97,6 +98,7 @@ public class UserQuizServiceImpl implements UserQuizService {
             throw new UserQuizNotFoundException();
         }
     }
+
     @Override
     public List<UserQuizDTO> calculateUserTotalMarks(Long userId, Long quizId) {
         Optional<User> user = userRepository.findByIdAndDeletedFalse(userId);
@@ -133,12 +135,16 @@ public class UserQuizServiceImpl implements UserQuizService {
     private List<UserAnswer> getUserAnswersForQuizAttempt(UserQuiz userQuiz) {
         return userAnswerRepository.findByUserAndAttemptNumber(userQuiz.getUser(), userQuiz.getAttemptNumber());
     }
+
     private Integer calculateTheNextAttemptNumber(Long userId, Long quizId) {
         Optional<Integer> maxAttemptNumber;
         List<UserQuiz> userQuizzes = userQuizRepository.findByUserAndQuiz(userRepository.findByIdAndDeletedFalse(userId).get(), quizRepository.findByIdAndDeletedFalse(quizId).get());
         maxAttemptNumber = userQuizzes.stream()
                 .map(UserQuiz::getAttemptNumber)
                 .max(Integer::compareTo);
+        if (maxAttemptNumber.map(num -> num + 1).get() > quizRepository.findByIdAndDeletedFalse(quizId).get().getAttemptLimit()) {
+            throw new NoMoreAttemptsForUserQuiz();
+        }
         return maxAttemptNumber.map(num -> num + 1).orElse(1);
     }
 }

@@ -56,7 +56,7 @@ public class QuizServiceImpl implements QuizService {
         try {
             Quiz quizEntity = quizRepository.save(modelMapper.map(quizDTO, Quiz.class));
             return modelMapper.map(quizEntity, QuizDTO.class);
-        }  catch (TransactionException exception) {
+        } catch (TransactionException exception) {
             if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
                 throw new ValidationQuizException(validationException.getConstraintViolations());
             }

@@ -92,6 +92,7 @@ public class UserAnswerServiceImpl implements UserAnswerService {
             throw new UserAnswerNotFoundException();
         }
     }
+
     private Integer calculateTheNextAttemptNumber(Long userId, Long answerId) {
         Optional<Integer> maxAttemptNumber;
         List<UserAnswer> userAnswers = userAnswerRepository.findByUserAndAnswer(userRepository.findByIdAndDeletedFalse(userId).get(), answerRepository.findByIdAndDeletedFalse(answerId).get());

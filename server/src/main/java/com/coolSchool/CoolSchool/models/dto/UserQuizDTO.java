@@ -19,5 +19,5 @@ public class UserQuizDTO {
     private LocalDateTime completedAt;
     private BigDecimal totalMarks;
     private Integer attemptNumber;
-    
+
 }
