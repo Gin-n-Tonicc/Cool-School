@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.services;
 
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
+import com.coolSchool.CoolSchool.models.entity.UserQuiz;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface UserQuizService {
     UserQuizDTO updateUserQuiz(Long id, UserQuizDTO userQuizDTO);
 
     void deleteUserQuiz(Long id);
+    List<UserQuizDTO> calculateUserTotalMarks(Long userId, Long quizId);
+
 }

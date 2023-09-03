@@ -17,4 +17,6 @@ public class UserQuizDTO {
     private BigDecimal grade;
     private String feedback;
     private LocalDateTime completedAt;
+    private BigDecimal totalMarks;
+    private Integer attemptNumber;
 }

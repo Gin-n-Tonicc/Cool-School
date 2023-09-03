@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -43,6 +44,11 @@ public class UserQuizController {
     public ResponseEntity<String> deleteUserQuizById(@PathVariable("id") Long id) {
         userQuizService.deleteUserQuiz(id);
         return ResponseEntity.ok("UserQuiz with id: " + id + " has been deleted successfully!");
+    }
+
+    @GetMapping("/calculateTotalMarks")
+    public ResponseEntity<List<UserQuizDTO>> calculateUserTotalMarks(@RequestParam Long userId, @RequestParam Long quizId) {
+        return ResponseEntity.ok(userQuizService.calculateUserTotalMarks(userId, quizId));
     }
 }
 

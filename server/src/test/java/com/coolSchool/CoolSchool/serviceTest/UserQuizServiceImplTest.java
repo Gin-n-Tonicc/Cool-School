@@ -4,6 +4,7 @@ import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
 import com.coolSchool.CoolSchool.models.entity.UserQuiz;
+import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserQuizRepository;
 import com.coolSchool.CoolSchool.services.impl.UserQuizServiceImpl;
 import jakarta.validation.ConstraintViolation;
@@ -36,12 +37,17 @@ class UserQuizServiceImplTest {
 
     private ModelMapper modelMapper;
     private Validator validator;
+    private final UserAnswerRepository userAnswerRepository;
+
+    UserQuizServiceImplTest(UserAnswerRepository userAnswerRepository) {
+        this.userAnswerRepository = userAnswerRepository;
+    }
 
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        userQuizService = new UserQuizServiceImpl(userQuizRepository, modelMapper, validator);
+        userQuizService = new UserQuizServiceImpl(userQuizRepository, modelMapper, validator, userAnswerRepository, userRepository, quizRepository);
     }
 
     @Test
