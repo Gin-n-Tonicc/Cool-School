@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllers;
 
 import com.coolSchool.CoolSchool.models.dto.UserAnswerDTO;
-import com.coolSchool.CoolSchool.services.impl.UserAnswerServiceImpl;
+import com.coolSchool.CoolSchool.services.UserAnswerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +12,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/userAnswers")
 public class UserAnswerController {
-    private final UserAnswerServiceImpl userAnswerService;
+    private final UserAnswerService userAnswerService;
 
-    public UserAnswerController(UserAnswerServiceImpl userAnswerService) {
+    public UserAnswerController(UserAnswerService userAnswerService) {
         this.userAnswerService = userAnswerService;
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<UserAnswerDTO>> getAllUserAnswers() {

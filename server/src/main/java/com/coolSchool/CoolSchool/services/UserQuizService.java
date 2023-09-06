@@ -17,4 +17,6 @@ public interface UserQuizService {
 
     List<UserQuizDTO> calculateUserTotalMarks(Long userId, Long quizId);
 
+    Integer calculateTheNextAttemptNumber(Long userId, Long quizId);
+
 }

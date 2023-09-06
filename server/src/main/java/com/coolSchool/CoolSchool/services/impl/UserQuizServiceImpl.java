@@ -135,6 +135,7 @@ public class UserQuizServiceImpl implements UserQuizService {
         return userAnswerRepository.findByUserAndAttemptNumber(userQuiz.getUser(), userQuiz.getAttemptNumber());
     }
 
+    @Override
     public Integer calculateTheNextAttemptNumber(Long userId, Long quizId) {
         Optional<Integer> maxAttemptNumber;
         List<UserQuiz> userQuizzes = userQuizRepository.findByUserAndQuiz(userRepository.findByIdAndDeletedFalse(userId).get(), quizRepository.findByIdAndDeletedFalse(quizId).get());

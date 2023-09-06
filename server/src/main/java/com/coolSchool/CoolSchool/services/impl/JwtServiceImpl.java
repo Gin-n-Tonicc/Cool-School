@@ -24,12 +24,11 @@ public class JwtServiceImpl implements JwtService {
 
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration;
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private long refreshExpiration;
 
     public JwtServiceImpl() {
     }
-
-    @Value("${application.security.jwt.refresh-token.expiration}")
-    private long refreshExpiration;
 
     public JwtServiceImpl(String secretKey, long jwtExpiration, long refreshExpiration) {
         this.secretKey = secretKey;

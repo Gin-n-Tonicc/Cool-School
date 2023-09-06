@@ -3,8 +3,6 @@ package com.coolSchool.CoolSchool.serviceTest;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
-import com.coolSchool.CoolSchool.models.entity.Quiz;
-import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.models.entity.UserAnswer;
 import com.coolSchool.CoolSchool.models.entity.UserQuiz;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;
