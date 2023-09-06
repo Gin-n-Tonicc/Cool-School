@@ -5,7 +5,7 @@ import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
 
 export default function Header() {
-  const homeMenuPaths = useMemo(() => ['/'], []);
+  const homeMenuPaths = useMemo(() => ['/', '/login', '/register'], []);
   const location = useLocation();
 
   let headerClasses = 'main_menu ';
@@ -69,11 +69,13 @@ export default function Header() {
                       </div>
                     </li> */}
                     <HeaderNavItem text="Contact" pathName="/contact" />
-                    <li className="d-none d-lg-block">
+                    <HeaderNavItem text="Login" pathName="/login" />
+                    <HeaderNavItem text="Register" pathName="/register" />
+                    {/* <li className="d-none d-lg-block">
                       <a className="btn_1" href="#">
                         Get a Quote
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </nav>

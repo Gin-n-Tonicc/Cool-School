@@ -22,6 +22,8 @@ public class UserAnswer {
     @JoinColumn(name = "answer_id")
     @NotNull(message = "The answer of the userAnswer should not be null!")
     private Answer answer;
+    private Integer attemptNumber;
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
+
 }

@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllers;
 
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
-import com.coolSchool.CoolSchool.services.impl.UserQuizServiceImpl;
+import com.coolSchool.CoolSchool.services.UserQuizService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +12,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/userQuizzes")
 public class UserQuizController {
-    private final UserQuizServiceImpl userQuizService;
+    private final UserQuizService userQuizService;
 
-    public UserQuizController(UserQuizServiceImpl userQuizService) {
+    public UserQuizController(UserQuizService userQuizService) {
         this.userQuizService = userQuizService;
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<UserQuizDTO>> getAllUserQuizzes() {
@@ -30,6 +31,7 @@ public class UserQuizController {
 
     @PostMapping("/create")
     public ResponseEntity<UserQuizDTO> createUserQuiz(@Valid @RequestBody UserQuizDTO userQuizDTO) {
+        userQuizDTO.setAttemptNumber(userQuizService.calculateTheNextAttemptNumber(userQuizDTO.getUserId(), userQuizDTO.getQuizId()));
         UserQuizDTO cratedUserQuiz = userQuizService.createUserQuiz(userQuizDTO);
         return new ResponseEntity<>(cratedUserQuiz, HttpStatus.CREATED);
     }
@@ -43,6 +45,11 @@ public class UserQuizController {
     public ResponseEntity<String> deleteUserQuizById(@PathVariable("id") Long id) {
         userQuizService.deleteUserQuiz(id);
         return ResponseEntity.ok("UserQuiz with id: " + id + " has been deleted successfully!");
+    }
+
+    @GetMapping("/calculateTotalMarks")
+    public ResponseEntity<List<UserQuizDTO>> calculateUserTotalMarks(@RequestParam Long userId, @RequestParam Long quizId) {
+        return ResponseEntity.ok(userQuizService.calculateUserTotalMarks(userId, quizId));
     }
 }
 

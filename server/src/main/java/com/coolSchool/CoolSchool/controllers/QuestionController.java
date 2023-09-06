@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllers;
 
 import com.coolSchool.CoolSchool.models.dto.QuestionDTO;
-import com.coolSchool.CoolSchool.services.impl.QuestionServiceImpl;
+import com.coolSchool.CoolSchool.services.QuestionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +12,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/questions")
 public class QuestionController {
-    private final QuestionServiceImpl questionService;
+    private final QuestionService questionService;
 
-    public QuestionController(QuestionServiceImpl questionService) {
+    public QuestionController(QuestionService questionService) {
         this.questionService = questionService;
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<QuestionDTO>> getAllQuestions() {

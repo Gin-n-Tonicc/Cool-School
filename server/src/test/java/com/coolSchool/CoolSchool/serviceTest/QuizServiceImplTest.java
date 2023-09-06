@@ -1,7 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.quizzes.QuizNotFoundException;
-import com.coolSchool.CoolSchool.exceptions.quizzes.ValidationQuizException;
 import com.coolSchool.CoolSchool.models.dto.QuizDTO;
 import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
 import com.coolSchool.CoolSchool.models.entity.Quiz;

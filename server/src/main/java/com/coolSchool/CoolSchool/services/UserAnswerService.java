@@ -14,4 +14,6 @@ public interface UserAnswerService {
     UserAnswerDTO updateUserAnswer(Long id, UserAnswerDTO userAnswerDTO);
 
     void deleteUserAnswer(Long id);
+
+    Integer calculateTheNextAttemptNumber(Long userId, Long answerId);
 }

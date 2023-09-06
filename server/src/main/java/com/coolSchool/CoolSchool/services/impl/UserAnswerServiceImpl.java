@@ -4,7 +4,9 @@ import com.coolSchool.CoolSchool.exceptions.userAnswer.UserAnswerNotFoundExcepti
 import com.coolSchool.CoolSchool.exceptions.userAnswer.ValidationUserAnswerException;
 import com.coolSchool.CoolSchool.models.dto.UserAnswerDTO;
 import com.coolSchool.CoolSchool.models.entity.UserAnswer;
+import com.coolSchool.CoolSchool.repositories.AnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
+import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.UserAnswerService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -19,11 +21,15 @@ import java.util.Optional;
 public class UserAnswerServiceImpl implements UserAnswerService {
     private final UserAnswerRepository userAnswerRepository;
     private final ModelMapper modelMapper;
+    private final AnswerRepository answerRepository;
+    private final UserRepository userRepository;
     private final Validator validator;
 
-    public UserAnswerServiceImpl(UserAnswerRepository userAnswerRepository, ModelMapper modelMapper, Validator validator) {
+    public UserAnswerServiceImpl(UserAnswerRepository userAnswerRepository, ModelMapper modelMapper, AnswerRepository answerRepository, UserRepository userRepository, Validator validator) {
         this.userAnswerRepository = userAnswerRepository;
         this.modelMapper = modelMapper;
+        this.answerRepository = answerRepository;
+        this.userRepository = userRepository;
         this.validator = validator;
     }
 
@@ -84,5 +90,15 @@ public class UserAnswerServiceImpl implements UserAnswerService {
         } else {
             throw new UserAnswerNotFoundException();
         }
+    }
+
+    @Override
+    public Integer calculateTheNextAttemptNumber(Long userId, Long answerId) {
+        Optional<Integer> maxAttemptNumber;
+        List<UserAnswer> userAnswers = userAnswerRepository.findByUserAndAnswer(userRepository.findByIdAndDeletedFalse(userId).get(), answerRepository.findByIdAndDeletedFalse(answerId).get());
+        maxAttemptNumber = userAnswers.stream()
+                .map(UserAnswer::getAttemptNumber)
+                .max(Integer::compareTo);
+        return maxAttemptNumber.map(num -> num + 1).orElse(1);
     }
 }

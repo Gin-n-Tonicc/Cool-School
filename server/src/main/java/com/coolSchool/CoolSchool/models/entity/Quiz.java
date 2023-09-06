@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "quizzes")
 public class Quiz {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
     @NotBlank(message = "The title of the quiz should not be blank!")

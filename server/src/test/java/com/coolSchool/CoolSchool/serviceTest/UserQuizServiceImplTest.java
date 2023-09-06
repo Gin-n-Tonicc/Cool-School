@@ -3,8 +3,12 @@ package com.coolSchool.CoolSchool.serviceTest;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
+import com.coolSchool.CoolSchool.models.entity.UserAnswer;
 import com.coolSchool.CoolSchool.models.entity.UserQuiz;
+import com.coolSchool.CoolSchool.repositories.QuizRepository;
+import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserQuizRepository;
+import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.impl.UserQuizServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -19,6 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +32,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserQuizServiceImplTest {
-
     @Mock
     private UserQuizRepository userQuizRepository;
 
@@ -35,13 +39,20 @@ class UserQuizServiceImplTest {
     private UserQuizServiceImpl userQuizService;
 
     private ModelMapper modelMapper;
+    @Mock
+    private QuizRepository quizRepository;
+    @Mock
+    private UserRepository userRepository;
     private Validator validator;
+    @Mock
+    private UserAnswerRepository userAnswerRepository;
+
 
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        userQuizService = new UserQuizServiceImpl(userQuizRepository, modelMapper, validator);
+        userQuizService = new UserQuizServiceImpl(userQuizRepository, modelMapper, validator, userAnswerRepository, userRepository, quizRepository);
     }
 
     @Test
@@ -159,6 +170,29 @@ class UserQuizServiceImplTest {
         when(userQuizRepository.save(any(UserQuiz.class))).thenThrow(constraintViolationException);
 
         assertThrows(ConstraintViolationException.class, () -> userQuizService.updateUserQuiz(userQuizId, userQuizDTO));
+    }
+
+    @Test
+    void calculateTotalMarksForQuizAttempt_ShouldCalculateTotalMarks() {
+        UserQuiz userQuiz = new UserQuiz();
+        List<UserAnswer> userAnswers = new ArrayList<>();
+        UserAnswer userAnswer = new UserAnswer();
+        userAnswers.add(userAnswer);
+        when(userAnswerRepository.findByUserAndAttemptNumber(userQuiz.getUser(), userQuiz.getAttemptNumber())).thenReturn(userAnswers);
+        BigDecimal expectedTotalMarks = BigDecimal.valueOf(0);
+        BigDecimal totalMarks = userQuizService.calculateTotalMarksForQuizAttempt(userQuiz);
+        assertEquals(expectedTotalMarks, totalMarks);
+    }
+
+    @Test
+    void getUserAnswersForQuizAttempt_ShouldReturnUserAnswers() {
+        UserQuiz userQuiz = new UserQuiz();
+        List<UserAnswer> expectedUserAnswers = new ArrayList<>();
+        UserAnswer userAnswer = new UserAnswer();
+        expectedUserAnswers.add(userAnswer);
+        when(userAnswerRepository.findByUserAndAttemptNumber(userQuiz.getUser(), userQuiz.getAttemptNumber())).thenReturn(expectedUserAnswers);
+        List<UserAnswer> userAnswers = userQuizService.getUserAnswersForQuizAttempt(userQuiz);
+        assertEquals(expectedUserAnswers, userAnswers);
     }
 }
 

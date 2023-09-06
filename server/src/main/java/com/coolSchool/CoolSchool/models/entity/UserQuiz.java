@@ -31,6 +31,8 @@ public class UserQuiz {
     private String feedback;
     @NotNull(message = "The completedAt time of the userQuiz should not be null!")
     private LocalDateTime completedAt;
+    private BigDecimal totalMarks;
+    private Integer attemptNumber;
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

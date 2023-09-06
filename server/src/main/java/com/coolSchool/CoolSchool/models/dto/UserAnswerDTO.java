@@ -11,4 +11,5 @@ public class UserAnswerDTO {
     private Long id;
     private Long userId;
     private Long answerId;
+    private Integer attemptNumber;
 }
