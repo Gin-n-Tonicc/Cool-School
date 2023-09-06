@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.models.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,13 +19,18 @@ public class UserQuiz {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotNull(message = "The user of the userQuiz should not be null!")
     private User user;
     @ManyToOne
     @JoinColumn(name = "quiz_id")
+    @NotNull(message = "The quiz of the userQuiz should not be null!")
     private Quiz quiz;
+    @NotNull(message = "The grade of the userQuiz should not be null!")
     private BigDecimal grade;
+    @NotNull(message = "The feedback of the userQuiz should not be null!")
     private String feedback;
+    @NotNull(message = "The completedAt time of the userQuiz should not be null!")
     private LocalDateTime completedAt;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

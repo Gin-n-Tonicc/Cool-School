@@ -22,6 +22,6 @@ public class TaskSubmission {
     @ManyToOne
     @JoinColumn(name = "file_id")
     private File file;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }
