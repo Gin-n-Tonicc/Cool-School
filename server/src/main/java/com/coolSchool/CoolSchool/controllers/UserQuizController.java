@@ -30,6 +30,7 @@ public class UserQuizController {
 
     @PostMapping("/create")
     public ResponseEntity<UserQuizDTO> createUserQuiz(@Valid @RequestBody UserQuizDTO userQuizDTO) {
+        userQuizDTO.setAttemptNumber(userQuizService.calculateTheNextAttemptNumber(userQuizDTO.getUserId(), userQuizDTO.getQuizId()));
         UserQuizDTO cratedUserQuiz = userQuizService.createUserQuiz(userQuizDTO);
         return new ResponseEntity<>(cratedUserQuiz, HttpStatus.CREATED);
     }

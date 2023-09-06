@@ -30,6 +30,7 @@ public class UserAnswerController {
 
     @PostMapping("/create")
     public ResponseEntity<UserAnswerDTO> createUserAnswer(@Valid @RequestBody UserAnswerDTO userAnswerDTO) {
+        userAnswerDTO.setAttemptNumber(userAnswerService.calculateTheNextAttemptNumber(userAnswerDTO.getUserId(), userAnswerDTO.getAnswerId()));
         UserAnswerDTO cratedUserAnswer = userAnswerService.createUserAnswer(userAnswerDTO);
         return new ResponseEntity<>(cratedUserAnswer, HttpStatus.CREATED);
     }

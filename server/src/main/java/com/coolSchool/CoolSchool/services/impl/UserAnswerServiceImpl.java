@@ -51,7 +51,6 @@ public class UserAnswerServiceImpl implements UserAnswerService {
     @Override
     public UserAnswerDTO createUserAnswer(UserAnswerDTO userAnswerDTO) {
         try {
-            userAnswerDTO.setAttemptNumber(calculateTheNextAttemptNumber(userAnswerDTO.getUserId(), userAnswerDTO.getAnswerId()));
             UserAnswer userAnswerEntity = userAnswerRepository.save(modelMapper.map(userAnswerDTO, UserAnswer.class));
             return modelMapper.map(userAnswerEntity, UserAnswerDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -93,7 +92,7 @@ public class UserAnswerServiceImpl implements UserAnswerService {
         }
     }
 
-    private Integer calculateTheNextAttemptNumber(Long userId, Long answerId) {
+    public Integer calculateTheNextAttemptNumber(Long userId, Long answerId) {
         Optional<Integer> maxAttemptNumber;
         List<UserAnswer> userAnswers = userAnswerRepository.findByUserAndAnswer(userRepository.findByIdAndDeletedFalse(userId).get(), answerRepository.findByIdAndDeletedFalse(answerId).get());
         maxAttemptNumber = userAnswers.stream()

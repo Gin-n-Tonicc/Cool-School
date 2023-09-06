@@ -57,7 +57,6 @@ public class UserQuizServiceImpl implements UserQuizService {
     @Override
     public UserQuizDTO createUserQuiz(UserQuizDTO userQuizDTO) {
         try {
-            userQuizDTO.setAttemptNumber(calculateTheNextAttemptNumber(userQuizDTO.getUserId(), userQuizDTO.getQuizId()));
             UserQuiz userQuizEntity = userQuizRepository.save(modelMapper.map(userQuizDTO, UserQuiz.class));
             return modelMapper.map(userQuizEntity, UserQuizDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -119,7 +118,7 @@ public class UserQuizServiceImpl implements UserQuizService {
         userQuizRepository.save(userQuiz);
     }
 
-    private BigDecimal calculateTotalMarksForQuizAttempt(UserQuiz userQuiz) {
+    public BigDecimal calculateTotalMarksForQuizAttempt(UserQuiz userQuiz) {
         List<UserAnswer> userAnswers = getUserAnswersForQuizAttempt(userQuiz);
         BigDecimal totalMarks = BigDecimal.ZERO;
 
@@ -132,11 +131,11 @@ public class UserQuizServiceImpl implements UserQuizService {
         return totalMarks;
     }
 
-    private List<UserAnswer> getUserAnswersForQuizAttempt(UserQuiz userQuiz) {
+    public List<UserAnswer> getUserAnswersForQuizAttempt(UserQuiz userQuiz) {
         return userAnswerRepository.findByUserAndAttemptNumber(userQuiz.getUser(), userQuiz.getAttemptNumber());
     }
 
-    private Integer calculateTheNextAttemptNumber(Long userId, Long quizId) {
+    public Integer calculateTheNextAttemptNumber(Long userId, Long quizId) {
         Optional<Integer> maxAttemptNumber;
         List<UserQuiz> userQuizzes = userQuizRepository.findByUserAndQuiz(userRepository.findByIdAndDeletedFalse(userId).get(), quizRepository.findByIdAndDeletedFalse(quizId).get());
         maxAttemptNumber = userQuizzes.stream()

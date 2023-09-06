@@ -29,7 +29,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserAnswerServiceImplTest {
-    //TODO: FIX CREATE TESTS
 
     @Mock
     private UserAnswerRepository userAnswerRepository;
