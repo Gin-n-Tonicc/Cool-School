@@ -49,6 +49,7 @@ public class SecurityConfiguration {
                         "/api/v1/userQuizzes/**",
                         "/api/v1/userAnswers/**",
                         "/api/v1/files/**",
+                        "/api/v1/courses/**",
                         "/api/v1/auth/**",
                         "/v2/api-docs",
                         "/v3/api-docs",
