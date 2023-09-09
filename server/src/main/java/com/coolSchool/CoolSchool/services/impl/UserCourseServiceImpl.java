@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseAlreadyExistsException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.ValidationUserCourseException;
 import com.coolSchool.CoolSchool.models.dto.UserCourseDTO;
@@ -54,6 +55,10 @@ public class UserCourseServiceImpl implements UserCourseService {
     @Override
     public UserCourseDTO createUserCourse(UserCourseDTO userCourseDTO) {
         try {
+            if (userCourseRepository.existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId())) {
+                throw new UserCourseAlreadyExistsException();
+            }
+
             UserCourse userCourse = new UserCourse();
 
             User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId())

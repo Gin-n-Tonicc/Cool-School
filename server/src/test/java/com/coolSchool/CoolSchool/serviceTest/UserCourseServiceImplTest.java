@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseAlreadyExistsException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.UserCourseDTO;
 import com.coolSchool.CoolSchool.models.entity.Course;
@@ -21,14 +22,16 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class userCourseServiceImplTest {
+class UserCourseServiceImplTest {
 
     @Mock
     private UserCourseRepository userCourseRepository;
@@ -47,7 +50,21 @@ class userCourseServiceImplTest {
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        userCourseService = new UserCourseServiceImpl(userCourseRepository, userRepository, courseRepository ,modelMapper, validator);
+        userCourseService = new UserCourseServiceImpl(userCourseRepository, userRepository, courseRepository, modelMapper, validator);
+    }
+
+    @Test
+    void testCreateUserCourseAlreadyExists() {
+        UserCourseDTO userCourseDTO = new UserCourseDTO();
+        userCourseDTO.setUserId(1L);
+        userCourseDTO.setCourseId(2L);
+        when(userCourseRepository.existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId()))
+                .thenReturn(true);
+        assertThrows(UserCourseAlreadyExistsException.class, () -> userCourseService.createUserCourse(userCourseDTO));
+        verify(userCourseRepository, times(1)).existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId());
+        verify(userRepository, never()).findByIdAndDeletedFalse(anyLong());
+        verify(courseRepository, never()).findByIdAndDeletedFalse(anyLong());
+        verify(userCourseRepository, never()).save(any(UserCourse.class));
     }
 
     @Test

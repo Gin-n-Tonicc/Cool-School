@@ -12,5 +12,6 @@ public interface UserCourseRepository extends JpaRepository<UserCourse, Long> {
     List<UserCourse> findByDeletedFalse();
 
     Optional<UserCourse> findByIdAndDeletedFalse(Long id);
+    boolean existsByUserIdAndCourseIdAndDeletedFalse(Long userId, Long courseId);
 
 }
