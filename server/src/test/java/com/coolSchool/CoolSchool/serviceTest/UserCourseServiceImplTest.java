@@ -4,7 +4,6 @@ import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseAlreadyExistsException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.UserCourseDTO;
-import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.models.entity.UserCourse;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;

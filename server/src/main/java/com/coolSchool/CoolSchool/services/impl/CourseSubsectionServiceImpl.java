@@ -49,6 +49,7 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
     @Override
     public CourseSubsectionDTO createCourseSubsection(CourseSubsectionDTO courseSubsectionDTO) {
         try {
+            courseSubsectionDTO.setId(null);
             courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId())
                     .orElseThrow(NoSuchElementException::new);
             CourseSubsection courseSubsectionEntity = courseSubsectionRepository.save(modelMapper.map(courseSubsectionDTO, CourseSubsection.class));

@@ -45,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         try {
+            categoryDTO.setId(null);
             Category categoryEntity = categoryRepository.save(modelMapper.map(categoryDTO, Category.class));
             return modelMapper.map(categoryEntity, CategoryDTO.class);
         } catch (ConstraintViolationException exception) {

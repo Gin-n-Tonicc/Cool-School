@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.NoMoreAttemptsForUserQuiz;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
@@ -57,6 +58,9 @@ public class UserQuizServiceImpl implements UserQuizService {
     @Override
     public UserQuizDTO createUserQuiz(UserQuizDTO userQuizDTO) {
         try {
+            userQuizDTO.setId(null);
+            userRepository.findByIdAndDeletedFalse(userQuizDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+            quizRepository.findByIdAndDeletedFalse(userQuizDTO.getQuizId()).orElseThrow(NoSuchElementException::new);
             UserQuiz userQuizEntity = userQuizRepository.save(modelMapper.map(userQuizDTO, UserQuiz.class));
             return modelMapper.map(userQuizEntity, UserQuizDTO.class);
         } catch (ConstraintViolationException exception) {

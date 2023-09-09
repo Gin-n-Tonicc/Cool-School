@@ -58,7 +58,6 @@ public class UserCourseServiceImpl implements UserCourseService {
             if (userCourseRepository.existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId())) {
                 throw new UserCourseAlreadyExistsException();
             }
-
             UserCourse userCourse = new UserCourse();
 
             User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId())

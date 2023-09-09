@@ -1,10 +1,13 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
 import com.coolSchool.CoolSchool.models.dto.CourseDTO;
 import com.coolSchool.CoolSchool.models.entity.Course;
+import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
+import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.CourseService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -19,11 +22,15 @@ import java.util.Optional;
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final Validator validator;
 
-    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, Validator validator) {
+    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, Validator validator) {
         this.courseRepository = courseRepository;
         this.modelMapper = modelMapper;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
         this.validator = validator;
     }
 
@@ -45,6 +52,9 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseDTO createCourse(CourseDTO courseDTO) {
         try {
+            courseDTO.setId(null);
+            userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+            categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
             Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
             return modelMapper.map(courseEntity, CourseDTO.class);
         } catch (ConstraintViolationException exception) {

@@ -3,8 +3,7 @@ package com.coolSchool.CoolSchool.serviceTest;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
-import com.coolSchool.CoolSchool.models.entity.UserAnswer;
-import com.coolSchool.CoolSchool.models.entity.UserQuiz;
+import com.coolSchool.CoolSchool.models.entity.*;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;
 import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserQuizRepository;
@@ -105,6 +104,8 @@ class UserQuizServiceImplTest {
         UserQuizDTO userQuizDTO = new UserQuizDTO();
         UserQuiz userQuiz = modelMapper.map(userQuizDTO, UserQuiz.class);
         when(userQuizRepository.save(any(UserQuiz.class))).thenReturn(userQuiz);
+        when(quizRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Quiz()));
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         UserQuizDTO result = userQuizService.createUserQuiz(userQuizDTO);
         assertNotNull(result);
     }
@@ -147,7 +148,8 @@ class UserQuizServiceImplTest {
         Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
 
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
-
+        when(quizRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Quiz()));
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         when(userQuizRepository.save(any(UserQuiz.class))).thenThrow(constraintViolationException);
 
         assertThrows(ValidationUserQuizException.class, () -> userQuizService.createUserQuiz(userQuizDTO));

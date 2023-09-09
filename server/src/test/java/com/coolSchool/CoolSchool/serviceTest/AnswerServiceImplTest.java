@@ -4,7 +4,9 @@ import com.coolSchool.CoolSchool.exceptions.answer.AnswerNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.answer.ValidationAnswerException;
 import com.coolSchool.CoolSchool.models.dto.AnswerDTO;
 import com.coolSchool.CoolSchool.models.entity.Answer;
+import com.coolSchool.CoolSchool.models.entity.Question;
 import com.coolSchool.CoolSchool.repositories.AnswerRepository;
+import com.coolSchool.CoolSchool.repositories.QuestionRepository;
 import com.coolSchool.CoolSchool.services.impl.AnswerServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -36,12 +38,14 @@ class AnswerServiceImplTest {
 
     private ModelMapper modelMapper;
     private Validator validator;
+    @Mock
+    private QuestionRepository questionRepository;
 
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        answerService = new AnswerServiceImpl(answerRepository, modelMapper, validator);
+        answerService = new AnswerServiceImpl(answerRepository, modelMapper, questionRepository, validator);
     }
 
     @Test
@@ -94,6 +98,7 @@ class AnswerServiceImplTest {
         AnswerDTO answerDTO = new AnswerDTO();
         Answer answer = modelMapper.map(answerDTO, Answer.class);
         when(answerRepository.save(any(Answer.class))).thenReturn(answer);
+        when(questionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Question()));
         AnswerDTO result = answerService.createAnswer(answerDTO);
         assertNotNull(result);
     }
@@ -138,7 +143,7 @@ class AnswerServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
 
         when(answerRepository.save(any(Answer.class))).thenThrow(constraintViolationException);
-
+        when(questionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Question()));
         assertThrows(ValidationAnswerException.class, () -> answerService.createAnswer(answerDTO));
     }
 

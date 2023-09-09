@@ -1,10 +1,12 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.questions.QuestionNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.questions.ValidationQuestionException;
 import com.coolSchool.CoolSchool.models.dto.QuestionDTO;
 import com.coolSchool.CoolSchool.models.entity.Question;
 import com.coolSchool.CoolSchool.repositories.QuestionRepository;
+import com.coolSchool.CoolSchool.repositories.QuizRepository;
 import com.coolSchool.CoolSchool.services.QuestionService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -19,11 +21,13 @@ import java.util.Optional;
 public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
     private final ModelMapper modelMapper;
+    private final QuizRepository quizRepository;
     private final Validator validator;
 
-    public QuestionServiceImpl(QuestionRepository questionRepository, ModelMapper modelMapper, Validator validator) {
+    public QuestionServiceImpl(QuestionRepository questionRepository, ModelMapper modelMapper, QuizRepository quizRepository, Validator validator) {
         this.questionRepository = questionRepository;
         this.modelMapper = modelMapper;
+        this.quizRepository = quizRepository;
         this.validator = validator;
     }
 
@@ -45,6 +49,8 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public QuestionDTO createQuestion(QuestionDTO questionDTO) {
         try {
+            questionDTO.setId(null);
+            quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(NoSuchElementException::new);
             Question questionEntity = questionRepository.save(modelMapper.map(questionDTO, Question.class));
             return modelMapper.map(questionEntity, QuestionDTO.class);
         } catch (ConstraintViolationException exception) {

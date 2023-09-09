@@ -3,8 +3,12 @@ package com.coolSchool.CoolSchool.serviceTest;
 import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
 import com.coolSchool.CoolSchool.models.dto.CourseDTO;
+import com.coolSchool.CoolSchool.models.entity.Category;
 import com.coolSchool.CoolSchool.models.entity.Course;
+import com.coolSchool.CoolSchool.models.entity.User;
+import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
+import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.impl.CourseServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -30,6 +34,10 @@ class CourseServiceImplTest {
 
     @Mock
     private CourseRepository courseRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private CategoryRepository categoryRepository;
 
     @InjectMocks
     private CourseServiceImpl courseService;
@@ -41,7 +49,7 @@ class CourseServiceImplTest {
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        courseService = new CourseServiceImpl(courseRepository, modelMapper, validator);
+        courseService = new CourseServiceImpl(courseRepository, modelMapper, userRepository, categoryRepository, validator);
     }
 
     @Test
@@ -62,7 +70,7 @@ class CourseServiceImplTest {
     }
 
     @Test
-    void testGetAllCoursezes() {
+    void testGetAllCourses() {
         List<Course> courseList = new ArrayList<>();
         courseList.add(new Course());
         Mockito.when(courseRepository.findByDeletedFalse()).thenReturn(courseList);
@@ -94,6 +102,8 @@ class CourseServiceImplTest {
         CourseDTO courseDTO = new CourseDTO();
         Course course = modelMapper.map(courseDTO, Course.class);
         when(courseRepository.save(any(Course.class))).thenReturn(course);
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
+        when(categoryRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Category()));
         CourseDTO result = courseService.createCourse(courseDTO);
         assertNotNull(result);
     }
@@ -138,7 +148,8 @@ class CourseServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
 
         when(courseRepository.save(any(Course.class))).thenThrow(constraintViolationException);
-
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
+        when(categoryRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Category()));
         assertThrows(ValidationCourseException.class, () -> courseService.createCourse(courseDTO));
     }
 
