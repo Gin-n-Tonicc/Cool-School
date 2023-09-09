@@ -16,9 +16,11 @@ public class CourseSubsection {
     private Long id;
     @NotNull(message = "The title of the courseSubsection should not be null!")
     private String title;
+    @NotNull(message = "The description of the courseSubsection should not be null!")
     private String description;
     @ManyToOne
     @JoinColumn(name = "course_id")
+    @NotNull(message = "The course of the courseSubsection should not be null!")
     private Course course;
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;

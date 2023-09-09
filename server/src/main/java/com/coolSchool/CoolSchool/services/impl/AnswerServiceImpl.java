@@ -2,9 +2,11 @@ package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.exceptions.answer.AnswerNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.answer.ValidationAnswerException;
+import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.models.dto.AnswerDTO;
 import com.coolSchool.CoolSchool.models.entity.Answer;
 import com.coolSchool.CoolSchool.repositories.AnswerRepository;
+import com.coolSchool.CoolSchool.repositories.QuestionRepository;
 import com.coolSchool.CoolSchool.services.AnswerService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -19,11 +21,13 @@ import java.util.Optional;
 public class AnswerServiceImpl implements AnswerService {
     private final AnswerRepository answerRepository;
     private final ModelMapper modelMapper;
+    private final QuestionRepository questionRepository;
     private final Validator validator;
 
-    public AnswerServiceImpl(AnswerRepository answerRepository, ModelMapper modelMapper, Validator validator) {
+    public AnswerServiceImpl(AnswerRepository answerRepository, ModelMapper modelMapper, QuestionRepository questionRepository, Validator validator) {
         this.answerRepository = answerRepository;
         this.modelMapper = modelMapper;
+        this.questionRepository = questionRepository;
         this.validator = validator;
     }
 
@@ -45,6 +49,8 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public AnswerDTO createAnswer(AnswerDTO answerDTO) {
         try {
+            answerDTO.setId(null);
+            questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(NoSuchElementException::new);
             Answer answerEntity = answerRepository.save(modelMapper.map(answerDTO, Answer.class));
             return modelMapper.map(answerEntity, AnswerDTO.class);
         } catch (ConstraintViolationException exception) {

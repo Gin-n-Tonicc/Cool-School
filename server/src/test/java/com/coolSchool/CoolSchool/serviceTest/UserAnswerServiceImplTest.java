@@ -3,6 +3,8 @@ package com.coolSchool.CoolSchool.serviceTest;
 import com.coolSchool.CoolSchool.exceptions.userAnswer.UserAnswerNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userAnswer.ValidationUserAnswerException;
 import com.coolSchool.CoolSchool.models.dto.UserAnswerDTO;
+import com.coolSchool.CoolSchool.models.entity.Answer;
+import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.models.entity.UserAnswer;
 import com.coolSchool.CoolSchool.repositories.AnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
@@ -68,7 +70,7 @@ class UserAnswerServiceImplTest {
     }
 
     @Test
-    void testGetAllUserAnswerzes() {
+    void testGetAllUserAnswers() {
         List<UserAnswer> userAnswerList = new ArrayList<>();
         userAnswerList.add(new UserAnswer());
         Mockito.when(userAnswerRepository.findByDeletedFalse()).thenReturn(userAnswerList);
@@ -99,6 +101,8 @@ class UserAnswerServiceImplTest {
     void testCreateUserAnswer() {
         UserAnswerDTO userAnswerDTO = new UserAnswerDTO();
         UserAnswer userAnswer = modelMapper.map(userAnswerDTO, UserAnswer.class);
+        when(answerRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Answer()));
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         when(userAnswerRepository.save(any(UserAnswer.class))).thenReturn(userAnswer);
         UserAnswerDTO result = userAnswerService.createUserAnswer(userAnswerDTO);
         assertNotNull(result);
@@ -109,6 +113,7 @@ class UserAnswerServiceImplTest {
         Long userAnswerId = 1L;
         UserAnswerDTO updatedUserAnswerDTO = new UserAnswerDTO();
         UserAnswer existingUserAnswer = new UserAnswer();
+
         Optional<UserAnswer> existingUserAnswerOptional = Optional.of(existingUserAnswer);
         when(userAnswerRepository.findByIdAndDeletedFalse(userAnswerId)).thenReturn(existingUserAnswerOptional);
         when(userAnswerRepository.save(any(UserAnswer.class))).thenReturn(existingUserAnswer);
@@ -144,7 +149,8 @@ class UserAnswerServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
 
         when(userAnswerRepository.save(any(UserAnswer.class))).thenThrow(constraintViolationException);
-
+        when(answerRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Answer()));
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         assertThrows(ValidationUserAnswerException.class, () -> userAnswerService.createUserAnswer(userAnswerDTO));
     }
 

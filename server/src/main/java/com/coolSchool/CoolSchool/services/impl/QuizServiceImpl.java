@@ -1,9 +1,11 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.quizzes.QuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.quizzes.ValidationQuizException;
 import com.coolSchool.CoolSchool.models.dto.QuizDTO;
 import com.coolSchool.CoolSchool.models.entity.Quiz;
+import com.coolSchool.CoolSchool.repositories.CourseSubsectionRepository;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;
 import com.coolSchool.CoolSchool.services.QuizService;
 import jakarta.validation.ConstraintViolationException;
@@ -21,11 +23,13 @@ public class QuizServiceImpl implements QuizService {
     private final QuizRepository quizRepository;
     private final ModelMapper modelMapper;
     private final Validator validator;
+    private final CourseSubsectionRepository courseSubsectionRepository;
 
-    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, Validator validator) {
+    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, Validator validator, CourseSubsectionRepository courseSubsectionRepository) {
         this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
         this.validator = validator;
+        this.courseSubsectionRepository = courseSubsectionRepository;
     }
 
     @Override
@@ -54,6 +58,8 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public QuizDTO createQuiz(QuizDTO quizDTO) {
         try {
+            quizDTO.setId(null);
+            courseSubsectionRepository.findByIdAndDeletedFalse(quizDTO.getSubsectionId()).orElseThrow(NoSuchElementException::new);
             Quiz quizEntity = quizRepository.save(modelMapper.map(quizDTO, Quiz.class));
             return modelMapper.map(quizEntity, QuizDTO.class);
         } catch (TransactionException exception) {

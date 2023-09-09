@@ -4,7 +4,9 @@ import com.coolSchool.CoolSchool.exceptions.questions.QuestionNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.questions.ValidationQuestionException;
 import com.coolSchool.CoolSchool.models.dto.QuestionDTO;
 import com.coolSchool.CoolSchool.models.entity.Question;
+import com.coolSchool.CoolSchool.models.entity.Quiz;
 import com.coolSchool.CoolSchool.repositories.QuestionRepository;
+import com.coolSchool.CoolSchool.repositories.QuizRepository;
 import com.coolSchool.CoolSchool.services.impl.QuestionServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -30,6 +32,8 @@ class QuestionServiceImplTest {
 
     @Mock
     private QuestionRepository questionRepository;
+    @Mock
+    private QuizRepository quizRepository;
 
     @InjectMocks
     private QuestionServiceImpl questionService;
@@ -41,7 +45,7 @@ class QuestionServiceImplTest {
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        questionService = new QuestionServiceImpl(questionRepository, modelMapper, validator);
+        questionService = new QuestionServiceImpl(questionRepository, modelMapper, quizRepository, validator);
     }
 
     @Test
@@ -62,7 +66,7 @@ class QuestionServiceImplTest {
     }
 
     @Test
-    void testGetAllQuestionzes() {
+    void testGetAllQuestions() {
         List<Question> questionList = new ArrayList<>();
         questionList.add(new Question());
         Mockito.when(questionRepository.findByDeletedFalse()).thenReturn(questionList);
@@ -94,6 +98,7 @@ class QuestionServiceImplTest {
         QuestionDTO questionDTO = new QuestionDTO();
         Question question = modelMapper.map(questionDTO, Question.class);
         when(questionRepository.save(any(Question.class))).thenReturn(question);
+        when(quizRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Quiz()));
         QuestionDTO result = questionService.createQuestion(questionDTO);
         assertNotNull(result);
     }
@@ -138,7 +143,7 @@ class QuestionServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
 
         when(questionRepository.save(any(Question.class))).thenThrow(constraintViolationException);
-
+        when(quizRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Quiz()));
         assertThrows(ValidationQuestionException.class, () -> questionService.createQuestion(questionDTO));
     }
 

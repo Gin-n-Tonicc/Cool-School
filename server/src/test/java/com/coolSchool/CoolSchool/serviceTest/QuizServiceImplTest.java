@@ -4,6 +4,7 @@ import com.coolSchool.CoolSchool.exceptions.quizzes.QuizNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.QuizDTO;
 import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
 import com.coolSchool.CoolSchool.models.entity.Quiz;
+import com.coolSchool.CoolSchool.repositories.CourseSubsectionRepository;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;
 import com.coolSchool.CoolSchool.services.impl.QuizServiceImpl;
 import jakarta.validation.ConstraintViolation;
@@ -30,6 +31,8 @@ class QuizServiceImplTest {
 
     @Mock
     private QuizRepository quizRepository;
+    @Mock
+    private CourseSubsectionRepository courseSubsectionRepository;
 
     @InjectMocks
     private QuizServiceImpl quizService;
@@ -41,7 +44,7 @@ class QuizServiceImplTest {
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        quizService = new QuizServiceImpl(quizRepository, modelMapper, validator);
+        quizService = new QuizServiceImpl(quizRepository, modelMapper, validator, courseSubsectionRepository);
     }
 
     @Test
@@ -94,6 +97,7 @@ class QuizServiceImplTest {
         QuizDTO quizDTO = new QuizDTO();
         Quiz quiz = modelMapper.map(quizDTO, Quiz.class);
         when(quizRepository.save(any(Quiz.class))).thenReturn(quiz);
+        when(courseSubsectionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new CourseSubsection()));
         QuizDTO result = quizService.createQuiz(quizDTO);
         assertNotNull(result);
     }
@@ -157,7 +161,7 @@ class QuizServiceImplTest {
         Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
 
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
-
+        when(courseSubsectionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new CourseSubsection()));
         when(quizRepository.save(any(Quiz.class))).thenThrow(constraintViolationException);
 
         assertThrows(ConstraintViolationException.class, () -> quizService.createQuiz(quizDTO));

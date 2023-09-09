@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.userAnswer.UserAnswerNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userAnswer.ValidationUserAnswerException;
 import com.coolSchool.CoolSchool.models.dto.UserAnswerDTO;
@@ -51,6 +52,9 @@ public class UserAnswerServiceImpl implements UserAnswerService {
     @Override
     public UserAnswerDTO createUserAnswer(UserAnswerDTO userAnswerDTO) {
         try {
+            userAnswerDTO.setId(null);
+            userRepository.findByIdAndDeletedFalse(userAnswerDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+            answerRepository.findByIdAndDeletedFalse(userAnswerDTO.getAnswerId()).orElseThrow(NoSuchElementException::new);
             UserAnswer userAnswerEntity = userAnswerRepository.save(modelMapper.map(userAnswerDTO, UserAnswer.class));
             return modelMapper.map(userAnswerEntity, UserAnswerDTO.class);
         } catch (ConstraintViolationException exception) {
