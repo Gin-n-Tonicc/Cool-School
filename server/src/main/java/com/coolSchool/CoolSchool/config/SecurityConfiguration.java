@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                         "/api/v1/courses/**",
                         "/api/v1/categories/**",
                         "/api/v1/userCourses/**",
+                        "/api/v1/courseSubsections/**",
                         "/api/v1/auth/**",
                         "/v2/api-docs",
                         "/v3/api-docs",
