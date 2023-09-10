@@ -111,6 +111,7 @@ class QuestionServiceImplTest {
         Optional<Question> existingQuestionOptional = Optional.of(existingQuestion);
         when(questionRepository.findByIdAndDeletedFalse(questionId)).thenReturn(existingQuestionOptional);
         when(questionRepository.save(any(Question.class))).thenReturn(existingQuestion);
+        when(quizRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Quiz()));
         QuestionDTO result = questionService.updateQuestion(questionId, updatedQuestionDTO);
         assertNotNull(result);
     }
@@ -162,7 +163,7 @@ class QuestionServiceImplTest {
 
         when(questionRepository.findByIdAndDeletedFalse(questionId)).thenReturn(existingQuestionOptional);
         when(questionRepository.save(any(Question.class))).thenThrow(constraintViolationException);
-
+        when(quizRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Quiz()));
         assertThrows(ConstraintViolationException.class, () -> questionService.updateQuestion(questionId, questionDTO));
     }
 }

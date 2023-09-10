@@ -69,7 +69,8 @@ public class UserAnswerServiceImpl implements UserAnswerService {
         if (existingUserAnswerOptional.isEmpty()) {
             throw new UserAnswerNotFoundException();
         }
-
+        userRepository.findByIdAndDeletedFalse(userAnswerDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+        answerRepository.findByIdAndDeletedFalse(userAnswerDTO.getAnswerId()).orElseThrow(NoSuchElementException::new);
         UserAnswer existingUserAnswer = existingUserAnswerOptional.get();
         modelMapper.map(userAnswerDTO, existingUserAnswer);
 

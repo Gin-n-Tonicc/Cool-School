@@ -60,10 +60,8 @@ public class UserCourseServiceImpl implements UserCourseService {
             }
             UserCourse userCourse = new UserCourse();
 
-            User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId())
-                    .orElseThrow(NoSuchElementException::new);
-            Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId())
-                    .orElseThrow(NoSuchElementException::new);
+            User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+            Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
 
             userCourse.setUser(user);
             userCourse.setCourse(course);
@@ -84,10 +82,8 @@ public class UserCourseServiceImpl implements UserCourseService {
         }
 
         UserCourse existingUserCourse = existingUserCourseOptional.get();
-        User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId())
-                .orElseThrow(NoSuchElementException::new);
-        Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId())
-                .orElseThrow(NoSuchElementException::new);
+        User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+        Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
 
         existingUserCourse.setUser(user);
         existingUserCourse.setCourse(course);

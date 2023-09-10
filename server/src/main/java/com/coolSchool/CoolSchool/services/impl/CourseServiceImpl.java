@@ -69,7 +69,8 @@ public class CourseServiceImpl implements CourseService {
         if (existingCourseOptional.isEmpty()) {
             throw new CourseNotFoundException();
         }
-
+        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+        categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
         Course existingCourse = existingCourseOptional.get();
         modelMapper.map(courseDTO, existingCourse);
 

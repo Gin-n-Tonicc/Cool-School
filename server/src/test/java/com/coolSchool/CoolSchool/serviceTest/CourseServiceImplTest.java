@@ -116,6 +116,8 @@ class CourseServiceImplTest {
         Optional<Course> existingCourseOptional = Optional.of(existingCourse);
         when(courseRepository.findByIdAndDeletedFalse(courseId)).thenReturn(existingCourseOptional);
         when(courseRepository.save(any(Course.class))).thenReturn(existingCourse);
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
+        when(categoryRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Category()));
         CourseDTO result = courseService.updateCourse(courseId, updatedCourseDTO);
         assertNotNull(result);
     }
@@ -165,7 +167,8 @@ class CourseServiceImplTest {
         Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
 
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
-
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
+        when(categoryRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Category()));
         when(courseRepository.findByIdAndDeletedFalse(courseId)).thenReturn(existingCourseOptional);
         when(courseRepository.save(any(Course.class))).thenThrow(constraintViolationException);
 
