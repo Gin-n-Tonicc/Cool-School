@@ -1,21 +1,14 @@
 import { PropsWithChildren, createContext, useContext } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { IAuthResponse } from '../interfaces/IAuthResponse';
 import { IAuthStorage } from '../interfaces/IAuthStorage';
 import { IUser } from '../interfaces/IUser';
 
 type AuthContextType = {
   user: Partial<IAuthStorage>;
   isAuthenticated: boolean;
-  updateUser: (object: IUser) => void;
-  loginUser: ({
-    accessToken,
-    refreshToken,
-    user,
-  }: {
-    accessToken: string;
-    refreshToken: string;
-    user: IUser;
-  }) => void;
+  updateUser: (v: IUser) => void;
+  loginUser: (v: IAuthResponse) => void;
   logoutUser: () => void;
 };
 

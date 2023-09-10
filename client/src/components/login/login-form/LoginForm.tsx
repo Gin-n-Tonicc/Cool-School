@@ -1,6 +1,9 @@
 import { useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useFetch } from 'use-http';
 import { useAuthContext } from '../../../contexts/AuthContext';
+import { IAuthResponse } from '../../../interfaces/IAuthResponse';
 import FormInput from '../../common/form-input/FormInput';
 
 type Inputs = {
@@ -10,12 +13,17 @@ type Inputs = {
 };
 
 export default function LoginForm() {
-  const { user, isAuthenticated, loginUser, logoutUser } = useAuthContext();
+  const navigate = useNavigate();
+  const { loginUser } = useAuthContext();
+  const { post, response } = useFetch<IAuthResponse>(
+    'http://localhost:8080/api/v1/auth/authenticate'
+  );
 
   const {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
@@ -26,28 +34,18 @@ export default function LoginForm() {
     mode: 'onChange',
   });
 
-  const onSubmit: SubmitHandler<Inputs> = useCallback(
-    (data) => {
-      // Debug purposes
-      if (!isAuthenticated) {
-        loginUser({
-          accessToken: 'AccessToken',
-          refreshToken: 'refreshToken',
-          user: {
-            email: 'email',
-            firstname: 'first name',
-            _id: 1,
-            username: 'username',
-          },
-        });
-      } else {
-        logoutUser();
-      }
+  const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
+    const user = await post({
+      email: data.Username,
+      password: data.Password,
+    });
 
-      console.log(data);
-    },
-    [user]
-  );
+    if (response.ok) {
+      reset();
+      loginUser(user);
+      navigate('/');
+    }
+  }, []);
 
   return (
     <form

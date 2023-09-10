@@ -1,11 +1,35 @@
 import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuthContext } from '../../../contexts/AuthContext';
 import logo from '../../../images/logo.png';
 import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
 
+function GuestLinks() {
+  return (
+    <>
+      <HeaderNavItem text="Login" pathName="/login" />
+      <HeaderNavItem text="Register" pathName="/register" />
+    </>
+  );
+}
+
+function UserLinks() {
+  return (
+    <>
+      <HeaderNavItem text="Logout" pathName="/logout" />
+    </>
+  );
+}
+
 export default function Header() {
-  const homeMenuPaths = useMemo(() => ['/', '/login', '/register'], []);
+  const { isAuthenticated } = useAuthContext();
+
+  const homeMenuPaths = useMemo(
+    () => ['/', '/login', '/register', '/logout'],
+    []
+  );
+
   const location = useLocation();
 
   let headerClasses = 'main_menu ';
@@ -69,8 +93,7 @@ export default function Header() {
                       </div>
                     </li> */}
                     <HeaderNavItem text="Contact" pathName="/contact" />
-                    <HeaderNavItem text="Login" pathName="/login" />
-                    <HeaderNavItem text="Register" pathName="/register" />
+                    {isAuthenticated ? <UserLinks /> : <GuestLinks />}
                     {/* <li className="d-none d-lg-block">
                       <a className="btn_1" href="#">
                         Get a Quote
