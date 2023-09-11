@@ -5,6 +5,7 @@ import Header from './components/common/header/Header';
 import ContactUs from './components/contact-us/ContactUs';
 import Courses from './components/courses/Courses';
 import Home from './components/home/Home';
+import HttpProvider from './components/http-provider/HttpProvider';
 import Login from './components/login/Login';
 import NotFound from './components/not-found/NotFound';
 import Register from './components/register/Register';
@@ -16,15 +17,17 @@ function App() {
     <>
       <AuthProvider>
         <Header />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <HttpProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </HttpProvider>
       </AuthProvider>
       <Footer />
     </>
