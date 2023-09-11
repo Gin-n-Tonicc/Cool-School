@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useFetch } from 'use-http';
+import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../contexts/AuthContext';
 
 export default function Logout() {
@@ -9,6 +9,7 @@ export default function Logout() {
 
   const { loading } = useFetch(
     `${process.env.REACT_APP_API_URL}/auth/logout`,
+    { cachePolicy: CachePolicies.NO_CACHE },
     []
   );
 

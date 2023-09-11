@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useFetch } from 'use-http';
+import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import { IAuthResponse } from '../../../interfaces/IAuthResponse';
 import FormInput from '../../common/form-input/FormInput';
@@ -16,7 +16,8 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const { loginUser } = useAuthContext();
   const { post, response } = useFetch<IAuthResponse>(
-    'http://localhost:8080/api/v1/auth/authenticate'
+    'http://localhost:8080/api/v1/auth/authenticate',
+    { cachePolicy: CachePolicies.NO_CACHE }
   );
 
   const {
