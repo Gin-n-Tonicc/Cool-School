@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CachePolicies, useFetch } from 'use-http';
@@ -7,7 +6,7 @@ import { IAuthResponse } from '../../../interfaces/IAuthResponse';
 import FormInput from '../../common/form-input/FormInput';
 
 type Inputs = {
-  Username: string;
+  Email: string;
   Password: string;
   rememberMe: boolean;
 };
@@ -16,7 +15,7 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const { loginUser } = useAuthContext();
   const { post, response } = useFetch<IAuthResponse>(
-    'http://localhost:8080/api/v1/auth/authenticate',
+    `${process.env.REACT_APP_API_URL}/auth/authenticate`,
     { cachePolicy: CachePolicies.NO_CACHE }
   );
 
@@ -28,16 +27,18 @@ export default function LoginForm() {
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
-      Username: '',
+      Email: '',
       Password: '',
       rememberMe: false,
     },
     mode: 'onChange',
   });
 
-  const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // TODO: Add form validations
+
     const user = await post({
-      email: data.Username,
+      email: data.Email,
       password: data.Password,
     });
 
@@ -46,7 +47,7 @@ export default function LoginForm() {
       loginUser(user);
       navigate('/');
     }
-  }, []);
+  };
 
   return (
     <form
@@ -55,10 +56,10 @@ export default function LoginForm() {
       id="login-form">
       <FormInput
         control={control}
-        name="Username"
-        type="text"
+        name="Email"
+        type="email"
         iconClasses="zmdi zmdi-account material-icons-name"
-        rules={{ required: 'Username is required.' }}
+        rules={{ required: 'Email is required.' }}
       />
 
       <FormInput
