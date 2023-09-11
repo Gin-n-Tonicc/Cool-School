@@ -7,6 +7,7 @@ import Courses from './components/courses/Courses';
 import Home from './components/home/Home';
 import HttpProvider from './components/http-provider/HttpProvider';
 import Login from './components/login/Login';
+import Logout from './components/logout/Logout';
 import NotFound from './components/not-found/NotFound';
 import Register from './components/register/Register';
 import { AuthProvider } from './contexts/AuthContext';
@@ -25,6 +26,7 @@ function App() {
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/logout" element={<Logout />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HttpProvider>
