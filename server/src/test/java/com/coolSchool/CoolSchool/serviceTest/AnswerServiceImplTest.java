@@ -111,6 +111,7 @@ class AnswerServiceImplTest {
         Optional<Answer> existingAnswerOptional = Optional.of(existingAnswer);
         when(answerRepository.findByIdAndDeletedFalse(answerId)).thenReturn(existingAnswerOptional);
         when(answerRepository.save(any(Answer.class))).thenReturn(existingAnswer);
+        when(questionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Question()));
         AnswerDTO result = answerService.updateAnswer(answerId, updatedAnswerDTO);
         assertNotNull(result);
     }
@@ -159,7 +160,7 @@ class AnswerServiceImplTest {
         Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
 
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
-
+        when(questionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Question()));
         when(answerRepository.findByIdAndDeletedFalse(answerId)).thenReturn(existingAnswerOptional);
         when(answerRepository.save(any(Answer.class))).thenThrow(constraintViolationException);
 

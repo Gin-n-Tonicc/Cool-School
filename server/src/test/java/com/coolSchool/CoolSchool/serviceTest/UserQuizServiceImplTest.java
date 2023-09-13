@@ -3,7 +3,10 @@ package com.coolSchool.CoolSchool.serviceTest;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
 import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
-import com.coolSchool.CoolSchool.models.entity.*;
+import com.coolSchool.CoolSchool.models.entity.Quiz;
+import com.coolSchool.CoolSchool.models.entity.User;
+import com.coolSchool.CoolSchool.models.entity.UserAnswer;
+import com.coolSchool.CoolSchool.models.entity.UserQuiz;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;
 import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserQuizRepository;
@@ -118,6 +121,8 @@ class UserQuizServiceImplTest {
         Optional<UserQuiz> existingUserQuizOptional = Optional.of(existingUserQuiz);
         when(userQuizRepository.findByIdAndDeletedFalse(userQuizId)).thenReturn(existingUserQuizOptional);
         when(userQuizRepository.save(any(UserQuiz.class))).thenReturn(existingUserQuiz);
+        when(quizRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Quiz()));
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         UserQuizDTO result = userQuizService.updateUserQuiz(userQuizId, updatedUserQuizDTO);
         assertNotNull(result);
     }
@@ -170,7 +175,8 @@ class UserQuizServiceImplTest {
 
         when(userQuizRepository.findByIdAndDeletedFalse(userQuizId)).thenReturn(existingUserQuizOptional);
         when(userQuizRepository.save(any(UserQuiz.class))).thenThrow(constraintViolationException);
-
+        when(quizRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Quiz()));
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         assertThrows(ConstraintViolationException.class, () -> userQuizService.updateUserQuiz(userQuizId, userQuizDTO));
     }
 

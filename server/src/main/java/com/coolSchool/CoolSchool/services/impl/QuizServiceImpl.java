@@ -77,7 +77,7 @@ public class QuizServiceImpl implements QuizService {
         if (existingQuizOptional.isEmpty()) {
             throw new QuizNotFoundException();
         }
-
+        courseSubsectionRepository.findByIdAndDeletedFalse(quizDTO.getSubsectionId()).orElseThrow(NoSuchElementException::new);
         Quiz existingQuiz = existingQuizOptional.get();
         modelMapper.map(quizDTO, existingQuiz);
 

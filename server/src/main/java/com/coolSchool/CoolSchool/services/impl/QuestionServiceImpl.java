@@ -65,7 +65,7 @@ public class QuestionServiceImpl implements QuestionService {
         if (existingQuestionOptional.isEmpty()) {
             throw new QuestionNotFoundException();
         }
-
+        quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(NoSuchElementException::new);
         Question existingQuestion = existingQuestionOptional.get();
         modelMapper.map(questionDTO, existingQuestion);
 

@@ -117,6 +117,8 @@ class UserAnswerServiceImplTest {
         Optional<UserAnswer> existingUserAnswerOptional = Optional.of(existingUserAnswer);
         when(userAnswerRepository.findByIdAndDeletedFalse(userAnswerId)).thenReturn(existingUserAnswerOptional);
         when(userAnswerRepository.save(any(UserAnswer.class))).thenReturn(existingUserAnswer);
+        when(answerRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Answer()));
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         UserAnswerDTO result = userAnswerService.updateUserAnswer(userAnswerId, updatedUserAnswerDTO);
         assertNotNull(result);
     }
@@ -169,7 +171,8 @@ class UserAnswerServiceImplTest {
 
         when(userAnswerRepository.findByIdAndDeletedFalse(userAnswerId)).thenReturn(existingUserAnswerOptional);
         when(userAnswerRepository.save(any(UserAnswer.class))).thenThrow(constraintViolationException);
-
+        when(answerRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Answer()));
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         assertThrows(ConstraintViolationException.class, () -> userAnswerService.updateUserAnswer(userAnswerId, userAnswerDTO));
     }
 }

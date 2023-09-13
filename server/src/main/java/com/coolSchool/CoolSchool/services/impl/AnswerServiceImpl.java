@@ -65,6 +65,7 @@ public class AnswerServiceImpl implements AnswerService {
         if (existingAnswerOptional.isEmpty()) {
             throw new AnswerNotFoundException();
         }
+        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(NoSuchElementException::new);
 
         Answer existingAnswer = existingAnswerOptional.get();
         modelMapper.map(answerDTO, existingAnswer);

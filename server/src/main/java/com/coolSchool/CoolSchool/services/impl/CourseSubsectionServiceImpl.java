@@ -50,8 +50,7 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
     public CourseSubsectionDTO createCourseSubsection(CourseSubsectionDTO courseSubsectionDTO) {
         try {
             courseSubsectionDTO.setId(null);
-            courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId())
-                    .orElseThrow(NoSuchElementException::new);
+            courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
             CourseSubsection courseSubsectionEntity = courseSubsectionRepository.save(modelMapper.map(courseSubsectionDTO, CourseSubsection.class));
             return modelMapper.map(courseSubsectionEntity, CourseSubsectionDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -66,8 +65,7 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
         if (existingCourseSubsectionOptional.isEmpty()) {
             throw new CourseSubsectionNotFoundException();
         }
-        courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId())
-                .orElseThrow(NoSuchElementException::new);
+        courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
         CourseSubsection existingCourseSubsection = existingCourseSubsectionOptional.get();
         modelMapper.map(courseSubsectionDTO, existingCourseSubsection);
 

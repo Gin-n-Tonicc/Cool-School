@@ -18,9 +18,11 @@ public class Resource {
     private String name;
     @ManyToOne
     @JoinColumn(name = "file_id")
+    @NotNull(message = "The file of the resource should not be null!")
     private File file;
     @ManyToOne
     @JoinColumn(name = "subsection_id")
+    @NotNull(message = "The subsection of the resource should not be null!")
     private CourseSubsection subsection;
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;

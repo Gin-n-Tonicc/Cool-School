@@ -75,6 +75,8 @@ public class UserQuizServiceImpl implements UserQuizService {
         if (existingUserQuizOptional.isEmpty()) {
             throw new UserQuizNotFoundException();
         }
+        userRepository.findByIdAndDeletedFalse(userQuizDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+        quizRepository.findByIdAndDeletedFalse(userQuizDTO.getQuizId()).orElseThrow(NoSuchElementException::new);
 
         UserQuiz existingUserQuiz = existingUserQuizOptional.get();
         modelMapper.map(userQuizDTO, existingUserQuiz);
