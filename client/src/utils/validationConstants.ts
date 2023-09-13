@@ -35,6 +35,7 @@ export const LAST_NAME_VALIDATIONS: RegisterOptions = {
 };
 
 export const USERNAME_VALIDATIONS: RegisterOptions = {
+  required: 'Username is required.',
   pattern: {
     value: /^[a-z\d]{5,}$/gm,
     message: 'Required minimum five characters & no uppercase letters',
@@ -50,6 +51,6 @@ export const ADDRESS_VALIDATIONS: RegisterOptions = {
 };
 
 export const REPEAT_PASSWORD_VALIDATIONS: RegisterOptions = {
+  ...PASSWORD_VALIDATIONS,
   required: 'Repeat password is required.',
-  pattern: PASSWORD_VALIDATIONS.pattern,
 };
