@@ -1,0 +1,22 @@
+.form-error-container {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.form-error {
+  position: absolute;
+  color: red;
+  font-size: 75%;
+
+  @media #{$tab_device} {
+    font-size: 60%;
+  }
+
+  @media #{$xs_mobile} {
+    font-size: 65%;
+  }
+
+  @media #{$xss_mobile} {
+    font-size: 60%;
+  }
+}

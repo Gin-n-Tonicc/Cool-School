@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import { IAuthResponse } from '../../../interfaces/IAuthResponse';
+import {
+  EMAIL_VALIDATIONS,
+  PASSWORD_VALIDATIONS,
+} from '../../../utils/validationConstants';
 import FormInput from '../../common/form-input/FormInput';
 
 type Inputs = {
@@ -19,13 +23,7 @@ export default function LoginForm() {
     { cachePolicy: CachePolicies.NO_CACHE }
   );
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm<Inputs>({
+  const { register, handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: {
       Email: '',
       Password: '',
@@ -35,8 +33,6 @@ export default function LoginForm() {
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    // TODO: Add form validations
-
     const user = await post({
       email: data.Email,
       password: data.Password,
@@ -59,7 +55,7 @@ export default function LoginForm() {
         name="Email"
         type="email"
         iconClasses="zmdi zmdi-account material-icons-name"
-        rules={{ required: 'Email is required.' }}
+        rules={EMAIL_VALIDATIONS}
       />
 
       <FormInput
@@ -67,7 +63,7 @@ export default function LoginForm() {
         name="Password"
         type="password"
         iconClasses="zmdi zmdi-lock"
-        rules={{ required: 'Password is required.' }}
+        rules={PASSWORD_VALIDATIONS}
       />
 
       <div className="form-group">

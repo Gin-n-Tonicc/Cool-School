@@ -1,8 +1,18 @@
+import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import { IAuthResponse } from '../../../interfaces/IAuthResponse';
+import {
+  ADDRESS_VALIDATIONS,
+  EMAIL_VALIDATIONS,
+  FIRST_NAME_VALIDATIONS,
+  LAST_NAME_VALIDATIONS,
+  PASSWORD_VALIDATIONS,
+  REPEAT_PASSWORD_VALIDATIONS,
+  USERNAME_VALIDATIONS,
+} from '../../../utils/validationConstants';
 import FormInput from '../../common/form-input/FormInput';
 
 type Inputs = {
@@ -25,10 +35,12 @@ export default function RegisterForm() {
   );
 
   const {
-    register,
     handleSubmit,
     control,
     reset,
+    watch,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
@@ -44,12 +56,27 @@ export default function RegisterForm() {
     mode: 'onChange',
   });
 
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    if (!data.agreeTOC || data.Password !== data['Repeat your password']) {
-      // TODO: Add form validations
-      return;
+  const formValues = watch();
+
+  useEffect(() => {
+    const areEqual = formValues.Password === formValues['Repeat your password'];
+    const hasError = Boolean(errors['Repeat your password']);
+    const hasManualError =
+      hasError && errors['Repeat your password']?.type === 'manual';
+
+    if (!hasError && !areEqual) {
+      setError('Repeat your password', {
+        type: 'manual',
+        message: 'Repeat password must match password.',
+      });
     }
 
+    if (hasManualError && areEqual) {
+      clearErrors('Repeat your password');
+    }
+  }, [errors, formValues, setError, clearErrors]);
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const user = await post({
       firstname: data['First Name'],
       lastname: data['Last Name'],
@@ -76,7 +103,7 @@ export default function RegisterForm() {
         name="First Name"
         type="text"
         iconClasses="zmdi zmdi-face material-icons-name"
-        rules={{ required: 'First name is required.' }}
+        rules={FIRST_NAME_VALIDATIONS}
       />
 
       <FormInput
@@ -84,7 +111,7 @@ export default function RegisterForm() {
         name="Last Name"
         type="text"
         iconClasses="zmdi zmdi-face material-icons-name"
-        rules={{ required: 'Last name is required.' }}
+        rules={LAST_NAME_VALIDATIONS}
       />
 
       <FormInput
@@ -92,7 +119,7 @@ export default function RegisterForm() {
         name="Username"
         type="text"
         iconClasses="zmdi zmdi-account material-icons-name"
-        rules={{ required: 'Username is required.' }}
+        rules={USERNAME_VALIDATIONS}
       />
 
       <FormInput
@@ -100,7 +127,7 @@ export default function RegisterForm() {
         name="Address"
         type="text"
         iconClasses="zmdi zmdi-pin"
-        rules={{ required: 'Address is required.' }}
+        rules={ADDRESS_VALIDATIONS}
       />
 
       <FormInput
@@ -108,7 +135,7 @@ export default function RegisterForm() {
         name="Email"
         type="email"
         iconClasses="zmdi zmdi-email"
-        rules={{ required: 'Email is required.' }}
+        rules={EMAIL_VALIDATIONS}
       />
 
       <FormInput
@@ -116,7 +143,7 @@ export default function RegisterForm() {
         name="Password"
         type="password"
         iconClasses="zmdi zmdi-lock"
-        rules={{ required: 'Password is required.' }}
+        rules={PASSWORD_VALIDATIONS}
       />
 
       <FormInput
@@ -124,10 +151,11 @@ export default function RegisterForm() {
         name="Repeat your password"
         type="password"
         iconClasses="zmdi zmdi-lock-outline"
-        rules={{ required: 'Repeat password is required.' }}
+        rules={REPEAT_PASSWORD_VALIDATIONS}
       />
 
-      <div className="form-group">
+      {/* TODO: Decide if we need this */}
+      {/* <div className="form-group">
         <input
           type="checkbox"
           id="agree-term"
@@ -138,10 +166,10 @@ export default function RegisterForm() {
           <span>
             <span></span>
           </span>
-          {/* TODO: Add terms of service link */}I agree all statements in Terms
+          I agree all statements in Terms
           of service
         </label>
-      </div>
+      </div> */}
 
       <div className="form-group form-button">
         <input

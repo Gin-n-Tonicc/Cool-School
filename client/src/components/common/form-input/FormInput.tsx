@@ -11,21 +11,19 @@ export default function FormInput(props: FormInputProps) {
 
   return (
     <div className="form-group">
-      <label htmlFor={props.name}>
-        <i className={props.iconClasses}></i>
-      </label>
+      <div className="form-error-container">
+        <label htmlFor={props.name}>
+          <i className={props.iconClasses}></i>
+        </label>
 
-      <input
-        {...field}
-        className={props.inputClasses}
-        type={props.type}
-        placeholder={props.name}
-      />
-
-      {/* DEBUGGING PURPOSES */}
-      {/* <p>{fieldState.isTouched && 'Touched'}</p>
-      <p>{fieldState.isDirty && 'Dirty'}</p>
-      <p>{fieldState.invalid ? 'invalid' : 'valid'}</p> */}
+        <input
+          {...field}
+          className={props.inputClasses}
+          type={props.type}
+          placeholder={props.name}
+        />
+        <p className="form-error">{fieldState.error?.message}</p>
+      </div>
     </div>
   );
 }
