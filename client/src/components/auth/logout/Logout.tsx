@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CachePolicies, useFetch } from 'use-http';
-import { useAuthContext } from '../../contexts/AuthContext';
+import { useAuthContext } from '../../../contexts/AuthContext';
 
 export default function Logout() {
   const { logoutUser } = useAuthContext();
@@ -18,7 +18,7 @@ export default function Logout() {
       logoutUser();
       navigate('/');
     }
-  }, [loading]);
+  }, [loading, logoutUser, navigate]);
 
   return <p>Logging out...</p>;
 }

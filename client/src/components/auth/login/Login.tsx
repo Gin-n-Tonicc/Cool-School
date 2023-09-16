@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import '../common/scss/authentication.scss';
+import '../../common/scss/authentication.scss';
 import LoginForm from './login-form/LoginForm';
 import signInImage from './signin-image.jpg';
 

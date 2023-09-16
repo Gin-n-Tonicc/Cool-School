@@ -1,9 +1,6 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
-import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
-import com.coolSchool.CoolSchool.models.dto.RefreshTokenBodyDTO;
-import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
+import com.coolSchool.CoolSchool.models.dto.*;
 import com.coolSchool.CoolSchool.services.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,5 +36,12 @@ public class AuthenticationController {
             @RequestBody RefreshTokenBodyDTO refreshTokenBody
             ) throws IOException {
         return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenBody));
+    }
+
+    @PostMapping("/me")
+    public ResponseEntity<AuthenticationResponse> getMe(
+            @RequestBody AccessTokenBodyDTO accessTokenBodyDTO
+            ) {
+        return ResponseEntity.ok(authenticationService.me(accessTokenBodyDTO));
     }
 }

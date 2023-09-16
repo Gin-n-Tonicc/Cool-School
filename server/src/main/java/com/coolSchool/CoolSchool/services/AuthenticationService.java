@@ -1,9 +1,6 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
-import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
-import com.coolSchool.CoolSchool.models.dto.RefreshTokenBodyDTO;
-import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
+import com.coolSchool.CoolSchool.models.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -15,4 +12,8 @@ public interface AuthenticationService {
     AuthenticationResponse authenticate(AuthenticationRequest request);
 
     AuthenticationResponse refreshToken(RefreshTokenBodyDTO refreshTokenBodyDTO) throws IOException;
+
+    AuthenticationResponse me(
+            AccessTokenBodyDTO accessTokenBodyDTO
+    );
 }

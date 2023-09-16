@@ -2,7 +2,6 @@ import { PropsWithChildren } from 'react';
 import { CachePolicies, CustomOptions, Provider, useFetch } from 'use-http';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { IAuthRefreshResponse } from '../../interfaces/IAuthRefreshResponse';
-import { IAuthStorage } from '../../interfaces/IAuthStorage';
 import { isJwtExpired } from '../../utils/jwtUtils';
 
 export default function HttpProvider({ children }: PropsWithChildren) {
@@ -53,10 +52,6 @@ export default function HttpProvider({ children }: PropsWithChildren) {
         }
 
         removeTokensIfExpired();
-        /* 
-          TODO:
-          Check for session validity when loading the page
-        */
 
         if (user.accessToken) {
           Object.assign(customOptions.headers, {
@@ -78,21 +73,4 @@ export default function HttpProvider({ children }: PropsWithChildren) {
       {children}
     </Provider>
   );
-}
-
-function decideWhichToken(
-  user: Partial<IAuthStorage>,
-  isRefreshRequest: boolean
-): string | null {
-  let token: string | null = null;
-
-  if (!isRefreshRequest && user.accessToken) {
-    token = user.accessToken;
-  }
-
-  if (isRefreshRequest && user.refreshToken) {
-    token = user.refreshToken;
-  }
-
-  return token;
 }

@@ -1,13 +1,13 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CachePolicies, useFetch } from 'use-http';
-import { useAuthContext } from '../../../contexts/AuthContext';
-import { IAuthResponse } from '../../../interfaces/IAuthResponse';
+import { useAuthContext } from '../../../../contexts/AuthContext';
+import { IAuthResponse } from '../../../../interfaces/IAuthResponse';
 import {
   EMAIL_VALIDATIONS,
   PASSWORD_VALIDATIONS,
-} from '../../../utils/validationConstants';
-import FormInput from '../../common/form-input/FormInput';
+} from '../../../../utils/validationConstants';
+import FormInput from '../../../common/form-input/FormInput';
 
 type Inputs = {
   Email: string;
