@@ -6,7 +6,11 @@ const parseJwt = (token: string): { exp: number } | null => {
   }
 };
 
-export const isJwtExpired = (token: string) => {
+export const isJwtExpired = (token: string | undefined | null) => {
+  if (!token) {
+    return true;
+  }
+
   const decodedJwt = parseJwt(token);
 
   if (!decodedJwt || decodedJwt.exp * 1000 < Date.now()) {

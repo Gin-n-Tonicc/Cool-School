@@ -1,7 +1,6 @@
+import { IAuthRefreshResponse } from './IAuthRefreshResponse';
 import { IUser } from './IUser';
 
-export interface IAuthResponse {
-  accessToken: string;
-  refreshToken: string;
+export interface IAuthResponse extends IAuthRefreshResponse {
   user: IUser;
 }

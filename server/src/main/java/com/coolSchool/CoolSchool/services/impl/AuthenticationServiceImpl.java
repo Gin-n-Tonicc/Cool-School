@@ -2,10 +2,7 @@ package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.CoolSchool.exceptions.user.UserLoginException;
-import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
-import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
-import com.coolSchool.CoolSchool.models.dto.PublicUserDTO;
-import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
+import com.coolSchool.CoolSchool.models.dto.*;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.services.AuthenticationService;
 import com.coolSchool.CoolSchool.services.JwtService;
@@ -79,16 +76,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
+            RefreshTokenBodyDTO refreshTokenBodyDTO
     ) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken = refreshTokenBodyDTO.getRefreshToken();
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
             throw new InvalidTokenException();
         }
-
-        final String refreshToken = authHeader.substring(7);
 
         String userEmail;
 

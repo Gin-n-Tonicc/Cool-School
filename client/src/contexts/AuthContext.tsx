@@ -3,6 +3,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { IAuthResponse } from '../interfaces/IAuthResponse';
 import { IAuthStorage } from '../interfaces/IAuthStorage';
 import { IUser } from '../interfaces/IUser';
+import { isJwtExpired } from '../utils/jwtUtils';
 
 type AuthContextType = {
   user: Partial<IAuthStorage>;
@@ -10,6 +11,8 @@ type AuthContextType = {
   updateUser: (v: IUser) => void;
   loginUser: (v: IAuthResponse) => void;
   logoutUser: () => void;
+  setAccessToken: (token: string | undefined) => void;
+  removeRefreshToken: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -41,7 +44,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setAuth({});
   };
 
-  const isAuthenticated = Boolean(auth?.accessToken);
+  const setAccessToken: AuthContextType['setAccessToken'] = (
+    token: string | undefined
+  ) => {
+    setAuth((auth) => ({ ...auth, accessToken: token }));
+  };
+
+  const removeRefreshToken: AuthContextType['removeRefreshToken'] = () => {
+    setAuth((auth) => ({ ...auth, refreshToken: undefined }));
+  };
+
+  const isAuthenticated =
+    Boolean(auth.accessToken) && !isJwtExpired(auth.accessToken);
 
   return (
     <AuthContext.Provider
@@ -51,6 +65,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
         loginUser,
         logoutUser,
         updateUser,
+        setAccessToken,
+        removeRefreshToken,
       }}>
       {children}
     </AuthContext.Provider>
