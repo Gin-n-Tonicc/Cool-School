@@ -18,7 +18,7 @@ export default function Logout() {
       logoutUser();
       navigate('/');
     }
-  }, [loading, logoutUser, navigate]);
+  }, [loading]);
 
   return <p>Logging out...</p>;
 }

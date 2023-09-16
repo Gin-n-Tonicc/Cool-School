@@ -24,7 +24,7 @@ export default function Authenticate({ children }: PropsWithChildren) {
     }
 
     fetchApi();
-  }, [loginUser, logoutUser, post, response.ok, user.accessToken]);
+  }, []);
 
   return <>{loading ? <Spinner /> : children}</>;
 }
