@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.session.SessionManagementFilter;
 
 import static com.coolSchool.CoolSchool.enums.Permission.*;
 import static com.coolSchool.CoolSchool.enums.Role.ADMIN;

@@ -3,7 +3,7 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.user.UserCreateException;
 import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
-import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
+import com.coolSchool.CoolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.UserService;

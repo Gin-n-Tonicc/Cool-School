@@ -1,4 +1,4 @@
-package com.coolSchool.CoolSchool.models.dto;
+package com.coolSchool.CoolSchool.models.dto.auth;
 
 import lombok.*;
 

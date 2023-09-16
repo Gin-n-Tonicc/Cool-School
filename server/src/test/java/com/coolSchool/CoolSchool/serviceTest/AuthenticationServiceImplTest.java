@@ -1,9 +1,9 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
-import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
-import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
-import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
+import com.coolSchool.CoolSchool.models.dto.auth.AuthenticationRequest;
+import com.coolSchool.CoolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.CoolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.services.AuthenticationService;
 import com.coolSchool.CoolSchool.services.JwtService;

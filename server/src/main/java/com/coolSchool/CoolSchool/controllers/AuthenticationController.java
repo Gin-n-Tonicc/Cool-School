@@ -1,12 +1,13 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.models.dto.*;
+import com.coolSchool.CoolSchool.models.dto.auth.*;
 import com.coolSchool.CoolSchool.services.AuthenticationService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -34,14 +35,14 @@ public class AuthenticationController {
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthenticationResponse> refreshToken(
             @RequestBody RefreshTokenBodyDTO refreshTokenBody
-            ) throws IOException {
+    ) throws IOException {
         return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenBody));
     }
 
     @PostMapping("/me")
     public ResponseEntity<AuthenticationResponse> getMe(
             @RequestBody AccessTokenBodyDTO accessTokenBodyDTO
-            ) {
+    ) {
         return ResponseEntity.ok(authenticationService.me(accessTokenBodyDTO));
     }
 }

@@ -23,7 +23,9 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public List<Token> findByUser(User user) { return tokenRepository.findAllByUser(user); }
+    public List<Token> findByUser(User user) {
+        return tokenRepository.findAllByUser(user);
+    }
 
     @Override
     public void saveToken(User user, String jwtToken, TokenType tokenType) {
@@ -40,7 +42,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void revokeToken(Token token) {
-            tokenRepository.delete(token);
+        tokenRepository.delete(token);
     }
 
     @Override

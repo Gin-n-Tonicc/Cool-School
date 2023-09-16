@@ -3,7 +3,7 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.enums.TokenType;
 import com.coolSchool.CoolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.CoolSchool.exceptions.user.UserLoginException;
-import com.coolSchool.CoolSchool.models.dto.*;
+import com.coolSchool.CoolSchool.models.dto.auth.*;
 import com.coolSchool.CoolSchool.models.entity.Token;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.services.AuthenticationService;

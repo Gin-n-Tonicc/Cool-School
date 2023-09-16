@@ -1,8 +1,6 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.*;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.coolSchool.CoolSchool.models.dto.auth.*;
 
 import java.io.IOException;
 

@@ -1,9 +1,9 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.AuthenticationController;
-import com.coolSchool.CoolSchool.models.dto.AuthenticationRequest;
-import com.coolSchool.CoolSchool.models.dto.AuthenticationResponse;
-import com.coolSchool.CoolSchool.models.dto.RegisterRequest;
+import com.coolSchool.CoolSchool.models.dto.auth.AuthenticationRequest;
+import com.coolSchool.CoolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.CoolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.CoolSchool.services.AuthenticationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
