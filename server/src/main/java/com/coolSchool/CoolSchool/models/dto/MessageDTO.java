@@ -14,6 +14,6 @@ public class MessageDTO {
     private String content;
     private Long senderId;
     private Long receiverId;
-//    private Long groupId;
+    //    private Long groupId;
     private LocalDateTime sent_at;
 }

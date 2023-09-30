@@ -16,6 +16,7 @@ import org.springframework.transaction.TransactionException;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;

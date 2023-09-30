@@ -25,7 +25,7 @@ public class Message {
     @JoinColumn(name = "receiver_id")
     @NotNull(message = "The receiver of the quiz should not be null!")
     private User receiver;
-//    private boolean isGroupChat;
+    //    private boolean isGroupChat;
     private LocalDateTime sent_at;
     @NotBlank(message = "The content of the quiz should not be blank!")
     @NotNull(message = "The content of the message should not be null!")
