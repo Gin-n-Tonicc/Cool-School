@@ -44,11 +44,12 @@ class ResourceServiceImplTest {
     private CourseSubsectionRepository courseSubsectionRepository;
     @Mock
     private FileRepository fileRepository;
+
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        resourceService = new ResourceServiceImpl(resourceRepository, modelMapper, courseSubsectionRepository ,fileRepository, validator);
+        resourceService = new ResourceServiceImpl(resourceRepository, modelMapper, courseSubsectionRepository, fileRepository, validator);
     }
 
     @Test
