@@ -136,7 +136,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         User user = accessToken.getUser();
-        if (!jwtService.isTokenValid(accessToken.getToken(), user)) {
+
+        boolean isTokenValid;
+
+        try {
+            isTokenValid = jwtService.isTokenValid(accessToken.getToken(), user);
+        } catch (JwtException jwtException) {
+            isTokenValid = false;
+        }
+
+        if (!isTokenValid) {
             tokenService.revokeAllUserTokens(user);
             throw new InvalidTokenException();
         }
