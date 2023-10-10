@@ -1,12 +1,16 @@
 import { PropsWithChildren } from 'react';
 import { CachePolicies, CustomOptions, Provider, useFetch } from 'use-http';
 import { useAuthContext } from '../../contexts/AuthContext';
+import { useErrorContext } from '../../contexts/ErrorContext';
 import { IAuthRefreshResponse } from '../../interfaces/IAuthRefreshResponse';
+import { initialAuthUtils } from '../../utils/initialAuthUtils';
 import { isJwtExpired } from '../../utils/jwtUtils';
 
 export default function HttpProvider({ children }: PropsWithChildren) {
   const { user, isAuthenticated, setAccessToken, removeRefreshToken } =
     useAuthContext();
+
+  const { addError } = useErrorContext();
 
   const { post, response } = useFetch<IAuthRefreshResponse>(
     `${process.env.REACT_APP_API_URL}/auth/refresh-token`,
@@ -62,7 +66,18 @@ export default function HttpProvider({ children }: PropsWithChildren) {
         return Object.assign(options, customOptions);
       },
       response: async ({ response }) => {
-        // TODO: Parse errors
+        if (!response.ok) {
+          if (
+            !initialAuthUtils.hasFinishedInitialAuth() &&
+            response.status === 401
+          ) {
+            return response;
+          }
+
+          const message = response.data.message || '';
+          addError({ message, unmountAfter: 10000 });
+        }
+
         return response;
       },
     },
