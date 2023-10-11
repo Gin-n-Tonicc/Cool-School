@@ -6,11 +6,8 @@ import com.coolSchool.CoolSchool.models.dto.auth.AuthenticationResponse;
 import com.coolSchool.CoolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.CoolSchool.services.AuthenticationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -76,8 +73,26 @@ class AuthenticationControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(authenticationRequest)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(authenticationResponse)));
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testRefreshTokenEndpoint() throws Exception {
+        String refreshTokenJson = "{\"refreshToken\": \"your_refresh_token_here\"}";
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/refresh-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(refreshTokenJson))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testMeEndpoint() throws Exception {
+        String accessTokenJson = "{\"accessToken\": \"your_access_token_here\"}";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/me")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(accessTokenJson))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
 }

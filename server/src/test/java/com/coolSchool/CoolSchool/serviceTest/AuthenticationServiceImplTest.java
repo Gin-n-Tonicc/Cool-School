@@ -94,6 +94,7 @@ class AuthenticationServiceImplTest {
 
         Assertions.assertNotNull(response);
     }
+
     @Test
     public void testRefreshToken() throws IOException {
         RefreshTokenBodyDTO refreshTokenBodyDTO = new RefreshTokenBodyDTO("mockRefreshToken");
@@ -117,6 +118,7 @@ class AuthenticationServiceImplTest {
         Mockito.verify(tokenService, Mockito.times(1)).saveToken(mockUser, "mockAccessToken", TokenType.ACCESS);
         Mockito.verify(tokenService, Mockito.times(1)).saveToken(mockUser, "mockRefreshToken", TokenType.REFRESH);
     }
+
     @Test
     public void testRefreshToken_InvalidRefreshToken() {
         RefreshTokenBodyDTO refreshTokenBodyDTO = new RefreshTokenBodyDTO(null);
@@ -178,6 +180,7 @@ class AuthenticationServiceImplTest {
         Mockito.verify(jwtService, Mockito.times(1)).isTokenValid("mockRefreshToken", mockUser);
         Mockito.verify(tokenService, Mockito.times(1)).revokeToken(mockToken);
     }
+
     @Test
     public void testMe_InvalidAccessToken() {
         AccessTokenBodyDTO accessTokenBodyDTO = new AccessTokenBodyDTO("invalidAccessToken");
