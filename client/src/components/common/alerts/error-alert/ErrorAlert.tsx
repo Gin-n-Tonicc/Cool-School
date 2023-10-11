@@ -21,6 +21,10 @@ export default function ErrorAlert({
     }, unmountAfter);
   }, []);
 
+  const onClose = () => {
+    deleteError(id);
+  };
+
   return (
     <div className="col-sm-12">
       <div
@@ -28,6 +32,7 @@ export default function ErrorAlert({
         role="alert"
         data-brk-library="component__alert">
         <button
+          onClick={onClose}
           type="button"
           className="close font__size-18"
           data-dismiss="alert">
