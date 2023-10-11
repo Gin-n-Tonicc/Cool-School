@@ -13,9 +13,9 @@ type ErrorContextType = {
 };
 
 export const ErrorProvider = ({ children }: PropsWithChildren) => {
-  const [errors, setErrors] = useState<IError[]>([]);
+  const [errors, setErrors] = useState<ErrorContextType['errors']>([]);
 
-  const addError = (error: Omit<IError, 'id'>) => {
+  const addError: ErrorContextType['addError'] = (error) => {
     const newError = { ...error, id: `error-${uuidV4()}` };
 
     setErrors((errors) => {
@@ -30,11 +30,11 @@ export const ErrorProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
-  const deleteError = (errorId: IError['id']) => {
+  const deleteError: ErrorContextType['deleteError'] = (errorId) => {
     setErrors((errors) => errors.filter((x) => x.id !== errorId));
   };
 
-  const clearErrors = () => {
+  const clearErrors: ErrorContextType['clearErrors'] = () => {
     setErrors([]);
   };
 

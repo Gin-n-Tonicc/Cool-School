@@ -7,8 +7,6 @@ export default function AlertBox() {
 
   return (
     <section className="alert-container">
-      <div className="square_box box_three"></div>
-      <div className="square_box box_four"></div>
       <div className="container mt-5">
         <div className="row">
           {/* <div className="col-sm-12">
@@ -73,6 +71,12 @@ export default function AlertBox() {
           {errors.map((x) => (
             <ErrorAlert {...x} key={x.id} />
           ))}
+
+          <ErrorAlert
+            message="Invalid email or password"
+            id="test"
+            unmountAfter={12000000000}
+          />
 
           {/* <div className="col-sm-12">
             <div

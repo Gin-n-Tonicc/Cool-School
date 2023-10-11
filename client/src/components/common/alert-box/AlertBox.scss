@@ -1,14 +1,26 @@
+@import 'src/styles/style.scss';
+
 .alert-container {
   position: fixed;
   top: 10vh;
   right: 0;
   width: 100%;
   max-width: 20vw;
-  z-index: 1000;
+  z-index: 100;
+
+  @media #{$tab_device}, #{$large_mobile}, #{$small_mobile} {
+    max-width: 90vw;
+    margin: 0 5vw;
+  }
+
+  @media #{$xss_mobile} {
+  }
 }
 
 .alert {
   position: relative;
+  padding-right: 2rem;
+  z-index: 9999999;
 }
 
 .alert > .start-icon {
@@ -95,39 +107,6 @@
   color: #03d0ff;
 }
 
-.square_box {
-  position: absolute;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
-  border-top-left-radius: 45px;
-  opacity: 0.302;
-}
-
-.square_box.box_three {
-  background-image: -moz-linear-gradient(-90deg, #290a59 0%, #3d57f4 100%);
-  background-image: -webkit-linear-gradient(-90deg, #290a59 0%, #3d57f4 100%);
-  background-image: -ms-linear-gradient(-90deg, #290a59 0%, #3d57f4 100%);
-  opacity: 0.059;
-  left: -80px;
-  top: -60px;
-  width: 500px;
-  height: 500px;
-  border-radius: 45px;
-}
-
-.square_box.box_four {
-  background-image: -moz-linear-gradient(-90deg, #290a59 0%, #3d57f4 100%);
-  background-image: -webkit-linear-gradient(-90deg, #290a59 0%, #3d57f4 100%);
-  background-image: -ms-linear-gradient(-90deg, #290a59 0%, #3d57f4 100%);
-  opacity: 0.059;
-  left: 150px;
-  top: -25px;
-  width: 550px;
-  height: 550px;
-  border-radius: 45px;
-}
-
 .alert:before {
   content: '';
   position: absolute;
@@ -141,9 +120,4 @@
   top: 50%;
   transform: translate(0, -50%);
   height: 20px;
-}
-
-.fa-times {
-  -webkit-animation: blink-1 2s infinite both;
-  animation: blink-1 2s infinite both;
 }
