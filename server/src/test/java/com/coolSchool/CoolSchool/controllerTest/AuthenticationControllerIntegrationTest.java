@@ -80,12 +80,4 @@ class AuthenticationControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(authenticationResponse)));
     }
 
-    @Test
-    void testRefreshToken() throws Exception {
-        when(authenticationService.refreshToken(Mockito.any(HttpServletRequest.class), Mockito.any(HttpServletResponse.class))).thenReturn(authenticationResponse);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/refresh-token"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(objectMapper.writeValueAsString(authenticationResponse)));
-    }
 }
