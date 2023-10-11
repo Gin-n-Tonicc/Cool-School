@@ -19,7 +19,7 @@ export default function ErrorAlert({
     setTimeout(() => {
       deleteError(id);
     }, unmountAfter);
-  }, []);
+  }, [id, unmountAfter, deleteError]);
 
   const onClose = () => {
     deleteError(id);
