@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.models.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,10 +16,14 @@ public class UserAnswer {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotNull(message = "The user of the userAnswer should not be null!")
     private User user;
     @ManyToOne
     @JoinColumn(name = "answer_id")
+    @NotNull(message = "The answer of the userAnswer should not be null!")
     private Answer answer;
-    @Column(name = "is_deleted")
+    private Integer attemptNumber;
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
+
 }

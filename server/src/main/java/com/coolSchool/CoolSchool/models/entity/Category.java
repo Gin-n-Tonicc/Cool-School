@@ -16,6 +16,6 @@ public class Category {
     private Long id;
     @NotNull(message = "The name of the category should not be null!")
     private String name;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

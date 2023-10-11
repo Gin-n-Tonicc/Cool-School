@@ -20,10 +20,12 @@ public class Course {
     private String aClass;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotNull(message = "The user of the class should not be null!")
     private User user;
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @NotNull(message = "The category of the class should not be null!")
     private Category category;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

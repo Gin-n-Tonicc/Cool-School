@@ -20,6 +20,6 @@ public class File {
     private String url;
     @NotNull
     private String type;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

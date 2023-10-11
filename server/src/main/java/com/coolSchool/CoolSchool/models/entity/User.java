@@ -55,7 +55,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "file_id")
     private File profilePic;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 
     @Override
