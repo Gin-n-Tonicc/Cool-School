@@ -38,7 +38,7 @@ import static org.mockito.Mockito.when;
                 )
         }
 )
-public class AuthenticationControllerTest {
+class AuthenticationControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -53,14 +53,14 @@ public class AuthenticationControllerTest {
     private AuthenticationResponse authenticationResponse;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         registerRequest = new RegisterRequest();
         authenticationRequest = new AuthenticationRequest();
         authenticationResponse = new AuthenticationResponse();
     }
 
     @Test
-    public void testRegister() throws Exception {
+    void testRegister() throws Exception {
         when(authenticationService.register(any(RegisterRequest.class))).thenReturn(authenticationResponse);
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -70,7 +70,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testAuthenticate() throws Exception {
+    void testAuthenticate() throws Exception {
         when(authenticationService.authenticate(any(AuthenticationRequest.class))).thenReturn(authenticationResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/authenticate")
@@ -81,7 +81,7 @@ public class AuthenticationControllerTest {
     }
 
     @Test
-    public void testRefreshToken() throws Exception {
+    void testRefreshToken() throws Exception {
         when(authenticationService.refreshToken(Mockito.any(HttpServletRequest.class), Mockito.any(HttpServletResponse.class))).thenReturn(authenticationResponse);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/refresh-token"))

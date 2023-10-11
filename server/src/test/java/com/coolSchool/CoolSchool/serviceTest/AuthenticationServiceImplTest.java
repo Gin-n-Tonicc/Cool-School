@@ -33,7 +33,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 
-public class AuthenticationServiceImplTest {
+class AuthenticationServiceImplTest {
     @Mock
     private UserService userService;
 

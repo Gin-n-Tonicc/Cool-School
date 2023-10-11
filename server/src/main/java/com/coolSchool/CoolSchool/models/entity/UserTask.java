@@ -25,6 +25,6 @@ public class UserTask {
     private BigDecimal grade;
     private String feedback;
     private LocalDateTime completed_at;
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }
