@@ -10,6 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -21,16 +23,26 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public void saveToken(User user, String jwtToken) {
+    public List<Token> findByUser(User user) {
+        return tokenRepository.findAllByUser(user);
+    }
+
+    @Override
+    public void saveToken(User user, String jwtToken, TokenType tokenType) {
         Token token = Token.builder()
                 .user(user)
                 .token(jwtToken)
-                .tokenType(TokenType.BEARER)
+                .tokenType(tokenType)
                 .expired(false)
                 .revoked(false)
                 .build();
 
         tokenRepository.save(token);
+    }
+
+    @Override
+    public void revokeToken(Token token) {
+        tokenRepository.delete(token);
     }
 
     @Override
