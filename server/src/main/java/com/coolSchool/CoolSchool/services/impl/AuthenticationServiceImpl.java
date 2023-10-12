@@ -78,9 +78,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse refreshToken(
-            RefreshTokenBodyDTO refreshTokenBodyDTO
-    ) {
+    public AuthenticationResponse refreshToken(RefreshTokenBodyDTO refreshTokenBodyDTO) {
         final String refreshToken = refreshTokenBodyDTO.getRefreshToken();
 
         if (refreshToken == null || refreshToken.isEmpty()) {
@@ -126,9 +124,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse me(
-            AccessTokenBodyDTO accessTokenBodyDTO
-    ) {
+    public AuthenticationResponse me(AccessTokenBodyDTO accessTokenBodyDTO) {
         Token accessToken = tokenService.findByToken(accessTokenBodyDTO.getAccessToken());
 
         if (accessToken == null) {

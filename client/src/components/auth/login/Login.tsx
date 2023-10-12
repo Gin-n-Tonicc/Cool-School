@@ -20,26 +20,6 @@ export default function Login() {
           <div className="signin-form">
             <h2 className="form-title">Login</h2>
             <LoginForm />
-            {/* <div className="social-login">
-              <span className="social-label">Or login with</span>
-              <ul className="socials">
-                <li>
-                  <a href="#">
-                    <i className="display-flex-center zmdi zmdi-facebook"></i>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <i className="display-flex-center zmdi zmdi-twitter"></i>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <i className="display-flex-center zmdi zmdi-google"></i>
-                  </a>
-                </li>
-              </ul>
-            </div> */}
           </div>
         </div>
       </div>
