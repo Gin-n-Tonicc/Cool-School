@@ -1,11 +1,37 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { useCallback } from 'react';
+import { Navigate, Outlet, To, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../../contexts/AuthContext';
 
-export default function ProtectedRoute({ onlyUser }: { onlyUser: boolean }) {
-  const { isAuthenticated } = useAuthContext();
+const logoutPath = '/logout';
+const loginPath = '/login';
 
-  if (isAuthenticated != onlyUser) {
-    return <Navigate to={'/'} replace />;
+type ProtectedRouteProps = {
+  onlyUser: boolean;
+};
+
+export default function ProtectedRoute({ onlyUser }: ProtectedRouteProps) {
+  const { isAuthenticated } = useAuthContext();
+  const { pathname } = useLocation();
+
+  const generateNavPath = useCallback(
+    (path: string) => {
+      const navPath: To = {
+        pathname: path,
+        search: `?redirect=${pathname}`,
+      };
+      return navPath;
+    },
+    [pathname]
+  );
+
+  const passThrew = isAuthenticated === onlyUser;
+
+  if (onlyUser && !passThrew && pathname !== logoutPath) {
+    return <Navigate to={generateNavPath(loginPath)} />;
+  }
+
+  if (!passThrew) {
+    return <Navigate to={'/'} />;
   }
 
   return <Outlet />;
