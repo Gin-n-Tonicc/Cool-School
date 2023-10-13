@@ -15,6 +15,7 @@ import Home from './components/home/Home';
 import HttpProvider from './components/http-provider/HttpProvider';
 import NavigationMiddleware from './components/navigation-middleware/NavigationMiddleware';
 import NotFound from './components/not-found/NotFound';
+import Quizzes from './components/quizzes/Quizzes';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
 import './styles/style.scss';
@@ -46,6 +47,7 @@ function App() {
                     {/* Only logged users */}
                     <Route element={<ProtectedRoute onlyUser={true} />}>
                       <Route path="/logout" element={<Logout />} />
+                      <Route path="/quizzes" element={<Quizzes />} />
                     </Route>
 
                     <Route path="*" element={<NotFound />} />
