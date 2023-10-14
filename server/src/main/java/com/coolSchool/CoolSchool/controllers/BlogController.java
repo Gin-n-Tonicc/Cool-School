@@ -3,7 +3,6 @@ package com.coolSchool.CoolSchool.controllers;
 import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
-import com.coolSchool.CoolSchool.models.entity.Blog;
 import com.coolSchool.CoolSchool.services.BlogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -69,6 +68,7 @@ public class BlogController {
     public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordSummary(@RequestParam("keyword") String keyword) {
         return ResponseEntity.ok(blogService.searchBlogsByKeywordSummary(keyword));
     }
+
     @GetMapping("/mostRecent/{n}")
     public ResponseEntity<List<BlogDTO>> getLastNRecentBlogs(@PathVariable("n") int n) {
         return ResponseEntity.ok(blogService.getLastNBlogs(n));

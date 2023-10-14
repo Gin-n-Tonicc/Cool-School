@@ -17,9 +17,6 @@ import com.coolSchool.CoolSchool.services.BlogService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,10 +137,11 @@ public class BlogServiceImpl implements BlogService {
         List<Blog> blogs = blogRepository.searchBySummaryContainingIgnoreCase(keyword.toLowerCase());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
     }
+
     @Override
     public List<BlogDTO> getLastNBlogs(int n) {
-        if(n>=0) {
-            List<Blog> allBlogs = blogRepository.findAll();
+        if (n >= 0) {
+            List<Blog> allBlogs = blogRepository.findByDeletedFalse();
             List<Blog> sortedBlogs = allBlogs.stream()
                     .sorted((blog1, blog2) -> Long.compare(blog2.getId(), blog1.getId()))
                     .collect(Collectors.toList());
