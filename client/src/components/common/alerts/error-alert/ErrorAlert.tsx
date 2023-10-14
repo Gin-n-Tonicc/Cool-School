@@ -19,7 +19,11 @@ export default function ErrorAlert({
     setTimeout(() => {
       deleteError(id);
     }, unmountAfter);
-  }, []);
+  }, [id, unmountAfter, deleteError]);
+
+  const onClose = () => {
+    deleteError(id);
+  };
 
   return (
     <div className="col-sm-12">
@@ -28,6 +32,7 @@ export default function ErrorAlert({
         role="alert"
         data-brk-library="component__alert">
         <button
+          onClick={onClose}
           type="button"
           className="close font__size-18"
           data-dismiss="alert">

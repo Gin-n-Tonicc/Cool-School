@@ -1,4 +1,10 @@
-import { PropsWithChildren, createContext, useContext, useState } from 'react';
+import {
+  PropsWithChildren,
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { IError } from '../interfaces/IError';
 
@@ -13,9 +19,9 @@ type ErrorContextType = {
 };
 
 export const ErrorProvider = ({ children }: PropsWithChildren) => {
-  const [errors, setErrors] = useState<IError[]>([]);
+  const [errors, setErrors] = useState<ErrorContextType['errors']>([]);
 
-  const addError = (error: Omit<IError, 'id'>) => {
+  const addError: ErrorContextType['addError'] = useCallback((error) => {
     const newError = { ...error, id: `error-${uuidV4()}` };
 
     setErrors((errors) => {
@@ -28,20 +34,24 @@ export const ErrorProvider = ({ children }: PropsWithChildren) => {
 
       return [...errors, newError];
     });
-  };
+  }, []);
 
-  const deleteError = (errorId: IError['id']) => {
-    setErrors((errors) => errors.filter((x) => x.id !== errorId));
-  };
+  const deleteError: ErrorContextType['deleteError'] = useCallback(
+    (errorId) => {
+      setErrors((errors) => errors.filter((x) => x.id !== errorId));
+    },
+    []
+  );
 
-  const clearErrors = () => {
+  const clearErrors: ErrorContextType['clearErrors'] = useCallback(() => {
     setErrors([]);
-  };
-
-  const value = { errors, addError, deleteError, clearErrors };
+  }, []);
 
   return (
-    <ErrorContext.Provider value={value}>{children}</ErrorContext.Provider>
+    <ErrorContext.Provider
+      value={{ errors, addError, deleteError, clearErrors }}>
+      {children}
+    </ErrorContext.Provider>
   );
 };
 

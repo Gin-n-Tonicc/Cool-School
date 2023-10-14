@@ -24,23 +24,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
-    ) {
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthenticationResponse> refreshToken(
-            @RequestBody RefreshTokenBodyDTO refreshTokenBody
-    ) throws IOException {
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenBodyDTO refreshTokenBody) throws IOException {
         return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenBody));
     }
 
     @PostMapping("/me")
-    public ResponseEntity<AuthenticationResponse> getMe(
-            @RequestBody AccessTokenBodyDTO accessTokenBodyDTO
-    ) {
+    public ResponseEntity<AuthenticationResponse> getMe(@RequestBody AccessTokenBodyDTO accessTokenBodyDTO) {
         return ResponseEntity.ok(authenticationService.me(accessTokenBodyDTO));
     }
 }

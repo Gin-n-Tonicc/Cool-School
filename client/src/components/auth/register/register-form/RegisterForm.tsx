@@ -23,7 +23,6 @@ type Inputs = {
   Email: string;
   Password: string;
   'Repeat your password': string;
-  agreeTOC: boolean;
 };
 
 export default function RegisterForm() {
@@ -51,7 +50,6 @@ export default function RegisterForm() {
       Email: '',
       Password: '',
       'Repeat your password': '',
-      agreeTOC: false,
     },
     mode: 'onChange',
   });
@@ -153,23 +151,6 @@ export default function RegisterForm() {
         iconClasses="zmdi zmdi-lock-outline"
         rules={REPEAT_PASSWORD_VALIDATIONS}
       />
-
-      {/* TODO: Decide if we need this */}
-      {/* <div className="form-group">
-        <input
-          type="checkbox"
-          id="agree-term"
-          className="agree-term"
-          {...register('agreeTOC')}
-        />
-        <label htmlFor="agree-term" className="label-agree-term">
-          <span>
-            <span></span>
-          </span>
-          I agree all statements in Terms
-          of service
-        </label>
-      </div> */}
 
       <div className="form-group form-button">
         <input

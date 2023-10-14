@@ -1,0 +1,53 @@
+@import 'src/styles/style.scss';
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.error-number {
+  color: rgb(75, 75, 75);
+  font-size: 180px;
+  font-weight: 100;
+
+  @media #{$xss_mobile} {
+    font-size: 100px;
+  }
+}
+
+.error-title {
+  color: rgb(62, 61, 63);
+  font-weight: 500;
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+
+.error-text {
+  font-weight: 300;
+  color: rgb(100, 100, 100);
+  font-size: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.error-home-button {
+  border: 1px solid rgb(2, 123, 208);
+  background-color: rgb(2, 123, 208);
+  padding: 0.4em 0.9em;
+  border-radius: 5px;
+
+  color: white;
+
+  text-decoration: none;
+  font-size: 18px;
+
+  transition: background-color 0.1s, color 0.1s;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}

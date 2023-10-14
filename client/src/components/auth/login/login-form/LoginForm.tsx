@@ -27,7 +27,6 @@ export default function LoginForm() {
     defaultValues: {
       Email: '',
       Password: '',
-      rememberMe: false,
     },
     mode: 'onChange',
   });
@@ -66,20 +65,6 @@ export default function LoginForm() {
         rules={PASSWORD_VALIDATIONS}
       />
 
-      <div className="form-group">
-        <input
-          type="checkbox"
-          id="remember-me"
-          className="agree-term"
-          {...register('rememberMe')}
-        />
-        <label htmlFor="remember-me" className="label-agree-term">
-          <span>
-            <span></span>
-          </span>
-          Remember me
-        </label>
-      </div>
       <div className="form-group form-button">
         <input
           type="submit"
