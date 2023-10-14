@@ -4,6 +4,7 @@ import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
+import com.coolSchool.CoolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
@@ -16,6 +17,9 @@ import com.coolSchool.CoolSchool.services.BlogService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BlogServiceImpl implements BlogService {
@@ -134,5 +139,17 @@ public class BlogServiceImpl implements BlogService {
     public List<BlogDTO> searchBlogsByKeywordSummary(String keyword) {
         List<Blog> blogs = blogRepository.searchBySummaryContainingIgnoreCase(keyword.toLowerCase());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+    }
+    @Override
+    public List<BlogDTO> getLastNBlogs(int n) {
+        if(n>=0) {
+            List<Blog> allBlogs = blogRepository.findAll();
+            List<Blog> sortedBlogs = allBlogs.stream()
+                    .sorted((blog1, blog2) -> Long.compare(blog2.getId(), blog1.getId()))
+                    .collect(Collectors.toList());
+            List<Blog> lastNBlogs = sortedBlogs.subList(0, Math.min(n, sortedBlogs.size()));
+            return lastNBlogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+        }
+        throw new BadRequestException();
     }
 }

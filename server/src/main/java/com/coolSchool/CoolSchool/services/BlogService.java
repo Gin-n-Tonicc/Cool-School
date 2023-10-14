@@ -2,6 +2,7 @@ package com.coolSchool.CoolSchool.services;
 
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.entity.Blog;
 
 import java.util.List;
 
@@ -23,4 +24,5 @@ public interface BlogService {
     List<BlogDTO> searchBlogsByKeywordTitle(String keyword);
 
     List<BlogDTO> searchBlogsByKeywordSummary(String keyword);
+    List<BlogDTO> getLastNBlogs(int n);
 }

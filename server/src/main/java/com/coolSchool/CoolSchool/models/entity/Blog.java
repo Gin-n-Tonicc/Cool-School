@@ -31,6 +31,7 @@ public class Blog {
     @NotBlank(message = "The summary of the blog should not be blank!")
     @Size(min = 10, message = "The field must be at least 10 symbols!")
     private String summary;
+    @Column(name = "created_at")
     private LocalDateTime created_at;
     @ManyToMany
     private Set<User> liked_users;
