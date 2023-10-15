@@ -2,14 +2,15 @@ import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import logo from '../../../images/logo.png';
+import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
 
 function GuestLinks() {
   return (
     <>
-      <HeaderNavItem text="Login" pathName="/login" />
-      <HeaderNavItem text="Register" pathName="/register" />
+      <HeaderNavItem text="Login" pathName={PagesEnum.Login} />
+      <HeaderNavItem text="Register" pathName={PagesEnum.Register} />
     </>
   );
 }
@@ -17,7 +18,7 @@ function GuestLinks() {
 function UserLinks() {
   return (
     <>
-      <HeaderNavItem text="Logout" pathName="/logout" />
+      <HeaderNavItem text="Logout" pathName={PagesEnum.Logout} />
     </>
   );
 }
@@ -47,7 +48,7 @@ export default function Header() {
           <div className="row align-items-center">
             <div className="col-lg-12">
               <nav className="navbar navbar-expand-lg navbar-light">
-                <Link to="/" className="navbar-brand">
+                <Link to={PagesEnum.Home} className="navbar-brand">
                   <img className="site-logo" src={logo} alt="logo" />
                 </Link>
                 <button
@@ -68,37 +69,8 @@ export default function Header() {
                     <HeaderNavItem text="Home" pathName="/" />
                     <HeaderNavItem text="Courses" pathName="/courses" />
                     <HeaderNavItem text="Blog" pathName="/blog" />
-
-                    {/* TODO: FINISH PAGES IN FUTURE */}
-                    {/* <li className="nav-item dropdown">
-                      <a
-                        className="nav-link dropdown-toggle"
-                        href="blog.html"
-                        id="navbarDropdown"
-                        role="button"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false">
-                        Pages
-                      </a>
-                      <div
-                        className="dropdown-menu"
-                        aria-labelledby="navbarDropdown">
-                        <a className="dropdown-item" href="single-blog.html">
-                          Single blog
-                        </a>
-                        <a className="dropdown-item" href="elements.html">
-                          Elements
-                        </a>
-                      </div>
-                    </li> */}
                     <HeaderNavItem text="Contact" pathName="/contact" />
                     {isAuthenticated ? <UserLinks /> : <GuestLinks />}
-                    {/* <li className="d-none d-lg-block">
-                      <a className="btn_1" href="#">
-                        Get a Quote
-                      </a>
-                    </li> */}
                   </ul>
                 </div>
               </nav>
