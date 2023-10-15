@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../../../contexts/AuthContext';
-import { IAuthResponse } from '../../../../interfaces/IAuthResponse';
+import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
 import {
   EMAIL_VALIDATIONS,
   PASSWORD_VALIDATIONS,
