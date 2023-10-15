@@ -33,8 +33,8 @@ public class BlogController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BlogDTO> createBlog(@Valid @RequestBody BlogDTO blogDTO) {
-        BlogDTO cratedBlog = blogService.createBlog(blogDTO);
+    public ResponseEntity<BlogDTO> createBlog(@Valid @RequestBody BlogDTO blogDTO, HttpServletRequest httpServletRequest) {
+        BlogDTO cratedBlog = blogService.createBlog(blogDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         return new ResponseEntity<>(cratedBlog, HttpStatus.CREATED);
     }
 

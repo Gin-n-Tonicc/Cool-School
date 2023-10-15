@@ -59,10 +59,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public BlogDTO createBlog(BlogDTO blogDTO) {
+    public BlogDTO createBlog(BlogDTO blogDTO, PublicUserDTO loggedUser) {
         try {
             blogDTO.setId(null);
             blogDTO.setCreated_at(LocalDateTime.now());
+            blogDTO.setOwnerId(loggedUser.getId());
             userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
             return modelMapper.map(blogEntity, BlogDTO.class);

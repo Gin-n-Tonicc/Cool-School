@@ -10,7 +10,7 @@ public interface BlogService {
 
     BlogDTO getBlogById(Long id);
 
-    BlogDTO createBlog(BlogDTO blogDTO);
+    BlogDTO createBlog(BlogDTO blogDTO, PublicUserDTO loggedUser);
 
     BlogDTO updateBlog(Long id, BlogDTO blogDTO, PublicUserDTO loggedUser);
 
