@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import Admin from './components/admin/Admin';
 import Authenticate from './components/auth/authenticate/Authenticate';
 import Login from './components/auth/login/Login';
 import Logout from './components/auth/logout/Logout';
@@ -49,6 +50,9 @@ function App() {
                     <Route element={<ProtectedRoute onlyUser={true} />}>
                       <Route path={PagesEnum.Logout} element={<Logout />} />
                       <Route path={PagesEnum.Quizzes} element={<Quizzes />} />
+
+                      {/* Admin does it's own auth check on load */}
+                      <Route path={PagesEnum.Admin} element={<Admin />} />
                     </Route>
 
                     <Route path="*" element={<NotFound />} />

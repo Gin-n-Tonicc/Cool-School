@@ -34,9 +34,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       accessToken,
       refreshToken,
       email: user.email,
-      _id: user._id,
+      id: user.id,
       username: user.username,
       firstname: user.firstname,
+      role: user.role,
     });
   };
 

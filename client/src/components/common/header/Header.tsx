@@ -70,6 +70,7 @@ export default function Header() {
                     <HeaderNavItem text="Courses" pathName="/courses" />
                     <HeaderNavItem text="Blog" pathName="/blog" />
                     <HeaderNavItem text="Contact" pathName="/contact" />
+                    <HeaderNavItem text="Admin" pathName="/admin" />
                     {isAuthenticated ? <UserLinks /> : <GuestLinks />}
                   </ul>
                 </div>
