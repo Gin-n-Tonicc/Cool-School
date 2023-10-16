@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Navigate, Outlet, To, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../../contexts/AuthContext';
+import { PagesEnum } from '../../../types/enums/PagesEnum';
 
 const logoutPath = '/logout';
 const loginPath = '/login';
@@ -31,7 +32,7 @@ export default function ProtectedRoute({ onlyUser }: ProtectedRouteProps) {
   }
 
   if (!passThrew) {
-    return <Navigate to={'/'} />;
+    return <Navigate to={PagesEnum.Home} />;
   }
 
   return <Outlet />;
