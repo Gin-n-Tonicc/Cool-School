@@ -27,11 +27,22 @@ export default function Header() {
   const { isAuthenticated } = useAuthContext();
 
   const homeMenuPaths = useMemo(
-    () => ['/', '/login', '/register', '/logout'],
+    () =>
+      [
+        PagesEnum.Home,
+        PagesEnum.Login,
+        PagesEnum.Register,
+        PagesEnum.Logout,
+        PagesEnum.Admin,
+      ].map((x) => x.toString()),
     []
   );
 
   const location = useLocation();
+
+  // if (PagesEnum.Admin.toString().includes(location.pathname)) {
+  //   return <></>;
+  // }
 
   let headerClasses = 'main_menu ';
 
