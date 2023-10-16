@@ -23,6 +23,12 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     @Query("SELECT b FROM Blog b WHERE LOWER(b.title) LIKE %:keyword% AND b.deleted = false")
     List<Blog> searchByTitleContainingIgnoreCase(@Param("keyword") String keyword);
 
-    @Query("SELECT b FROM Blog b WHERE LOWER(b.summary) LIKE %:keyword% AND b.deleted = false")
-    List<Blog> searchBySummaryContainingIgnoreCase(@Param("keyword") String keyword);
+    @Query("SELECT b FROM Blog b JOIN b.categoryId c " +
+            "WHERE c.name LIKE %:categoryName% " + "AND b.deleted = false")
+    List<Blog> findByCategoryIdName(String categoryName);
+
+    @Query("SELECT b FROM Blog b JOIN b.categoryId c " +
+            "WHERE (LOWER(b.title) LIKE %:keyword% OR c.name LIKE %:keyword%) " +
+            "AND b.deleted = false")
+    List<Blog> searchByTitleAndCategoryName(@Param("keyword") String keyword);
 }

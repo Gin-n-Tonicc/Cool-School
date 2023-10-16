@@ -64,6 +64,9 @@ public class BlogServiceImpl implements BlogService {
             blogDTO.setId(null);
             blogDTO.setCreated_at(LocalDateTime.now());
             blogDTO.setOwnerId(loggedUser.getId());
+            if(loggedUser.getRole().equals(Role.ADMIN)){
+                blogDTO.setIsEnabled(blogDTO.getIsEnabled());
+            }
             userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
             return modelMapper.map(blogEntity, BlogDTO.class);
@@ -82,6 +85,9 @@ public class BlogServiceImpl implements BlogService {
 
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), user.getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException();
+        }
+        if(loggedUser.getRole().equals(Role.ADMIN)){
+            blogDTO.setIsEnabled(blogDTO.getIsEnabled());
         }
         Blog existingBlog = existingBlogOptional.get();
         modelMapper.map(blogDTO, existingBlog);
@@ -134,8 +140,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<BlogDTO> searchBlogsByKeywordSummary(String keyword) {
-        List<Blog> blogs = blogRepository.searchBySummaryContainingIgnoreCase(keyword.toLowerCase());
+    public List<BlogDTO> searchBlogsByKeywordCategory(String keyword) {
+        List<Blog> blogs = blogRepository.findByCategoryIdName(keyword.toLowerCase());
+        return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+    }
+    @Override
+    public List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keyword) {
+        List<Blog> blogs = blogRepository.searchByTitleAndCategoryName(keyword.toLowerCase());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
     }
 

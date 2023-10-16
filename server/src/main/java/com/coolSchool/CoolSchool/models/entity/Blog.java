@@ -41,5 +41,10 @@ public class Blog {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User ownerId;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    @NotNull(message = "The category of the blog should not be null!")
+    private Category categoryId;
+    private boolean isEnabled;
     private boolean deleted;
 }

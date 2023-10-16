@@ -20,4 +20,7 @@ public class BlogDTO {
     private List<PublicUserDTO> liked_users;
     private Long pictureId;
     private Long ownerId;
+    private Long categoryId;
+    private String isEnabled;
+
 }
