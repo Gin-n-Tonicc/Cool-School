@@ -50,6 +50,23 @@ input:focus {
     padding: 70px 0px;
   }
 }
+
+.section_margin {
+  margin: 140px 0px;
+  @media #{$medium_device} {
+    margin: 80px 0px;
+  }
+  @media #{$tab_device} {
+    margin: 70px 0px;
+  }
+  @media #{$small_mobile} {
+    margin: 70px 0px;
+  }
+  @media #{$large_mobile} {
+    margin: 70px 0px;
+  }
+}
+
 .single_padding_top {
   padding-top: 140px !important;
   @media #{$medium_device} {
