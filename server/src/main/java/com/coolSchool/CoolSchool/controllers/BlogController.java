@@ -23,13 +23,13 @@ public class BlogController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<BlogDTO>> getAllBlogs() {
-        return ResponseEntity.ok(blogService.getAllBlogs());
+    public ResponseEntity<List<BlogDTO>> getAllBlogs(HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(blogService.getAllBlogs((PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BlogDTO> getBlogById(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.ok(blogService.getBlogById(id));
+    public ResponseEntity<BlogDTO> getBlogById(@PathVariable(name = "id") Long id, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(blogService.getBlogById(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
     @PostMapping("/create")

@@ -44,14 +44,26 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<BlogDTO> getAllBlogs() {
-        List<Blog> blogs = blogRepository.findByDeletedFalse();
+    public List<BlogDTO> getAllBlogs(PublicUserDTO loggedUser) {
+        if(loggedUser != null) {
+            if (loggedUser.getRole().equals(Role.ADMIN)) {
+                List<Blog> blogs = blogRepository.findAll();
+                return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+            }
+        }
+        List<Blog> blogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
     }
 
     @Override
-    public BlogDTO getBlogById(Long id) {
-        Optional<Blog> blog = blogRepository.findByIdAndDeletedFalse(id);
+    public BlogDTO getBlogById(Long id, PublicUserDTO loggedUser) {
+        if(loggedUser != null) {
+            if (loggedUser.getRole().equals(Role.ADMIN)) {
+                Optional<Blog> blog = blogRepository.findById(id);
+                return modelMapper.map(blog.get(), BlogDTO.class);
+            }
+        }
+        Optional<Blog> blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
         if (blog.isPresent()) {
             return modelMapper.map(blog.get(), BlogDTO.class);
         }
@@ -77,7 +89,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogDTO updateBlog(Long id, BlogDTO blogDTO, PublicUserDTO loggedUser) {
-        Optional<Blog> existingBlogOptional = blogRepository.findByIdAndDeletedFalse(id);
+        Optional<Blog> existingBlogOptional = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
         if (existingBlogOptional.isEmpty()) {
             throw new BlogNotFoundException();
         }
@@ -107,7 +119,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional
     public void deleteBlog(Long id, PublicUserDTO loggedUser) {
-        Optional<Blog> blogOptional = blogRepository.findByIdAndDeletedFalse(id);
+        Optional<Blog> blogOptional = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
         if (blogOptional.isPresent()) {
             Blog blog = blogOptional.get();
 
@@ -153,7 +165,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public List<BlogDTO> getLastNBlogs(int n) {
         if (n >= 0) {
-            List<Blog> allBlogs = blogRepository.findByDeletedFalse();
+            List<Blog> allBlogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
             List<Blog> sortedBlogs = allBlogs.stream()
                     .sorted((blog1, blog2) -> Long.compare(blog2.getId(), blog1.getId()))
                     .collect(Collectors.toList());

@@ -6,9 +6,9 @@ import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import java.util.List;
 
 public interface BlogService {
-    List<BlogDTO> getAllBlogs();
+    List<BlogDTO> getAllBlogs(PublicUserDTO loggedUser);
 
-    BlogDTO getBlogById(Long id);
+    BlogDTO getBlogById(Long id, PublicUserDTO loggedUser);
 
     BlogDTO createBlog(BlogDTO blogDTO, PublicUserDTO loggedUser);
 

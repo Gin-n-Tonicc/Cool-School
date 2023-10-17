@@ -7,7 +7,6 @@ import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.models.dto.CommentDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
-import com.coolSchool.CoolSchool.models.entity.Blog;
 import com.coolSchool.CoolSchool.models.entity.Comment;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
@@ -64,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
             commentDTO.setCreated_at(LocalDateTime.now());
             commentDTO.setOwnerId(loggedUser.getId());
             userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
-            blogRepository.findByIdAndDeletedFalse(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
+            blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
             Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
             return modelMapper.map(commentEntity, CommentDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -79,7 +78,7 @@ public class CommentServiceImpl implements CommentService {
             throw new CommentNotFoundException();
         }
         User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
-        blogRepository.findByIdAndDeletedFalse(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
+        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), user.getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException();
         }
