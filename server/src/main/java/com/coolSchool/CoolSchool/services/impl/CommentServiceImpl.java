@@ -57,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO createComment(CommentDTO commentDTO,  PublicUserDTO loggedUser) {
+    public CommentDTO createComment(CommentDTO commentDTO, PublicUserDTO loggedUser) {
         try {
             commentDTO.setId(null);
             commentDTO.setCreated_at(LocalDateTime.now());

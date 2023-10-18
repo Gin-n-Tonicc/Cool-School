@@ -68,6 +68,7 @@ public class BlogController {
     public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordSummary(@RequestParam("keyword") String keyword) {
         return ResponseEntity.ok(blogService.searchBlogsByKeywordCategory(keyword));
     }
+
     @GetMapping("/search/titleAndCategory")
     public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordInTitleAndCategory(@RequestParam("keyword") String keyword) {
         return ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(keyword));

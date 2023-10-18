@@ -21,5 +21,5 @@ public class BlogDTO {
     private Long pictureId;
     private Long ownerId;
     private Long categoryId;
-    private String isEnabled;
+    private boolean isEnabled;
 }

@@ -45,7 +45,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<BlogDTO> getAllBlogs(PublicUserDTO loggedUser) {
-        if(loggedUser != null) {
+        if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
                 List<Blog> blogs = blogRepository.findAll();
                 return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
@@ -57,7 +57,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogDTO getBlogById(Long id, PublicUserDTO loggedUser) {
-        if(loggedUser != null) {
+        if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
                 Optional<Blog> blog = blogRepository.findById(id);
                 return modelMapper.map(blog.get(), BlogDTO.class);
@@ -72,12 +72,17 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogDTO createBlog(BlogDTO blogDTO, PublicUserDTO loggedUser) {
+        if (loggedUser == null) {
+            throw new AccessDeniedException();
+        }
         try {
             blogDTO.setId(null);
             blogDTO.setCreated_at(LocalDateTime.now());
             blogDTO.setOwnerId(loggedUser.getId());
-            if(loggedUser.getRole().equals(Role.ADMIN)){
-                blogDTO.setIsEnabled(blogDTO.getIsEnabled());
+            if (loggedUser.getRole().equals(Role.ADMIN)) {
+                blogDTO.setEnabled(blogDTO.isEnabled());
+            } else {
+                blogDTO.setEnabled(false);
             }
             userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
@@ -93,19 +98,21 @@ public class BlogServiceImpl implements BlogService {
         if (existingBlogOptional.isEmpty()) {
             throw new BlogNotFoundException();
         }
-        User user = userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
 
-        if (loggedUser == null || (!Objects.equals(loggedUser.getId(), user.getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
+        if (loggedUser == null || (!Objects.equals(loggedUser.getId(), existingBlogOptional.get().getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException();
         }
-        if(loggedUser.getRole().equals(Role.ADMIN)){
-            blogDTO.setIsEnabled(blogDTO.getIsEnabled());
+        if (loggedUser.getRole().equals(Role.ADMIN)) {
+            blogDTO.setEnabled(blogDTO.isEnabled());
+        } else{
+            blogDTO.setEnabled(existingBlogOptional.get().isEnabled());
         }
         Blog existingBlog = existingBlogOptional.get();
         modelMapper.map(blogDTO, existingBlog);
 
         try {
             existingBlog.setId(id);
+            existingBlog.setCreated_at(existingBlog.getCreated_at());
             Blog updatedBlog = blogRepository.save(existingBlog);
             return modelMapper.map(updatedBlog, BlogDTO.class);
         } catch (TransactionException exception) {
@@ -156,6 +163,7 @@ public class BlogServiceImpl implements BlogService {
         List<Blog> blogs = blogRepository.findByCategoryIdName(keyword.toLowerCase());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
     }
+
     @Override
     public List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keyword) {
         List<Blog> blogs = blogRepository.searchByTitleAndCategoryName(keyword.toLowerCase());
@@ -166,9 +174,7 @@ public class BlogServiceImpl implements BlogService {
     public List<BlogDTO> getLastNBlogs(int n) {
         if (n >= 0) {
             List<Blog> allBlogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
-            List<Blog> sortedBlogs = allBlogs.stream()
-                    .sorted((blog1, blog2) -> Long.compare(blog2.getId(), blog1.getId()))
-                    .collect(Collectors.toList());
+            List<Blog> sortedBlogs = allBlogs.stream().sorted((blog1, blog2) -> Long.compare(blog2.getId(), blog1.getId())).collect(Collectors.toList());
             List<Blog> lastNBlogs = sortedBlogs.subList(0, Math.min(n, sortedBlogs.size()));
             return lastNBlogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
         }
