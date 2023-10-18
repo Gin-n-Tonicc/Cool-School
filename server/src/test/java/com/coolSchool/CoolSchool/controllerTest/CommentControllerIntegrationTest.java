@@ -16,6 +16,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,7 +81,23 @@ class CommentControllerIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
+    @Test
+    void testGetCommentsByNewest() throws Exception {
+        Mockito.when(commentService.getCommentsByNewestFirst()).thenReturn(Collections.emptyList());
 
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comments/sort/newest"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void testGetCommentsByNumberOfLikes() throws Exception {
+        Mockito.when(commentService.getCommentsByMostLiked()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/comments/sort/default"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+    }
     @Test
     void testDeleteCommentById() throws Exception {
         Long commentId = 1L;
