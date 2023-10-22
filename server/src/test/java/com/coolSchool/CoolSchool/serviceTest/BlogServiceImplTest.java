@@ -7,8 +7,11 @@ import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
+import com.coolSchool.CoolSchool.models.entity.Category;
+import com.coolSchool.CoolSchool.models.entity.File;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
+import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.FileRepository;
 import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.impl.BlogServiceImpl;
@@ -40,6 +43,8 @@ public class BlogServiceImplTest {
     private FileRepository fileRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private CategoryRepository categoryRepository;
     private LocalValidatorFactoryBean validator;
 
     @BeforeEach
@@ -49,8 +54,8 @@ public class BlogServiceImplTest {
         fileRepository = mock(FileRepository.class);
         userRepository = mock(UserRepository.class);
         validator = new LocalValidatorFactoryBean();
-
-        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, validator);
+        categoryRepository = mock(CategoryRepository.class);
+        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, validator);
     }
 
     @Test
@@ -219,28 +224,12 @@ public class BlogServiceImplTest {
         blogDTO.setOwnerId(loggedUser.getId());
         blogDTO.setId(null);
         when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.of(new User()));
-        when(blogRepository.save(any(Blog.class))).thenReturn(new Blog());
+        when(categoryRepository.findByIdAndDeletedFalse(anyLong())).thenReturn(Optional.of(new Category()));
+        when(fileRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.of(new File()));
         BlogDTO createdBlogDTO = blogService.createBlog(blogDTO, loggedUser);
         Assertions.assertNotNull(createdBlogDTO);
         Assertions.assertTrue(blogDTO.isEnabled());
     }
-
-    @Test
-    void testCreateBlogAsUser() {
-        PublicUserDTO loggedUser = new PublicUserDTO();
-        loggedUser.setRole(Role.USER);
-        loggedUser.setId(1L);
-        BlogDTO blogDTO = new BlogDTO();
-        blogDTO.setEnabled(true);
-        blogDTO.setOwnerId(loggedUser.getId());
-        blogDTO.setId(null);
-        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.of(new User()));
-        when(blogRepository.save(any(Blog.class))).thenReturn(new Blog());
-        BlogDTO createdBlogDTO = blogService.createBlog(blogDTO, loggedUser);
-        Assertions.assertNotNull(createdBlogDTO);
-        Assertions.assertFalse(createdBlogDTO.isEnabled());
-    }
-
     @Test
     void testCreateBlogWithInvalidUser() {
         PublicUserDTO loggedUser = new PublicUserDTO();

@@ -3,14 +3,17 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
+import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.CoolSchool.exceptions.files.FileNotFoundException;
+import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
-import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
+import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.FileRepository;
 import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.BlogService;
@@ -33,13 +36,15 @@ public class BlogServiceImpl implements BlogService {
     private final ModelMapper modelMapper;
     private final FileRepository fileRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final Validator validator;
 
-    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, Validator validator) {
+    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, Validator validator) {
         this.blogRepository = blogRepository;
         this.modelMapper = modelMapper;
         this.fileRepository = fileRepository;
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
         this.validator = validator;
     }
 
@@ -84,7 +89,11 @@ public class BlogServiceImpl implements BlogService {
             } else {
                 blogDTO.setEnabled(false);
             }
-            userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
+            userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
+            categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
+            if(blogDTO.getPictureId()!=null) {
+                fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
+            }
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
             return modelMapper.map(blogEntity, BlogDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -95,6 +104,8 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public BlogDTO updateBlog(Long id, BlogDTO blogDTO, PublicUserDTO loggedUser) {
         Optional<Blog> existingBlogOptional = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
+        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(blogDTO.getCategoryId()).orElseThrow(BlogNotFoundException::new);
+        fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
         if (existingBlogOptional.isEmpty()) {
             throw new BlogNotFoundException();
         }
