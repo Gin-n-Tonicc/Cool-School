@@ -14,6 +14,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+    @Column(unique = true)
     @NotNull(message = "The name of the category should not be null!")
     private String name;
     @Column(name = "is_deleted", nullable = false)

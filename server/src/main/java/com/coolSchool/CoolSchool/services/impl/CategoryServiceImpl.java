@@ -1,7 +1,9 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.exceptions.category.CategoryCreateException;
 import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.category.ValidationCategoryException;
+import com.coolSchool.CoolSchool.exceptions.user.UserCreateException;
 import com.coolSchool.CoolSchool.models.dto.CategoryDTO;
 import com.coolSchool.CoolSchool.models.entity.Category;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
@@ -9,6 +11,7 @@ import com.coolSchool.CoolSchool.services.CategoryService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -50,6 +53,8 @@ public class CategoryServiceImpl implements CategoryService {
             return modelMapper.map(categoryEntity, CategoryDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationCategoryException(exception.getConstraintViolations());
+        } catch (DataIntegrityViolationException exception){
+            throw new CategoryCreateException(true);
         }
     }
 

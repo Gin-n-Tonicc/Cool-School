@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.filters;
 
+import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.repositories.TokenRepository;
 import com.coolSchool.CoolSchool.services.JwtService;
 import com.coolSchool.CoolSchool.services.UserService;
@@ -8,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,8 +24,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    public static final String userKey = "user";
     private final JwtService jwtService;
     private final UserService userService;
+    private final ModelMapper modelMapper;
     private final TokenRepository tokenRepository;
 
     @Override
@@ -36,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        request.setAttribute(userKey, null);
 
         final String authHeader = request.getHeader("Authorization");
 
@@ -67,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+            request.setAttribute(userKey, modelMapper.map(userDetails, PublicUserDTO.class));
         }
 
         filterChain.doFilter(request, response);
