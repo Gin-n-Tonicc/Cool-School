@@ -1,66 +1,23 @@
 import { useCallback, useMemo, useState } from 'react';
+import { SubmitHandler } from 'react-hook-form';
 import { v4 as uuidV4 } from 'uuid';
 import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
 import * as paginationUtils from '../../../utils/page';
 import { camelCaseToWords } from '../../../utils/stringUtils';
 import './AdminTable.scss';
+import AdminTablePagination from './admin-table-pagination/AdminTablePagination';
+import AdminTableSearch, {
+  AdminSearchValues,
+} from './admin-table-search/AdminTableSearch';
 
-type TogglePageFunction = (page: number) => void;
-type SwitchPageFunction = () => void;
+export type TogglePageFunction = (page: number) => void;
+export type SwitchPageFunction = () => void;
 
 export type AdminTableProps = {
   tableName: string;
   list: IObjectWithId[];
   create: boolean;
 };
-
-function TablePagination(props: {
-  currentPage: number;
-  pageCount: number;
-  togglePage: TogglePageFunction;
-  previousPage: SwitchPageFunction;
-  nextPage: SwitchPageFunction;
-}) {
-  return (
-    <ul className="pagination admin-pagination">
-      <li className="page-item">
-        <a
-          className="page-link"
-          aria-label="Previous"
-          onClick={() => props.previousPage()}>
-          <span aria-hidden="true">&laquo;</span>
-          <span className="sr-only">Previous</span>
-        </a>
-      </li>
-      {[...Array(props.pageCount)].map((_, i) => {
-        const page = i + 1;
-        let classNames = 'page-link';
-
-        if (props.currentPage === page) {
-          classNames += ' active-page';
-        }
-
-        return (
-          <li
-            key={i}
-            className="page-item"
-            onClick={() => props.togglePage(page)}>
-            <a className={classNames}>{page}</a>
-          </li>
-        );
-      })}
-      <li className="page-item">
-        <a
-          className="page-link"
-          aria-label="Next"
-          onClick={() => props.nextPage()}>
-          <span aria-hidden="true">&raquo;</span>
-          <span className="sr-only">Next</span>
-        </a>
-      </li>
-    </ul>
-  );
-}
 
 function TableTitle(props: { tableName: string; isEmpty: boolean }) {
   return (
@@ -94,7 +51,7 @@ export default function AdminTable(props: AdminTableProps) {
     return [pages, pages === 0];
   }, [props.list]);
 
-  const keys = Object.keys(props.list[0]);
+  const columns = Object.keys(props.list[0]);
 
   const validatePage = paginationUtils.validatePage.bind(null, pages);
 
@@ -113,6 +70,13 @@ export default function AdminTable(props: AdminTableProps) {
     setCurrentPage((currentPage) => validatePage(currentPage + 1));
   }, [setCurrentPage, validatePage]);
 
+  const onSearch: SubmitHandler<AdminSearchValues> = useCallback((v) => {
+    // add handling
+    console.log(v);
+
+    console.log('submitting');
+  }, []);
+
   return (
     <div className="pd-20 card-box mb-30 admin-table section_margin">
       <div className="clearfix mb-20 d-flex flex-column justify-content-center align-items-center">
@@ -123,7 +87,7 @@ export default function AdminTable(props: AdminTableProps) {
         <table className="table table-striped">
           <thead>
             <tr>
-              {keys.map((x) => (
+              {columns.map((x) => (
                 <th scope="col" key={x}>
                   {camelCaseToWords(x)}
                 </th>
@@ -142,17 +106,14 @@ export default function AdminTable(props: AdminTableProps) {
         </table>
       </div>
       <div className="d-flex flex-row justify-content-between">
-        <TablePagination
+        <AdminTablePagination
           currentPage={currentPage}
           pageCount={pages}
           togglePage={togglePage}
           previousPage={previousPage}
           nextPage={nextPage}
         />
-        <div className="admin-form-group">
-          <span className="fa fa-search admin-form-control-feedback"></span>
-          <input type="text" className="form-control" placeholder="Search" />
-        </div>
+        <AdminTableSearch onSubmit={onSearch} />
       </div>
     </div>
   );
