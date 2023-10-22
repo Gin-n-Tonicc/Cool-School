@@ -1,3 +1,5 @@
-export interface IObjectWithId extends Object {
+import { IDefaultObject } from './IDefaultObject';
+
+export interface IObjectWithId extends IDefaultObject<any> {
   id: number;
 }

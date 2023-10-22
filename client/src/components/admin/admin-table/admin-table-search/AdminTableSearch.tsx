@@ -9,6 +9,7 @@ interface AdminSearchFormValues {
 
 interface AdminTableSearchProps {
   onSubmit: SubmitHandler<AdminSearchValues>;
+  columnsLowercased: string[];
 }
 
 const SEPARATOR_SEARCH = '//';
@@ -35,16 +36,20 @@ export default function AdminTableSearch(props: AdminTableSearchProps) {
           return acc;
         }
 
+        if (!props.columnsLowercased.includes(key)) {
+          return acc;
+        }
+
         let newValue: number | string = value;
 
         if (!isNaN(newValue as any)) {
           newValue = Number(value);
         } else {
-          newValue = newValue.toLowerCase();
+          newValue = newValue.toLowerCase().trim();
         }
 
         const objToMerge: AdminSearchValues = {};
-        objToMerge[key.toLowerCase()] = newValue;
+        objToMerge[key.toLowerCase().trim()] = newValue;
 
         return Object.assign(acc, objToMerge);
       }, {});
