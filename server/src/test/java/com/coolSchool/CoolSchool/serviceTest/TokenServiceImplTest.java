@@ -28,7 +28,6 @@ class TokenServiceImplTest {
 
     @InjectMocks
     private TokenServiceImpl tokenService;
-
     @Test
     public void testSaveToken() {
         User mockUser = new User();
@@ -45,7 +44,6 @@ class TokenServiceImplTest {
                         !token.isRevoked()
         ));
     }
-
     @Test
     public void testFindByToken() {
         String jwt = "mockJwt";
