@@ -37,7 +37,7 @@ function AdminView() {
   return (
     <>
       <div className="container">
-        <AdminTable tableName="Users" list={mockedUsers2} />
+        <AdminTable tableName="Users" list={mockedUsers2} create={false} />
       </div>
     </>
   );
