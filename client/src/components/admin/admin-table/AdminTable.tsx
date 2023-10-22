@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { v4 as uuidV4 } from 'uuid';
 import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
@@ -39,21 +39,32 @@ const PAGE_SIZE = 5;
 
 export default function AdminTable(props: AdminTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredList, setFilteredList] = useState(props.list);
+  const [list, setList] = useState<IObjectWithId[]>(props.list);
+  const [pages, setPages] = useState(1);
 
-  const updatedList = useMemo(
-    () =>
-      props.list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE),
-    [props.list, currentPage]
+  useEffect(() => {
+    setList(
+      filteredList.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+    );
+  }, [filteredList, currentPage]);
+
+  useEffect(() => {
+    const pages = Math.ceil(filteredList.length / PAGE_SIZE);
+    setPages(pages);
+  }, [filteredList]);
+
+  const validatePage = useMemo(
+    () => paginationUtils.validatePage.bind(null, pages),
+    [pages]
   );
 
-  const [pages, isEmpty] = useMemo(() => {
-    const pages = Math.ceil(props.list.length / PAGE_SIZE);
-    return [pages, pages === 0];
-  }, [props.list]);
+  useEffect(() => {
+    setCurrentPage(validatePage(currentPage));
+  }, [pages]);
 
   const columns = Object.keys(props.list[0]);
-
-  const validatePage = paginationUtils.validatePage.bind(null, pages);
+  const columnsLowercased = columns.map((x) => x.toLowerCase());
 
   const togglePage: TogglePageFunction = useCallback(
     (page: number) => {
@@ -71,16 +82,31 @@ export default function AdminTable(props: AdminTableProps) {
   }, [setCurrentPage, validatePage]);
 
   const onSearch: SubmitHandler<AdminSearchValues> = useCallback((v) => {
-    // add handling
-    console.log(v);
+    const filteredList = props.list.filter((x) => {
+      for (const key in x) {
+        if (v[key]) {
+          if (isNaN(x[key])) {
+            const baseString = (x[key] as string).trim().toLowerCase();
 
-    console.log('submitting');
+            if (!baseString.includes(`${v[key]}`)) {
+              return false;
+            }
+          } else if (v[key] !== x[key]) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    });
+
+    setFilteredList(filteredList);
   }, []);
 
   return (
     <div className="pd-20 card-box mb-30 admin-table section_margin">
       <div className="clearfix mb-20 d-flex flex-column justify-content-center align-items-center">
-        <TableTitle tableName={props.tableName} isEmpty={isEmpty} />
+        <TableTitle tableName={props.tableName} isEmpty={pages === 0} />
         {props.create && <CreateButton />}
       </div>
       <div className="table-responsive">
@@ -95,7 +121,7 @@ export default function AdminTable(props: AdminTableProps) {
             </tr>
           </thead>
           <tbody>
-            {updatedList.map((x) => (
+            {list.map((x) => (
               <tr key={x.id}>
                 {Object.values(x).map((x) => (
                   <td key={uuidV4()}>{x}</td>
@@ -113,7 +139,10 @@ export default function AdminTable(props: AdminTableProps) {
           previousPage={previousPage}
           nextPage={nextPage}
         />
-        <AdminTableSearch onSubmit={onSearch} />
+        <AdminTableSearch
+          onSubmit={onSearch}
+          columnsLowercased={columnsLowercased}
+        />
       </div>
     </div>
   );
