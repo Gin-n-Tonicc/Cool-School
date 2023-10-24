@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -176,8 +177,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keyword) {
-        List<Blog> blogs = blogRepository.searchByTitleAndCategoryName(keyword.toLowerCase());
+    public List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keywordForTitle, String keywordForCategory) {
+        List<Blog> blogs = blogRepository.searchBlogsByKeywordInTitleAndCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase());
+        return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+    }
+    @Override
+    public List<BlogDTO> searchBlogsByKeywordInTitleOrCategory(String keywordForTitle, String keywordForCategory) {
+        List<Blog> blogs = blogRepository.searchBlogsByKeywordInTitleOrCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
     }
 

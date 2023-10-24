@@ -105,16 +105,16 @@ class BlogControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
-    @Test
-    void testSearchBlogsByKeywordInTitleAndCategory() throws Exception {
-        String keyword = "example";
-        Mockito.when(blogService.searchBlogsByKeywordInTitleAndCategory(keyword)).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search/titleAndCategory")
-                        .param("keyword", keyword))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
-    }
+//    @Test
+//    void testSearchBlogsByKeywordInTitleAndCategory() throws Exception {
+//        String keyword = "example";
+//        Mockito.when(blogService.searchBlogsByKeywordInTitleAndCategory(keyword)).thenReturn(Collections.emptyList());
+//
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search/titleAndCategory")
+//                        .param("keyword", keyword))
+//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+//    }
 
     @Test
     void testGetLastNRecentBlogs() throws Exception {

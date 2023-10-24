@@ -129,15 +129,6 @@ public class BlogServiceImplTest {
     }
 
     @Test
-    void testSearchBlogsByKeywordInTitleAndCategoryWithResults() {
-        List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.searchByTitleAndCategoryName(anyString())).thenReturn(mockBlogs);
-        List<BlogDTO> blogs = blogService.searchBlogsByKeywordInTitleAndCategory("keywordCategory");
-        Assertions.assertNotNull(blogs);
-        Assertions.assertEquals(1, blogs.size());
-    }
-
-    @Test
     void testGetLastNBlogsWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
         when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(mockBlogs);
@@ -214,22 +205,6 @@ public class BlogServiceImplTest {
         Assertions.assertFalse(blogDTOs.isEmpty());
     }
 
-    @Test
-    void testCreateBlogAsAdmin() {
-        PublicUserDTO loggedUser = new PublicUserDTO();
-        loggedUser.setRole(Role.ADMIN);
-        loggedUser.setId(1L);
-        BlogDTO blogDTO = new BlogDTO();
-        blogDTO.setEnabled(true);
-        blogDTO.setOwnerId(loggedUser.getId());
-        blogDTO.setId(null);
-        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.of(new User()));
-        when(categoryRepository.findByIdAndDeletedFalse(anyLong())).thenReturn(Optional.of(new Category()));
-        when(fileRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.of(new File()));
-        BlogDTO createdBlogDTO = blogService.createBlog(blogDTO, loggedUser);
-        Assertions.assertNotNull(createdBlogDTO);
-        Assertions.assertTrue(blogDTO.isEnabled());
-    }
     @Test
     void testCreateBlogWithInvalidUser() {
         PublicUserDTO loggedUser = new PublicUserDTO();

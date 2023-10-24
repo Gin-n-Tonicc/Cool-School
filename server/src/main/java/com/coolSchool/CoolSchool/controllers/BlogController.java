@@ -70,8 +70,12 @@ public class BlogController {
     }
 
     @GetMapping("/search/titleAndCategory")
-    public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordInTitleAndCategory(@RequestParam("keyword") String keyword) {
-        return ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(keyword));
+    public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordInTitleAndCategory(@RequestParam("keywordTitle") String keywordTitle, @RequestParam("keywordCategory") String keywordCategory) {
+        return ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(keywordTitle, keywordCategory));
+    }
+    @GetMapping("/search/titleOrCategory")
+    public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordInTitleOrCategory(@RequestParam("keywordTitle") String keywordTitle, @RequestParam("keywordCategory") String keywordCategory) {
+        return ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleOrCategory(keywordTitle, keywordCategory));
     }
 
     @GetMapping("/mostRecent/{n}")
