@@ -4,22 +4,36 @@ import { v4 as uuidV4 } from 'uuid';
 import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
 import * as paginationUtils from '../../../utils/page';
 import { camelCaseToWords } from '../../../utils/stringUtils';
+import AdminEditForm, {
+  OnUpdateFunction,
+} from '../admin-edit-form/AdminEditForm';
 import './AdminTable.scss';
-import AdminTablePagination from './admin-table-pagination/AdminTablePagination';
+import AdminTablePagination, {
+  SwitchPageFunction,
+  TogglePageFunction,
+} from './admin-table-pagination/AdminTablePagination';
 import AdminTableSearch, {
   AdminSearchValues,
 } from './admin-table-search/AdminTableSearch';
 
-export type TogglePageFunction = (page: number) => void;
-export type SwitchPageFunction = () => void;
+export type OnDeleteFunction = (id: number) => void;
 
-export type AdminTableProps = {
+interface AdminTableProps {
   tableName: string;
   list: IObjectWithId[];
   create: boolean;
-};
+  update: boolean;
+  delete: boolean;
+  onDelete: OnDeleteFunction;
+  onUpdate: OnUpdateFunction;
+}
 
-function TableTitle(props: { tableName: string; isEmpty: boolean }) {
+interface AdminTableTitleProps {
+  tableName: string;
+  isEmpty: boolean;
+}
+
+function TableTitle(props: AdminTableTitleProps) {
   return (
     <h4 className="text-blue h4">
       {props.tableName} Table{props.isEmpty && ' - No current records'}
@@ -38,9 +52,12 @@ function CreateButton() {
 const PAGE_SIZE = 5;
 
 export default function AdminTable(props: AdminTableProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentObj, setCurrentObj] = useState<IObjectWithId>({ id: -1 });
+
   const [filteredList, setFilteredList] = useState(props.list);
   const [list, setList] = useState<IObjectWithId[]>(props.list);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
 
   useEffect(() => {
@@ -63,8 +80,17 @@ export default function AdminTable(props: AdminTableProps) {
     setCurrentPage(validatePage(currentPage));
   }, [pages]);
 
-  const columns = Object.keys(props.list[0]);
-  const columnsLowercased = columns.map((x) => x.toLowerCase());
+  const [columns, columnsLowercased] = useMemo(() => {
+    let columns: string[];
+
+    try {
+      columns = Object.keys(props.list[0]);
+    } catch {
+      columns = [];
+    }
+
+    return [columns, columns.map((x) => x.toLowerCase())];
+  }, [props.list]);
 
   const togglePage: TogglePageFunction = useCallback(
     (page: number) => {
@@ -103,6 +129,42 @@ export default function AdminTable(props: AdminTableProps) {
     setFilteredList(filteredList);
   }, []);
 
+  const openEdit = () => {
+    setIsEditing(true);
+  };
+
+  const closeEdit = () => {
+    setIsEditing(false);
+  };
+
+  const onUpdate = useCallback(
+    (id: number) => {
+      if (isEditing && currentObj.id === id) {
+        return closeEdit();
+      }
+
+      const foundObj = props.list.find((x) => x.id === id);
+
+      if (foundObj) {
+        openEdit();
+        setCurrentObj(foundObj);
+      } else {
+        closeEdit();
+      }
+    },
+    [isEditing, currentObj]
+  );
+
+  const onDelete = useCallback((id: number) => {
+    const confirmation = window.confirm(
+      `Are you sure you want to delete row with ID=${id}?`
+    );
+
+    if (confirmation) {
+      props.onDelete(id);
+    }
+  }, []);
+
   return (
     <div className="pd-20 card-box mb-30 admin-table section_margin">
       <div className="clearfix mb-20 d-flex flex-column justify-content-center align-items-center">
@@ -122,27 +184,50 @@ export default function AdminTable(props: AdminTableProps) {
           </thead>
           <tbody>
             {list.map((x) => (
-              <tr key={x.id}>
+              <tr className="table-admin-row" key={x.id}>
                 {Object.values(x).map((x) => (
-                  <td key={uuidV4()}>{x}</td>
+                  <td key={uuidV4()}>{`${x}`}</td>
                 ))}
+                <td className="control-buttons">
+                  {props.update && (
+                    <a onClick={onUpdate.bind(null, x.id)}>
+                      <i className="fas fa-pen"></i>
+                    </a>
+                  )}
+
+                  {props.delete && (
+                    <a onClick={onDelete.bind(null, x.id)}>
+                      <i className="fas fa-minus-circle"></i>
+                    </a>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className="d-flex flex-row justify-content-between">
-        <AdminTablePagination
-          currentPage={currentPage}
-          pageCount={pages}
-          togglePage={togglePage}
-          previousPage={previousPage}
-          nextPage={nextPage}
-        />
-        <AdminTableSearch
-          onSubmit={onSearch}
-          columnsLowercased={columnsLowercased}
-        />
+      <div>
+        <div className="d-flex flex-row justify-content-between">
+          <AdminTablePagination
+            currentPage={currentPage}
+            pageCount={pages}
+            togglePage={togglePage}
+            previousPage={previousPage}
+            nextPage={nextPage}
+          />
+          <AdminTableSearch
+            onSubmit={onSearch}
+            columnsLowercased={columnsLowercased}
+          />
+        </div>
+        {isEditing && (
+          <AdminEditForm
+            currentObj={currentObj}
+            columns={columns.filter((x) => x !== 'id')}
+            onUpdate={props.onUpdate}
+            closeEdit={closeEdit}
+          />
+        )}
       </div>
     </div>
   );

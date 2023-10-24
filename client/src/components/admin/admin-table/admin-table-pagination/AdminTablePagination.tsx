@@ -1,4 +1,5 @@
-import { SwitchPageFunction, TogglePageFunction } from '../AdminTable';
+export type TogglePageFunction = (page: number) => void;
+export type SwitchPageFunction = () => void;
 
 interface AdminTablePaginationProps {
   currentPage: number;

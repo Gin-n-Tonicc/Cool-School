@@ -7,6 +7,24 @@
   -moz-box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.08);
   box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.08);
 
+  .table-admin-row {
+    position: relative;
+
+    .control-buttons {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      right: 0px;
+      height: 100%;
+
+      a {
+        z-index: 1000;
+        cursor: pointer;
+      }
+    }
+  }
+
   .admin-pagination .page-item .page-link {
     color: rgb(69, 69, 69);
     cursor: pointer;
