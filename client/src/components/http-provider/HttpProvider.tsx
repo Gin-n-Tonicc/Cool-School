@@ -75,7 +75,7 @@ export default function HttpProvider({ children }: PropsWithChildren) {
           }
 
           const message = response.data.message || '';
-          addError({ message, unmountAfter: 10000 });
+          addError(message);
         }
 
         return response;

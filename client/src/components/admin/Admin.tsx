@@ -4,11 +4,11 @@ import useAuthenticate from '../../hooks/useAuthenticate';
 import { PagesEnum } from '../../types/enums/PagesEnum';
 import { RolesEnum } from '../../types/enums/RolesEnum';
 import Spinner from '../common/spinner/Spinner';
-import AdminTable from './admin-table/AdminTable';
+import AdminTableApi from './admin-table-api/AdminTableApi';
 
 export default function Admin() {
   const { user, loading } = useAuthenticate(false);
-  const desiredRole = useMemo(() => RolesEnum.USER, []);
+  const desiredRole = useMemo(() => RolesEnum.ADMIN, []);
 
   return (
     <>
@@ -26,18 +26,16 @@ export default function Admin() {
 // ----------------------------------------------------------------------
 
 function AdminView() {
-  const mockedUsers2 = [...Array(10)].map((_, i) => ({
-    username: `username${i + 1}`,
-    id: i + 1,
-    firstname: `firstname${i + 1}`,
-    email: `email${i + 1}`,
-    role: RolesEnum.USER,
-  }));
-
   return (
     <>
       <div className="container">
-        <AdminTable tableName="Users" list={mockedUsers2} create={false} />
+        <AdminTableApi
+          tableName="Users"
+          apiPathname="/users"
+          create={false}
+          delete={true}
+          update={true}
+        />
       </div>
     </>
   );

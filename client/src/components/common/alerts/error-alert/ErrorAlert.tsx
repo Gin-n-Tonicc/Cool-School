@@ -42,7 +42,7 @@ export default function ErrorAlert({
           <span className="sr-only">Close</span>
         </button>
         <i className="start-icon far fa-times-circle faa-pulse animated"></i>
-        <strong className="font__weight-semibold">Oh snap! </strong>
+        <strong className="font__weight-semibold">Error! </strong>
         {message}
       </div>
     </div>
