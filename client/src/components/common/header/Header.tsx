@@ -31,7 +31,6 @@ function UserNav({ isAuthenticated }: { isAuthenticated: boolean }) {
       <HeaderNavItem text="Courses" pathName={PagesEnum.Courses} />
       <HeaderNavItem text="Blog" pathName={PagesEnum.Blog} />
       <HeaderNavItem text="Contact" pathName={PagesEnum.Contact} />
-      <HeaderNavItem text="Admin" pathName={PagesEnum.Admin} />
       {isAuthenticated ? <UserLinks /> : <GuestLinks />}
     </ul>
   );
@@ -40,8 +39,14 @@ function UserNav({ isAuthenticated }: { isAuthenticated: boolean }) {
 function AdminNav() {
   return (
     <ul className="navbar-nav align-items-center">
-      <HeaderNavItem text="Users" pathName="/admin/users" />
-      <HeaderNavItem text="Categories" pathName="/admin/categories" />
+      <HeaderNavItem
+        text="Users"
+        pathName={`${PagesEnum.Admin}/${AdminPagesEnum.USERS}`}
+      />
+      <HeaderNavItem
+        text="Categories"
+        pathName={`${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`}
+      />
     </ul>
   );
 }
@@ -64,10 +69,6 @@ export default function Header() {
   );
 
   const location = useLocation();
-
-  // if (PagesEnum.Admin.toString().includes(location.pathname)) {
-  //   return <></>;
-  // }
 
   let headerClasses = 'main_menu ';
 
