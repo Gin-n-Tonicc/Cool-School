@@ -37,6 +37,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             "AND b.deleted = false " +
             "AND b.isEnabled = true")
     List<Blog> searchBlogsByKeywordInTitleAndCategory(String titleKeyword, String categoryKeyword);
+
     @Query("SELECT b FROM Blog b " +
             "JOIN b.categoryId c " +
             "WHERE lower(b.title) like lower(concat('%', :titleKeyword, '%')) " +

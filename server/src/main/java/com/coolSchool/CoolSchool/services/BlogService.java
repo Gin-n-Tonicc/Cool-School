@@ -25,6 +25,6 @@ public interface BlogService {
     List<BlogDTO> searchBlogsByKeywordCategory(String keyword);
 
     List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keywordTitle, String keywordForCategory);
-    List<BlogDTO> searchBlogsByKeywordInTitleOrCategory(String keywordTitle, String keywordForCategory);
+
     List<BlogDTO> getLastNBlogs(int n);
 }

@@ -98,6 +98,7 @@ class CommentControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
+
     @Test
     void testDeleteCommentById() throws Exception {
         Long commentId = 1L;
