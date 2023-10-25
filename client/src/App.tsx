@@ -1,5 +1,8 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Admin from './components/admin/Admin';
+import AdminTableCategories from './components/admin/admin-tables/AdminTableCategories';
+import AdminTableDefault from './components/admin/admin-tables/AdminTableDefault';
+import AdminTableUsers from './components/admin/admin-tables/AdminTableUsers';
 import Authenticate from './components/auth/authenticate/Authenticate';
 import Login from './components/auth/login/Login';
 import Logout from './components/auth/logout/Logout';
@@ -20,6 +23,7 @@ import Quizzes from './components/quizzes/Quizzes';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
 import './styles/style.scss';
+import { AdminPagesEnum } from './types/enums/AdminPagesEnum';
 import { PagesEnum } from './types/enums/PagesEnum';
 
 function App() {
@@ -52,7 +56,21 @@ function App() {
                       <Route path={PagesEnum.Quizzes} element={<Quizzes />} />
 
                       {/* Admin does it's own auth check on load */}
-                      <Route path={PagesEnum.Admin} element={<Admin />} />
+                      <Route path={PagesEnum.Admin} element={<Admin />}>
+                        <Route index element={<AdminTableDefault />} />
+                        <Route
+                          path={AdminPagesEnum.USERS}
+                          element={<AdminTableUsers />}
+                        />
+                        <Route
+                          path={AdminPagesEnum.CATEGORIES}
+                          element={<AdminTableCategories />}
+                        />
+                        <Route
+                          path="*"
+                          element={<Navigate to={PagesEnum.NotFound} />}
+                        />
+                      </Route>
                     </Route>
 
                     <Route path="*" element={<NotFound />} />

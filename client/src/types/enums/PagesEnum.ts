@@ -8,4 +8,5 @@ export enum PagesEnum {
   Courses = '/courses',
   Blog = '/blog',
   Admin = '/admin',
+  NotFound = '/not-found',
 }

@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CachePolicies, useFetch } from 'use-http';
+import { CachePolicies, Res, useFetch } from 'use-http';
 import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
 import Spinner from '../../common/spinner/Spinner';
-import { OnUpdateFunction } from '../admin-edit-form/AdminEditForm';
+import {
+  OnCreateFunction,
+  OnUpdateFunction,
+} from '../admin-edit-form/AdminEditForm';
 import AdminTable, { OnDeleteFunction } from '../admin-table/AdminTable';
 
 interface AdminTableApiProps {
@@ -22,19 +25,26 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     response: getResponse,
     loading,
     get,
-  } = useFetch<IObjectWithId[]>(`${baseUrl}${props.apiPathname}/`, {
+  } = useFetch<IObjectWithId[]>(`${baseUrl}${props.apiPathname}/all`, {
     cachePolicy: CachePolicies.NO_CACHE,
   });
 
-  const { response: delResponse, del } = useFetch<void>(
-    `${baseUrl}${props.apiPathname}/delete`,
+  const { response: postResponse, post } = useFetch<IObjectWithId>(
+    `${baseUrl}${props.apiPathname}/create`,
     {
       cachePolicy: CachePolicies.NO_CACHE,
     }
   );
 
   const { response: putResponse, put } = useFetch<IObjectWithId>(
-    `${baseUrl}${props.apiPathname}/update`,
+    `${baseUrl}${props.apiPathname}`,
+    {
+      cachePolicy: CachePolicies.NO_CACHE,
+    }
+  );
+
+  const { response: delResponse, del } = useFetch<void>(
+    `${baseUrl}${props.apiPathname}`,
     {
       cachePolicy: CachePolicies.NO_CACHE,
     }
@@ -48,37 +58,52 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     } else {
       setRows([]);
     }
-  }, []);
+  }, [get, getResponse]);
 
   useEffect(() => {
     loadRows();
   }, []);
 
-  const onUpdate: OnUpdateFunction = useCallback(
-    async (id: number, data: Object) => {
-      const obj = await put(`/${id}`, data);
+  const onCrud = useCallback(
+    async (response: Res<any>, message: string) => {
+      if (response.ok) {
+        const promise = loadRows();
+        window.alert(message);
 
-      if (putResponse.ok) {
-        await loadRows();
-        window.alert(`Successfully updated row with ID=${id}`);
+        await promise;
         return true;
       }
 
       return false;
     },
-    [putResponse]
+    [loadRows]
+  );
+
+  const onCreate: OnCreateFunction = useCallback(
+    async (data: Object) => {
+      const obj = await post(data);
+      return onCrud(
+        postResponse,
+        `Successfully created record with ID=${obj.id}`
+      );
+    },
+    [postResponse, onCrud, post]
+  );
+
+  const onUpdate: OnUpdateFunction = useCallback(
+    async (id: number, data: Object) => {
+      await put(`/${id}`, data);
+      return onCrud(putResponse, `Successfully updated record with ID=${id}`);
+    },
+    [putResponse, onCrud, put]
   );
 
   const onDelete: OnDeleteFunction = useCallback(
     async (id: number) => {
       await del(`/${id}`);
-
-      if (delResponse.ok) {
-        await loadRows();
-        window.alert(`Successfully deleted row with ID=${id}`);
-      }
+      onCrud(delResponse, `Successfully deleted record with ID=${id}`);
     },
-    [delResponse]
+    [delResponse, onCrud, del]
   );
 
   if (loading) {
@@ -87,13 +112,14 @@ export default function AdminTableApi(props: AdminTableApiProps) {
 
   return (
     <AdminTable
-      tableName="Users"
+      tableName={props.tableName}
       list={rows}
       create={props.create}
       update={props.update}
       delete={props.delete}
       onDelete={onDelete}
       onUpdate={onUpdate}
+      onCreate={onCreate}
     />
   );
 }

@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import useAuthenticate from '../../hooks/useAuthenticate';
 import { PagesEnum } from '../../types/enums/PagesEnum';
 import { RolesEnum } from '../../types/enums/RolesEnum';
 import Spinner from '../common/spinner/Spinner';
-import AdminTableApi from './admin-table-api/AdminTableApi';
 
 export default function Admin() {
   const { user, loading } = useAuthenticate(false);
@@ -29,13 +28,7 @@ function AdminView() {
   return (
     <>
       <div className="container">
-        <AdminTableApi
-          tableName="Users"
-          apiPathname="/users"
-          create={false}
-          delete={true}
-          update={true}
-        />
+        <Outlet />
       </div>
     </>
   );

@@ -20,19 +20,19 @@ import java.util.List;
 public class UserController {
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/all")
     @PreAuthorize("hasAuthority('admin:read')")
     public ResponseEntity<List<AdminUserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('admin:update')")
     public ResponseEntity<AdminUserDTO> updateUser(@PathVariable("id") Long id, @Valid @RequestBody AdminUserDTO userDTO, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(userService.updateUser(id, userDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('admin:delete')")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
         userService.deleteUserById(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));

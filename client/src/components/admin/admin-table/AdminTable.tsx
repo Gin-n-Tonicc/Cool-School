@@ -5,6 +5,7 @@ import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
 import * as paginationUtils from '../../../utils/page';
 import { camelCaseToWords } from '../../../utils/stringUtils';
 import AdminEditForm, {
+  OnCreateFunction,
   OnUpdateFunction,
 } from '../admin-edit-form/AdminEditForm';
 import './AdminTable.scss';
@@ -26,11 +27,16 @@ interface AdminTableProps {
   delete: boolean;
   onDelete: OnDeleteFunction;
   onUpdate: OnUpdateFunction;
+  onCreate: OnCreateFunction;
 }
 
 interface AdminTableTitleProps {
   tableName: string;
   isEmpty: boolean;
+}
+
+interface CreateButtonProps {
+  onCreate: () => void;
 }
 
 function TableTitle(props: AdminTableTitleProps) {
@@ -41,9 +47,13 @@ function TableTitle(props: AdminTableTitleProps) {
   );
 }
 
-function CreateButton() {
+function CreateButton(props: CreateButtonProps) {
   return (
-    <span className="admin-btn btn_1" rel="content-y" role="button">
+    <span
+      className="admin-btn btn_1"
+      rel="content-y"
+      role="button"
+      onClick={() => props.onCreate()}>
       <i className="fa fa-plus"></i> CREATE
     </span>
   );
@@ -53,6 +63,7 @@ const PAGE_SIZE = 5;
 
 export default function AdminTable(props: AdminTableProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [currentObj, setCurrentObj] = useState<IObjectWithId>({ id: -1 });
 
   const [filteredList, setFilteredList] = useState(props.list);
@@ -129,18 +140,35 @@ export default function AdminTable(props: AdminTableProps) {
     setFilteredList(filteredList);
   }, []);
 
+  const openCreate = () => {
+    setCurrentObj({ id: -1 });
+    setIsEditing(false);
+    setIsCreating(true);
+  };
+
   const openEdit = () => {
+    setIsCreating(false);
     setIsEditing(true);
   };
 
-  const closeEdit = () => {
+  const closeForm = () => {
+    setCurrentObj({ id: -1 });
+    setIsCreating(false);
     setIsEditing(false);
   };
+
+  const onCreate = useCallback(() => {
+    if (isCreating) {
+      return closeForm();
+    }
+
+    openCreate();
+  }, [isCreating]);
 
   const onUpdate = useCallback(
     (id: number) => {
       if (isEditing && currentObj.id === id) {
-        return closeEdit();
+        return closeForm();
       }
 
       const foundObj = props.list.find((x) => x.id === id);
@@ -149,7 +177,7 @@ export default function AdminTable(props: AdminTableProps) {
         openEdit();
         setCurrentObj(foundObj);
       } else {
-        closeEdit();
+        closeForm();
       }
     },
     [isEditing, currentObj]
@@ -169,7 +197,7 @@ export default function AdminTable(props: AdminTableProps) {
     <div className="pd-20 card-box mb-30 admin-table section_margin">
       <div className="clearfix mb-20 d-flex flex-column justify-content-center align-items-center">
         <TableTitle tableName={props.tableName} isEmpty={pages === 0} />
-        {props.create && <CreateButton />}
+        {props.create && <CreateButton onCreate={onCreate} />}
       </div>
       <div className="table-responsive">
         <table className="table table-striped">
@@ -220,12 +248,15 @@ export default function AdminTable(props: AdminTableProps) {
             columnsLowercased={columnsLowercased}
           />
         </div>
-        {isEditing && (
+        {(isEditing || isCreating) && (
           <AdminEditForm
             currentObj={currentObj}
             columns={columns.filter((x) => x !== 'id')}
             onUpdate={props.onUpdate}
-            closeEdit={closeEdit}
+            onCreate={props.onCreate}
+            closeEdit={closeForm}
+            editing={isEditing}
+            creating={isCreating}
           />
         )}
       </div>

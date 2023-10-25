@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import logo from '../../../images/logo.png';
+import { AdminPagesEnum } from '../../../types/enums/AdminPagesEnum';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
@@ -23,6 +24,28 @@ function UserLinks() {
   );
 }
 
+function UserNav({ isAuthenticated }: { isAuthenticated: boolean }) {
+  return (
+    <ul className="navbar-nav align-items-center">
+      <HeaderNavItem text="Home" pathName={PagesEnum.Home} />
+      <HeaderNavItem text="Courses" pathName={PagesEnum.Courses} />
+      <HeaderNavItem text="Blog" pathName={PagesEnum.Blog} />
+      <HeaderNavItem text="Contact" pathName={PagesEnum.Contact} />
+      <HeaderNavItem text="Admin" pathName={PagesEnum.Admin} />
+      {isAuthenticated ? <UserLinks /> : <GuestLinks />}
+    </ul>
+  );
+}
+
+function AdminNav() {
+  return (
+    <ul className="navbar-nav align-items-center">
+      <HeaderNavItem text="Users" pathName="/admin/users" />
+      <HeaderNavItem text="Categories" pathName="/admin/categories" />
+    </ul>
+  );
+}
+
 export default function Header() {
   const { isAuthenticated } = useAuthContext();
 
@@ -34,6 +57,8 @@ export default function Header() {
         PagesEnum.Register,
         PagesEnum.Logout,
         PagesEnum.Admin,
+        `${PagesEnum.Admin}/${AdminPagesEnum.USERS}`,
+        `${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`,
       ].map((x) => x.toString()),
     []
   );
@@ -77,12 +102,11 @@ export default function Header() {
                   className="collapse navbar-collapse main-menu-item justify-content-end"
                   id="navbarSupportedContent">
                   <ul className="navbar-nav align-items-center">
-                    <HeaderNavItem text="Home" pathName="/" />
-                    <HeaderNavItem text="Courses" pathName="/courses" />
-                    <HeaderNavItem text="Blog" pathName="/blog" />
-                    <HeaderNavItem text="Contact" pathName="/contact" />
-                    <HeaderNavItem text="Admin" pathName="/admin" />
-                    {isAuthenticated ? <UserLinks /> : <GuestLinks />}
+                    {location.pathname.includes(PagesEnum.Admin) ? (
+                      <AdminNav />
+                    ) : (
+                      <UserNav isAuthenticated={isAuthenticated} />
+                    )}
                   </ul>
                 </div>
               </nav>
