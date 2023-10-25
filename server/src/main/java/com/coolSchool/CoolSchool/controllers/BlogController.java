@@ -61,7 +61,7 @@ public class BlogController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<BlogDTO>> searchBlogs(@RequestParam("title") Optional<String> title, @RequestParam("category") Optional<String> category) {
+    public ResponseEntity<List<BlogDTO>> searchBlogs(@RequestParam("title") Optional<String> title, @RequestParam("category") Optional<String> category, HttpServletRequest httpServletRequest) {
         if (title.isPresent() && category.isPresent()) {
             ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(title.get(), category.get()));
         }
@@ -71,7 +71,7 @@ public class BlogController {
         if (title.isEmpty() && category.isPresent()) {
             return ResponseEntity.ok(blogService.searchBlogsByKeywordCategory(category.get()));
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(blogService.getAllBlogs((PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
     @GetMapping("/mostRecent/{n}")

@@ -160,7 +160,7 @@ class BlogControllerIntegrationTest {
     public void testSearchBlogsWithNeitherTitleNorCategory() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
