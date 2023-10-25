@@ -43,6 +43,7 @@ function App() {
                     <Route path={PagesEnum.Courses} element={<Courses />} />
                     <Route path={PagesEnum.Blog} element={<Blog />} />
                     <Route path={PagesEnum.Contact} element={<ContactUs />} />
+                    <Route path={PagesEnum.NotFound} element={<NotFound />} />
 
                     {/* Only guests */}
                     <Route element={<ProtectedRoute onlyUser={false} />}>
@@ -73,7 +74,10 @@ function App() {
                       </Route>
                     </Route>
 
-                    <Route path="*" element={<NotFound />} />
+                    <Route
+                      path="*"
+                      element={<Navigate to={PagesEnum.NotFound} />}
+                    />
                   </Routes>
                 </Authenticate>
               </HttpProvider>
