@@ -36,8 +36,7 @@ export default function AdminTableSearch(props: AdminTableSearchProps) {
           return acc;
         }
 
-        let newKey = key.toLowerCase().trim();
-        if (!props.columnsLowercased.includes(newKey)) {
+        if (!props.columnsLowercased.includes(key)) {
           return acc;
         }
 
@@ -50,7 +49,7 @@ export default function AdminTableSearch(props: AdminTableSearchProps) {
         }
 
         const objToMerge: AdminSearchValues = {};
-        objToMerge[newKey] = newValue;
+        objToMerge[key.toLowerCase().trim()] = newValue;
 
         return Object.assign(acc, objToMerge);
       }, {});
