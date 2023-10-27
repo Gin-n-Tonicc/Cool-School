@@ -4,13 +4,13 @@ import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.CoolSchool.models.dto.auth.AdminUserDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
