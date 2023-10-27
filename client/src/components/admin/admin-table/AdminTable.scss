@@ -1,0 +1,77 @@
+.card-box {
+  background-color: #ffffff;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.08);
+  -moz-box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 0px 28px rgba(0, 0, 0, 0.08);
+
+  .table-admin-row {
+    position: relative;
+
+    .control-buttons {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      right: 0px;
+      height: 100%;
+
+      a {
+        z-index: 1000;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .admin-pagination .page-item .page-link {
+    color: rgb(69, 69, 69);
+    cursor: pointer;
+  }
+
+  .admin-form-group .form-control {
+    padding-left: 2.375rem;
+  }
+
+  .admin-form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+  }
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.admin-table {
+  width: 100%;
+  padding: 1rem;
+}
+
+.clearfix {
+  margin: 1rem 1rem;
+
+  h4.h4 {
+    font-size: 2rem;
+  }
+
+  .admin-btn {
+    cursor: pointer;
+  }
+}
+
+.active-page {
+  color: #ee390f !important;
+}

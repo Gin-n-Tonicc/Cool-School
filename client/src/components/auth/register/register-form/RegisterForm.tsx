@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../../../contexts/AuthContext';
-import { IAuthResponse } from '../../../../interfaces/IAuthResponse';
+import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
 import {
   ADDRESS_VALIDATIONS,
   EMAIL_VALIDATIONS,
@@ -15,6 +15,10 @@ import {
 } from '../../../../utils/validationConstants';
 import FormInput from '../../../common/form-input/FormInput';
 
+type RegisterFormProps = {
+  redirectTo: string | null;
+};
+
 type Inputs = {
   'First Name': string;
   'Last Name': string;
@@ -25,7 +29,7 @@ type Inputs = {
   'Repeat your password': string;
 };
 
-export default function RegisterForm() {
+export default function RegisterForm({ redirectTo }: RegisterFormProps) {
   const navigate = useNavigate();
   const { loginUser } = useAuthContext();
   const { post, response } = useFetch<IAuthResponse>(
@@ -87,7 +91,12 @@ export default function RegisterForm() {
     if (response.ok) {
       reset();
       loginUser(user);
-      navigate('/');
+
+      if (redirectTo) {
+        navigate(redirectTo);
+      } else {
+        navigate('/');
+      }
     }
   };
 

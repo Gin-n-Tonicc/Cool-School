@@ -2,12 +2,16 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../../../contexts/AuthContext';
-import { IAuthResponse } from '../../../../interfaces/IAuthResponse';
+import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
 import {
   EMAIL_VALIDATIONS,
   PASSWORD_VALIDATIONS,
 } from '../../../../utils/validationConstants';
 import FormInput from '../../../common/form-input/FormInput';
+
+type LoginFormProps = {
+  redirectTo: string | null;
+};
 
 type Inputs = {
   Email: string;
@@ -15,15 +19,16 @@ type Inputs = {
   rememberMe: boolean;
 };
 
-export default function LoginForm() {
+export default function LoginForm({ redirectTo }: LoginFormProps) {
   const navigate = useNavigate();
+
   const { loginUser } = useAuthContext();
   const { post, response } = useFetch<IAuthResponse>(
     `${process.env.REACT_APP_API_URL}/auth/authenticate`,
     { cachePolicy: CachePolicies.NO_CACHE }
   );
 
-  const { register, handleSubmit, control, reset } = useForm<Inputs>({
+  const { handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: {
       Email: '',
       Password: '',
@@ -40,7 +45,12 @@ export default function LoginForm() {
     if (response.ok) {
       reset();
       loginUser(user);
-      navigate('/');
+
+      if (redirectTo) {
+        navigate(redirectTo);
+      } else {
+        navigate('/');
+      }
     }
   };
 

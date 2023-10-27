@@ -6,14 +6,15 @@ import {
   useState,
 } from 'react';
 import { v4 as uuidV4 } from 'uuid';
-import { IError } from '../interfaces/IError';
+import { IError } from '../types/interfaces/IError';
 
 const ErrorContext = createContext<null | ErrorContextType>(null);
 const maxErrors = 3;
+const unmountAfter = 10000;
 
 type ErrorContextType = {
   errors: IError[];
-  addError: (error: Omit<IError, 'id'>) => void;
+  addError: (error: string) => void;
   deleteError: (errorId: IError['id']) => void;
   clearErrors: () => void;
 };
@@ -22,7 +23,11 @@ export const ErrorProvider = ({ children }: PropsWithChildren) => {
   const [errors, setErrors] = useState<ErrorContextType['errors']>([]);
 
   const addError: ErrorContextType['addError'] = useCallback((error) => {
-    const newError = { ...error, id: `error-${uuidV4()}` };
+    const newError: IError = {
+      message: error,
+      unmountAfter: unmountAfter,
+      id: `error-${uuidV4()}`,
+    };
 
     setErrors((errors) => {
       if (errors.length >= maxErrors) {

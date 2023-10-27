@@ -1,8 +1,8 @@
 import { PropsWithChildren, createContext, useContext } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { IAuthResponse } from '../interfaces/IAuthResponse';
-import { IAuthStorage } from '../interfaces/IAuthStorage';
-import { IUser } from '../interfaces/IUser';
+import { IAuthResponse } from '../types/interfaces/IAuthResponse';
+import { IAuthStorage } from '../types/interfaces/IAuthStorage';
+import { IUser } from '../types/interfaces/IUser';
 import { isJwtExpired } from '../utils/jwtUtils';
 
 type AuthContextType = {
@@ -34,9 +34,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       accessToken,
       refreshToken,
       email: user.email,
-      _id: user._id,
+      id: user.id,
       username: user.username,
       firstname: user.firstname,
+      role: user.role,
     });
   };
 

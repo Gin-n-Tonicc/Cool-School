@@ -1,4 +1,8 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import Admin from './components/admin/Admin';
+import AdminTableCategories from './components/admin/admin-tables/AdminTableCategories';
+import AdminTableDefault from './components/admin/admin-tables/AdminTableDefault';
+import AdminTableUsers from './components/admin/admin-tables/AdminTableUsers';
 import Authenticate from './components/auth/authenticate/Authenticate';
 import Login from './components/auth/login/Login';
 import Logout from './components/auth/logout/Logout';
@@ -15,9 +19,12 @@ import Home from './components/home/Home';
 import HttpProvider from './components/http-provider/HttpProvider';
 import NavigationMiddleware from './components/navigation-middleware/NavigationMiddleware';
 import NotFound from './components/not-found/NotFound';
+import Quizzes from './components/quizzes/Quizzes';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
 import './styles/style.scss';
+import { AdminPagesEnum } from './types/enums/AdminPagesEnum';
+import { PagesEnum } from './types/enums/PagesEnum';
 
 function App() {
   return (
@@ -32,23 +39,45 @@ function App() {
                   <Header />
                   <Routes>
                     {/* Everyone */}
-                    <Route path="/" element={<Home />} />
-                    <Route path="/courses" element={<Courses />} />
-                    <Route path="/blog" element={<Blog />} />
-                    <Route path="/contact" element={<ContactUs />} />
+                    <Route path={PagesEnum.Home} element={<Home />} />
+                    <Route path={PagesEnum.Courses} element={<Courses />} />
+                    <Route path={PagesEnum.Blog} element={<Blog />} />
+                    <Route path={PagesEnum.Contact} element={<ContactUs />} />
+                    <Route path={PagesEnum.NotFound} element={<NotFound />} />
 
                     {/* Only guests */}
                     <Route element={<ProtectedRoute onlyUser={false} />}>
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
+                      <Route path={PagesEnum.Login} element={<Login />} />
+                      <Route path={PagesEnum.Register} element={<Register />} />
                     </Route>
 
                     {/* Only logged users */}
                     <Route element={<ProtectedRoute onlyUser={true} />}>
-                      <Route path="/logout" element={<Logout />} />
+                      <Route path={PagesEnum.Logout} element={<Logout />} />
+                      <Route path={PagesEnum.Quizzes} element={<Quizzes />} />
+
+                      {/* Admin does it's own auth check on load */}
+                      <Route path={PagesEnum.Admin} element={<Admin />}>
+                        <Route index element={<AdminTableDefault />} />
+                        <Route
+                          path={AdminPagesEnum.USERS}
+                          element={<AdminTableUsers />}
+                        />
+                        <Route
+                          path={AdminPagesEnum.CATEGORIES}
+                          element={<AdminTableCategories />}
+                        />
+                        <Route
+                          path="*"
+                          element={<Navigate to={PagesEnum.NotFound} />}
+                        />
+                      </Route>
                     </Route>
 
-                    <Route path="*" element={<NotFound />} />
+                    <Route
+                      path="*"
+                      element={<Navigate to={PagesEnum.NotFound} />}
+                    />
                   </Routes>
                 </Authenticate>
               </HttpProvider>

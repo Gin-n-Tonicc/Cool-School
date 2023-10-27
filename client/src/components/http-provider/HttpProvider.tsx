@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 import { CachePolicies, CustomOptions, Provider, useFetch } from 'use-http';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useErrorContext } from '../../contexts/ErrorContext';
-import { IAuthRefreshResponse } from '../../interfaces/IAuthRefreshResponse';
+import { IAuthRefreshResponse } from '../../types/interfaces/IAuthRefreshResponse';
 import { initialAuthUtils } from '../../utils/initialAuthUtils';
 import { isJwtExpired } from '../../utils/jwtUtils';
 
@@ -75,7 +75,7 @@ export default function HttpProvider({ children }: PropsWithChildren) {
           }
 
           const message = response.data.message || '';
-          addError({ message, unmountAfter: 10000 });
+          addError(message);
         }
 
         return response;
