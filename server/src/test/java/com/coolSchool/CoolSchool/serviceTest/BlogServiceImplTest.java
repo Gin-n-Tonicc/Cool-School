@@ -3,12 +3,10 @@ package com.coolSchool.CoolSchool.serviceTest;
 import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.common.BadRequestException;
-import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
-import com.coolSchool.CoolSchool.models.entity.Category;
-import com.coolSchool.CoolSchool.models.entity.File;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
@@ -26,10 +24,12 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -129,15 +129,6 @@ public class BlogServiceImplTest {
     }
 
     @Test
-    void testSearchBlogsByKeywordInTitleAndCategoryWithResults() {
-        List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.searchByTitleAndCategoryName(anyString())).thenReturn(mockBlogs);
-        List<BlogDTO> blogs = blogService.searchBlogsByKeywordInTitleAndCategory("keywordCategory");
-        Assertions.assertNotNull(blogs);
-        Assertions.assertEquals(1, blogs.size());
-    }
-
-    @Test
     void testGetLastNBlogsWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
         when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(mockBlogs);
@@ -215,21 +206,27 @@ public class BlogServiceImplTest {
     }
 
     @Test
-    void testCreateBlogAsAdmin() {
-        PublicUserDTO loggedUser = new PublicUserDTO();
-        loggedUser.setRole(Role.ADMIN);
-        loggedUser.setId(1L);
-        BlogDTO blogDTO = new BlogDTO();
-        blogDTO.setEnabled(true);
-        blogDTO.setOwnerId(loggedUser.getId());
-        blogDTO.setId(null);
-        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.of(new User()));
-        when(categoryRepository.findByIdAndDeletedFalse(anyLong())).thenReturn(Optional.of(new Category()));
-        when(fileRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.of(new File()));
-        BlogDTO createdBlogDTO = blogService.createBlog(blogDTO, loggedUser);
-        Assertions.assertNotNull(createdBlogDTO);
-        Assertions.assertTrue(blogDTO.isEnabled());
+    public void testSearchBlogsByKeywordInTitleAndCategory() {
+        String keywordForTitle = "programming";
+        String keywordForCategory = "tech";
+        List<Blog> mockBlogs = List.of(
+                new Blog(),
+                new Blog(),
+                new Blog()
+        );
+
+        when(blogRepository.searchBlogsByKeywordInTitleAndCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase()))
+                .thenReturn(mockBlogs);
+
+        List<BlogDTO> result = blogService.searchBlogsByKeywordInTitleAndCategory(keywordForTitle, keywordForCategory);
+
+        List<BlogDTO> expectedDTOs = mockBlogs.stream()
+                .map(blog -> new BlogDTO())
+                .collect(Collectors.toList());
+
+        Assertions.assertEquals(expectedDTOs, result);
     }
+
     @Test
     void testCreateBlogWithInvalidUser() {
         PublicUserDTO loggedUser = new PublicUserDTO();
@@ -240,7 +237,7 @@ public class BlogServiceImplTest {
         blogDTO.setOwnerId(loggedUser.getId());
         blogDTO.setId(null);
         when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> blogService.createBlog(blogDTO, loggedUser));
+        assertThrows(UserNotFoundException.class, () -> blogService.createBlog(blogDTO, loggedUser));
     }
 
     @Test

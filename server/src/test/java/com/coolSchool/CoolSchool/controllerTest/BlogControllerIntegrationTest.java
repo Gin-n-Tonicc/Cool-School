@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -60,18 +61,72 @@ class BlogControllerIntegrationTest {
     }
 
     @Test
+    public void testSearchBlogsByTitle() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search")
+                        .param("title", "programming")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    public void testGetAllBlogs() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/all")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    public void testGetBlogById() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testCreateBlog() throws Exception {
+        String validBlogDtoJson = "{ \"title\": \"Test Blog\", \"content\": \"This is a test blog.\" }";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/blogs/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validBlogDtoJson))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    public void testUpdateBlog() throws Exception {
+        String validBlogDtoJson = "{ \"title\": \"Updated Blog\", \"content\": \"This is an updated blog.\" }";
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/blogs/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validBlogDtoJson))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testSearchBlogsByCategory() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search")
+                        .param("category", "tech")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
     void testDeleteBlogById() throws Exception {
         Long blogId = 1L;
         mockMvc.perform(delete("/api/v1/blogs/{id}", blogId))
                 .andExpect(status().isOk());
     }
+
     @Test
     void testGetBlogsByNewest() throws Exception {
         Mockito.when(blogService.getBlogsByNewestFirst()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/sort/default"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -80,40 +135,32 @@ class BlogControllerIntegrationTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/sort/likes"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    void testSearchBlogsByKeywordTitle() throws Exception {
-        String keyword = "example";
-        Mockito.when(blogService.searchBlogsByKeywordTitle(keyword)).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search/title")
-                        .param("keyword", keyword))
+    public void testSearchBlogsWithTitleOnly() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search")
+                        .param("title", "TestTitle")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    void testSearchBlogsByKeywordCategory() throws Exception {
-        String keyword = "example";
-        Mockito.when(blogService.searchBlogsByKeywordCategory(keyword)).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search/category")
-                        .param("keyword", keyword))
+    public void testSearchBlogsWithCategoryOnly() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search")
+                        .param("category", "TestCategory")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    void testSearchBlogsByKeywordInTitleAndCategory() throws Exception {
-        String keyword = "example";
-        Mockito.when(blogService.searchBlogsByKeywordInTitleAndCategory(keyword)).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search/titleAndCategory")
-                        .param("keyword", keyword))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+    public void testSearchBlogsWithNeitherTitleNorCategory() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/search")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
@@ -123,6 +170,6 @@ class BlogControllerIntegrationTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/mostRecent/{n}", n))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }
