@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/blogs")
@@ -59,19 +60,18 @@ public class BlogController {
         return ResponseEntity.ok(blogService.getBlogsByMostLiked());
     }
 
-    @GetMapping("/search/title")
-    public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordTitle(@RequestParam("keyword") String keyword) {
-        return ResponseEntity.ok(blogService.searchBlogsByKeywordTitle(keyword));
-    }
-
-    @GetMapping("/search/category")
-    public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordSummary(@RequestParam("keyword") String keyword) {
-        return ResponseEntity.ok(blogService.searchBlogsByKeywordCategory(keyword));
-    }
-
-    @GetMapping("/search/titleAndCategory")
-    public ResponseEntity<List<BlogDTO>> searchBlogsByKeywordInTitleAndCategory(@RequestParam("keyword") String keyword) {
-        return ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(keyword));
+    @GetMapping("/search")
+    public ResponseEntity<List<BlogDTO>> searchBlogs(@RequestParam("title") Optional<String> title, @RequestParam("category") Optional<String> category, HttpServletRequest httpServletRequest) {
+        if (title.isPresent() && category.isPresent()) {
+            ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(title.get(), category.get()));
+        }
+        if (title.isPresent() && category.isEmpty()) {
+            return ResponseEntity.ok(blogService.searchBlogsByKeywordTitle(title.get()));
+        }
+        if (title.isEmpty() && category.isPresent()) {
+            return ResponseEntity.ok(blogService.searchBlogsByKeywordCategory(category.get()));
+        }
+        return ResponseEntity.ok(blogService.getAllBlogs((PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
     @GetMapping("/mostRecent/{n}")

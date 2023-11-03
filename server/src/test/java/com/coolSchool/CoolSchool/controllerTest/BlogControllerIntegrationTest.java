@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(value = BlogController.class,
         useDefaultFilters = false,
@@ -73,7 +74,7 @@ class BlogControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/all")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -143,7 +144,7 @@ class BlogControllerIntegrationTest {
                         .param("title", "TestTitle")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -152,7 +153,7 @@ class BlogControllerIntegrationTest {
                         .param("category", "TestCategory")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
 public interface BlogRepository extends JpaRepository<Blog, Long> {
     @Query("SELECT b FROM Blog b WHERE b.deleted = false AND b.isEnabled = true")
@@ -31,8 +30,19 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
             "WHERE c.name LIKE %:categoryName% " + "AND b.deleted = false AND b.isEnabled = true")
     List<Blog> findByCategoryIdName(String categoryName);
 
-    @Query("SELECT b FROM Blog b JOIN b.categoryId c " +
-            "WHERE (LOWER(b.title) LIKE %:keyword% OR c.name LIKE %:keyword%) " +
-            "AND b.deleted = false AND b.isEnabled = true")
-    List<Blog> searchByTitleAndCategoryName(@Param("keyword") String keyword);
+    @Query("SELECT b FROM Blog b " +
+            "JOIN b.categoryId c " +
+            "WHERE lower(b.title) like lower(concat('%', :titleKeyword, '%')) " +
+            "AND lower(c.name) like lower(concat('%', :categoryKeyword, '%')) " +
+            "AND b.deleted = false " +
+            "AND b.isEnabled = true")
+    List<Blog> searchBlogsByKeywordInTitleAndCategory(String titleKeyword, String categoryKeyword);
+
+    @Query("SELECT b FROM Blog b " +
+            "JOIN b.categoryId c " +
+            "WHERE lower(b.title) like lower(concat('%', :titleKeyword, '%')) " +
+            "OR lower(c.name) like lower(concat('%', :categoryKeyword, '%')) " +
+            "AND b.deleted = false " +
+            "AND b.isEnabled = true")
+    List<Blog> searchBlogsByKeywordInTitleOrCategory(String titleKeyword, String categoryKeyword);
 }
