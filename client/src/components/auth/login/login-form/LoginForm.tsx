@@ -1,7 +1,6 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useFetch } from 'use-http';
-import { apiUrlsConfig } from '../../../../config/apiUrls';
+import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../../../contexts/AuthContext';
 import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
 import {
@@ -24,7 +23,10 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
   const navigate = useNavigate();
 
   const { loginUser } = useAuthContext();
-  const { post, response } = useFetch<IAuthResponse>(apiUrlsConfig.auth.login);
+  const { post, response } = useFetch<IAuthResponse>(
+    `${process.env.REACT_APP_API_URL}/auth/authenticate`,
+    { cachePolicy: CachePolicies.NO_CACHE }
+  );
 
   const { handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: {

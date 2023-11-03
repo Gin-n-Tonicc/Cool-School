@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useFetch } from 'use-http';
-import { apiUrlsConfig } from '../../../../config/apiUrls';
+import { CachePolicies, useFetch } from 'use-http';
 import { useAuthContext } from '../../../../contexts/AuthContext';
 import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
 import {
@@ -34,7 +33,8 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
   const navigate = useNavigate();
   const { loginUser } = useAuthContext();
   const { post, response } = useFetch<IAuthResponse>(
-    apiUrlsConfig.auth.register
+    `${process.env.REACT_APP_API_URL}/auth/register`,
+    { cachePolicy: CachePolicies.NO_CACHE }
   );
 
   const {

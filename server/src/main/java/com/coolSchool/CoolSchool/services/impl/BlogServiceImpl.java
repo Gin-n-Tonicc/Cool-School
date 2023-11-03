@@ -6,6 +6,7 @@ import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.BadRequestException;
+import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.files.FileNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
@@ -90,7 +91,7 @@ public class BlogServiceImpl implements BlogService {
             }
             userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
             categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
-            if (blogDTO.getPictureId() != null) {
+            if(blogDTO.getPictureId()!=null) {
                 fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
             }
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
@@ -114,7 +115,7 @@ public class BlogServiceImpl implements BlogService {
         }
         if (loggedUser.getRole().equals(Role.ADMIN)) {
             blogDTO.setEnabled(blogDTO.isEnabled());
-        } else {
+        } else{
             blogDTO.setEnabled(existingBlogOptional.get().isEnabled());
         }
         Blog existingBlog = existingBlogOptional.get();
@@ -175,8 +176,8 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keywordForTitle, String keywordForCategory) {
-        List<Blog> blogs = blogRepository.searchBlogsByKeywordInTitleAndCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase());
+    public List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keyword) {
+        List<Blog> blogs = blogRepository.searchByTitleAndCategoryName(keyword.toLowerCase());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
     }
 
