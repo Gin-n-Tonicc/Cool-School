@@ -1,5 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { CachePolicies, CustomOptions, Provider, useFetch } from 'use-http';
+import { apiUrlsConfig } from '../../config/apiUrls';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useErrorContext } from '../../contexts/ErrorContext';
 import { IAuthRefreshResponse } from '../../types/interfaces/IAuthRefreshResponse';
@@ -13,11 +14,8 @@ export default function HttpProvider({ children }: PropsWithChildren) {
   const { addError } = useErrorContext();
 
   const { post, response } = useFetch<IAuthRefreshResponse>(
-    `${process.env.REACT_APP_API_URL}/auth/refresh-token`,
-    { cachePolicy: CachePolicies.NO_CACHE }
+    apiUrlsConfig.auth.refreshToken()
   );
-
-  const refreshTokenPath = '/auth/refresh-token';
 
   const removeTokensIfExpired = () => {
     if (isJwtExpired(user.accessToken)) {
@@ -48,7 +46,10 @@ export default function HttpProvider({ children }: PropsWithChildren) {
           },
         };
 
-        const isRefreshRequest = pathname.includes(refreshTokenPath);
+        const isRefreshRequest = pathname.includes(
+          apiUrlsConfig.auth.refreshTokenPath
+        );
+
         const isExpired = Boolean(user.accessToken) && !isAuthenticated;
 
         if (!isRefreshRequest && isExpired) {
@@ -81,6 +82,9 @@ export default function HttpProvider({ children }: PropsWithChildren) {
         return response;
       },
     },
+    cachePolicy: CachePolicies.NO_CACHE,
+    // default is:
+    // cachePolicy: CachePolicies.CACHE_FIRST
   };
 
   return (
