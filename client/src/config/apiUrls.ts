@@ -17,7 +17,24 @@ const authPaths = {
   me: `${baseUrl}/auth/me`,
 };
 
-export const apiUrlsConfig = {
+const blogsPaths = {
+  search: (titleSearch: string | null, categorySearch: string | null) => {
+    const url = new URL(`${baseUrl}/blogs/search`);
+
+    if (titleSearch) {
+      url.searchParams.append('title', titleSearch);
+    }
+
+    if (categorySearch) {
+      url.searchParams.append('category', categorySearch);
+    }
+
+    return url.toString();
+  },
+};
+
+export const apiUrlsConfig = Object.seal({
   admin: { ...adminPaths },
   auth: { ...authPaths },
-};
+  blogs: { ...blogsPaths },
+});

@@ -63,14 +63,17 @@ public class BlogController {
     @GetMapping("/search")
     public ResponseEntity<List<BlogDTO>> searchBlogs(@RequestParam("title") Optional<String> title, @RequestParam("category") Optional<String> category, HttpServletRequest httpServletRequest) {
         if (title.isPresent() && category.isPresent()) {
-            ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(title.get(), category.get()));
+            return ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(title.get(), category.get()));
         }
-        if (title.isPresent() && category.isEmpty()) {
+
+        if (title.isPresent()) {
             return ResponseEntity.ok(blogService.searchBlogsByKeywordTitle(title.get()));
         }
-        if (title.isEmpty() && category.isPresent()) {
+
+        if (category.isPresent()) {
             return ResponseEntity.ok(blogService.searchBlogsByKeywordCategory(category.get()));
         }
+
         return ResponseEntity.ok(blogService.getAllBlogs((PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
