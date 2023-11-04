@@ -5,6 +5,7 @@ import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
+import com.coolSchool.CoolSchool.models.dto.CategoryDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
 import com.coolSchool.CoolSchool.models.entity.User;
@@ -234,9 +235,9 @@ public class BlogServiceImplTest {
         loggedUser.setId(1L);
         BlogDTO blogDTO = new BlogDTO();
         blogDTO.setEnabled(true);
-        blogDTO.setOwnerId(loggedUser.getId());
+        blogDTO.setOwner(loggedUser);
         blogDTO.setId(null);
-        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.empty());
+        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwner().getId())).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, () -> blogService.createBlog(blogDTO, loggedUser));
     }
 
@@ -247,9 +248,11 @@ public class BlogServiceImplTest {
         loggedUser.setId(1L);
         BlogDTO blogDTO = new BlogDTO();
         blogDTO.setEnabled(true);
-        blogDTO.setOwnerId(loggedUser.getId());
+        blogDTO.setOwner(loggedUser);
+        CategoryDTO categoryDTO = new CategoryDTO(1L, "name");
+        blogDTO.setCategory(categoryDTO);
         long existingBlogId = 123L;
-        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.empty());
+        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwner().getId())).thenReturn(Optional.empty());
         assertThrows(BlogNotFoundException.class, () -> blogService.updateBlog(existingBlogId, blogDTO, loggedUser));
     }
 }

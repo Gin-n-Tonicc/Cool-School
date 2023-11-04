@@ -82,16 +82,16 @@ public class BlogServiceImpl implements BlogService {
         try {
             blogDTO.setId(null);
             blogDTO.setCreated_at(LocalDateTime.now());
-            blogDTO.setOwnerId(loggedUser.getId());
+            blogDTO.setOwner(loggedUser);
             if (loggedUser.getRole().equals(Role.ADMIN)) {
                 blogDTO.setEnabled(blogDTO.isEnabled());
             } else {
                 blogDTO.setEnabled(false);
             }
-            userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
-            categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
-            if (blogDTO.getPictureId() != null) {
-                fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
+            userRepository.findByIdAndDeletedFalse(blogDTO.getOwner().getId()).orElseThrow(UserNotFoundException::new);
+            categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategory().getId()).orElseThrow(CategoryNotFoundException::new);
+            if (blogDTO.getPicture() != null) {
+                fileRepository.findByIdAndDeletedFalse(blogDTO.getPicture().getId()).orElseThrow(FileNotFoundException::new);
             }
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
             return modelMapper.map(blogEntity, BlogDTO.class);
@@ -103,8 +103,8 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public BlogDTO updateBlog(Long id, BlogDTO blogDTO, PublicUserDTO loggedUser) {
         Optional<Blog> existingBlogOptional = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
-        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(blogDTO.getCategoryId()).orElseThrow(BlogNotFoundException::new);
-        fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
+        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(blogDTO.getCategory().getId()).orElseThrow(BlogNotFoundException::new);
+        fileRepository.findByIdAndDeletedFalse(blogDTO.getPicture().getId()).orElseThrow(FileNotFoundException::new);
         if (existingBlogOptional.isEmpty()) {
             throw new BlogNotFoundException();
         }
