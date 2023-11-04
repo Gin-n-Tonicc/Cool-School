@@ -93,6 +93,7 @@ public class BlogServiceImpl implements BlogService {
             if (blogDTO.getPicture() != null) {
                 fileRepository.findByIdAndDeletedFalse(blogDTO.getPicture().getId()).orElseThrow(FileNotFoundException::new);
             }
+            blogDTO.setCommentCount(0);
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
             return modelMapper.map(blogEntity, BlogDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -118,6 +119,7 @@ public class BlogServiceImpl implements BlogService {
             blogDTO.setEnabled(existingBlogOptional.get().isEnabled());
         }
         Blog existingBlog = existingBlogOptional.get();
+        blogDTO.setCommentCount(existingBlog.getCommentCount());
         modelMapper.map(blogDTO, existingBlog);
 
         try {
@@ -190,4 +192,5 @@ public class BlogServiceImpl implements BlogService {
         }
         throw new BadRequestException();
     }
+
 }

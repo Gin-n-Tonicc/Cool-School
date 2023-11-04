@@ -23,4 +23,5 @@ public class BlogDTO {
     private PublicUserDTO owner;
     private CategoryDTO category;
     private boolean isEnabled;
+    private Integer commentCount;
 }

@@ -7,6 +7,7 @@ import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.models.dto.CommentDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.entity.Blog;
 import com.coolSchool.CoolSchool.models.entity.Comment;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
@@ -63,7 +64,9 @@ public class CommentServiceImpl implements CommentService {
             commentDTO.setCreated_at(LocalDateTime.now());
             commentDTO.setOwnerId(loggedUser.getId());
             userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
-            blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
+            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
+            blog.setCommentCount(blog.getCommentCount() + 1);
+            blogRepository.save(blog);
             Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
             return modelMapper.map(commentEntity, CommentDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -106,6 +109,9 @@ public class CommentServiceImpl implements CommentService {
             if (loggedUser == null || (!Objects.equals(loggedUser.getId(), comment.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN) && !Objects.equals(loggedUser.getId(), comment.getBlogId().getOwnerId())))) {
                 throw new AccessDeniedException();
             }
+            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(comment.getBlogId().getId()).orElseThrow(NoSuchElementException::new);
+            blog.setCommentCount(blog.getCommentCount() - 1);
+            blogRepository.save(blog);
             comment.setDeleted(true);
             commentRepository.save(comment);
         } else {

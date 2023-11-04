@@ -46,5 +46,6 @@ public class Blog {
     @NotNull(message = "The category of the blog should not be null!")
     private Category categoryId;
     private boolean isEnabled;
+    private Integer commentCount;
     private boolean deleted;
 }

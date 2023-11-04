@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,18 +62,30 @@ public class BlogController {
         return ResponseEntity.ok(blogService.getBlogsByMostLiked());
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<BlogDTO>> searchBlogs(@RequestParam("title") Optional<String> title, @RequestParam("category") Optional<String> category, HttpServletRequest httpServletRequest) {
+    @GetMapping("/search/all")
+    public ResponseEntity<List<BlogDTO>> searchBlogs(@RequestParam("title") Optional<String> title, @RequestParam("category") Optional<String> category,
+                                                     @RequestParam(name = "sort", required = false, defaultValue = "newest") String sort, HttpServletRequest httpServletRequest) {
+        List<BlogDTO> result;
         if (title.isPresent() && category.isPresent()) {
-            ResponseEntity.ok(blogService.searchBlogsByKeywordInTitleAndCategory(title.get(), category.get()));
+            result = blogService.searchBlogsByKeywordInTitleAndCategory(title.get(), category.get());
+        } else if (title.isPresent() && category.isEmpty()) {
+            result = blogService.searchBlogsByKeywordTitle(title.get());
+        } else if (title.isEmpty() && category.isPresent()) {
+            result = blogService.searchBlogsByKeywordCategory(category.get());
+        } else {
+            result = blogService.getAllBlogs((PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         }
-        if (title.isPresent() && category.isEmpty()) {
-            return ResponseEntity.ok(blogService.searchBlogsByKeywordTitle(title.get()));
+        List<BlogDTO> mutableResult = new ArrayList<>(result);
+        if ("newest".equals(sort)) {
+            mutableResult.sort(Comparator.comparing(BlogDTO::getCreated_at).reversed());
+            return ResponseEntity.ok(mutableResult);
         }
-        if (title.isEmpty() && category.isPresent()) {
-            return ResponseEntity.ok(blogService.searchBlogsByKeywordCategory(category.get()));
+        if ("mostLiked".equals(sort)) {
+            Comparator<BlogDTO> sortByMostLiked = Comparator.comparingInt(blog -> blog.getLiked_users().size());
+            mutableResult.sort(sortByMostLiked.reversed());
+            return ResponseEntity.ok(mutableResult);
         }
-        return ResponseEntity.ok(blogService.getAllBlogs((PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/mostRecent/{n}")
