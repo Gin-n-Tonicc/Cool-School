@@ -154,4 +154,3 @@ public class UserQuizServiceImpl implements UserQuizService {
         return maxAttemptNumber.map(num -> num + 1).orElse(1);
     }
 }
-

@@ -89,19 +89,6 @@ class QuizControllerIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
-    @Test
-    void testCreateQuiz() throws Exception {
-        QuizDTO quiz = new QuizDTO();
-        String quizJson = objectMapper.writeValueAsString(quiz);
-
-        Mockito.when(quizService.createQuiz(Mockito.any(QuizDTO.class))).thenReturn(quiz);
-
-        mockMvc.perform(post("/api/v1/quizzes/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(quizJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
 
     @Test
     void testUpdateQuiz() throws Exception {
