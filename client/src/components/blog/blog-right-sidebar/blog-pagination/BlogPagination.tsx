@@ -9,35 +9,34 @@ export default function BlogPagination(props: BlogPaginationProps) {
       <ul className="pagination">
         <li className="page-item">
           <a
-            href="#"
             className="page-link"
             aria-label="Previous"
-            onClick={(e) => {
-              e.preventDefault();
-              props.previousPage();
-            }}>
+            onClick={() => props.previousPage()}>
             <i className="ti-angle-left"></i>
           </a>
         </li>
-        <li className="page-item">
-          <a href="#" className="page-link">
-            1
-          </a>
-        </li>
-        <li className="page-item active">
-          <a href="#" className="page-link">
-            2
-          </a>
-        </li>
+        {[...new Array(props.pages)].map((x, i) => {
+          const page = i + 1;
+          let classNames = 'page-item';
+
+          if (page === props.currentPage) {
+            classNames += ' active';
+          }
+
+          return (
+            <li
+              key={page}
+              className={classNames}
+              onClick={() => props.togglePage(page)}>
+              <a className="page-link">{page}</a>
+            </li>
+          );
+        })}
         <li className="page-item">
           <a
-            href="#"
             className="page-link"
             aria-label="Next"
-            onClick={(e) => {
-              e.preventDefault();
-              props.nextPage();
-            }}>
+            onClick={() => props.nextPage()}>
             <i className="ti-angle-right"></i>
           </a>
         </li>
