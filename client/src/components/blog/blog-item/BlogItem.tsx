@@ -30,13 +30,13 @@ export default function BlogItem(props: BlogItemProps) {
         <p>{props.summary}</p>
         <ul className="blog-info-link">
           <li>
-            <a href="#">{props.category}</a>
+            <span>{props.category}</span>
           </li>
           <li>
-            <a href="#">
+            <span>
               <i className="far fa-comments"></i>
-              {props.commentCount.toString().padStart(2, '0')} Comments
-            </a>
+              {props.commentCount?.toString().padStart(2, '0')} Comments
+            </span>
           </li>
         </ul>
       </div>

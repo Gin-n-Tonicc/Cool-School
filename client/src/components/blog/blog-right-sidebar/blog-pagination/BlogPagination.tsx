@@ -1,11 +1,21 @@
+import { PaginationProps } from '../../../../hooks/usePagination';
 import './BlogPagination.scss';
 
-export default function BlogPagination() {
+interface BlogPaginationProps extends PaginationProps {}
+
+export default function BlogPagination(props: BlogPaginationProps) {
   return (
     <nav className="blog-pagination justify-content-center d-flex">
       <ul className="pagination">
         <li className="page-item">
-          <a href="#" className="page-link" aria-label="Previous">
+          <a
+            href="#"
+            className="page-link"
+            aria-label="Previous"
+            onClick={(e) => {
+              e.preventDefault();
+              props.previousPage();
+            }}>
             <i className="ti-angle-left"></i>
           </a>
         </li>
@@ -20,7 +30,14 @@ export default function BlogPagination() {
           </a>
         </li>
         <li className="page-item">
-          <a href="#" className="page-link" aria-label="Next">
+          <a
+            href="#"
+            className="page-link"
+            aria-label="Next"
+            onClick={(e) => {
+              e.preventDefault();
+              props.nextPage();
+            }}>
             <i className="ti-angle-right"></i>
           </a>
         </li>

@@ -19,7 +19,7 @@ const authPaths = Object.seal({
 
 const blogsPaths = Object.seal({
   search: (titleSearch: string | null, categorySearch: string | null) => {
-    const url = new URL(`${baseUrl}/blogs/search`);
+    const url = new URL(`${baseUrl}/blogs/search/all`);
 
     if (titleSearch) {
       url.searchParams.append('title', titleSearch);

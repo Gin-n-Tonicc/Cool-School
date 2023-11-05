@@ -1,13 +1,6 @@
-export type TogglePageFunction = (page: number) => void;
-export type SwitchPageFunction = () => void;
+import { PaginationProps } from '../../../../hooks/usePagination';
 
-interface AdminTablePaginationProps {
-  currentPage: number;
-  pageCount: number;
-  togglePage: TogglePageFunction;
-  previousPage: SwitchPageFunction;
-  nextPage: SwitchPageFunction;
-}
+interface AdminTablePaginationProps extends PaginationProps {}
 
 export default function AdminTablePagination(props: AdminTablePaginationProps) {
   return (
@@ -21,7 +14,7 @@ export default function AdminTablePagination(props: AdminTablePaginationProps) {
           <span className="sr-only">Previous</span>
         </a>
       </li>
-      {[...Array(props.pageCount)].map((_, i) => {
+      {[...Array(props.pages)].map((_, i) => {
         const page = i + 1;
         let classNames = 'page-link';
 

@@ -2,11 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import { usePagination } from '../../../hooks/usePagination';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import BlogItem, { BlogItemProps } from '../blog-item/BlogItem';
 import BlogPagination from '../blog-right-sidebar/blog-pagination/BlogPagination';
 import { CATEGORY_PARAM_KEY } from '../blog-right-sidebar/blog-post-category-widget/blog-post-category/BlogPostCategory';
 import { TITLE_PARAM_KEY } from '../blog-right-sidebar/blog-search-widget/BlogSearchWidget';
+
+const PAGE_SIZE = 5;
 
 export default function BlogLeftSidebar() {
   const [searchParams] = useSearchParams({
@@ -23,6 +26,15 @@ export default function BlogLeftSidebar() {
 
   const [url, setUrl] = useState(getUrl());
   const { data: blogs } = useFetch<IBlog[]>(url, [url]);
+
+  const {
+    list: paginatedBlogs,
+    pages,
+    currentPage,
+    togglePage,
+    nextPage,
+    previousPage,
+  } = usePagination<IBlog>(blogs, PAGE_SIZE);
 
   useEffect(() => {
     setUrl(getUrl());
@@ -41,16 +53,22 @@ export default function BlogLeftSidebar() {
   return (
     <div className="col-lg-8 mb-5 mb-lg-0">
       <div className="blog_left_sidebar">
-        {blogs?.map((x) => (
+        {paginatedBlogs?.map((x) => (
           <BlogItem
             key={x.id}
             {...{ ...mockedBlog, ...x }}
+            category={x.category.name}
             date={new Date(x.created_at)}
           />
         ))}
 
-        <BlogItem {...mockedBlog} />
-        <BlogPagination />
+        <BlogPagination
+          pages={pages}
+          currentPage={currentPage}
+          togglePage={togglePage}
+          nextPage={nextPage}
+          previousPage={previousPage}
+        />
       </div>
     </div>
   );
