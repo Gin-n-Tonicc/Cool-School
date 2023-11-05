@@ -5,17 +5,19 @@ import { apiUrlsConfig } from '../../../config/apiUrls';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import BlogItem, { BlogItemProps } from '../blog-item/BlogItem';
 import BlogPagination from '../blog-right-sidebar/blog-pagination/BlogPagination';
+import { CATEGORY_PARAM_KEY } from '../blog-right-sidebar/blog-post-category-widget/blog-post-category/BlogPostCategory';
+import { TITLE_PARAM_KEY } from '../blog-right-sidebar/blog-search-widget/BlogSearchWidget';
 
 export default function BlogLeftSidebar() {
   const [searchParams] = useSearchParams({
-    title: '',
-    category: '',
+    [TITLE_PARAM_KEY]: '',
+    [CATEGORY_PARAM_KEY]: '',
   });
 
   const getUrl = useCallback(() => {
     return apiUrlsConfig.blogs.search(
-      searchParams.get('title'),
-      searchParams.get('category')
+      searchParams.get(TITLE_PARAM_KEY),
+      searchParams.get(CATEGORY_PARAM_KEY)
     );
   }, [searchParams]);
 
@@ -48,11 +50,6 @@ export default function BlogLeftSidebar() {
         ))}
 
         <BlogItem {...mockedBlog} />
-        {/* <BlogItem {...mockedBlog} />
-        <BlogItem {...mockedBlog} />
-        <BlogItem {...mockedBlog} />
-        <BlogItem {...mockedBlog} /> */}
-
         <BlogPagination />
       </div>
     </div>

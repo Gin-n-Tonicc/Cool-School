@@ -2,23 +2,29 @@ import { FormEventHandler } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './BlogSearchWidget.scss';
 
+export const TITLE_PARAM_KEY = 'title';
+
 export default function BlogSearchWidget() {
   const [_, setSearchParams] = useSearchParams();
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
-    const title = new FormData(e.currentTarget).get('title')?.toString();
+    const value = new FormData(e.currentTarget)
+      .get(TITLE_PARAM_KEY)
+      ?.toString();
 
-    if (title) {
+    if (value) {
       return setSearchParams((prev) => ({
-        ...prev,
-        title,
+        ...Object.fromEntries(prev),
+        [TITLE_PARAM_KEY]: value,
       }));
     }
 
     setSearchParams((prev) => {
-      const { title: _, ...remainingParams } = Object.fromEntries(prev);
+      const { [TITLE_PARAM_KEY]: _, ...remainingParams } =
+        Object.fromEntries(prev);
+
       return remainingParams;
     });
   };
@@ -35,7 +41,7 @@ export default function BlogSearchWidget() {
               name="title"
             />
             <div className="input-group-append">
-              <button className="btn" type="button">
+              <button className="btn" type="submit">
                 <i className="ti-search"></i>
               </button>
             </div>
