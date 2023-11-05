@@ -31,6 +31,7 @@ const blogsPaths = Object.seal({
 
     return url.toString();
   },
+  recent: (n: number) => `${baseUrl}/blogs/mostRecent/${n}`,
 });
 
 const categoriesPaths = Object.seal({
