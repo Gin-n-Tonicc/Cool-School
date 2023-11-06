@@ -17,8 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import static com.coolSchool.CoolSchool.enums.Permission.*;
-import static com.coolSchool.CoolSchool.enums.Role.ADMIN;
-import static com.coolSchool.CoolSchool.enums.Role.MANAGER;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -55,7 +53,8 @@ public class SecurityConfiguration {
                         "/api/v1/categories/**",
                         "/api/v1/userCourses/**",
                         "/api/v1/courseSubsections/**",
-                        "/api/v1/blogs/**",
+                        "/api/v1/blogs/all",
+                        "/api/v1/blogs/\\d+",
                         "/api/v1/comments/**",
                         "/api/v1/resources/**",
                         "/api/v1/messages/**",
@@ -74,14 +73,12 @@ public class SecurityConfiguration {
                 .permitAll()
 
 
-                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
                 .requestMatchers(POST, "/api/v1/categories/**").hasAnyAuthority(ADMIN_CREATE.name())
                 .requestMatchers(PUT, "/api/v1/categories/**").hasAnyAuthority(ADMIN_UPDATE.name())
                 .requestMatchers(DELETE, "/api/v1/categories/**").hasAnyAuthority(ADMIN_DELETE.name())
+                .requestMatchers(POST, "/api/v1/courses/**").hasAnyAuthority(ADMIN_CREATE.name(), TEACHER_CREATE.name())
+                .requestMatchers(PUT, "/api/v1/courses/**").hasAnyAuthority(ADMIN_UPDATE.name(), TEACHER_UPDATE.name())
+                .requestMatchers(DELETE, "/api/v1/courses/**").hasAnyAuthority(ADMIN_DELETE.name(), TEACHER_DELETE.name())
                 .anyRequest()
                 .authenticated()
                 .and()

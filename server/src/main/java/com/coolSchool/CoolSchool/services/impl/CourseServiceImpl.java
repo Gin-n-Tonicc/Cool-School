@@ -4,6 +4,7 @@ import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
 import com.coolSchool.CoolSchool.models.dto.CourseDTO;
+import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
