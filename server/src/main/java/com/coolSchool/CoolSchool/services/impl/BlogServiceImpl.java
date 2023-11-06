@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -61,16 +62,22 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogDTO getBlogById(Long id, PublicUserDTO loggedUser) {
+        Optional<Blog> optionalBlog = Optional.empty();
+
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
-                Optional<Blog> blog = blogRepository.findById(id);
-                return modelMapper.map(blog.get(), BlogDTO.class);
+                optionalBlog = blogRepository.findById(id);
             }
         }
-        Optional<Blog> blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
-        if (blog.isPresent()) {
-            return modelMapper.map(blog.get(), BlogDTO.class);
+
+        if (optionalBlog.isEmpty()) {
+            optionalBlog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
         }
+
+        if (optionalBlog.isPresent()) {
+            return modelMapper.map(optionalBlog.get(), BlogDTO.class);
+        }
+
         throw new BlogNotFoundException();
     }
 

@@ -1,5 +1,6 @@
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
+import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import { IBlog } from '../../../../types/interfaces/IBlog';
 import { timeSince } from '../../../../utils/dateUtilts';
 import BlogPopularPost from './blog-popular-post/BlogPopularPost';
@@ -20,13 +21,12 @@ export default function BlogPopularPostWidget() {
         const date = timeSince(
           new Date(Date.now() - (Date.now() - new Date(x.created_at).getTime()))
         );
-        console.log(x);
 
         return (
           <BlogPopularPost
             key={x.id}
-            img={require('./post_1.png')}
-            redirectUrl="#"
+            img={apiUrlsConfig.files.get(x.picture.url)}
+            redirectUrl={PagesEnum.SingleBlog.replace(':id', x.id.toString())}
             title={x.title}
             date={`${date} ago`}
           />

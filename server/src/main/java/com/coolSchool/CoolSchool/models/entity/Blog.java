@@ -23,9 +23,11 @@ public class Blog {
     @NotBlank(message = "The title of the blog should not be blank!")
     @Size(min = 1, max = 20, message = "The field must be at least 5 symbols and less than 20!")
     private String title;
+
     @NotNull(message = "The content of the blog should not be null!")
     @NotBlank(message = "The content of the blog should not be blank!")
     @Size(min = 50, message = "The field must be at least 50 symbols!")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String content;
     @NotNull(message = "The summary of the blog should not be null!")
     @NotBlank(message = "The summary of the blog should not be blank!")

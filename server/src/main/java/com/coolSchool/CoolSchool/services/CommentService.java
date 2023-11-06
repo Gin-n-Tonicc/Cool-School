@@ -1,14 +1,17 @@
 package com.coolSchool.CoolSchool.services;
 
 import com.coolSchool.CoolSchool.models.dto.CommentDTO;
+import com.coolSchool.CoolSchool.models.dto.CommentGetDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 
 import java.util.List;
 
 public interface CommentService {
-    List<CommentDTO> getAllComments();
+    List<CommentGetDTO> getAllComments();
 
-    CommentDTO getCommentById(Long id);
+    List<CommentGetDTO> getCommentByBlogId(Long id);
+
+    CommentGetDTO getCommentById(Long id);
 
     CommentDTO createComment(CommentDTO commentDTO, PublicUserDTO loggedUser);
 

@@ -47,6 +47,10 @@ function AdminNav() {
         text="Categories"
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`}
       />
+      <HeaderNavItem
+        text="Blogs"
+        pathName={`${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`}
+      />
     </ul>
   );
 }
@@ -64,6 +68,7 @@ export default function Header() {
         PagesEnum.Admin,
         `${PagesEnum.Admin}/${AdminPagesEnum.USERS}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`,
+        `${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`,
       ].map((x) => x.toString()),
     []
   );

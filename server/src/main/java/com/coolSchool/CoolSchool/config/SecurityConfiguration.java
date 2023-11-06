@@ -56,7 +56,6 @@ public class SecurityConfiguration {
                         "/api/v1/userCourses/**",
                         "/api/v1/courseSubsections/**",
                         "/api/v1/blogs/**",
-                        "/api/v1/comments/**",
                         "/api/v1/resources/**",
                         "/api/v1/messages/**",
                         "/api/v1/auth/**",
@@ -72,6 +71,8 @@ public class SecurityConfiguration {
                         "/swagger-ui.html"
                 )
                 .permitAll()
+
+                .requestMatchers(GET, "/api/v1/comments/**").permitAll()
 
 
                 .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())

@@ -17,4 +17,5 @@ public class PublicUserDTO {
     private String usernameField;
     private String email;
     private Role role;
+    private String description;
 }

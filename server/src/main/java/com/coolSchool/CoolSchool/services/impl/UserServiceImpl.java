@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
                     .role(Role.USER)
                     .address(request.getAddress())
                     .usernameField(request.getUsername())
+                    .description(request.getDescription())
                     .deleted(false)
                     .build();
 

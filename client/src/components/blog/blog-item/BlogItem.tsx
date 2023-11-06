@@ -1,12 +1,16 @@
+import { Link } from 'react-router-dom';
+import { apiUrlsConfig } from '../../../config/apiUrls';
+import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './BlogItem.scss';
 
 export interface BlogItemProps {
-  img: string;
+  imgUrl: string;
   title: string;
   summary: string;
   category: string;
   commentCount: number;
   date: Date;
+  id: number;
 }
 
 export default function BlogItem(props: BlogItemProps) {
@@ -16,7 +20,11 @@ export default function BlogItem(props: BlogItemProps) {
   return (
     <article className="blog_item">
       <div className="blog_item_img">
-        <img className="card-img rounded-0" src={props.img} alt="" />
+        <img
+          className="card-img rounded-0"
+          src={apiUrlsConfig.files.get(props.imgUrl)}
+          alt=""
+        />
         <span className="blog_item_date">
           <h3>{day}</h3>
           <p>{month}</p>
@@ -24,9 +32,11 @@ export default function BlogItem(props: BlogItemProps) {
       </div>
 
       <div className="blog_details">
-        <a className="d-inline-block" href="single-blog.html">
+        <Link
+          className="d-inline-block"
+          to={PagesEnum.SingleBlog.replace(':id', props.id.toString())}>
           <h2>{props.title}</h2>
-        </a>
+        </Link>
         <p>{props.summary}</p>
         <ul className="blog-info-link">
           <li>

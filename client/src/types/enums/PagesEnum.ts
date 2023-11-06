@@ -7,6 +7,7 @@ export enum PagesEnum {
   Quizzes = '/quizzes',
   Courses = '/courses',
   Blog = '/blog',
+  SingleBlog = '/blog/:id',
   Admin = '/admin',
   NotFound = '/not-found',
 }

@@ -32,10 +32,23 @@ const blogsPaths = Object.seal({
     return url.toString();
   },
   recent: (n: number) => `${baseUrl}/blogs/mostRecent/${n}`,
+  getOne: (id: number | string | undefined) => `${baseUrl}/blogs/${id}`,
 });
 
 const categoriesPaths = Object.seal({
   get: `${baseUrl}/categories/all`,
+});
+
+const filesPaths = Object.seal({
+  get: (url: string) => {
+    const imgArr = url.split('/');
+    return `${baseUrl}/files/${imgArr[imgArr.length - 1]}`;
+  },
+});
+
+const commentsPaths = Object.seal({
+  getByBlogId: (blogId: number) => `${baseUrl}/comments/blog/${blogId}`,
+  post: `${baseUrl}/comments/create`,
 });
 
 export const apiUrlsConfig = Object.seal({
@@ -43,4 +56,6 @@ export const apiUrlsConfig = Object.seal({
   auth: authPaths,
   blogs: blogsPaths,
   categories: categoriesPaths,
+  files: filesPaths,
+  comments: commentsPaths,
 });

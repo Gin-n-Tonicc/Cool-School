@@ -50,6 +50,18 @@ export const ADDRESS_VALIDATIONS: RegisterOptions = {
   },
 };
 
+export const DESCRIPTION_VALIDATIONS: RegisterOptions = {
+  required: 'Description is required.',
+  minLength: {
+    value: 60,
+    message: 'Description requires minimum 60 characters',
+  },
+  maxLength: {
+    value: 120,
+    message: 'Description must be below 120 characters',
+  },
+};
+
 export const REPEAT_PASSWORD_VALIDATIONS: RegisterOptions = {
   ...PASSWORD_VALIDATIONS,
   required: 'Repeat password is required.',

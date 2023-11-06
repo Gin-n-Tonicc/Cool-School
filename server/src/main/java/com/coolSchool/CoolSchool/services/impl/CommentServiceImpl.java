@@ -6,6 +6,7 @@ import com.coolSchool.CoolSchool.exceptions.comment.ValidationCommentException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.models.dto.CommentDTO;
+import com.coolSchool.CoolSchool.models.dto.CommentGetDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
 import com.coolSchool.CoolSchool.models.entity.Comment;
@@ -43,16 +44,22 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> getAllComments() {
+    public List<CommentGetDTO> getAllComments() {
         List<Comment> comments = commentRepository.findByDeletedFalse();
-        return comments.stream().map(comment -> modelMapper.map(comment, CommentDTO.class)).toList();
+        return comments.stream().map(comment -> modelMapper.map(comment, CommentGetDTO.class)).toList();
     }
 
     @Override
-    public CommentDTO getCommentById(Long id) {
+    public List<CommentGetDTO> getCommentByBlogId(Long id) {
+        List<Comment> comments = commentRepository.findCommentsByBlogAndNotDeleted(id);
+        return comments.stream().map(comment -> modelMapper.map(comment, CommentGetDTO.class)).toList();
+    }
+
+    @Override
+    public CommentGetDTO getCommentById(Long id) {
         Optional<Comment> comment = commentRepository.findByIdAndDeletedFalse(id);
         if (comment.isPresent()) {
-            return modelMapper.map(comment.get(), CommentDTO.class);
+            return modelMapper.map(comment.get(), CommentGetDTO.class);
         }
         throw new CommentNotFoundException();
     }

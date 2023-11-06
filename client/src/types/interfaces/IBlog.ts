@@ -11,4 +11,6 @@ export interface IBlog {
   picture: IFile;
   owner: IUser;
   category: ICategory;
+  commentCount: number;
+  liked_users: IUser[];
 }

@@ -2,6 +2,7 @@ package com.coolSchool.CoolSchool.controllers;
 
 import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.CoolSchool.models.dto.CommentDTO;
+import com.coolSchool.CoolSchool.models.dto.CommentGetDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.services.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,12 +24,17 @@ public class CommentController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<CommentDTO>> getAllComments() {
+    public ResponseEntity<List<CommentGetDTO>> getAllComments() {
         return ResponseEntity.ok(commentService.getAllComments());
     }
 
+    @GetMapping("/blog/{blogId}")
+    public ResponseEntity<List<CommentGetDTO>> getCommentsByBlog(@PathVariable(name = "blogId") Long id) {
+        return ResponseEntity.ok(commentService.getCommentByBlogId(id));
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<CommentDTO> getCommentById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<CommentGetDTO> getCommentById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(commentService.getCommentById(id));
     }
 
