@@ -17,6 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import static com.coolSchool.CoolSchool.enums.Permission.*;
+import static com.coolSchool.CoolSchool.enums.Role.ADMIN;
+import static com.coolSchool.CoolSchool.enums.Role.TEACHER;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -49,12 +51,11 @@ public class SecurityConfiguration {
                         "/api/v1/userQuizzes/**",
                         "/api/v1/userAnswers/**",
                         "/api/v1/files/**",
-                        "/api/v1/courses/**",
                         "/api/v1/categories/**",
+                        "/api/v1/courses/**",
                         "/api/v1/userCourses/**",
                         "/api/v1/courseSubsections/**",
-                        "/api/v1/blogs/all",
-                        "/api/v1/blogs/\\d+",
+                        "/api/v1/blogs/**",
                         "/api/v1/comments/**",
                         "/api/v1/resources/**",
                         "/api/v1/messages/**",
@@ -76,9 +77,6 @@ public class SecurityConfiguration {
                 .requestMatchers(POST, "/api/v1/categories/**").hasAnyAuthority(ADMIN_CREATE.name())
                 .requestMatchers(PUT, "/api/v1/categories/**").hasAnyAuthority(ADMIN_UPDATE.name())
                 .requestMatchers(DELETE, "/api/v1/categories/**").hasAnyAuthority(ADMIN_DELETE.name())
-                .requestMatchers(POST, "/api/v1/courses/**").hasAnyAuthority(ADMIN_CREATE.name(), TEACHER_CREATE.name())
-                .requestMatchers(PUT, "/api/v1/courses/**").hasAnyAuthority(ADMIN_UPDATE.name(), TEACHER_UPDATE.name())
-                .requestMatchers(DELETE, "/api/v1/courses/**").hasAnyAuthority(ADMIN_DELETE.name(), TEACHER_DELETE.name())
                 .anyRequest()
                 .authenticated()
                 .and()

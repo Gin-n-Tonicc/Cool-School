@@ -1,5 +1,7 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.enums.Role;
+import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -51,7 +54,10 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDTO createCourse(CourseDTO courseDTO) {
+    public CourseDTO createCourse(CourseDTO courseDTO, PublicUserDTO loggedUser) {
+        if (loggedUser == null || !(loggedUser.getRole().equals(Role.ADMIN) || loggedUser.getRole().equals(Role.TEACHER))) {
+            throw new AccessDeniedException();
+        }
         try {
             courseDTO.setId(null);
             userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
@@ -64,11 +70,14 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseDTO updateCourse(Long id, CourseDTO courseDTO) {
+    public CourseDTO updateCourse(Long id, CourseDTO courseDTO, PublicUserDTO loggedUser) {
         Optional<Course> existingCourseOptional = courseRepository.findByIdAndDeletedFalse(id);
 
         if (existingCourseOptional.isEmpty()) {
             throw new CourseNotFoundException();
+        }
+        if (loggedUser == null || (!Objects.equals(loggedUser.getId(), courseDTO.getUserId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
+            throw new AccessDeniedException();
         }
         userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
         categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
@@ -88,9 +97,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void deleteCourse(Long id) {
+    public void deleteCourse(Long id, PublicUserDTO loggedUser) {
         Optional<Course> course = courseRepository.findByIdAndDeletedFalse(id);
         if (course.isPresent()) {
+            if (loggedUser == null || (!Objects.equals(loggedUser.getId(), course.get().getUser().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
+                throw new AccessDeniedException();
+            }
             course.get().setDeleted(true);
             courseRepository.save(course.get());
         } else {
