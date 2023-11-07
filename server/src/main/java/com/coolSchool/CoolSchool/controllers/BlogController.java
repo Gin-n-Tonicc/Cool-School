@@ -29,6 +29,10 @@ public class BlogController {
     public ResponseEntity<List<BlogDTO>> getAllBlogs(HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(blogService.getAllBlogs((PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
+    @PostMapping("/like/{blogId}")
+    public ResponseEntity<BlogDTO> likeBlog(@PathVariable Long blogId, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(blogService.addLike(blogId,(PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<BlogDTO> getBlogById(@PathVariable(name = "id") Long id, HttpServletRequest httpServletRequest) {

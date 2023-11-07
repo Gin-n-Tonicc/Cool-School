@@ -11,6 +11,7 @@ import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
+import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.FileRepository;
@@ -45,6 +46,19 @@ public class BlogServiceImpl implements BlogService {
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.validator = validator;
+    }
+    @Override
+    public BlogDTO addLike(Long blogId, PublicUserDTO loggedUser) {
+        if (loggedUser != null) {
+            Blog blog = blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
+            User user = userRepository.findByIdAndDeletedFalse(loggedUser.getId()).orElseThrow(UserNotFoundException::new);
+            if (!blog.getLiked_users().contains(user)) {
+                blog.getLiked_users().add(user);
+                blog = blogRepository.save(blog);
+                return modelMapper.map(blog, BlogDTO.class);
+            }
+        }
+        throw new AccessDeniedException();
     }
 
     @Override
