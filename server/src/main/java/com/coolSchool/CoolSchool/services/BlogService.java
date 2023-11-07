@@ -27,4 +27,5 @@ public interface BlogService {
     List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keywordTitle, String keywordForCategory);
 
     List<BlogDTO> getLastNBlogs(int n);
+    BlogDTO addLike(Long blogId, PublicUserDTO loggedUser);
 }

@@ -2,7 +2,9 @@ package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
+import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.CoolSchool.models.dto.CourseDTO;
+import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Category;
 import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.models.entity.User;
@@ -64,7 +66,7 @@ class CourseServiceImplTest {
         when(courseRepository.findByIdAndDeletedFalse(courseId)).thenReturn(courseOptional);
         when(courseRepository.save(any(Course.class))).thenReturn(course);
 
-        assertDoesNotThrow(() -> courseService.deleteCourse(courseId));
+        assertDoesNotThrow(() -> courseService.deleteCourse(courseId, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
         assertTrue(course.isDeleted());
         verify(courseRepository, times(1)).save(course);
     }
@@ -104,7 +106,7 @@ class CourseServiceImplTest {
         when(courseRepository.save(any(Course.class))).thenReturn(course);
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         when(categoryRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Category()));
-        CourseDTO result = courseService.createCourse(courseDTO);
+        CourseDTO result = courseService.createCourse(courseDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         assertNotNull(result);
     }
 
@@ -136,7 +138,7 @@ class CourseServiceImplTest {
 
         when(courseRepository.findByIdAndDeletedFalse(nonExistentCourseId)).thenReturn(Optional.empty());
 
-        assertThrows(CourseNotFoundException.class, () -> courseService.deleteCourse(nonExistentCourseId));
+        assertThrows(CourseNotFoundException.class, () -> courseService.deleteCourse(nonExistentCourseId, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
     @Test
@@ -152,7 +154,7 @@ class CourseServiceImplTest {
         when(courseRepository.save(any(Course.class))).thenThrow(constraintViolationException);
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
         when(categoryRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Category()));
-        assertThrows(ValidationCourseException.class, () -> courseService.createCourse(courseDTO));
+        assertThrows(ValidationCourseException.class, () -> courseService.createCourse(courseDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
     @Test

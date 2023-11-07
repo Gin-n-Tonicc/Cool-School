@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import static com.coolSchool.CoolSchool.enums.Permission.*;
 import static com.coolSchool.CoolSchool.enums.Role.ADMIN;
-import static com.coolSchool.CoolSchool.enums.Role.MANAGER;
+import static com.coolSchool.CoolSchool.enums.Role.TEACHER;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -48,11 +48,12 @@ public class SecurityConfiguration {
                         "/api/v1/quizzes/**",
                         "/api/v1/questions/**",
                         "/api/v1/answers/**",
+                        "/api/v1/reviews/**",
                         "/api/v1/userQuizzes/**",
                         "/api/v1/userAnswers/**",
                         "/api/v1/files/**",
-                        "/api/v1/courses/**",
                         "/api/v1/categories/**",
+                        "/api/v1/courses/**",
                         "/api/v1/userCourses/**",
                         "/api/v1/courseSubsections/**",
                         "/api/v1/blogs/**",
@@ -75,11 +76,6 @@ public class SecurityConfiguration {
                 .requestMatchers(GET, "/api/v1/comments/**").permitAll()
 
 
-                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
                 .requestMatchers(POST, "/api/v1/categories/**").hasAnyAuthority(ADMIN_CREATE.name())
                 .requestMatchers(PUT, "/api/v1/categories/**").hasAnyAuthority(ADMIN_UPDATE.name())
                 .requestMatchers(DELETE, "/api/v1/categories/**").hasAnyAuthority(ADMIN_DELETE.name())

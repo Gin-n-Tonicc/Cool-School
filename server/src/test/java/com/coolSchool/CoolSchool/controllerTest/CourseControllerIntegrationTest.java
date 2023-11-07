@@ -1,7 +1,9 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.CourseController;
+import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.CoolSchool.models.dto.CourseDTO;
+import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.services.impl.CourseServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,7 +84,7 @@ class CourseControllerIntegrationTest {
         CourseDTO course = new CourseDTO();
         String courseJson = objectMapper.writeValueAsString(course);
 
-        Mockito.when(courseService.createCourse(Mockito.any(CourseDTO.class))).thenReturn(course);
+        Mockito.when(courseService.createCourse(Mockito.any(CourseDTO.class), (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey))).thenReturn(course);
 
         mockMvc.perform(post("/api/v1/courses/create")
                         .contentType(MediaType.APPLICATION_JSON)
