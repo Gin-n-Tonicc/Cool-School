@@ -9,6 +9,7 @@ import Login from './components/auth/login/Login';
 import Logout from './components/auth/logout/Logout';
 import Register from './components/auth/register/Register';
 import Blog from './components/blog/Blog';
+import BlogCreate from './components/blog/blog-create/BlogCreate';
 import SingleBlog from './components/blog/single-blog/SingleBlog';
 import AlertBox from './components/common/alert-box/AlertBox';
 import Footer from './components/common/footer/Footer';
@@ -56,6 +57,10 @@ function App() {
                   <Route element={<ProtectedRoute onlyUser={true} />}>
                     <Route path={PagesEnum.Logout} element={<Logout />} />
                     <Route path={PagesEnum.Quizzes} element={<Quizzes />} />
+                    <Route
+                      path={PagesEnum.BlogCreate}
+                      element={<BlogCreate />}
+                    />
 
                     {/* Admin does it's own auth check on load */}
                     <Route path={PagesEnum.Admin} element={<Admin />}>

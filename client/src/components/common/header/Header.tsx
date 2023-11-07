@@ -65,6 +65,7 @@ export default function Header() {
         PagesEnum.Login,
         PagesEnum.Register,
         PagesEnum.Logout,
+        PagesEnum.BlogCreate,
         PagesEnum.Admin,
         `${PagesEnum.Admin}/${AdminPagesEnum.USERS}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`,
