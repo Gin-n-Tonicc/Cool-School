@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IBlog } from '../../../types/interfaces/IBlog';
-import { IComment } from '../../../types/interfaces/IComment';
+import { ICommentsByBlogResponse } from '../../../types/interfaces/ICommentsByBlogResponse';
 import Breadcrumb from '../../common/breadcrumb/Breadcrumb';
 import Spinner from '../../common/spinner/Spinner';
 import './SingleBlog.scss';
@@ -15,7 +15,9 @@ import SingleBlogComments from './single-blog-comments/SingleBlogComments';
 // TODO: Add text when no comments are available
 // TODO: Add text when no blogs are available
 // TODO: Add blog like system
-// TODO: Add load more button on the comments (increment by 10?)
+
+const DEFAULT_COMMENT_COUNT = 2;
+const COMMENT_INCREMENT = 5;
 
 export default function SingleBlog() {
   const { id } = useParams();
@@ -26,14 +28,29 @@ export default function SingleBlog() {
     loading,
   } = useFetch<IBlog>(apiUrlsConfig.blogs.getOne(id), []);
 
-  const { data: comments, get } = useFetch<IComment[]>(
-    apiUrlsConfig.comments.getByBlogId(Number(id || -1)),
-    []
+  const [commentCount, setCommentCount] = useState(DEFAULT_COMMENT_COUNT);
+
+  const { data: commentsRes, get } = useFetch<ICommentsByBlogResponse>(
+    apiUrlsConfig.comments.getByBlogId(Number(id || -1), commentCount),
+    [commentCount]
   );
 
   const refreshComments = useCallback(async () => {
     await get();
   }, [get]);
+
+  const loadMoreComments = useCallback(() => {
+    setCommentCount((prev) => {
+      const result = prev + COMMENT_INCREMENT;
+      const totalComments = commentsRes?.totalComments || 0;
+
+      if (result > totalComments) {
+        return totalComments;
+      }
+
+      return result;
+    });
+  }, [commentsRes, setCommentCount]);
 
   if (!loading && !response.ok) {
     return <Navigate to={PagesEnum.Blog} />;
@@ -65,8 +82,8 @@ export default function SingleBlog() {
                       <i className="far fa-user"></i> {blog.category.name}
                     </li>
                     <li>
-                      <i className="far fa-comments"></i> {comments?.length}{' '}
-                      Comments
+                      <i className="far fa-comments"></i>{' '}
+                      {commentsRes?.totalComments} Comments
                     </li>
                   </ul>
                   {blog.content.split('\n').map((x) => {
@@ -87,7 +104,7 @@ export default function SingleBlog() {
                       <span className="align-middle">
                         <i className="far fa-comment"></i>
                       </span>{' '}
-                      {comments?.length} Comments
+                      {commentsRes?.totalComments} Comments
                     </p>
                   </div>
                 </div>
@@ -103,7 +120,11 @@ export default function SingleBlog() {
                   </div>
                 </div>
               </div>
-              <SingleBlogComments comments={comments || []} />
+              <SingleBlogComments
+                comments={commentsRes?.comments || []}
+                totalComments={commentsRes?.totalComments || 0}
+                loadMoreComments={loadMoreComments}
+              />
               <SingleBlogCommentForm
                 blogId={blog.id}
                 refreshComments={refreshComments}

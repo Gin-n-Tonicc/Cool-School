@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.services;
 
 import com.coolSchool.CoolSchool.models.dto.CommentDTO;
+import com.coolSchool.CoolSchool.models.dto.CommentGetByBlogResponseDTO;
 import com.coolSchool.CoolSchool.models.dto.CommentGetDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 
@@ -9,7 +10,7 @@ import java.util.List;
 public interface CommentService {
     List<CommentGetDTO> getAllComments();
 
-    List<CommentGetDTO> getCommentByBlogId(Long id);
+    CommentGetByBlogResponseDTO getCommentByBlogId(Long id, Integer n);
 
     CommentGetDTO getCommentById(Long id);
 

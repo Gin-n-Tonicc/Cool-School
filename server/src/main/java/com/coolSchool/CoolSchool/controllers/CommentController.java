@@ -2,6 +2,7 @@ package com.coolSchool.CoolSchool.controllers;
 
 import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.CoolSchool.models.dto.CommentDTO;
+import com.coolSchool.CoolSchool.models.dto.CommentGetByBlogResponseDTO;
 import com.coolSchool.CoolSchool.models.dto.CommentGetDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.services.CommentService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/comments")
@@ -29,8 +31,8 @@ public class CommentController {
     }
 
     @GetMapping("/blog/{blogId}")
-    public ResponseEntity<List<CommentGetDTO>> getCommentsByBlog(@PathVariable(name = "blogId") Long id) {
-        return ResponseEntity.ok(commentService.getCommentByBlogId(id));
+    public ResponseEntity<CommentGetByBlogResponseDTO> getCommentsByBlog(@PathVariable(name = "blogId") Long id, @RequestParam("n") Optional<Integer> n) {
+        return ResponseEntity.ok(commentService.getCommentByBlogId(id, n.orElse(-1)));
     }
 
     @GetMapping("/{id}")

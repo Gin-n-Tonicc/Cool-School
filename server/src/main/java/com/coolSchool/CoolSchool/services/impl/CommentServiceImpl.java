@@ -6,6 +6,7 @@ import com.coolSchool.CoolSchool.exceptions.comment.ValidationCommentException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.models.dto.CommentDTO;
+import com.coolSchool.CoolSchool.models.dto.CommentGetByBlogResponseDTO;
 import com.coolSchool.CoolSchool.models.dto.CommentGetDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
@@ -50,9 +51,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentGetDTO> getCommentByBlogId(Long id) {
+    public CommentGetByBlogResponseDTO getCommentByBlogId(Long id, Integer n) {
         List<Comment> comments = commentRepository.findCommentsByBlogAndNotDeleted(id);
-        return comments.stream().map(comment -> modelMapper.map(comment, CommentGetDTO.class)).toList();
+        int length = comments.size();
+
+        if (n >= 1) {
+            comments = comments.subList(0, Math.min(length, n));
+        }
+
+        List<CommentGetDTO> commentGetDTOs = comments.stream().map(comment -> modelMapper.map(comment, CommentGetDTO.class)).toList();
+
+        return CommentGetByBlogResponseDTO
+                .builder()
+                .comments(commentGetDTOs)
+                .totalComments(length)
+                .build();
     }
 
     @Override

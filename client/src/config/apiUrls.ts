@@ -47,7 +47,8 @@ const filesPaths = Object.seal({
 });
 
 const commentsPaths = Object.seal({
-  getByBlogId: (blogId: number) => `${baseUrl}/comments/blog/${blogId}`,
+  getByBlogId: (blogId: number, n: number) =>
+    `${baseUrl}/comments/blog/${blogId}?n=${n}`,
   post: `${baseUrl}/comments/create`,
 });
 
