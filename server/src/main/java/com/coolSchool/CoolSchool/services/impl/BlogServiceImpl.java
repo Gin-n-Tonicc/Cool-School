@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.enums.Role;
+import com.coolSchool.CoolSchool.exceptions.blog.BlogAlreadyLikedException;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
@@ -50,6 +51,8 @@ public class BlogServiceImpl implements BlogService {
     }
     @Override
     public BlogDTO addLike(Long blogId, PublicUserDTO loggedUser) {
+        System.out.println(loggedUser);
+
         if (loggedUser != null) {
             Blog blog = blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
             User user = userRepository.findByIdAndDeletedFalse(loggedUser.getId()).orElseThrow(UserNotFoundException::new);
@@ -58,6 +61,8 @@ public class BlogServiceImpl implements BlogService {
                 blog = blogRepository.save(blog);
                 return modelMapper.map(blog, BlogDTO.class);
             }
+
+            throw new BlogAlreadyLikedException();
         }
         throw new AccessDeniedException();
     }

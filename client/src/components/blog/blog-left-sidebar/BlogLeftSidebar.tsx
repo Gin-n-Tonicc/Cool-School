@@ -43,6 +43,9 @@ export default function BlogLeftSidebar() {
   return (
     <div className="col-lg-8 mb-5 mb-lg-0">
       <div className="blog_left_sidebar">
+        {paginatedBlogs.length === 0 && (
+          <h1 className="text-center">No blogs available right now!</h1>
+        )}
         {paginatedBlogs?.map((x) => (
           <BlogItem
             key={x.id}

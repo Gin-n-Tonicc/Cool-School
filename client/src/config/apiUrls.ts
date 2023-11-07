@@ -33,6 +33,7 @@ const blogsPaths = Object.seal({
   },
   recent: (n: number) => `${baseUrl}/blogs/mostRecent/${n}`,
   getOne: (id: number | string | undefined) => `${baseUrl}/blogs/${id}`,
+  likeBlog: (id: number | string | undefined) => `${baseUrl}/blogs/like/${id}`,
 });
 
 const categoriesPaths = Object.seal({

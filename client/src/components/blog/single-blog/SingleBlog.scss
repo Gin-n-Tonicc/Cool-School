@@ -6,3 +6,12 @@
   max-width: 100% !important;
   flex: 0 0 100% !important;
 }
+
+.blog-like-btn {
+  cursor: pointer;
+
+  &.liked,
+  &:hover {
+    color: red;
+  }
+}

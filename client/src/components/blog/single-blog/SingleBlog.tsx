@@ -3,6 +3,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import { ICommentsByBlogResponse } from '../../../types/interfaces/ICommentsByBlogResponse';
@@ -12,21 +13,23 @@ import './SingleBlog.scss';
 import SingleBlogCommentForm from './single-blog-comment-form/SingleBlogCommentForm';
 import SingleBlogComments from './single-blog-comments/SingleBlogComments';
 
-// TODO: Add text when no comments are available
-// TODO: Add text when no blogs are available
-// TODO: Add blog like system
-
 const DEFAULT_COMMENT_COUNT = 2;
 const COMMENT_INCREMENT = 5;
 
 export default function SingleBlog() {
   const { id } = useParams();
+  const { user } = useAuthContext();
 
   const {
     data: blog,
     response,
     loading,
   } = useFetch<IBlog>(apiUrlsConfig.blogs.getOne(id), []);
+
+  const [hasLiked, setHasLiked] = useState(false);
+  const { response: likedBlogRes, post } = useFetch<IBlog>(
+    apiUrlsConfig.blogs.likeBlog(id)
+  );
 
   const [commentCount, setCommentCount] = useState(DEFAULT_COMMENT_COUNT);
 
@@ -52,6 +55,14 @@ export default function SingleBlog() {
     });
   }, [commentsRes, setCommentCount]);
 
+  const likeBlog = useCallback(async () => {
+    await post();
+
+    if (likedBlogRes.ok) {
+      setHasLiked(true);
+    }
+  }, [likedBlogRes, post]);
+
   if (!loading && !response.ok) {
     return <Navigate to={PagesEnum.Blog} />;
   }
@@ -59,6 +70,15 @@ export default function SingleBlog() {
   if (!blog) {
     return <Spinner />;
   }
+
+  let totalLikes = blog.liked_users.length;
+
+  if (hasLiked) {
+    totalLikes += 1;
+  }
+
+  const hasLikedBlog =
+    hasLiked || blog.liked_users.some((x) => x.id === user?.id);
 
   return (
     <>
@@ -94,10 +114,15 @@ export default function SingleBlog() {
               <div className="navigation-top">
                 <div className="d-sm-flex justify-content-between text-center">
                   <p className="like-info">
-                    <span className="align-middle">
+                    <span
+                      className={
+                        'align-middle blog-like-btn' +
+                        (hasLikedBlog ? ' liked' : '')
+                      }
+                      onClick={() => likeBlog()}>
                       <i className="far fa-heart"></i>
                     </span>{' '}
-                    {blog.liked_users.length} people like this
+                    {totalLikes} people like this
                   </p>
                   <div className="col-sm-4 text-center my-2 my-sm-0">
                     <p className="comment-count">
