@@ -24,5 +24,6 @@ public class BlogResponseDTO {
     private PublicUserDTO owner;
     private CategoryDTO category;
     private boolean isEnabled;
+    private boolean isDeleted;
     private Integer commentCount;
 }

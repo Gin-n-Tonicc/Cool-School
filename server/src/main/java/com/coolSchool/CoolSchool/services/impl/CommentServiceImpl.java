@@ -83,17 +83,25 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponseDTO createComment(CommentRequestDTO commentDTO, PublicUserDTO loggedUser) {
+        Blog blog = null;
+
         try {
             commentDTO.setId(null);
             commentDTO.setCreated_at(LocalDateTime.now());
             commentDTO.setOwnerId(loggedUser.getId());
             userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
-            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
+
+            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
             blog.setCommentCount(blog.getCommentCount() + 1);
             blogRepository.save(blog);
             Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
             return modelMapper.map(commentEntity, CommentResponseDTO.class);
         } catch (ConstraintViolationException exception) {
+            if (blog != null) {
+                blog.setCommentCount(blog.getCommentCount() - 1);
+                blogRepository.save(blog);
+            }
+
             throw new ValidationCommentException(exception.getConstraintViolations());
         }
     }

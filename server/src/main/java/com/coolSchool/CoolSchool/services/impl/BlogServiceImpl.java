@@ -110,11 +110,7 @@ public class BlogServiceImpl implements BlogService {
             blogDTO.setId(null);
             blogDTO.setCreated_at(LocalDateTime.now());
             blogDTO.setOwnerId(loggedUser.getId());
-            if (loggedUser.getRole().equals(Role.ADMIN)) {
-                blogDTO.setEnabled(blogDTO.isEnabled());
-            } else {
-                blogDTO.setEnabled(false);
-            }
+            blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
 
             userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
             categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
@@ -165,18 +161,14 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional
     public void deleteBlog(Long id, PublicUserDTO loggedUser) {
-        Optional<Blog> blogOptional = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
-        if (blogOptional.isPresent()) {
-            Blog blog = blogOptional.get();
+        Blog blog = blogRepository.findById(id).orElseThrow(BlogNotFoundException::new);
 
-            if (loggedUser == null || (!Objects.equals(loggedUser.getId(), blog.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
-                throw new AccessDeniedException();
-            }
-            blog.setDeleted(true);
-            blogRepository.save(blog);
-        } else {
-            throw new BlogNotFoundException();
+        if (loggedUser == null || (!Objects.equals(loggedUser.getId(), blog.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
+            throw new AccessDeniedException();
         }
+
+        blog.setDeleted(true);
+        blogRepository.save(blog);
     }
 
     @Override

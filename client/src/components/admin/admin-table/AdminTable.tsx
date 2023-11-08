@@ -176,15 +176,6 @@ export default function AdminTable(props: AdminTableProps) {
               <tr className="table-admin-row" key={x.id}>
                 {Object.values(x).map((x) => {
                   let content = `${x}`;
-
-                  if (typeof x === 'object') {
-                    if (Array.isArray(x)) {
-                      content = '[ ' + x + ' ]';
-                    } else {
-                      content = x.id || -1;
-                    }
-                  }
-
                   return <td key={uuidV4()}>{content}</td>;
                 })}
                 <td className="control-buttons">

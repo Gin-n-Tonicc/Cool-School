@@ -19,6 +19,7 @@ function GuestLinks() {
 function UserLinks() {
   return (
     <>
+      <HeaderNavItem text="Create Blog" pathName={PagesEnum.BlogCreate} />
       <HeaderNavItem text="Logout" pathName={PagesEnum.Logout} />
     </>
   );
@@ -29,8 +30,8 @@ function UserNav({ isAuthenticated }: { isAuthenticated: boolean }) {
     <ul className="navbar-nav align-items-center">
       <HeaderNavItem text="Home" pathName={PagesEnum.Home} />
       <HeaderNavItem text="Courses" pathName={PagesEnum.Courses} />
-      <HeaderNavItem text="Blog" pathName={PagesEnum.Blog} />
       <HeaderNavItem text="Contact" pathName={PagesEnum.Contact} />
+      <HeaderNavItem text="Blog" pathName={PagesEnum.Blog} />
       {isAuthenticated ? <UserLinks /> : <GuestLinks />}
     </ul>
   );

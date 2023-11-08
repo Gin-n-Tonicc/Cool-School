@@ -63,9 +63,9 @@ export default function BlogCreate() {
     }
 
     const body = {
-      title: data.Title,
-      content: data.content,
-      summary: data.Summary,
+      title: data.Title.trim(),
+      content: data.content.trim(),
+      summary: data.Summary.trim(),
       liked_users: [],
       pictureId: file.id,
       categoryId: 1,
@@ -73,6 +73,7 @@ export default function BlogCreate() {
 
     const blog = await blogPost(body);
     if (postBlogRes.ok) {
+      reset();
       navigate(PagesEnum.SingleBlog.replace(':id', blog.id.toString()));
     }
   };

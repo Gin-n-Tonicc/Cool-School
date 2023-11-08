@@ -40,15 +40,6 @@ export default function HttpProvider({ children }: PropsWithChildren) {
       request: async ({ options, url }) => {
         const pathname = new URL(url || '').pathname;
 
-        console.log({ hello: options }, options.body instanceof FormData);
-
-        let customOptions = {};
-
-        if (options.body instanceof FormData) {
-          // customOptions.headers['Content-Type'] = 'multipart/form-data';
-          console.log(Object.assign({ ...options }, { ...customOptions }));
-        }
-
         const isRefreshRequest = pathname.includes(
           apiUrlsConfig.auth.refreshTokenPath
         );
@@ -66,7 +57,7 @@ export default function HttpProvider({ children }: PropsWithChildren) {
           options.headers.Authorization = `Bearer ${user.accessToken}`;
         }
 
-        return Object.assign(options, customOptions);
+        return options;
       },
       response: async ({ response }) => {
         if (!response.ok) {
