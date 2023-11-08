@@ -18,6 +18,7 @@ const authPaths = Object.seal({
 });
 
 const blogsPaths = Object.seal({
+  upload: `http://localhost:8080/api/v1/blogs/create`,
   search: (titleSearch: string | null, categorySearch: string | null) => {
     const url = new URL(`${baseUrl}/blogs/search/all`);
 
@@ -41,9 +42,17 @@ const categoriesPaths = Object.seal({
 });
 
 const filesPaths = Object.seal({
-  get: (url: string) => {
+  base: `${baseUrl}/files`,
+  getByFilename(fileName: string) {
+    return `${this.base}/${fileName}`;
+  },
+  getByUrl(url: string) {
     const imgArr = url.split('/');
-    return `${baseUrl}/files/${imgArr[imgArr.length - 1]}`;
+    const fileName = imgArr[imgArr.length - 1];
+    return this.getByFilename(fileName);
+  },
+  upload() {
+    return `${this.base}/upload`;
   },
 });
 

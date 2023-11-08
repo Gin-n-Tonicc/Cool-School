@@ -25,7 +25,7 @@ export default function BlogPopularPostWidget() {
         return (
           <BlogPopularPost
             key={x.id}
-            img={apiUrlsConfig.files.get(x.picture.url)}
+            img={apiUrlsConfig.files.getByUrl(x.picture.url)}
             redirectUrl={PagesEnum.SingleBlog.replace(':id', x.id.toString())}
             title={x.title}
             date={`${date} ago`}

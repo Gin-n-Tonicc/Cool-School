@@ -1,16 +1,24 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useFetch } from 'use-http';
+import { apiUrlsConfig } from '../../../config/apiUrls';
+import { PagesEnum } from '../../../types/enums/PagesEnum';
+import { IBlog } from '../../../types/interfaces/IBlog';
+import { IFile } from '../../../types/interfaces/IFile';
 import {
-  FIRST_NAME_VALIDATIONS,
-  LAST_NAME_VALIDATIONS,
-  USERNAME_VALIDATIONS,
-} from '../../../utils/validationConstants';
+  CONTENT_VALIDATIONS,
+  FILE_VALIDATIONS,
+  SUMMARY_VALIDATIONS,
+  TITLE_VALIDATIONS,
+} from '../../../validations/blogCreateValidations';
+import FormErrorWrapper from '../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../common/form-input/FormInput';
 import './BlogCreate.scss';
 
 type Inputs = {
   Title: string;
   Summary: string;
-  Content: string;
+  content: string;
   file: File[];
 };
 
@@ -26,24 +34,74 @@ export default function BlogCreate() {
     defaultValues: {
       Title: '',
       Summary: '',
-      Content: '',
+      content: '',
       file: [],
     },
     mode: 'onChange',
   });
 
   const values = watch();
-  const labelText = values.file[0]?.name || 'Choose file';
+  const navigate = useNavigate();
+
+  const { get, response: getFileRes } = useFetch<IFile>(
+    apiUrlsConfig.files.base
+  );
+  const { post: filePost, response: postFileRes } = useFetch<string>(
+    apiUrlsConfig.files.upload(),
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
+
+  const { post: blogPost, response: postBlogRes } = useFetch<IBlog>(
+    apiUrlsConfig.blogs.upload
+  );
+
+  const labelText = values.file[0]?.name || 'Choose blog image';
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(data.file);
+    const fileFormData = new FormData();
+    fileFormData.append('file', data.file[0]);
+
+    const response = await fetch(apiUrlsConfig.files.upload(), {
+      method: 'POST',
+      body: fileFormData,
+    });
+
+    const fileName = await response.text();
+    console.log(fileName);
+
+    if (!response.ok) {
+      return;
+    }
+
+    const file = await get(`/${fileName}`);
+    if (!getFileRes.ok) {
+      return;
+    }
+
+    const body = {
+      title: data.Title,
+      content: data.content,
+      summary: data.Summary,
+      liked_users: [],
+      pictureId: file.id,
+      categoryId: 1,
+    };
+
+    const blog = await blogPost(body);
+    if (postBlogRes.ok) {
+      navigate(PagesEnum.SingleBlog.replace(':id', blog.id.toString()));
+    }
   };
 
   return (
     <section className="signup">
       <div className="sign-container">
         <div className="signup-content">
-          <div className="signup-form">
+          <div className="signup-form create-blog-form">
             <h2 className="form-title">Create Blog</h2>
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -54,7 +112,7 @@ export default function BlogCreate() {
                 name="Title"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
-                rules={FIRST_NAME_VALIDATIONS}
+                rules={TITLE_VALIDATIONS}
               />
 
               <FormInput
@@ -62,27 +120,29 @@ export default function BlogCreate() {
                 name="Summary"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
-                rules={LAST_NAME_VALIDATIONS}
+                rules={SUMMARY_VALIDATIONS}
               />
 
-              <FormInput
-                control={control}
-                name="Content"
-                type="text"
-                iconClasses="zmdi zmdi-account material-icons-name"
-                rules={USERNAME_VALIDATIONS}
-              />
+              <FormErrorWrapper message={errors.content?.message}>
+                <div className="blog-create-textarea-wrapper">
+                  <h5>Blog content</h5>
+                  <textarea
+                    className="form-control"
+                    {...register('content', { ...CONTENT_VALIDATIONS })}
+                    rows={3}></textarea>
+                </div>
+              </FormErrorWrapper>
 
-              <div className="form-group">
+              <FormErrorWrapper message={errors.file?.message}>
                 <div className="custom-file">
                   <input
                     type="file"
                     className="custom-file-input"
-                    {...register('file')}
+                    {...register('file', { ...FILE_VALIDATIONS })}
                   />
                   <label className="custom-file-label">{labelText}</label>
                 </div>
-              </div>
+              </FormErrorWrapper>
 
               <div className="form-group form-button">
                 <input
@@ -90,7 +150,7 @@ export default function BlogCreate() {
                   name="signup"
                   id="signup"
                   className="btn_1"
-                  value="Register"
+                  value="Create Blog"
                 />
               </div>
             </form>

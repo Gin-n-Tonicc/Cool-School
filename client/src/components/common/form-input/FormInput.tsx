@@ -1,4 +1,5 @@
 import { UseControllerProps, useController } from 'react-hook-form';
+import FormErrorWrapper from '../form-error-wrapper/FormErrorWrapper';
 
 export type FormInputProps = {
   type: string;
@@ -10,20 +11,17 @@ export default function FormInput(props: FormInputProps) {
   const { field, fieldState } = useController(props);
 
   return (
-    <div className="form-group">
-      <div className="form-error-container">
-        <label htmlFor={props.name}>
-          <i className={props.iconClasses}></i>
-        </label>
+    <FormErrorWrapper message={fieldState.error?.message}>
+      <label htmlFor={props.name}>
+        <i className={props.iconClasses}></i>
+      </label>
 
-        <input
-          {...field}
-          className={props.inputClasses}
-          type={props.type}
-          placeholder={props.name}
-        />
-        <p className="form-error">{fieldState.error?.message}</p>
-      </div>
-    </div>
+      <input
+        {...field}
+        className={props.inputClasses}
+        type={props.type}
+        placeholder={props.name}
+      />
+    </FormErrorWrapper>
   );
 }

@@ -7,8 +7,8 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import { ICommentsByBlogResponse } from '../../../types/interfaces/ICommentsByBlogResponse';
-import Breadcrumb from '../../common/breadcrumb/Breadcrumb';
 import Spinner from '../../common/spinner/Spinner';
+import BlogBreadcrumb from '../blog-breadcrumb/BlogBreadcrumb';
 import './SingleBlog.scss';
 import SingleBlogCommentForm from './single-blog-comment-form/SingleBlogCommentForm';
 import SingleBlogComments from './single-blog-comments/SingleBlogComments';
@@ -82,7 +82,8 @@ export default function SingleBlog() {
 
   return (
     <>
-      <Breadcrumb heading="Single Blog" pageName="Blog" />
+      {/* <Breadcrumb heading="Single Blog" pageName="Blog" /> */}
+      <BlogBreadcrumb />
       <section className="blog_area single-post-area section_padding">
         <div className="container">
           <div className="row">
@@ -91,7 +92,7 @@ export default function SingleBlog() {
                 <div className="feature-img">
                   <img
                     className="img-fluid"
-                    src={apiUrlsConfig.files.get(blog.picture.url)}
+                    src={apiUrlsConfig.files.getByUrl(blog.picture.url)}
                     alt=""
                   />
                 </div>
@@ -106,9 +107,12 @@ export default function SingleBlog() {
                       {commentsRes?.totalComments} Comments
                     </li>
                   </ul>
-                  {blog.content.split('\n').map((x) => {
-                    return <p key={uuidV4()}>{x.trim()}</p>;
-                  })}
+                  {blog.content
+                    .split('\n')
+                    .filter((x) => x)
+                    .map((x) => {
+                      return <p key={uuidV4()}>{x.trim()}</p>;
+                    })}
                 </div>
               </div>
               <div className="navigation-top">

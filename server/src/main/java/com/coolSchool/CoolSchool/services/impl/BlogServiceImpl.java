@@ -51,8 +51,6 @@ public class BlogServiceImpl implements BlogService {
     }
     @Override
     public BlogDTO addLike(Long blogId, PublicUserDTO loggedUser) {
-        System.out.println(loggedUser);
-
         if (loggedUser != null) {
             Blog blog = blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
             User user = userRepository.findByIdAndDeletedFalse(loggedUser.getId()).orElseThrow(UserNotFoundException::new);

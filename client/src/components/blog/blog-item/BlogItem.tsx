@@ -22,7 +22,7 @@ export default function BlogItem(props: BlogItemProps) {
       <div className="blog_item_img">
         <img
           className="card-img rounded-0"
-          src={apiUrlsConfig.files.get(props.imgUrl)}
+          src={apiUrlsConfig.files.getByUrl(props.imgUrl)}
           alt=""
         />
         <span className="blog_item_date">

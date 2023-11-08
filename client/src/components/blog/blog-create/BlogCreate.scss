@@ -1,4 +1,19 @@
-.signup-form {
+.create-blog-form {
   text-align: center;
   width: 100%;
+}
+
+.custom-file {
+  margin-top: 2rem;
+}
+
+.blog-create-textarea-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &.purple-border textarea {
+    color: black;
+  }
 }

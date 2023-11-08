@@ -14,7 +14,7 @@ import {
   PASSWORD_VALIDATIONS,
   REPEAT_PASSWORD_VALIDATIONS,
   USERNAME_VALIDATIONS,
-} from '../../../../utils/validationConstants';
+} from '../../../../validations/authValidations';
 import FormInput from '../../../common/form-input/FormInput';
 
 type RegisterFormProps = {
