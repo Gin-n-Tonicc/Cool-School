@@ -1,8 +1,6 @@
 package com.coolSchool.CoolSchool.models.dto;
 
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
-import com.coolSchool.CoolSchool.models.entity.User;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

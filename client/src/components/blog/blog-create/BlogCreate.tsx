@@ -43,16 +43,8 @@ export default function BlogCreate() {
   const values = watch();
   const navigate = useNavigate();
 
-  const { get, response: getFileRes } = useFetch<IFile>(
-    apiUrlsConfig.files.base
-  );
-  const { post: filePost, response: postFileRes } = useFetch<string>(
-    apiUrlsConfig.files.upload(),
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
+  const { post: filePost, response: postFileRes } = useFetch<IFile>(
+    apiUrlsConfig.files.upload()
   );
 
   const { post: blogPost, response: postBlogRes } = useFetch<IBlog>(
@@ -64,21 +56,9 @@ export default function BlogCreate() {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const fileFormData = new FormData();
     fileFormData.append('file', data.file[0]);
+    const file = await filePost(fileFormData);
 
-    const response = await fetch(apiUrlsConfig.files.upload(), {
-      method: 'POST',
-      body: fileFormData,
-    });
-
-    const fileName = await response.text();
-    console.log(fileName);
-
-    if (!response.ok) {
-      return;
-    }
-
-    const file = await get(`/${fileName}`);
-    if (!getFileRes.ok) {
+    if (!postFileRes.ok) {
       return;
     }
 

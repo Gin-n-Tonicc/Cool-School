@@ -48,7 +48,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file) {
+    public File uploadFile(MultipartFile file) {
         try {
             String originalFilename = file.getOriginalFilename();
             assert originalFilename != null;
@@ -64,9 +64,8 @@ public class FileServiceImpl implements FileService {
             fileEntity.setUrl(uploadDirectory + uniqueFilename);
             fileEntity.setDeleted(false);
             fileEntity.setType(file.getContentType());
-            fileRepository.save(fileEntity);
 
-            return uniqueFilename;
+            return fileRepository.save(fileEntity);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid argument.", e);
         }
