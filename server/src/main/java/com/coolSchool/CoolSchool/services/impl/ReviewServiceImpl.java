@@ -63,8 +63,9 @@ public class ReviewServiceImpl implements ReviewService {
         try {
             reviewDTO.setId(null);
             userRepository.findByIdAndDeletedFalse(reviewDTO.getUser().getId()).orElseThrow(NoSuchElementException::new);
-            courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourse().getId()).orElseThrow(NoSuchElementException::new);
+            Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourse().getId()).orElseThrow(NoSuchElementException::new);
             Review review = reviewRepository.save(modelMapper.map(reviewDTO, Review.class));
+            updateCourseStars(course);
             return modelMapper.map(review, ReviewDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationCourseException(exception.getConstraintViolations());
@@ -80,9 +81,24 @@ public class ReviewServiceImpl implements ReviewService {
             }
             review.get().setDeleted(true);
             reviewRepository.save(review.get());
+            updateCourseStars(review.get().getCourse());
         } else {
             throw new ReviewNotFoundException();
         }
     }
 
+    private void updateCourseStars(Course course) {
+        List<Review> reviews = reviewRepository.findAllByCourse(course);
+        if (reviews.isEmpty()) {
+            course.setStars(0);
+        } else {
+            double totalStars = 0;
+            for (Review review : reviews) {
+                totalStars += review.getStars();
+            }
+            double averageStars = totalStars / reviews.size();
+            course.setStars(averageStars);
+        }
+        courseRepository.save(course);
+    }
 }

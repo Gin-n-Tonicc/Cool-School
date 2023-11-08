@@ -13,4 +13,5 @@ public class CourseDTO {
     private String aClass;
     private Long userId;
     private Long categoryId;
+    private double starts;
 }

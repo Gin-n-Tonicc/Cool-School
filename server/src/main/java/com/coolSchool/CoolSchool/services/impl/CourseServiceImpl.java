@@ -60,6 +60,7 @@ public class CourseServiceImpl implements CourseService {
         }
         try {
             courseDTO.setId(null);
+            courseDTO.setStarts(0);
             userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
             categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
             Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
