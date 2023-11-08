@@ -1,7 +1,8 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.CourseSubsectionController;
-import com.coolSchool.CoolSchool.models.dto.CourseSubsectionDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CourseSubsectionRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseSubsectionResponseDTO;
 import com.coolSchool.CoolSchool.services.impl.CourseSubsectionServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,7 @@ class CourseSubsectionControllerIntegrationTest {
     private ObjectMapper objectMapper;
     @MockBean
     private CourseSubsectionServiceImpl courseSubsectionService;
-    private List<CourseSubsectionDTO> courseSubsectionList;
+    private List<CourseSubsectionResponseDTO> courseSubsectionList;
 
     @BeforeEach
     void setup() {
@@ -54,7 +55,7 @@ class CourseSubsectionControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         courseSubsectionList = new ArrayList<>();
-        courseSubsectionList.add(new CourseSubsectionDTO());
+        courseSubsectionList.add(new CourseSubsectionResponseDTO());
     }
 
     @Test
@@ -68,7 +69,7 @@ class CourseSubsectionControllerIntegrationTest {
     @Test
     void testGetCourseSubsectionById() throws Exception {
         Long courseSubsectionId = 1L;
-        CourseSubsectionDTO courseSubsection = new CourseSubsectionDTO();
+        CourseSubsectionResponseDTO courseSubsection = new CourseSubsectionResponseDTO();
 
         Mockito.when(courseSubsectionService.getCourseSubsectionById(courseSubsectionId)).thenReturn(courseSubsection);
 
@@ -79,10 +80,10 @@ class CourseSubsectionControllerIntegrationTest {
 
     @Test
     void testCreateCourseSubsection() throws Exception {
-        CourseSubsectionDTO courseSubsection = new CourseSubsectionDTO();
+        CourseSubsectionResponseDTO courseSubsection = new CourseSubsectionResponseDTO();
         String courseSubsectionJson = objectMapper.writeValueAsString(courseSubsection);
 
-        Mockito.when(courseSubsectionService.createCourseSubsection(Mockito.any(CourseSubsectionDTO.class))).thenReturn(courseSubsection);
+        Mockito.when(courseSubsectionService.createCourseSubsection(Mockito.any(CourseSubsectionRequestDTO.class))).thenReturn(courseSubsection);
 
         mockMvc.perform(post("/api/v1/courseSubsections/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -94,10 +95,10 @@ class CourseSubsectionControllerIntegrationTest {
     @Test
     void testUpdateCourseSubsection() throws Exception {
         Long courseSubsectionId = 1L;
-        CourseSubsectionDTO updatedCourseSubsection = new CourseSubsectionDTO();
+        CourseSubsectionResponseDTO updatedCourseSubsection = new CourseSubsectionResponseDTO();
         String updatedCourseSubsectionJson = objectMapper.writeValueAsString(updatedCourseSubsection);
 
-        Mockito.when(courseSubsectionService.updateCourseSubsection(Mockito.eq(courseSubsectionId), Mockito.any(CourseSubsectionDTO.class)))
+        Mockito.when(courseSubsectionService.updateCourseSubsection(Mockito.eq(courseSubsectionId), Mockito.any(CourseSubsectionRequestDTO.class)))
                 .thenReturn(updatedCourseSubsection);
 
         mockMvc.perform(put("/api/v1/courseSubsections/{id}", courseSubsectionId)

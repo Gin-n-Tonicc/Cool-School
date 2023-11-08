@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.utils;
 
 import com.coolSchool.CoolSchool.exceptions.common.ApiException;
-import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
+import com.coolSchool.CoolSchool.models.dto.response.ExceptionResponse;
 
 import java.time.LocalDateTime;
 

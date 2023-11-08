@@ -1,8 +1,9 @@
 package com.coolSchool.CoolSchool.controllers;
 
 import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
-import com.coolSchool.CoolSchool.models.dto.CommentDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CommentRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CommentResponseDTO;
 import com.coolSchool.CoolSchool.services.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -23,23 +24,23 @@ public class CommentController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<CommentDTO>> getAllComments() {
+    public ResponseEntity<List<CommentResponseDTO>> getAllComments() {
         return ResponseEntity.ok(commentService.getAllComments());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommentDTO> getCommentById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<CommentResponseDTO> getCommentById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(commentService.getCommentById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CommentDTO> createComment(@Valid @RequestBody CommentDTO commentDTO, HttpServletRequest httpServletRequest) {
-        CommentDTO cratedComment = commentService.createComment(commentDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
+    public ResponseEntity<CommentResponseDTO> createComment(@Valid @RequestBody CommentRequestDTO commentDTO, HttpServletRequest httpServletRequest) {
+        CommentResponseDTO cratedComment = commentService.createComment(commentDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         return new ResponseEntity<>(cratedComment, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CommentDTO> updateComment(@PathVariable("id") Long id, @Valid @RequestBody CommentDTO commentDTO, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<CommentResponseDTO> updateComment(@PathVariable("id") Long id, @Valid @RequestBody CommentRequestDTO commentDTO, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(commentService.updateComment(id, commentDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
@@ -50,12 +51,12 @@ public class CommentController {
     }
 
     @GetMapping("/sort/newest")
-    public ResponseEntity<List<CommentDTO>> getCommentsByNewest() {
+    public ResponseEntity<List<CommentResponseDTO>> getCommentsByNewest() {
         return ResponseEntity.ok(commentService.getCommentsByNewestFirst());
     }
 
     @GetMapping("/sort/default")
-    public ResponseEntity<List<CommentDTO>> getCommentsByNumberOfLikes() {
+    public ResponseEntity<List<CommentResponseDTO>> getCommentsByNumberOfLikes() {
         return ResponseEntity.ok(commentService.getCommentsByMostLiked());
     }
 }

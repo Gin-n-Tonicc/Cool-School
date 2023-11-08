@@ -3,7 +3,8 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.courseSubsection.ValidationCourseSubsectionException;
-import com.coolSchool.CoolSchool.models.dto.CourseSubsectionDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CourseSubsectionRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseSubsectionResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
 import com.coolSchool.CoolSchool.repositories.CourseSubsectionRepository;
@@ -32,34 +33,34 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
     }
 
     @Override
-    public List<CourseSubsectionDTO> getAllCourseSubsections() {
+    public List<CourseSubsectionResponseDTO> getAllCourseSubsections() {
         List<CourseSubsection> courseSubsections = courseSubsectionRepository.findByDeletedFalse();
-        return courseSubsections.stream().map(courseSubsection -> modelMapper.map(courseSubsection, CourseSubsectionDTO.class)).toList();
+        return courseSubsections.stream().map(courseSubsection -> modelMapper.map(courseSubsection, CourseSubsectionResponseDTO.class)).toList();
     }
 
     @Override
-    public CourseSubsectionDTO getCourseSubsectionById(Long id) {
+    public CourseSubsectionResponseDTO getCourseSubsectionById(Long id) {
         Optional<CourseSubsection> courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(id);
         if (courseSubsection.isPresent()) {
-            return modelMapper.map(courseSubsection.get(), CourseSubsectionDTO.class);
+            return modelMapper.map(courseSubsection.get(), CourseSubsectionResponseDTO.class);
         }
         throw new CourseSubsectionNotFoundException();
     }
 
     @Override
-    public CourseSubsectionDTO createCourseSubsection(CourseSubsectionDTO courseSubsectionDTO) {
+    public CourseSubsectionResponseDTO createCourseSubsection(CourseSubsectionRequestDTO courseSubsectionDTO) {
         try {
             courseSubsectionDTO.setId(null);
             courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
             CourseSubsection courseSubsectionEntity = courseSubsectionRepository.save(modelMapper.map(courseSubsectionDTO, CourseSubsection.class));
-            return modelMapper.map(courseSubsectionEntity, CourseSubsectionDTO.class);
+            return modelMapper.map(courseSubsectionEntity, CourseSubsectionResponseDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationCourseSubsectionException(exception.getConstraintViolations());
         }
     }
 
     @Override
-    public CourseSubsectionDTO updateCourseSubsection(Long id, CourseSubsectionDTO courseSubsectionDTO) {
+    public CourseSubsectionResponseDTO updateCourseSubsection(Long id, CourseSubsectionRequestDTO courseSubsectionDTO) {
         Optional<CourseSubsection> existingCourseSubsectionOptional = courseSubsectionRepository.findByIdAndDeletedFalse(id);
 
         if (existingCourseSubsectionOptional.isEmpty()) {
@@ -72,7 +73,7 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
         try {
             existingCourseSubsection.setId(id);
             CourseSubsection updatedCourseSubsection = courseSubsectionRepository.save(existingCourseSubsection);
-            return modelMapper.map(updatedCourseSubsection, CourseSubsectionDTO.class);
+            return modelMapper.map(updatedCourseSubsection, CourseSubsectionResponseDTO.class);
         } catch (TransactionException exception) {
             if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
                 throw new ValidationCourseSubsectionException(validationException.getConstraintViolations());
