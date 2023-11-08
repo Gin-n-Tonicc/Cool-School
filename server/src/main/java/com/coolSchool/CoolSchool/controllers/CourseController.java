@@ -1,8 +1,9 @@
 package com.coolSchool.CoolSchool.controllers;
 
 import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
-import com.coolSchool.CoolSchool.models.dto.CourseDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CourseRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseResponseDTO;
 import com.coolSchool.CoolSchool.services.CourseService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -23,23 +24,23 @@ public class CourseController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<CourseDTO>> getAllCourses() {
+    public ResponseEntity<List<CourseResponseDTO>> getAllCourses() {
         return ResponseEntity.ok(courseService.getAllCourses());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CourseDTO> getCourseById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseDTO, HttpServletRequest httpServletRequest) {
-        CourseDTO cratedCourse = courseService.createCourse(courseDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
+    public ResponseEntity<CourseResponseDTO> createCourse(@Valid @RequestBody CourseRequestDTO courseDTO, HttpServletRequest httpServletRequest) {
+        CourseResponseDTO cratedCourse = courseService.createCourse(courseDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         return new ResponseEntity<>(cratedCourse, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CourseDTO> updateCourse(@PathVariable("id") Long id, @Valid @RequestBody CourseDTO courseDTO, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<CourseResponseDTO> updateCourse(@PathVariable("id") Long id, @Valid @RequestBody CourseRequestDTO courseDTO, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(courseService.updateCourse(id, courseDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 

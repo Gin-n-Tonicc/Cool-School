@@ -1,16 +1,17 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.ReviewDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.ReviewRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.ReviewResponseDTO;
 
 import java.util.List;
 
 public interface ReviewService {
-    List<ReviewDTO> getAllReviews(Long courseId);
+    List<ReviewResponseDTO> getAllReviews(Long courseId);
 
-    ReviewDTO getReviewById(Long id);
+    ReviewResponseDTO getReviewById(Long id);
 
-    ReviewDTO createReview(ReviewDTO reviewDTO, PublicUserDTO loggedUser);
+    ReviewResponseDTO createReview(ReviewRequestDTO reviewDTO, PublicUserDTO loggedUser);
 
     void deleteReview(Long id, PublicUserDTO loggedUser);
 }

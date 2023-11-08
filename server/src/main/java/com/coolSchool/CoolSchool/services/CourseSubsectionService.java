@@ -1,17 +1,18 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.CourseSubsectionDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CourseSubsectionRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseSubsectionResponseDTO;
 
 import java.util.List;
 
 public interface CourseSubsectionService {
-    List<CourseSubsectionDTO> getAllCourseSubsections();
+    List<CourseSubsectionResponseDTO> getAllCourseSubsections();
 
-    CourseSubsectionDTO getCourseSubsectionById(Long id);
+    CourseSubsectionResponseDTO getCourseSubsectionById(Long id);
 
-    CourseSubsectionDTO createCourseSubsection(CourseSubsectionDTO courseSubsectionDTO);
+    CourseSubsectionResponseDTO createCourseSubsection(CourseSubsectionRequestDTO courseSubsectionDTO);
 
-    CourseSubsectionDTO updateCourseSubsection(Long id, CourseSubsectionDTO courseSubsectionDTO);
+    CourseSubsectionResponseDTO updateCourseSubsection(Long id, CourseSubsectionRequestDTO courseSubsectionDTO);
 
     void deleteCourseSubsection(Long id);
 }

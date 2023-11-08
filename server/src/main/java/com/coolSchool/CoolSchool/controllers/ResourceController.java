@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.models.dto.ResourceDTO;
+import com.coolSchool.CoolSchool.models.dto.request.ResourceRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.ResourceResponseDTO;
 import com.coolSchool.CoolSchool.services.ResourceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,23 +21,23 @@ public class ResourceController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<ResourceDTO>> getAllResources() {
+    public ResponseEntity<List<ResourceResponseDTO>> getAllResources() {
         return ResponseEntity.ok(resourceService.getAllResources());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceDTO> getResourceById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<ResourceResponseDTO> getResourceById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(resourceService.getResourceById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResourceDTO> createResource(@Valid @RequestBody ResourceDTO resourceDTO) {
-        ResourceDTO cratedResource = resourceService.createResource(resourceDTO);
+    public ResponseEntity<ResourceResponseDTO> createResource(@Valid @RequestBody ResourceRequestDTO resourceDTO) {
+        ResourceResponseDTO cratedResource = resourceService.createResource(resourceDTO);
         return new ResponseEntity<>(cratedResource, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResourceDTO> updateResource(@PathVariable("id") Long id, @Valid @RequestBody ResourceDTO resourceDTO) {
+    public ResponseEntity<ResourceResponseDTO> updateResource(@PathVariable("id") Long id, @Valid @RequestBody ResourceRequestDTO resourceDTO) {
         return ResponseEntity.ok(resourceService.updateResource(id, resourceDTO));
     }
 

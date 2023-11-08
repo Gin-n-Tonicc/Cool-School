@@ -2,7 +2,8 @@ package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.resource.ResourceNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.resource.ValidationResourceException;
-import com.coolSchool.CoolSchool.models.dto.ResourceDTO;
+import com.coolSchool.CoolSchool.models.dto.request.ResourceRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.ResourceResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
 import com.coolSchool.CoolSchool.models.entity.File;
 import com.coolSchool.CoolSchool.models.entity.Resource;
@@ -74,7 +75,7 @@ class ResourceServiceImplTest {
         List<Resource> resourceList = new ArrayList<>();
         resourceList.add(new Resource());
         Mockito.when(resourceRepository.findByDeletedFalse()).thenReturn(resourceList);
-        List<ResourceDTO> result = resourceService.getAllResources();
+        List<ResourceResponseDTO> result = resourceService.getAllResources();
         assertNotNull(result);
         assertEquals(resourceList.size(), result.size());
     }
@@ -85,7 +86,7 @@ class ResourceServiceImplTest {
         Resource resource = new Resource();
         Optional<Resource> resourceOptional = Optional.of(resource);
         when(resourceRepository.findByIdAndDeletedFalse(resourceId)).thenReturn(resourceOptional);
-        ResourceDTO result = resourceService.getResourceById(resourceId);
+        ResourceResponseDTO result = resourceService.getResourceById(resourceId);
         assertNotNull(result);
     }
 
@@ -99,33 +100,33 @@ class ResourceServiceImplTest {
 
     @Test
     void testCreateResource() {
-        ResourceDTO resourceDTO = new ResourceDTO();
+        ResourceResponseDTO resourceDTO = new ResourceResponseDTO();
         Resource resource = modelMapper.map(resourceDTO, Resource.class);
         when(resourceRepository.save(any(Resource.class))).thenReturn(resource);
         when(fileRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new File()));
         when(courseSubsectionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new CourseSubsection()));
-        ResourceDTO result = resourceService.createResource(resourceDTO);
+        ResourceResponseDTO result = resourceService.createResource(modelMapper.map(resourceDTO, ResourceRequestDTO.class));
         assertNotNull(result);
     }
 
     @Test
     void testUpdateResource() {
         Long resourceId = 1L;
-        ResourceDTO updatedResourceDTO = new ResourceDTO();
+        ResourceResponseDTO updatedResourceDTO = new ResourceResponseDTO();
         Resource existingResource = new Resource();
         Optional<Resource> existingResourceOptional = Optional.of(existingResource);
         when(resourceRepository.findByIdAndDeletedFalse(resourceId)).thenReturn(existingResourceOptional);
         when(resourceRepository.save(any(Resource.class))).thenReturn(existingResource);
         when(fileRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new File()));
         when(courseSubsectionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new CourseSubsection()));
-        ResourceDTO result = resourceService.updateResource(resourceId, updatedResourceDTO);
+        ResourceResponseDTO result = resourceService.updateResource(resourceId, modelMapper.map(updatedResourceDTO, ResourceRequestDTO.class));
         assertNotNull(result);
     }
 
     @Test
     void testUpdateResourceNotFound() {
         Long nonExistentResourceId = 99L;
-        ResourceDTO updatedResourceDTO = new ResourceDTO();
+        ResourceRequestDTO updatedResourceDTO = new ResourceRequestDTO();
         when(resourceRepository.findByIdAndDeletedFalse(nonExistentResourceId)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> resourceService.updateResource(nonExistentResourceId, updatedResourceDTO));
     }
@@ -141,7 +142,7 @@ class ResourceServiceImplTest {
 
     @Test
     void testCreateResource_ValidationException() {
-        ResourceDTO resourceDTO = new ResourceDTO();
+        ResourceRequestDTO resourceDTO = new ResourceRequestDTO();
         resourceDTO.setFileId(null);
 
         ConstraintViolation<?> violation = mock(ConstraintViolation.class);
@@ -158,7 +159,7 @@ class ResourceServiceImplTest {
     @Test
     void testUpdateResource_ValidationException() {
         Long resourceId = 1L;
-        ResourceDTO resourceDTO = new ResourceDTO();
+        ResourceRequestDTO resourceDTO = new ResourceRequestDTO();
         resourceDTO.setName(null);
         Resource existingResource = new Resource();
         Optional<Resource> existingResourceOptional = Optional.of(existingResource);

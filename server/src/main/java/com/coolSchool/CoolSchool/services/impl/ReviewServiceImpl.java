@@ -5,9 +5,10 @@ import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
 import com.coolSchool.CoolSchool.exceptions.review.ReviewNotFoundException;
-import com.coolSchool.CoolSchool.models.dto.CourseDTO;
-import com.coolSchool.CoolSchool.models.dto.ReviewDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.ReviewRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseResponseDTO;
+import com.coolSchool.CoolSchool.models.dto.response.ReviewResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.models.entity.Review;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
@@ -40,32 +41,34 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewDTO> getAllReviews(Long courseId) {
-        CourseDTO courseDTO = courseService.getCourseById(courseId);
+    public List<ReviewResponseDTO> getAllReviews(Long courseId) {
+        CourseResponseDTO courseDTO = courseService.getCourseById(courseId);
         List<Review> reviews = reviewRepository.findAllByCourse(modelMapper.map(courseDTO, Course.class));
-        return reviews.stream().map(review -> modelMapper.map(review, ReviewDTO.class)).toList();
+        return reviews.stream().map(review -> modelMapper.map(review, ReviewResponseDTO.class)).toList();
     }
 
     @Override
-    public ReviewDTO getReviewById(Long id) {
+    public ReviewResponseDTO getReviewById(Long id) {
         Optional<Review> review = reviewRepository.findByIdAndDeletedFalse(id);
         if (review.isPresent()) {
-            return modelMapper.map(review.get(), ReviewDTO.class);
+            return modelMapper.map(review.get(), ReviewResponseDTO.class);
         }
         throw new ReviewNotFoundException();
     }
 
     @Override
-    public ReviewDTO createReview(ReviewDTO reviewDTO, PublicUserDTO loggedUser) {
+    public ReviewResponseDTO createReview(ReviewRequestDTO reviewDTO, PublicUserDTO loggedUser) {
         if (loggedUser == null) {
             throw new AccessDeniedException();
         }
         try {
             reviewDTO.setId(null);
-            userRepository.findByIdAndDeletedFalse(reviewDTO.getUser().getId()).orElseThrow(NoSuchElementException::new);
-            courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourse().getId()).orElseThrow(NoSuchElementException::new);
-            Review review = reviewRepository.save(modelMapper.map(reviewDTO, Review.class));
-            return modelMapper.map(review, ReviewDTO.class);
+            userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(NoSuchElementException::new);
+            Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
+            Review reviewRequestDTO = modelMapper.map(reviewDTO, Review.class);
+            Review review = reviewRepository.save(reviewRequestDTO);
+            updateCourseStars(course);
+            return modelMapper.map(review, ReviewResponseDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationCourseException(exception.getConstraintViolations());
         }
@@ -80,9 +83,24 @@ public class ReviewServiceImpl implements ReviewService {
             }
             review.get().setDeleted(true);
             reviewRepository.save(review.get());
+            updateCourseStars(review.get().getCourse());
         } else {
             throw new ReviewNotFoundException();
         }
     }
 
+    private void updateCourseStars(Course course) {
+        List<Review> reviews = reviewRepository.findAllByCourse(course);
+        if (reviews.isEmpty()) {
+            course.setStars(0);
+        } else {
+            double totalStars = 0;
+            for (Review review : reviews) {
+                totalStars += review.getStars();
+            }
+            double averageStars = totalStars / reviews.size();
+            course.setStars(averageStars);
+        }
+        courseRepository.save(course);
+    }
 }

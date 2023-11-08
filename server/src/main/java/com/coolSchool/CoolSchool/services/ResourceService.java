@@ -1,17 +1,18 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.ResourceDTO;
+import com.coolSchool.CoolSchool.models.dto.request.ResourceRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.ResourceResponseDTO;
 
 import java.util.List;
 
 public interface ResourceService {
-    List<ResourceDTO> getAllResources();
+    List<ResourceResponseDTO> getAllResources();
 
-    ResourceDTO getResourceById(Long id);
+    ResourceResponseDTO getResourceById(Long id);
 
-    ResourceDTO createResource(ResourceDTO resourceDTO);
+    ResourceResponseDTO createResource(ResourceRequestDTO resourceDTO);
 
-    ResourceDTO updateResource(Long id, ResourceDTO resourceDTO);
+    ResourceResponseDTO updateResource(Long id, ResourceRequestDTO resourceDTO);
 
     void deleteResource(Long id);
 }

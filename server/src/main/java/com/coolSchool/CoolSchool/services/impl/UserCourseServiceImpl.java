@@ -4,7 +4,8 @@ import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseAlreadyExistsException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.ValidationUserCourseException;
-import com.coolSchool.CoolSchool.models.dto.UserCourseDTO;
+import com.coolSchool.CoolSchool.models.dto.request.UserCourseRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.UserCourseResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.models.entity.UserCourse;
@@ -38,22 +39,22 @@ public class UserCourseServiceImpl implements UserCourseService {
     }
 
     @Override
-    public List<UserCourseDTO> getAllUserCourses() {
+    public List<UserCourseResponseDTO> getAllUserCourses() {
         List<UserCourse> userCourses = userCourseRepository.findByDeletedFalse();
-        return userCourses.stream().map(userCourse -> modelMapper.map(userCourse, UserCourseDTO.class)).toList();
+        return userCourses.stream().map(userCourse -> modelMapper.map(userCourse, UserCourseResponseDTO.class)).toList();
     }
 
     @Override
-    public UserCourseDTO getUserCourseById(Long id) {
+    public UserCourseResponseDTO getUserCourseById(Long id) {
         Optional<UserCourse> userCourse = userCourseRepository.findByIdAndDeletedFalse(id);
         if (userCourse.isPresent()) {
-            return modelMapper.map(userCourse.get(), UserCourseDTO.class);
+            return modelMapper.map(userCourse.get(), UserCourseResponseDTO.class);
         }
         throw new UserCourseNotFoundException();
     }
 
     @Override
-    public UserCourseDTO createUserCourse(UserCourseDTO userCourseDTO) {
+    public UserCourseResponseDTO createUserCourse(UserCourseRequestDTO userCourseDTO) {
         try {
             if (userCourseRepository.existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId())) {
                 throw new UserCourseAlreadyExistsException();
@@ -67,14 +68,14 @@ public class UserCourseServiceImpl implements UserCourseService {
             userCourse.setCourse(course);
 
             UserCourse userCourseEntity = userCourseRepository.save(userCourse);
-            return modelMapper.map(userCourseEntity, UserCourseDTO.class);
+            return modelMapper.map(userCourseEntity, UserCourseResponseDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationUserCourseException(exception.getConstraintViolations());
         }
     }
 
     @Override
-    public UserCourseDTO updateUserCourse(Long id, UserCourseDTO userCourseDTO) {
+    public UserCourseResponseDTO updateUserCourse(Long id, UserCourseRequestDTO userCourseDTO) {
         Optional<UserCourse> existingUserCourseOptional = userCourseRepository.findByIdAndDeletedFalse(id);
 
         if (existingUserCourseOptional.isEmpty()) {
@@ -91,7 +92,7 @@ public class UserCourseServiceImpl implements UserCourseService {
         try {
             existingUserCourse.setId(id);
             UserCourse updatedUserCourse = userCourseRepository.save(existingUserCourse);
-            return modelMapper.map(updatedUserCourse, UserCourseDTO.class);
+            return modelMapper.map(updatedUserCourse, UserCourseResponseDTO.class);
         } catch (TransactionException exception) {
             if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
                 throw new com.coolSchool.CoolSchool.exceptions.userCourse.ValidationUserCourseException(validationException.getConstraintViolations());

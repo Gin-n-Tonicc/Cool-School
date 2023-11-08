@@ -1,4 +1,4 @@
-package com.coolSchool.CoolSchool.models.dto;
+package com.coolSchool.CoolSchool.models.dto.request;
 
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import lombok.AllArgsConstructor;
@@ -11,11 +11,11 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentDTO {
+public class CommentRequestDTO {
     private Long id;
     private String comment;
     private LocalDateTime created_at;
     private Long ownerId;
     private Long blogId;
-    private Set<PublicUserDTO> liked_users;
+    private Set<Long> liked_users;
 }

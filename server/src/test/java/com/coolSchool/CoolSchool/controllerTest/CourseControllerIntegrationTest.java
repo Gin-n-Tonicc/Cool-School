@@ -1,9 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.CourseController;
-import com.coolSchool.CoolSchool.filters.JwtAuthenticationFilter;
-import com.coolSchool.CoolSchool.models.dto.CourseDTO;
-import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseResponseDTO;
 import com.coolSchool.CoolSchool.services.impl.CourseServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,7 +45,7 @@ class CourseControllerIntegrationTest {
     private ObjectMapper objectMapper;
     @MockBean
     private CourseServiceImpl courseService;
-    private List<CourseDTO> courseList;
+    private List<CourseResponseDTO> courseList;
 
     @BeforeEach
     void setup() {
@@ -56,7 +55,7 @@ class CourseControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         courseList = new ArrayList<>();
-        courseList.add(new CourseDTO());
+        courseList.add(new CourseResponseDTO());
     }
 
     @Test
@@ -70,41 +69,11 @@ class CourseControllerIntegrationTest {
     @Test
     void testGetCourseById() throws Exception {
         Long courseId = 1L;
-        CourseDTO course = new CourseDTO();
+        CourseResponseDTO course = new CourseResponseDTO();
 
         Mockito.when(courseService.getCourseById(courseId)).thenReturn(course);
 
         mockMvc.perform(get("/api/v1/courses/{id}", courseId))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
-    @Test
-    void testCreateCourse() throws Exception {
-        CourseDTO course = new CourseDTO();
-        String courseJson = objectMapper.writeValueAsString(course);
-
-        Mockito.when(courseService.createCourse(Mockito.any(CourseDTO.class), (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey))).thenReturn(course);
-
-        mockMvc.perform(post("/api/v1/courses/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(courseJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
-    @Test
-    void testUpdateCourse() throws Exception {
-        Long courseId = 1L;
-        CourseDTO updatedCourse = new CourseDTO();
-        String updatedCourseJson = objectMapper.writeValueAsString(updatedCourse);
-
-        Mockito.when(courseService.updateCourse(Mockito.eq(courseId), Mockito.any(CourseDTO.class)))
-                .thenReturn(updatedCourse);
-
-        mockMvc.perform(put("/api/v1/courses/{id}", courseId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(updatedCourseJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }

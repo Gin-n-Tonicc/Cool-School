@@ -5,10 +5,11 @@ import com.coolSchool.CoolSchool.exceptions.comment.CommentNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.comment.ValidationCommentException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
-import com.coolSchool.CoolSchool.models.dto.CommentDTO;
-import com.coolSchool.CoolSchool.models.dto.CommentGetByBlogResponseDTO;
-import com.coolSchool.CoolSchool.models.dto.CommentGetDTO;
+
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CommentRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CommentGetByBlogResponseDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CommentResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
 import com.coolSchool.CoolSchool.models.entity.Comment;
 import com.coolSchool.CoolSchool.models.entity.User;
@@ -45,9 +46,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentGetDTO> getAllComments() {
+    public List<CommentResponseDTO> getAllComments() {
         List<Comment> comments = commentRepository.findByDeletedFalse();
-        return comments.stream().map(comment -> modelMapper.map(comment, CommentGetDTO.class)).toList();
+        return comments.stream().map(comment -> modelMapper.map(comment, CommentResponseDTO.class)).toList();
     }
 
     @Override
@@ -59,7 +60,10 @@ public class CommentServiceImpl implements CommentService {
             comments = comments.subList(0, Math.min(length, n));
         }
 
-        List<CommentGetDTO> commentGetDTOs = comments.stream().map(comment -> modelMapper.map(comment, CommentGetDTO.class)).toList();
+        List<CommentResponseDTO> commentGetDTOs = comments.stream().map(comment -> {
+            comment.setBlogId(null);
+            return modelMapper.map(comment, CommentResponseDTO.class);
+        }).toList();
 
         return CommentGetByBlogResponseDTO
                 .builder()
@@ -69,16 +73,16 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentGetDTO getCommentById(Long id) {
+    public CommentResponseDTO getCommentById(Long id) {
         Optional<Comment> comment = commentRepository.findByIdAndDeletedFalse(id);
         if (comment.isPresent()) {
-            return modelMapper.map(comment.get(), CommentGetDTO.class);
+            return modelMapper.map(comment.get(), CommentResponseDTO.class);
         }
         throw new CommentNotFoundException();
     }
 
     @Override
-    public CommentDTO createComment(CommentDTO commentDTO, PublicUserDTO loggedUser) {
+    public CommentResponseDTO createComment(CommentRequestDTO commentDTO, PublicUserDTO loggedUser) {
         try {
             commentDTO.setId(null);
             commentDTO.setCreated_at(LocalDateTime.now());
@@ -88,14 +92,14 @@ public class CommentServiceImpl implements CommentService {
             blog.setCommentCount(blog.getCommentCount() + 1);
             blogRepository.save(blog);
             Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
-            return modelMapper.map(commentEntity, CommentDTO.class);
+            return modelMapper.map(commentEntity, CommentResponseDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationCommentException(exception.getConstraintViolations());
         }
     }
 
     @Override
-    public CommentDTO updateComment(Long id, CommentDTO commentDTO, PublicUserDTO loggedUser) {
+    public CommentResponseDTO updateComment(Long id, CommentRequestDTO commentDTO, PublicUserDTO loggedUser) {
         Optional<Comment> existingCommentOptional = commentRepository.findByIdAndDeletedFalse(id);
         if (existingCommentOptional.isEmpty()) {
             throw new CommentNotFoundException();
@@ -111,7 +115,7 @@ public class CommentServiceImpl implements CommentService {
         try {
             existingComment.setId(id);
             Comment updatedComment = commentRepository.save(existingComment);
-            return modelMapper.map(updatedComment, CommentDTO.class);
+            return modelMapper.map(updatedComment, CommentResponseDTO.class);
         } catch (TransactionException exception) {
             if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
                 throw new ValidationCommentException(validationException.getConstraintViolations());
@@ -140,14 +144,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDTO> getCommentsByNewestFirst() {
+    public List<CommentResponseDTO> getCommentsByNewestFirst() {
         List<Comment> comments = commentRepository.findAllByNewestFirst();
-        return comments.stream().map(comment -> modelMapper.map(comment, CommentDTO.class)).toList();
+        return comments.stream().map(comment -> modelMapper.map(comment, CommentResponseDTO.class)).toList();
     }
 
     @Override
-    public List<CommentDTO> getCommentsByMostLiked() {
+    public List<CommentResponseDTO> getCommentsByMostLiked() {
         List<Comment> comments = commentRepository.findAllByMostLiked();
-        return comments.stream().map(comment -> modelMapper.map(comment, CommentDTO.class)).toList();
+        return comments.stream().map(comment -> modelMapper.map(comment, CommentResponseDTO.class)).toList();
     }
 }

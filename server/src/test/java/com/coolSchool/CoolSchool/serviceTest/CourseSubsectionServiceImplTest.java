@@ -2,7 +2,8 @@ package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.courseSubsection.ValidationCourseSubsectionException;
-import com.coolSchool.CoolSchool.models.dto.CourseSubsectionDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CourseSubsectionRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseSubsectionResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
@@ -70,7 +71,7 @@ class CourseSubsectionServiceImplTest {
         List<CourseSubsection> courseSubsectionList = new ArrayList<>();
         courseSubsectionList.add(new CourseSubsection());
         Mockito.when(courseSubsectionRepository.findByDeletedFalse()).thenReturn(courseSubsectionList);
-        List<CourseSubsectionDTO> result = courseSubsectionService.getAllCourseSubsections();
+        List<CourseSubsectionResponseDTO> result = courseSubsectionService.getAllCourseSubsections();
         assertNotNull(result);
         assertEquals(courseSubsectionList.size(), result.size());
     }
@@ -81,7 +82,7 @@ class CourseSubsectionServiceImplTest {
         CourseSubsection courseSubsection = new CourseSubsection();
         Optional<CourseSubsection> courseSubsectionOptional = Optional.of(courseSubsection);
         when(courseSubsectionRepository.findByIdAndDeletedFalse(courseSubsectionId)).thenReturn(courseSubsectionOptional);
-        CourseSubsectionDTO result = courseSubsectionService.getCourseSubsectionById(courseSubsectionId);
+        CourseSubsectionResponseDTO result = courseSubsectionService.getCourseSubsectionById(courseSubsectionId);
         assertNotNull(result);
     }
 
@@ -95,33 +96,33 @@ class CourseSubsectionServiceImplTest {
 
     @Test
     void testCreateCourseSubsection() {
-        CourseSubsectionDTO courseSubsectionDTO = new CourseSubsectionDTO();
+        CourseSubsectionResponseDTO courseSubsectionDTO = new CourseSubsectionResponseDTO();
         CourseSubsection courseSubsection = modelMapper.map(courseSubsectionDTO, CourseSubsection.class);
         when(courseSubsectionRepository.save(any(CourseSubsection.class))).thenReturn(courseSubsection);
         when(courseRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Course()));
-        CourseSubsectionDTO result = courseSubsectionService.createCourseSubsection(courseSubsectionDTO);
+        CourseSubsectionResponseDTO result = courseSubsectionService.createCourseSubsection(modelMapper.map(courseSubsectionDTO, CourseSubsectionRequestDTO.class));
         assertNotNull(result);
     }
 
     @Test
     void testUpdateCourseSubsection() {
         Long courseSubsectionId = 1L;
-        CourseSubsectionDTO updatedCourseSubsectionDTO = new CourseSubsectionDTO();
+        CourseSubsectionResponseDTO updatedCourseSubsectionDTO = new CourseSubsectionResponseDTO();
         CourseSubsection existingCourseSubsection = new CourseSubsection();
         Optional<CourseSubsection> existingCourseSubsectionOptional = Optional.of(existingCourseSubsection);
         when(courseSubsectionRepository.findByIdAndDeletedFalse(courseSubsectionId)).thenReturn(existingCourseSubsectionOptional);
         when(courseSubsectionRepository.save(any(CourseSubsection.class))).thenReturn(existingCourseSubsection);
         when(courseRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Course()));
-        CourseSubsectionDTO result = courseSubsectionService.updateCourseSubsection(courseSubsectionId, updatedCourseSubsectionDTO);
+        CourseSubsectionResponseDTO result = courseSubsectionService.updateCourseSubsection(courseSubsectionId, modelMapper.map(updatedCourseSubsectionDTO, CourseSubsectionRequestDTO.class));
         assertNotNull(result);
     }
 
     @Test
     void testUpdateCourseSubsectionNotFound() {
         Long nonExistentCourseSubsectionId = 99L;
-        CourseSubsectionDTO updatedCourseSubsectionDTO = new CourseSubsectionDTO();
+        CourseSubsectionResponseDTO updatedCourseSubsectionDTO = new CourseSubsectionResponseDTO();
         when(courseSubsectionRepository.findByIdAndDeletedFalse(nonExistentCourseSubsectionId)).thenReturn(Optional.empty());
-        assertThrows(CourseSubsectionNotFoundException.class, () -> courseSubsectionService.updateCourseSubsection(nonExistentCourseSubsectionId, updatedCourseSubsectionDTO));
+        assertThrows(CourseSubsectionNotFoundException.class, () -> courseSubsectionService.updateCourseSubsection(nonExistentCourseSubsectionId, modelMapper.map(updatedCourseSubsectionDTO, CourseSubsectionRequestDTO.class)));
     }
 
     @Test
@@ -133,20 +134,20 @@ class CourseSubsectionServiceImplTest {
 
     @Test
     void testCreateCourseSubsection_ValidationException() {
-        CourseSubsectionDTO courseSubsectionDTO = new CourseSubsectionDTO();
+        CourseSubsectionResponseDTO courseSubsectionDTO = new CourseSubsectionResponseDTO();
         courseSubsectionDTO.setTitle(null);
         when(courseRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Course()));
         ConstraintViolation<?> violation = mock(ConstraintViolation.class);
         Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
         when(courseSubsectionRepository.save(any(CourseSubsection.class))).thenThrow(constraintViolationException);
-        assertThrows(ValidationCourseSubsectionException.class, () -> courseSubsectionService.createCourseSubsection(courseSubsectionDTO));
+        assertThrows(ValidationCourseSubsectionException.class, () -> courseSubsectionService.createCourseSubsection(modelMapper.map(courseSubsectionDTO, CourseSubsectionRequestDTO.class)));
     }
 
     @Test
     void testUpdateCourseSubsection_ValidationException() {
         Long courseSubsectionId = 1L;
-        CourseSubsectionDTO courseSubsectionDTO = new CourseSubsectionDTO();
+        CourseSubsectionResponseDTO courseSubsectionDTO = new CourseSubsectionResponseDTO();
         courseSubsectionDTO.setDescription(null);
         CourseSubsection existingCourseSubsection = new CourseSubsection();
         Optional<CourseSubsection> existingCourseSubsectionOptional = Optional.of(existingCourseSubsection);
@@ -156,7 +157,7 @@ class CourseSubsectionServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
         when(courseSubsectionRepository.findByIdAndDeletedFalse(courseSubsectionId)).thenReturn(existingCourseSubsectionOptional);
         when(courseSubsectionRepository.save(any(CourseSubsection.class))).thenThrow(constraintViolationException);
-        assertThrows(ConstraintViolationException.class, () -> courseSubsectionService.updateCourseSubsection(courseSubsectionId, courseSubsectionDTO));
+        assertThrows(ConstraintViolationException.class, () -> courseSubsectionService.updateCourseSubsection(courseSubsectionId, modelMapper.map(courseSubsectionDTO, CourseSubsectionRequestDTO.class)));
     }
 }
 
