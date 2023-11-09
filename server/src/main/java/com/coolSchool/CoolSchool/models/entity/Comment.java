@@ -22,7 +22,7 @@ public class Comment {
     private Long id;
     @NotNull(message = "The content of the comment should not be null!")
     @NotBlank(message = "The content of the comment should not be blank!")
-    @Size(max = 100, message = "The comment must be less than 100 symbols!")
+    @Size(max = 200, message = "The comment must be less than 200 symbols!")
     private String comment;
     @Column(name = "created_at")
     private LocalDateTime created_at;

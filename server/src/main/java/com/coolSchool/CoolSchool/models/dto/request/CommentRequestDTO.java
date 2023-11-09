@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.models.dto.request;
 
+import com.coolSchool.CoolSchool.models.dto.common.CommentDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +12,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentRequestDTO {
+public class CommentRequestDTO extends CommentDTO {
     private Long ownerId;
     private Long blogId;
     private Set<Long> liked_users;

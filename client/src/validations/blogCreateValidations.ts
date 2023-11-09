@@ -7,8 +7,8 @@ export const TITLE_VALIDATIONS: RegisterOptions = {
     message: 'Title requires minimum five characters',
   },
   maxLength: {
-    value: 20,
-    message: 'Title requires maximum twenty characters',
+    value: 50,
+    message: 'Title requires maximum fifty characters',
   },
 };
 

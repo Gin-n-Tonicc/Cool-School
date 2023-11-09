@@ -21,7 +21,7 @@ public class Blog {
     private Long id;
     @NotNull(message = "The title of the blog should not be null!")
     @NotBlank(message = "The title of the blog should not be blank!")
-    @Size(min = 5, max = 20, message = "The title must be at least 5 symbols and less than 20!")
+    @Size(min = 5, max = 50, message = "The title must be at least 5 symbols and less than 50!")
     private String title;
 
     @NotNull(message = "The content of the blog should not be null!")
