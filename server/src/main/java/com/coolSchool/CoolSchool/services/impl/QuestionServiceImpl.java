@@ -3,7 +3,7 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.questions.QuestionNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.questions.ValidationQuestionException;
-import com.coolSchool.CoolSchool.models.dto.QuestionDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuestionDTO;
 import com.coolSchool.CoolSchool.models.entity.Question;
 import com.coolSchool.CoolSchool.repositories.QuestionRepository;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;

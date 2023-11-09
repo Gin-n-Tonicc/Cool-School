@@ -3,7 +3,7 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.userAnswer.UserAnswerNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userAnswer.ValidationUserAnswerException;
-import com.coolSchool.CoolSchool.models.dto.UserAnswerDTO;
+import com.coolSchool.CoolSchool.models.dto.common.UserAnswerDTO;
 import com.coolSchool.CoolSchool.models.entity.UserAnswer;
 import com.coolSchool.CoolSchool.repositories.AnswerRepository;
 import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;

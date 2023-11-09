@@ -1,25 +1,20 @@
 package com.coolSchool.CoolSchool.models.dto.request;
 
+import com.coolSchool.CoolSchool.models.dto.common.BlogDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BlogRequestDTO {
-    private Long id;
-    private String title;
-    private String content;
-    private String summary;
-    private LocalDateTime created_at;
+public class BlogRequestDTO extends BlogDTO {
     private List<Long> liked_users;
     private Long pictureId;
     private Long ownerId;
     private Long categoryId;
-    private boolean isEnabled;
-    private Integer commentCount;
 }

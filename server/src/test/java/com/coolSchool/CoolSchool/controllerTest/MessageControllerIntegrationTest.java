@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.MessageController;
-import com.coolSchool.CoolSchool.models.dto.MessageDTO;
+import com.coolSchool.CoolSchool.models.dto.common.MessageDTO;
 import com.coolSchool.CoolSchool.services.impl.MessageServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

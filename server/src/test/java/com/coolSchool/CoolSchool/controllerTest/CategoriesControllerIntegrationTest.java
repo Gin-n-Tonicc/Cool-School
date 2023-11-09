@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.CategoryController;
-import com.coolSchool.CoolSchool.models.dto.CategoryDTO;
+import com.coolSchool.CoolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.CoolSchool.services.impl.CategoryServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

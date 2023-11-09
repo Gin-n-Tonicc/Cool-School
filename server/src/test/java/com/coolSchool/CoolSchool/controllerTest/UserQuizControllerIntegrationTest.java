@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.UserQuizController;
-import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
+import com.coolSchool.CoolSchool.models.dto.common.UserQuizDTO;
 import com.coolSchool.CoolSchool.services.impl.UserQuizServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

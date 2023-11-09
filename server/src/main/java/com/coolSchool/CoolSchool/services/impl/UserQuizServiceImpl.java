@@ -4,7 +4,7 @@ import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.NoMoreAttemptsForUserQuiz;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.UserQuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userQuiz.ValidationUserQuizException;
-import com.coolSchool.CoolSchool.models.dto.UserQuizDTO;
+import com.coolSchool.CoolSchool.models.dto.common.UserQuizDTO;
 import com.coolSchool.CoolSchool.models.entity.*;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;
 import com.coolSchool.CoolSchool.repositories.UserAnswerRepository;
