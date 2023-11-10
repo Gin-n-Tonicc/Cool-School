@@ -14,7 +14,7 @@ export interface BlogItemProps {
 }
 
 export default function BlogItem(props: BlogItemProps) {
-  const month = props.date.toLocaleString('default', { month: 'short' });
+  const month = props.date.toLocaleString('en-US', { month: 'short' });
   const day = props.date.getDate();
 
   return (
