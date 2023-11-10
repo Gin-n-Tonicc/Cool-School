@@ -3,7 +3,7 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.message.MessageNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.message.ValidationMessageException;
-import com.coolSchool.CoolSchool.models.dto.MessageDTO;
+import com.coolSchool.CoolSchool.models.dto.common.MessageDTO;
 import com.coolSchool.CoolSchool.models.entity.Message;
 import com.coolSchool.CoolSchool.repositories.MessageRepository;
 import com.coolSchool.CoolSchool.repositories.UserRepository;

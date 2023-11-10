@@ -2,7 +2,7 @@ package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.category.ValidationCategoryException;
-import com.coolSchool.CoolSchool.models.dto.CategoryDTO;
+import com.coolSchool.CoolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.CoolSchool.models.entity.Category;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.services.impl.CategoryServiceImpl;

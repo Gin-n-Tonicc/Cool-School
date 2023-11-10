@@ -4,7 +4,7 @@ import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
-import com.coolSchool.CoolSchool.models.dto.CategoryDTO;
+import com.coolSchool.CoolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.CoolSchool.models.dto.response.BlogResponseDTO;

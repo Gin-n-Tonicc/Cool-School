@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.models.dto.AnswerDTO;
+import com.coolSchool.CoolSchool.models.dto.common.AnswerDTO;
 import com.coolSchool.CoolSchool.services.AnswerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

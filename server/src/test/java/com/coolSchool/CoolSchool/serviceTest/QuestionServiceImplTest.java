@@ -2,7 +2,7 @@ package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.questions.QuestionNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.questions.ValidationQuestionException;
-import com.coolSchool.CoolSchool.models.dto.QuestionDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuestionDTO;
 import com.coolSchool.CoolSchool.models.entity.Question;
 import com.coolSchool.CoolSchool.models.entity.Quiz;
 import com.coolSchool.CoolSchool.repositories.QuestionRepository;

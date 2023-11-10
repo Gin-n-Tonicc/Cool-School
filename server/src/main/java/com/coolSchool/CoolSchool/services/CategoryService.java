@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.CategoryDTO;
+import com.coolSchool.CoolSchool.models.dto.common.CategoryDTO;
 
 import java.util.List;
 

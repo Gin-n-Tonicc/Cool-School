@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.MessageDTO;
+import com.coolSchool.CoolSchool.models.dto.common.MessageDTO;
 
 import java.util.List;
 

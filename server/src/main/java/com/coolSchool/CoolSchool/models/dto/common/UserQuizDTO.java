@@ -1,5 +1,6 @@
-package com.coolSchool.CoolSchool.models.dto;
+package com.coolSchool.CoolSchool.models.dto.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserQuizDTO {
     private Long id;
+    @JsonProperty(value = "user")
     private Long userId;
+    @JsonProperty(value = "quiz")
     private Long quizId;
     private BigDecimal grade;
     private String feedback;

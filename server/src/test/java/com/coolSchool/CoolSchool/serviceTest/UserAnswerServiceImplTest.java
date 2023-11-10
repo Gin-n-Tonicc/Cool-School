@@ -2,7 +2,7 @@ package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.userAnswer.UserAnswerNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userAnswer.ValidationUserAnswerException;
-import com.coolSchool.CoolSchool.models.dto.UserAnswerDTO;
+import com.coolSchool.CoolSchool.models.dto.common.UserAnswerDTO;
 import com.coolSchool.CoolSchool.models.entity.Answer;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.models.entity.UserAnswer;

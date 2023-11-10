@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.QuestionDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuestionDTO;
 
 import java.util.List;
 

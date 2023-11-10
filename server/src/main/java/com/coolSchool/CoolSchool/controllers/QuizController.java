@@ -1,8 +1,7 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.models.dto.QuizDTO;
-import com.coolSchool.CoolSchool.models.dto.QuizDataDTO;
-import com.coolSchool.CoolSchool.models.entity.Quiz;
+import com.coolSchool.CoolSchool.models.dto.common.QuizDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuizDataDTO;
 import com.coolSchool.CoolSchool.services.QuizService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

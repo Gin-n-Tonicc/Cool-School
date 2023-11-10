@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.QuestionController;
-import com.coolSchool.CoolSchool.models.dto.QuestionDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuestionDTO;
 import com.coolSchool.CoolSchool.services.impl.QuestionServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
