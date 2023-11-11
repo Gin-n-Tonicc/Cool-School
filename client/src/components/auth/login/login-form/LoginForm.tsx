@@ -7,7 +7,7 @@ import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
 import {
   EMAIL_VALIDATIONS,
   PASSWORD_VALIDATIONS,
-} from '../../../../utils/validationConstants';
+} from '../../../../validations/authValidations';
 import FormInput from '../../../common/form-input/FormInput';
 
 type LoginFormProps = {

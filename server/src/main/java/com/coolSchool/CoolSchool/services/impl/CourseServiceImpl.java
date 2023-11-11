@@ -1,9 +1,13 @@
 package com.coolSchool.CoolSchool.services.impl;
 
+import com.coolSchool.CoolSchool.enums.Role;
+import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
-import com.coolSchool.CoolSchool.models.dto.CourseDTO;
+import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CourseRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -35,39 +40,46 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseDTO> getAllCourses() {
+    public List<CourseResponseDTO> getAllCourses() {
         List<Course> courses = courseRepository.findByDeletedFalse();
-        return courses.stream().map(course -> modelMapper.map(course, CourseDTO.class)).toList();
+        return courses.stream().map(course -> modelMapper.map(course, CourseResponseDTO.class)).toList();
     }
 
     @Override
-    public CourseDTO getCourseById(Long id) {
+    public CourseResponseDTO getCourseById(Long id) {
         Optional<Course> course = courseRepository.findByIdAndDeletedFalse(id);
         if (course.isPresent()) {
-            return modelMapper.map(course.get(), CourseDTO.class);
+            return modelMapper.map(course.get(), CourseResponseDTO.class);
         }
         throw new CourseNotFoundException();
     }
 
     @Override
-    public CourseDTO createCourse(CourseDTO courseDTO) {
+    public CourseResponseDTO createCourse(CourseRequestDTO courseDTO, PublicUserDTO loggedUser) {
+        if (loggedUser == null || !(loggedUser.getRole().equals(Role.ADMIN) || loggedUser.getRole().equals(Role.TEACHER))) {
+            throw new AccessDeniedException();
+        }
         try {
             courseDTO.setId(null);
+            courseDTO.setStarts(0);
             userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
             categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
             Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
-            return modelMapper.map(courseEntity, CourseDTO.class);
+            return modelMapper.map(courseEntity, CourseResponseDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationCourseException(exception.getConstraintViolations());
         }
     }
 
     @Override
-    public CourseDTO updateCourse(Long id, CourseDTO courseDTO) {
+    public CourseResponseDTO updateCourse(Long id, CourseRequestDTO courseDTO, PublicUserDTO loggedUser) {
         Optional<Course> existingCourseOptional = courseRepository.findByIdAndDeletedFalse(id);
 
         if (existingCourseOptional.isEmpty()) {
             throw new CourseNotFoundException();
+        }
+        if (loggedUser == null || (!Objects.equals(loggedUser.getId(), courseDTO.getUserId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
+            throw new AccessDeniedException();
         }
         userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
         categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
@@ -77,7 +89,7 @@ public class CourseServiceImpl implements CourseService {
         try {
             existingCourse.setId(id);
             Course updatedCourse = courseRepository.save(existingCourse);
-            return modelMapper.map(updatedCourse, CourseDTO.class);
+            return modelMapper.map(updatedCourse, CourseResponseDTO.class);
         } catch (TransactionException exception) {
             if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
                 throw new ValidationCourseException(validationException.getConstraintViolations());
@@ -87,9 +99,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void deleteCourse(Long id) {
+    public void deleteCourse(Long id, PublicUserDTO loggedUser) {
         Optional<Course> course = courseRepository.findByIdAndDeletedFalse(id);
         if (course.isPresent()) {
+            if (loggedUser == null || (!Objects.equals(loggedUser.getId(), course.get().getUser().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
+                throw new AccessDeniedException();
+            }
             course.get().setDeleted(true);
             courseRepository.save(course.get());
         } else {

@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
-import com.coolSchool.CoolSchool.models.dto.CommentDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CommentResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Comment;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
 import com.coolSchool.CoolSchool.repositories.CommentRepository;
@@ -51,7 +51,7 @@ public class CommentServiceImplTest {
         comments.add(new Comment());
         comments.add(new Comment());
         when(commentRepository.findByDeletedFalse()).thenReturn(comments);
-        List<CommentDTO> commentDTOs = commentService.getAllComments();
+        List<CommentResponseDTO> commentDTOs = commentService.getAllComments();
         Assertions.assertNotNull(commentDTOs);
         Assertions.assertEquals(2, commentDTOs.size());
     }
@@ -61,7 +61,7 @@ public class CommentServiceImplTest {
         Comment comment = new Comment();
         comment.setId(1L);
         when(commentRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(comment));
-        CommentDTO commentDTO = commentService.getCommentById(1L);
+        CommentResponseDTO commentDTO = commentService.getCommentById(1L);
         Assertions.assertNotNull(commentDTO);
 
     }
@@ -72,7 +72,7 @@ public class CommentServiceImplTest {
         comments.add(new Comment());
         comments.add(new Comment());
         when(commentRepository.findAllByNewestFirst()).thenReturn(comments);
-        List<CommentDTO> commentDTOs = commentService.getCommentsByNewestFirst();
+        List<CommentResponseDTO> commentDTOs = commentService.getCommentsByNewestFirst();
         Assertions.assertNotNull(commentDTOs);
         Assertions.assertEquals(2, commentDTOs.size());
     }

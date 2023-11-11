@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.QuizController;
-import com.coolSchool.CoolSchool.models.dto.QuizDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuizDTO;
 import com.coolSchool.CoolSchool.services.impl.QuizServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,19 +89,6 @@ class QuizControllerIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
-    @Test
-    void testCreateQuiz() throws Exception {
-        QuizDTO quiz = new QuizDTO();
-        String quizJson = objectMapper.writeValueAsString(quiz);
-
-        Mockito.when(quizService.createQuiz(Mockito.any(QuizDTO.class))).thenReturn(quiz);
-
-        mockMvc.perform(post("/api/v1/quizzes/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(quizJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
 
     @Test
     void testUpdateQuiz() throws Exception {

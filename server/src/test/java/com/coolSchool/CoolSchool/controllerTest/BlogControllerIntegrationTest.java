@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.BlogController;
-import com.coolSchool.CoolSchool.models.dto.BlogDTO;
+import com.coolSchool.CoolSchool.models.dto.response.BlogResponseDTO;
 import com.coolSchool.CoolSchool.services.impl.BlogServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +47,7 @@ class BlogControllerIntegrationTest {
     private ObjectMapper objectMapper;
     @MockBean
     private BlogServiceImpl blogService;
-    private List<BlogDTO> blogList;
+    private List<BlogResponseDTO> blogList;
 
     @BeforeEach
     void setup() {
@@ -57,7 +57,7 @@ class BlogControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         blogList = new ArrayList<>();
-        blogList.add(new BlogDTO());
+        blogList.add(new BlogResponseDTO());
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.models.dto.CategoryDTO;
+import com.coolSchool.CoolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.CoolSchool.services.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

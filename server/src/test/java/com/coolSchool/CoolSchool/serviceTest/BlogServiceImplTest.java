@@ -4,8 +4,10 @@ import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
-import com.coolSchool.CoolSchool.models.dto.BlogDTO;
+import com.coolSchool.CoolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.BlogRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.BlogResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
@@ -63,7 +65,7 @@ public class BlogServiceImplTest {
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.ADMIN);
         when(blogRepository.findAll()).thenReturn(Collections.emptyList());
-        List<BlogDTO> blogs = blogService.getAllBlogs(loggedUser);
+        List<BlogResponseDTO> blogs = blogService.getAllBlogs(loggedUser);
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(0, blogs.size());
     }
@@ -74,7 +76,7 @@ public class BlogServiceImplTest {
         loggedUser.setRole(Role.ADMIN);
         Blog sampleBlog = new Blog();
         when(blogRepository.findById(anyLong())).thenReturn(Optional.of(sampleBlog));
-        BlogDTO blogDTO = blogService.getBlogById(1L, loggedUser);
+        BlogResponseDTO blogDTO = blogService.getBlogById(1L, loggedUser);
         Assertions.assertNotNull(blogDTO);
     }
 
@@ -96,7 +98,7 @@ public class BlogServiceImplTest {
     void testGetBlogsByNewestFirstWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
         when(blogRepository.findAllByNewestFirst()).thenReturn(mockBlogs);
-        List<BlogDTO> blogs = blogService.getBlogsByNewestFirst();
+        List<BlogResponseDTO> blogs = blogService.getBlogsByNewestFirst();
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
     }
@@ -105,7 +107,7 @@ public class BlogServiceImplTest {
     void testGetBlogsByMostLikedWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
         when(blogRepository.findAllByMostLiked()).thenReturn(mockBlogs);
-        List<BlogDTO> blogs = blogService.getBlogsByMostLiked();
+        List<BlogResponseDTO> blogs = blogService.getBlogsByMostLiked();
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
     }
@@ -114,7 +116,7 @@ public class BlogServiceImplTest {
     void testSearchBlogsByKeywordTitleWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
         when(blogRepository.searchByTitleContainingIgnoreCase(anyString())).thenReturn(mockBlogs);
-        List<BlogDTO> blogs = blogService.searchBlogsByKeywordTitle("keyword");
+        List<BlogResponseDTO> blogs = blogService.searchBlogsByKeywordTitle("keyword");
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
     }
@@ -123,7 +125,7 @@ public class BlogServiceImplTest {
     void testSearchBlogsByKeywordCategoryWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
         when(blogRepository.findByCategoryIdName(anyString())).thenReturn(mockBlogs);
-        List<BlogDTO> blogs = blogService.searchBlogsByKeywordCategory("category");
+        List<BlogResponseDTO> blogs = blogService.searchBlogsByKeywordCategory("category");
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
     }
@@ -132,7 +134,7 @@ public class BlogServiceImplTest {
     void testGetLastNBlogsWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
         when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(mockBlogs);
-        List<BlogDTO> blogs = blogService.getLastNBlogs(5);
+        List<BlogResponseDTO> blogs = blogService.getLastNBlogs(5);
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
     }
@@ -149,7 +151,7 @@ public class BlogServiceImplTest {
         when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(anyLong())).thenReturn(Optional.empty());
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.ADMIN);
-        BlogDTO blogDTO = blogService.getBlogById(1L, loggedUser);
+        BlogResponseDTO blogDTO = blogService.getBlogById(1L, loggedUser);
         Assertions.assertNotNull(blogDTO);
     }
 
@@ -160,7 +162,7 @@ public class BlogServiceImplTest {
         when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(anyLong())).thenReturn(Optional.of(new Blog()));
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.USER);
-        BlogDTO blogDTO = blogService.getBlogById(1L, loggedUser);
+        BlogResponseDTO blogDTO = blogService.getBlogById(1L, loggedUser);
         Assertions.assertNotNull(blogDTO);
     }
 
@@ -178,7 +180,7 @@ public class BlogServiceImplTest {
         when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(List.of());
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.ADMIN);
-        List<BlogDTO> blogDTOs = blogService.getAllBlogs(loggedUser);
+        List<BlogResponseDTO> blogDTOs = blogService.getAllBlogs(loggedUser);
         Assertions.assertNotNull(blogDTOs);
         Assertions.assertFalse(blogDTOs.isEmpty());
     }
@@ -190,7 +192,7 @@ public class BlogServiceImplTest {
         when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(mockBlogs);
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.USER);
-        List<BlogDTO> blogDTOs = blogService.getAllBlogs(loggedUser);
+        List<BlogResponseDTO> blogDTOs = blogService.getAllBlogs(loggedUser);
         Assertions.assertNotNull(blogDTOs);
         Assertions.assertFalse(blogDTOs.isEmpty());
     }
@@ -200,7 +202,7 @@ public class BlogServiceImplTest {
         List<Blog> mockBlogs = List.of(new Blog(), new Blog());
         when(blogRepository.findAll()).thenReturn(List.of());
         when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(mockBlogs);
-        List<BlogDTO> blogDTOs = blogService.getAllBlogs(null);
+        List<BlogResponseDTO> blogDTOs = blogService.getAllBlogs(null);
         Assertions.assertNotNull(blogDTOs);
         Assertions.assertFalse(blogDTOs.isEmpty());
     }
@@ -218,10 +220,10 @@ public class BlogServiceImplTest {
         when(blogRepository.searchBlogsByKeywordInTitleAndCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase()))
                 .thenReturn(mockBlogs);
 
-        List<BlogDTO> result = blogService.searchBlogsByKeywordInTitleAndCategory(keywordForTitle, keywordForCategory);
+        List<BlogResponseDTO> result = blogService.searchBlogsByKeywordInTitleAndCategory(keywordForTitle, keywordForCategory);
 
-        List<BlogDTO> expectedDTOs = mockBlogs.stream()
-                .map(blog -> new BlogDTO())
+        List<BlogResponseDTO> expectedDTOs = mockBlogs.stream()
+                .map(blog -> new BlogResponseDTO())
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(expectedDTOs, result);
@@ -232,12 +234,16 @@ public class BlogServiceImplTest {
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.USER);
         loggedUser.setId(1L);
-        BlogDTO blogDTO = new BlogDTO();
+        BlogResponseDTO blogDTO = new BlogResponseDTO();
         blogDTO.setEnabled(true);
-        blogDTO.setOwnerId(loggedUser.getId());
+        blogDTO.setOwner(loggedUser);
         blogDTO.setId(null);
-        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class, () -> blogService.createBlog(blogDTO, loggedUser));
+        BlogRequestDTO blogRequestDTO = new BlogRequestDTO();
+        blogRequestDTO.setEnabled(true);
+        blogRequestDTO.setOwnerId(loggedUser.getId());
+        blogRequestDTO.setId(null);
+        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwner().getId())).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> blogService.createBlog(blogRequestDTO, loggedUser));
     }
 
     @Test
@@ -245,11 +251,13 @@ public class BlogServiceImplTest {
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.USER);
         loggedUser.setId(1L);
-        BlogDTO blogDTO = new BlogDTO();
+        BlogResponseDTO blogDTO = new BlogResponseDTO();
         blogDTO.setEnabled(true);
-        blogDTO.setOwnerId(loggedUser.getId());
+        blogDTO.setOwner(loggedUser);
+        CategoryDTO categoryDTO = new CategoryDTO(1L, "name");
+        blogDTO.setCategory(categoryDTO);
         long existingBlogId = 123L;
-        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId())).thenReturn(Optional.empty());
-        assertThrows(BlogNotFoundException.class, () -> blogService.updateBlog(existingBlogId, blogDTO, loggedUser));
+        when(userRepository.findByIdAndDeletedFalse(blogDTO.getOwner().getId())).thenReturn(Optional.empty());
+        assertThrows(BlogNotFoundException.class, () -> blogService.updateBlog(existingBlogId, modelMapper.map(blogDTO, BlogRequestDTO.class), loggedUser));
     }
 }

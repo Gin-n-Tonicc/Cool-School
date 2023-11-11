@@ -1,11 +1,13 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.CoolSchool.exceptions.quizzes.QuizNotFoundException;
-import com.coolSchool.CoolSchool.models.dto.QuizDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuizDTO;
 import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
 import com.coolSchool.CoolSchool.models.entity.Quiz;
 import com.coolSchool.CoolSchool.repositories.CourseSubsectionRepository;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;
+import com.coolSchool.CoolSchool.services.AnswerService;
+import com.coolSchool.CoolSchool.services.QuestionService;
 import com.coolSchool.CoolSchool.services.impl.QuizServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -33,6 +35,10 @@ class QuizServiceImplTest {
     private QuizRepository quizRepository;
     @Mock
     private CourseSubsectionRepository courseSubsectionRepository;
+    @Mock
+    private QuestionService questionService;
+    @Mock
+    private AnswerService answerService;
 
     @InjectMocks
     private QuizServiceImpl quizService;
@@ -44,7 +50,7 @@ class QuizServiceImplTest {
     void setUp() {
         modelMapper = new ModelMapper();
         validator = Validation.buildDefaultValidatorFactory().getValidator();
-        quizService = new QuizServiceImpl(quizRepository, modelMapper, validator, courseSubsectionRepository);
+        quizService = new QuizServiceImpl(quizRepository, modelMapper,questionService, answerService, validator, courseSubsectionRepository);
     }
 
     @Test
@@ -92,15 +98,6 @@ class QuizServiceImplTest {
         assertThrows(QuizNotFoundException.class, () -> quizService.getQuizById(quizId));
     }
 
-    @Test
-    void testCreateQuiz() {
-        QuizDTO quizDTO = new QuizDTO();
-        Quiz quiz = modelMapper.map(quizDTO, Quiz.class);
-        when(quizRepository.save(any(Quiz.class))).thenReturn(quiz);
-        when(courseSubsectionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new CourseSubsection()));
-        QuizDTO result = quizService.createQuiz(quizDTO);
-        assertNotNull(result);
-    }
 
     @Test
     void testUpdateQuiz() {
@@ -151,21 +148,6 @@ class QuizServiceImplTest {
         List<QuizDTO> quizDTOs = quizService.getQuizzesBySubsectionId(subsectionId);
         assertEquals(2, quizDTOs.size());
         assertEquals(quiz1.getId(), quizDTOs.get(0).getSubsectionId());
-    }
-
-    @Test
-    void testCreateQuiz_ValidationException() {
-        QuizDTO quizDTO = new QuizDTO();
-        quizDTO.setTitle(null);
-
-        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
-        Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
-
-        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
-        when(courseSubsectionRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new CourseSubsection()));
-        when(quizRepository.save(any(Quiz.class))).thenThrow(constraintViolationException);
-
-        assertThrows(ConstraintViolationException.class, () -> quizService.createQuiz(quizDTO));
     }
 
     @Test

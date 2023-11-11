@@ -3,10 +3,12 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.quizzes.QuizNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.quizzes.ValidationQuizException;
-import com.coolSchool.CoolSchool.models.dto.QuizDTO;
+import com.coolSchool.CoolSchool.models.dto.common.*;
 import com.coolSchool.CoolSchool.models.entity.Quiz;
 import com.coolSchool.CoolSchool.repositories.CourseSubsectionRepository;
 import com.coolSchool.CoolSchool.repositories.QuizRepository;
+import com.coolSchool.CoolSchool.services.AnswerService;
+import com.coolSchool.CoolSchool.services.QuestionService;
 import com.coolSchool.CoolSchool.services.QuizService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -22,12 +24,16 @@ import java.util.stream.Collectors;
 public class QuizServiceImpl implements QuizService {
     private final QuizRepository quizRepository;
     private final ModelMapper modelMapper;
+    private final QuestionService questionService;
+    private final AnswerService answerService;
     private final Validator validator;
     private final CourseSubsectionRepository courseSubsectionRepository;
 
-    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, Validator validator, CourseSubsectionRepository courseSubsectionRepository) {
+    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, Validator validator, CourseSubsectionRepository courseSubsectionRepository) {
         this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
+        this.questionService = questionService;
+        this.answerService = answerService;
         this.validator = validator;
         this.courseSubsectionRepository = courseSubsectionRepository;
     }
@@ -55,19 +61,21 @@ public class QuizServiceImpl implements QuizService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public QuizDTO createQuiz(QuizDTO quizDTO) {
-        try {
-            quizDTO.setId(null);
-            courseSubsectionRepository.findByIdAndDeletedFalse(quizDTO.getSubsectionId()).orElseThrow(NoSuchElementException::new);
-            Quiz quizEntity = quizRepository.save(modelMapper.map(quizDTO, Quiz.class));
-            return modelMapper.map(quizEntity, QuizDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationQuizException(validationException.getConstraintViolations());
+    public QuizDTO createQuiz(QuizDataDTO quizData) {
+        QuizDTO quizDTO = quizData.getQuizDTO();
+        List<QuestionAndAnswersDTO> questionAndAnswersList = quizData.getData();
+        Quiz savedQuiz = quizRepository.save(modelMapper.map(quizDTO, Quiz.class));
+
+        for (QuestionAndAnswersDTO questionAndAnswers : questionAndAnswersList) {
+            QuestionDTO questionDTO = questionAndAnswers.getQuestion();
+            questionDTO.setQuizId(savedQuiz.getId());
+            QuestionDTO savedQuestion = questionService.createQuestion(questionDTO);
+            for (AnswerDTO answerDTO : questionAndAnswers.getAnswers()) {
+                answerDTO.setQuestionId(savedQuestion.getId());
+                answerService.createAnswer(answerDTO);
             }
-            throw exception;
         }
+        return modelMapper.map(savedQuiz, QuizDTO.class);
     }
 
     @Override

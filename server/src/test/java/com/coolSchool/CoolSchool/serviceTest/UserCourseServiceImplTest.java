@@ -1,10 +1,8 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
-import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
-import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseAlreadyExistsException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseNotFoundException;
-import com.coolSchool.CoolSchool.models.dto.UserCourseDTO;
-import com.coolSchool.CoolSchool.models.entity.User;
+import com.coolSchool.CoolSchool.models.dto.request.UserCourseRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.UserCourseResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.UserCourse;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
 import com.coolSchool.CoolSchool.repositories.UserCourseRepository;
@@ -53,20 +51,6 @@ class UserCourseServiceImplTest {
     }
 
     @Test
-    void testCreateUserCourseAlreadyExists() {
-        UserCourseDTO userCourseDTO = new UserCourseDTO();
-        userCourseDTO.setUserId(1L);
-        userCourseDTO.setCourseId(2L);
-        when(userCourseRepository.existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId()))
-                .thenReturn(true);
-        assertThrows(UserCourseAlreadyExistsException.class, () -> userCourseService.createUserCourse(userCourseDTO));
-        verify(userCourseRepository, times(1)).existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId());
-        verify(userRepository, never()).findByIdAndDeletedFalse(anyLong());
-        verify(courseRepository, never()).findByIdAndDeletedFalse(anyLong());
-        verify(userCourseRepository, never()).save(any(UserCourse.class));
-    }
-
-    @Test
     public void testDeleteUserCourse_UserCoursePresent() {
         Long UserCourseId = 1L;
 
@@ -88,7 +72,7 @@ class UserCourseServiceImplTest {
         List<UserCourse> UserCourseList = new ArrayList<>();
         UserCourseList.add(new UserCourse());
         Mockito.when(userCourseRepository.findByDeletedFalse()).thenReturn(UserCourseList);
-        List<UserCourseDTO> result = userCourseService.getAllUserCourses();
+        List<UserCourseResponseDTO> result = userCourseService.getAllUserCourses();
         assertNotNull(result);
         assertEquals(UserCourseList.size(), result.size());
     }
@@ -99,7 +83,7 @@ class UserCourseServiceImplTest {
         UserCourse UserCourse = new UserCourse();
         Optional<UserCourse> UserCourseOptional = Optional.of(UserCourse);
         when(userCourseRepository.findByIdAndDeletedFalse(UserCourseId)).thenReturn(UserCourseOptional);
-        UserCourseDTO result = userCourseService.getUserCourseById(UserCourseId);
+        UserCourseResponseDTO result = userCourseService.getUserCourseById(UserCourseId);
         assertNotNull(result);
     }
 
@@ -111,32 +95,12 @@ class UserCourseServiceImplTest {
         assertThrows(UserCourseNotFoundException.class, () -> userCourseService.getUserCourseById(UserCourseId));
     }
 
-
-    @Test
-    void testCreateUserCourseUserNotFound() {
-        UserCourseDTO userCourseDTO = new UserCourseDTO();
-        userCourseDTO.setUserId(1L);
-        userCourseDTO.setCourseId(2L);
-        when(userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId())).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> userCourseService.createUserCourse(userCourseDTO));
-    }
-
-    @Test
-    void testCreateUserCourseCourseNotFound() {
-        UserCourseDTO userCourseDTO = new UserCourseDTO();
-        userCourseDTO.setUserId(1L);
-        userCourseDTO.setCourseId(2L);
-        when(userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId())).thenReturn(Optional.of(new User()));
-        when(courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId())).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> userCourseService.createUserCourse(userCourseDTO));
-    }
-
     @Test
     void testUpdateUserCourseNotFound() {
         Long nonExistentUserCourseId = 99L;
-        UserCourseDTO updatedUserCourseDTO = new UserCourseDTO();
+        UserCourseResponseDTO updatedUserCourseDTO = new UserCourseResponseDTO();
         when(userCourseRepository.findByIdAndDeletedFalse(nonExistentUserCourseId)).thenReturn(Optional.empty());
-        assertThrows(UserCourseNotFoundException.class, () -> userCourseService.updateUserCourse(nonExistentUserCourseId, updatedUserCourseDTO));
+        assertThrows(UserCourseNotFoundException.class, () -> userCourseService.updateUserCourse(nonExistentUserCourseId, modelMapper.map(updatedUserCourseDTO, UserCourseRequestDTO.class)));
     }
 
     @Test

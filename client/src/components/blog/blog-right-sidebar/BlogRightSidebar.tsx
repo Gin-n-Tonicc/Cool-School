@@ -1,9 +1,7 @@
 import './BlogRightSidebar.scss';
-import BlogNewsletterWidget from './blog-newsletter-widget/BlogNewsletterWidget';
 import BlogPopularPostWidget from './blog-popular-post-widget/BlogPopularPostWidget';
 import BlogPostCategoryWidget from './blog-post-category-widget/BlogPostCategoryWidget';
 import BlogSearchWidget from './blog-search-widget/BlogSearchWidget';
-import BlogTagCloudWidget from './blog-tag-cloud-widget/BlogTagCloudWidget';
 
 export default function BlogRightSidebar() {
   return (
@@ -12,8 +10,8 @@ export default function BlogRightSidebar() {
         <BlogSearchWidget />
         <BlogPostCategoryWidget />
         <BlogPopularPostWidget />
-        <BlogTagCloudWidget />
-        <BlogNewsletterWidget />
+        {/* <BlogTagCloudWidget /> */}
+        {/* <BlogNewsletterWidget /> */}
       </div>
     </div>
   );

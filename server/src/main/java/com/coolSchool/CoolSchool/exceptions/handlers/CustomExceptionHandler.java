@@ -4,7 +4,7 @@ import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.ApiException;
 import com.coolSchool.CoolSchool.exceptions.common.InternalServerErrorException;
 import com.coolSchool.CoolSchool.exceptions.user.UserLoginException;
-import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
+import com.coolSchool.CoolSchool.models.dto.response.ExceptionResponse;
 import com.coolSchool.CoolSchool.utils.ApiExceptionParser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

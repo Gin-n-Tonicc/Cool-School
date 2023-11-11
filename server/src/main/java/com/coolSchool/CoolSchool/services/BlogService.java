@@ -1,30 +1,32 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.BlogRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.BlogResponseDTO;
 
 import java.util.List;
 
 public interface BlogService {
-    List<BlogDTO> getAllBlogs(PublicUserDTO loggedUser);
+    List<BlogResponseDTO> getAllBlogs(PublicUserDTO loggedUser);
 
-    BlogDTO getBlogById(Long id, PublicUserDTO loggedUser);
+    BlogResponseDTO getBlogById(Long id, PublicUserDTO loggedUser);
 
-    BlogDTO createBlog(BlogDTO blogDTO, PublicUserDTO loggedUser);
+    BlogResponseDTO createBlog(BlogRequestDTO blogDTO, PublicUserDTO loggedUser);
 
-    BlogDTO updateBlog(Long id, BlogDTO blogDTO, PublicUserDTO loggedUser);
+    BlogResponseDTO updateBlog(Long id, BlogRequestDTO blogDTO, PublicUserDTO loggedUser);
 
     void deleteBlog(Long id, PublicUserDTO loggedUser);
 
-    List<BlogDTO> getBlogsByNewestFirst();
+    List<BlogResponseDTO> getBlogsByNewestFirst();
 
-    List<BlogDTO> getBlogsByMostLiked();
+    List<BlogResponseDTO> getBlogsByMostLiked();
 
-    List<BlogDTO> searchBlogsByKeywordTitle(String keyword);
+    List<BlogResponseDTO> searchBlogsByKeywordTitle(String keyword);
 
-    List<BlogDTO> searchBlogsByKeywordCategory(String keyword);
+    List<BlogResponseDTO> searchBlogsByKeywordCategory(String keyword);
 
-    List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keywordTitle, String keywordForCategory);
+    List<BlogResponseDTO> searchBlogsByKeywordInTitleAndCategory(String keywordTitle, String keywordForCategory);
 
-    List<BlogDTO> getLastNBlogs(int n);
+    List<BlogResponseDTO> getLastNBlogs(int n);
+    BlogResponseDTO addLike(Long blogId, PublicUserDTO loggedUser);
 }

@@ -4,6 +4,7 @@ import com.coolSchool.CoolSchool.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,6 +47,10 @@ public class User implements UserDetails {
     @NotNull(message = "The username should not be null!")
     @Column(name = "username")
     private String usernameField;
+
+    @NotNull(message = "The description shot not be null!")
+    @Size(min = 60, max = 120, message = "The description must be between 60 and 120 symbols!")
+    private String description;
 
     @NotNull
     @Enumerated(EnumType.STRING)

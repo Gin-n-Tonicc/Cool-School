@@ -1,7 +1,8 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.UserCourseController;
-import com.coolSchool.CoolSchool.models.dto.UserCourseDTO;
+import com.coolSchool.CoolSchool.models.dto.request.UserCourseRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.UserCourseResponseDTO;
 import com.coolSchool.CoolSchool.services.impl.UserCourseServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,7 @@ class UserCourseControllerIntegrationTest {
     private ObjectMapper objectMapper;
     @MockBean
     private UserCourseServiceImpl userCourseService;
-    private List<UserCourseDTO> userCourseList;
+    private List<UserCourseResponseDTO> userCourseList;
 
     @BeforeEach
     void setup() {
@@ -53,8 +54,8 @@ class UserCourseControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        userCourseList = new ArrayList<>();
-        userCourseList.add(new UserCourseDTO());
+        userCourseList = new ArrayList<UserCourseResponseDTO>();
+        userCourseList.add(new UserCourseResponseDTO());
     }
 
     @Test
@@ -68,7 +69,7 @@ class UserCourseControllerIntegrationTest {
     @Test
     void testGetUserCourseById() throws Exception {
         Long userCourseId = 1L;
-        UserCourseDTO userCourse = new UserCourseDTO();
+        UserCourseResponseDTO userCourse = new UserCourseResponseDTO();
 
         Mockito.when(userCourseService.getUserCourseById(userCourseId)).thenReturn(userCourse);
 
@@ -79,10 +80,10 @@ class UserCourseControllerIntegrationTest {
 
     @Test
     void testCreateUserCourse() throws Exception {
-        UserCourseDTO userCourse = new UserCourseDTO();
+        UserCourseResponseDTO userCourse = new UserCourseResponseDTO();
         String userCourseJson = objectMapper.writeValueAsString(userCourse);
 
-        Mockito.when(userCourseService.createUserCourse(Mockito.any(UserCourseDTO.class))).thenReturn(userCourse);
+        Mockito.when(userCourseService.createUserCourse(Mockito.any(UserCourseRequestDTO.class))).thenReturn(userCourse);
 
         mockMvc.perform(post("/api/v1/userCourses/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -94,10 +95,10 @@ class UserCourseControllerIntegrationTest {
     @Test
     void testUpdateUserCourse() throws Exception {
         Long userCourseId = 1L;
-        UserCourseDTO updatedUserCourse = new UserCourseDTO();
+        UserCourseResponseDTO updatedUserCourse = new UserCourseResponseDTO();
         String updatedUserCourseJson = objectMapper.writeValueAsString(updatedUserCourse);
 
-        Mockito.when(userCourseService.updateUserCourse(Mockito.eq(userCourseId), Mockito.any(UserCourseDTO.class)))
+        Mockito.when(userCourseService.updateUserCourse(Mockito.eq(userCourseId), Mockito.any(UserCourseRequestDTO.class)))
                 .thenReturn(updatedUserCourse);
 
         mockMvc.perform(put("/api/v1/userCourses/{id}", userCourseId)

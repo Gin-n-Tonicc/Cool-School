@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.enums.Role;
+import com.coolSchool.CoolSchool.exceptions.blog.BlogAlreadyLikedException;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
@@ -8,9 +9,11 @@ import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.CoolSchool.exceptions.files.FileNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
-import com.coolSchool.CoolSchool.models.dto.BlogDTO;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.BlogRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.BlogResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
+import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.FileRepository;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -48,34 +52,57 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<BlogDTO> getAllBlogs(PublicUserDTO loggedUser) {
+    public BlogResponseDTO addLike(Long blogId, PublicUserDTO loggedUser) {
         if (loggedUser != null) {
-            if (loggedUser.getRole().equals(Role.ADMIN)) {
-                List<Blog> blogs = blogRepository.findAll();
-                return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+            Blog blog = blogRepository.findById(blogId).orElseThrow(BlogNotFoundException::new);
+            User user = userRepository.findByIdAndDeletedFalse(loggedUser.getId()).orElseThrow(UserNotFoundException::new);
+            if (!blog.getLiked_users().contains(user)) {
+                blog.getLiked_users().add(user);
+                blog = blogRepository.save(blog);
+                return modelMapper.map(blog, BlogResponseDTO.class);
             }
+
+            throw new BlogAlreadyLikedException();
         }
-        List<Blog> blogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
-        return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+        throw new AccessDeniedException();
     }
 
     @Override
-    public BlogDTO getBlogById(Long id, PublicUserDTO loggedUser) {
+    public List<BlogResponseDTO> getAllBlogs(PublicUserDTO loggedUser) {
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
-                Optional<Blog> blog = blogRepository.findById(id);
-                return modelMapper.map(blog.get(), BlogDTO.class);
+                List<Blog> blogs = blogRepository.findAll();
+                return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
             }
         }
-        Optional<Blog> blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
-        if (blog.isPresent()) {
-            return modelMapper.map(blog.get(), BlogDTO.class);
+        List<Blog> blogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
+        return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
+    }
+
+    @Override
+
+    public BlogResponseDTO getBlogById(Long id, PublicUserDTO loggedUser) {
+        Optional<Blog> optionalBlog = Optional.empty();
+
+        if (loggedUser != null) {
+            if (loggedUser.getRole().equals(Role.ADMIN)) {
+                optionalBlog = blogRepository.findById(id);
+            }
         }
+
+        if (optionalBlog.isEmpty()) {
+            optionalBlog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
+        }
+
+        if (optionalBlog.isPresent()) {
+            return modelMapper.map(optionalBlog.get(), BlogResponseDTO.class);
+        }
+
         throw new BlogNotFoundException();
     }
 
     @Override
-    public BlogDTO createBlog(BlogDTO blogDTO, PublicUserDTO loggedUser) {
+    public BlogResponseDTO createBlog(BlogRequestDTO blogDTO, PublicUserDTO loggedUser) {
         if (loggedUser == null) {
             throw new AccessDeniedException();
         }
@@ -83,25 +110,22 @@ public class BlogServiceImpl implements BlogService {
             blogDTO.setId(null);
             blogDTO.setCreated_at(LocalDateTime.now());
             blogDTO.setOwnerId(loggedUser.getId());
-            if (loggedUser.getRole().equals(Role.ADMIN)) {
-                blogDTO.setEnabled(blogDTO.isEnabled());
-            } else {
-                blogDTO.setEnabled(false);
-            }
+            blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
+
             userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
             categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
-            if (blogDTO.getPictureId() != null) {
-                fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
-            }
+            fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
+
+            blogDTO.setCommentCount(0);
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
-            return modelMapper.map(blogEntity, BlogDTO.class);
+            return modelMapper.map(blogEntity, BlogResponseDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationBlogException(exception.getConstraintViolations());
         }
     }
 
     @Override
-    public BlogDTO updateBlog(Long id, BlogDTO blogDTO, PublicUserDTO loggedUser) {
+    public BlogResponseDTO updateBlog(Long id, BlogRequestDTO blogDTO, PublicUserDTO loggedUser) {
         Optional<Blog> existingBlogOptional = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
         blogRepository.findByIdAndDeletedFalseIsEnabledTrue(blogDTO.getCategoryId()).orElseThrow(BlogNotFoundException::new);
         fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
@@ -118,13 +142,14 @@ public class BlogServiceImpl implements BlogService {
             blogDTO.setEnabled(existingBlogOptional.get().isEnabled());
         }
         Blog existingBlog = existingBlogOptional.get();
+        blogDTO.setCommentCount(existingBlog.getCommentCount());
         modelMapper.map(blogDTO, existingBlog);
 
         try {
             existingBlog.setId(id);
             existingBlog.setCreated_at(existingBlog.getCreated_at());
             Blog updatedBlog = blogRepository.save(existingBlog);
-            return modelMapper.map(updatedBlog, BlogDTO.class);
+            return modelMapper.map(updatedBlog, BlogResponseDTO.class);
         } catch (TransactionException exception) {
             if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
                 throw new ValidationBlogException(validationException.getConstraintViolations());
@@ -136,58 +161,55 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional
     public void deleteBlog(Long id, PublicUserDTO loggedUser) {
-        Optional<Blog> blogOptional = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
-        if (blogOptional.isPresent()) {
-            Blog blog = blogOptional.get();
+        Blog blog = blogRepository.findById(id).orElseThrow(BlogNotFoundException::new);
 
-            if (loggedUser == null || (!Objects.equals(loggedUser.getId(), blog.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
-                throw new AccessDeniedException();
-            }
-            blog.setDeleted(true);
-            blogRepository.save(blog);
-        } else {
-            throw new BlogNotFoundException();
+        if (loggedUser == null || (!Objects.equals(loggedUser.getId(), blog.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
+            throw new AccessDeniedException();
         }
+
+        blog.setDeleted(true);
+        blogRepository.save(blog);
     }
 
     @Override
-    public List<BlogDTO> getBlogsByNewestFirst() {
+    public List<BlogResponseDTO> getBlogsByNewestFirst() {
         List<Blog> blogs = blogRepository.findAllByNewestFirst();
-        return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+        return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
-    public List<BlogDTO> getBlogsByMostLiked() {
+    public List<BlogResponseDTO> getBlogsByMostLiked() {
         List<Blog> blogs = blogRepository.findAllByMostLiked();
-        return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+        return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
-    public List<BlogDTO> searchBlogsByKeywordTitle(String keyword) {
+    public List<BlogResponseDTO> searchBlogsByKeywordTitle(String keyword) {
         List<Blog> blogs = blogRepository.searchByTitleContainingIgnoreCase(keyword.toLowerCase());
-        return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+        return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
-    public List<BlogDTO> searchBlogsByKeywordCategory(String keyword) {
+    public List<BlogResponseDTO> searchBlogsByKeywordCategory(String keyword) {
         List<Blog> blogs = blogRepository.findByCategoryIdName(keyword.toLowerCase());
-        return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+        return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
-    public List<BlogDTO> searchBlogsByKeywordInTitleAndCategory(String keywordForTitle, String keywordForCategory) {
+    public List<BlogResponseDTO> searchBlogsByKeywordInTitleAndCategory(String keywordForTitle, String keywordForCategory) {
         List<Blog> blogs = blogRepository.searchBlogsByKeywordInTitleAndCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase());
-        return blogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+        return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
-    public List<BlogDTO> getLastNBlogs(int n) {
+    public List<BlogResponseDTO> getLastNBlogs(int n) {
         if (n >= 0) {
             List<Blog> allBlogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
             List<Blog> sortedBlogs = allBlogs.stream().sorted((blog1, blog2) -> Long.compare(blog2.getId(), blog1.getId())).collect(Collectors.toList());
             List<Blog> lastNBlogs = sortedBlogs.subList(0, Math.min(n, sortedBlogs.size()));
-            return lastNBlogs.stream().map(blog -> modelMapper.map(blog, BlogDTO.class)).toList();
+            return lastNBlogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
         }
         throw new BadRequestException();
     }
+
 }

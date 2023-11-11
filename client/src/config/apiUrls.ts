@@ -1,12 +1,12 @@
 const baseUrl = process.env.REACT_APP_API_URL;
 
-const adminPaths = {
+const adminPaths = Object.seal({
   get: (pathName: string) => `${baseUrl}${pathName}/all`,
   post: (pathName: string) => `${baseUrl}${pathName}/create`,
   updateDelete: (pathName: string) => `${baseUrl}${pathName}`,
-};
+});
 
-const authPaths = {
+const authPaths = Object.seal({
   register: `${baseUrl}/auth/register`,
   login: `${baseUrl}/auth/authenticate`,
   logout: `${baseUrl}/auth/logout`,
@@ -15,9 +15,58 @@ const authPaths = {
     return `${baseUrl}${this.refreshTokenPath}`;
   },
   me: `${baseUrl}/auth/me`,
-};
+});
 
-export const apiUrlsConfig = {
-  admin: { ...adminPaths },
-  auth: { ...authPaths },
-};
+const blogsPaths = Object.seal({
+  upload: `http://localhost:8080/api/v1/blogs/create`,
+  search: (titleSearch: string | null, categorySearch: string | null) => {
+    const url = new URL(`${baseUrl}/blogs/search/all`);
+
+    if (titleSearch) {
+      url.searchParams.append('title', titleSearch);
+    }
+
+    if (categorySearch) {
+      url.searchParams.append('category', categorySearch);
+    }
+
+    return url.toString();
+  },
+  recent: (n: number) => `${baseUrl}/blogs/mostRecent/${n}`,
+  getOne: (id: number | string | undefined) => `${baseUrl}/blogs/${id}`,
+  likeBlog: (id: number | string | undefined) => `${baseUrl}/blogs/like/${id}`,
+});
+
+const categoriesPaths = Object.seal({
+  get: `${baseUrl}/categories/all`,
+});
+
+const filesPaths = Object.seal({
+  base: `${baseUrl}/files`,
+  getByFilename(fileName: string) {
+    return `${this.base}/${fileName}`;
+  },
+  getByUrl(url: string) {
+    const imgArr = url.split('/');
+    const fileName = imgArr[imgArr.length - 1];
+    return this.getByFilename(fileName);
+  },
+  upload() {
+    return `${this.base}/upload`;
+  },
+});
+
+const commentsPaths = Object.seal({
+  getByBlogId: (blogId: number, n: number) =>
+    `${baseUrl}/comments/blog/${blogId}?n=${n}`,
+  post: `${baseUrl}/comments/create`,
+});
+
+export const apiUrlsConfig = Object.seal({
+  admin: adminPaths,
+  auth: authPaths,
+  blogs: blogsPaths,
+  categories: categoriesPaths,
+  files: filesPaths,
+  comments: commentsPaths,
+});

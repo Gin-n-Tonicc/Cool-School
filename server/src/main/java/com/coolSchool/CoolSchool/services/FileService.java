@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.services;
 
+import com.coolSchool.CoolSchool.models.entity.File;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,7 +13,7 @@ public interface FileService {
 
     MediaType getMediaTypeForFile(String filename);
 
-    String uploadFile(MultipartFile file);
+    File uploadFile(MultipartFile file);
 
     Path createFilePath(String uniqueFilename);
 

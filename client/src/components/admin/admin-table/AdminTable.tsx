@@ -1,18 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import { v4 as uuidV4 } from 'uuid';
+import { usePagination } from '../../../hooks/usePagination';
 import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
-import * as paginationUtils from '../../../utils/page';
 import { camelCaseToWords } from '../../../utils/stringUtils';
 import AdminEditForm, {
   OnCreateFunction,
   OnUpdateFunction,
 } from '../admin-edit-form/AdminEditForm';
 import './AdminTable.scss';
-import AdminTablePagination, {
-  SwitchPageFunction,
-  TogglePageFunction,
-} from './admin-table-pagination/AdminTablePagination';
+import AdminTablePagination from './admin-table-pagination/AdminTablePagination';
 import AdminTableSearch, {
   AdminSearchValues,
 } from './admin-table-search/AdminTableSearch';
@@ -66,30 +63,9 @@ export default function AdminTable(props: AdminTableProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [currentObj, setCurrentObj] = useState<IObjectWithId>({ id: -1 });
 
-  const [filteredList, setFilteredList] = useState(props.list);
-  const [list, setList] = useState<IObjectWithId[]>(props.list);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pages, setPages] = useState(1);
-
-  useEffect(() => {
-    setList(
-      filteredList.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
-    );
-  }, [filteredList, currentPage]);
-
-  useEffect(() => {
-    const pages = Math.ceil(filteredList.length / PAGE_SIZE);
-    setPages(pages);
-  }, [filteredList]);
-
-  const validatePage = useMemo(
-    () => paginationUtils.validatePage.bind(null, pages),
-    [pages]
-  );
-
-  useEffect(() => {
-    setCurrentPage(validatePage(currentPage));
-  }, [pages]);
+  const [filteredList, setFilteredList] = useState<IObjectWithId[]>(props.list);
+  const { list, currentPage, pages, togglePage, nextPage, previousPage } =
+    usePagination<IObjectWithId>(filteredList, PAGE_SIZE);
 
   const [columns, columnsLowercased] = useMemo(() => {
     let columns: string[];
@@ -102,21 +78,6 @@ export default function AdminTable(props: AdminTableProps) {
 
     return [columns, columns.map((x) => x.toLowerCase())];
   }, [props.list]);
-
-  const togglePage: TogglePageFunction = useCallback(
-    (page: number) => {
-      setCurrentPage(validatePage(page));
-    },
-    [setCurrentPage, validatePage]
-  );
-
-  const previousPage: SwitchPageFunction = useCallback(() => {
-    setCurrentPage((currentPage) => validatePage(currentPage - 1));
-  }, [setCurrentPage, validatePage]);
-
-  const nextPage: SwitchPageFunction = useCallback(() => {
-    setCurrentPage((currentPage) => validatePage(currentPage + 1));
-  }, [setCurrentPage, validatePage]);
 
   const onSearch: SubmitHandler<AdminSearchValues> = useCallback((v) => {
     const filteredList = props.list.filter((x) => {
@@ -213,9 +174,10 @@ export default function AdminTable(props: AdminTableProps) {
           <tbody>
             {list.map((x) => (
               <tr className="table-admin-row" key={x.id}>
-                {Object.values(x).map((x) => (
-                  <td key={uuidV4()}>{`${x}`}</td>
-                ))}
+                {Object.values(x).map((x) => {
+                  let content = `${x}`;
+                  return <td key={uuidV4()}>{content}</td>;
+                })}
                 <td className="control-buttons">
                   {props.update && (
                     <a onClick={onUpdate.bind(null, x.id)}>
@@ -238,7 +200,7 @@ export default function AdminTable(props: AdminTableProps) {
         <div className="d-flex flex-row justify-content-between">
           <AdminTablePagination
             currentPage={currentPage}
-            pageCount={pages}
+            pages={pages}
             togglePage={togglePage}
             previousPage={previousPage}
             nextPage={nextPage}

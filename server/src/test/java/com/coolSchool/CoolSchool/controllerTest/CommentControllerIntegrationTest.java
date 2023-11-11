@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.CoolSchool.controllers.CommentController;
-import com.coolSchool.CoolSchool.models.dto.CommentDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CommentResponseDTO;
 import com.coolSchool.CoolSchool.services.impl.CommentServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ class CommentControllerIntegrationTest {
     private ObjectMapper objectMapper;
     @MockBean
     private CommentServiceImpl commentService;
-    private List<CommentDTO> commentList;
+    private List<CommentResponseDTO> commentList;
 
     @BeforeEach
     void setup() {
@@ -58,7 +58,7 @@ class CommentControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         commentList = new ArrayList<>();
-        commentList.add(new CommentDTO());
+        commentList.add(new CommentResponseDTO());
     }
 
     @Test
@@ -72,7 +72,7 @@ class CommentControllerIntegrationTest {
     @Test
     void testGetCommentById() throws Exception {
         Long commentId = 1L;
-        CommentDTO comment = new CommentDTO();
+        CommentResponseDTO comment = new CommentResponseDTO();
 
         Mockito.when(commentService.getCommentById(commentId)).thenReturn(comment);
 
@@ -98,6 +98,7 @@ class CommentControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
     }
+
     @Test
     void testDeleteCommentById() throws Exception {
         Long commentId = 1L;

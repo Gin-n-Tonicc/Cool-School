@@ -1,17 +1,19 @@
 package com.coolSchool.CoolSchool.services;
 
-import com.coolSchool.CoolSchool.models.dto.CourseDTO;
+import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CourseRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseResponseDTO;
 
 import java.util.List;
 
 public interface CourseService {
-    List<CourseDTO> getAllCourses();
+    List<CourseResponseDTO> getAllCourses();
 
-    CourseDTO getCourseById(Long id);
+    CourseResponseDTO getCourseById(Long id);
 
-    CourseDTO createCourse(CourseDTO courseDTO);
+    CourseResponseDTO createCourse(CourseRequestDTO courseDTO, PublicUserDTO attribute);
 
-    CourseDTO updateCourse(Long id, CourseDTO courseDTO);
+    CourseResponseDTO updateCourse(Long id, CourseRequestDTO courseDTO, PublicUserDTO loggedUser);
 
-    void deleteCourse(Long id);
+    void deleteCourse(Long id, PublicUserDTO attribute);
 }

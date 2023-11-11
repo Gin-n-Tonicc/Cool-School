@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.models.dto.CourseSubsectionDTO;
+import com.coolSchool.CoolSchool.models.dto.request.CourseSubsectionRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.CourseSubsectionResponseDTO;
 import com.coolSchool.CoolSchool.services.CourseSubsectionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,23 +21,23 @@ public class CourseSubsectionController {
 
 
     @GetMapping("/all")
-    public ResponseEntity<List<CourseSubsectionDTO>> getAllCategories() {
+    public ResponseEntity<List<CourseSubsectionResponseDTO>> getAllCategories() {
         return ResponseEntity.ok(courseSubsectionService.getAllCourseSubsections());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CourseSubsectionDTO> getCourseSubsectionById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<CourseSubsectionResponseDTO> getCourseSubsectionById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(courseSubsectionService.getCourseSubsectionById(id));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CourseSubsectionDTO> createCourseSubsection(@Valid @RequestBody CourseSubsectionDTO courseSubsectionDTO) {
-        CourseSubsectionDTO cratedCourseSubsection = courseSubsectionService.createCourseSubsection(courseSubsectionDTO);
+    public ResponseEntity<CourseSubsectionResponseDTO> createCourseSubsection(@Valid @RequestBody CourseSubsectionRequestDTO courseSubsectionDTO) {
+        CourseSubsectionResponseDTO cratedCourseSubsection = courseSubsectionService.createCourseSubsection(courseSubsectionDTO);
         return new ResponseEntity<>(cratedCourseSubsection, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CourseSubsectionDTO> updateCourseSubsection(@PathVariable("id") Long id, @Valid @RequestBody CourseSubsectionDTO courseSubsectionDTO) {
+    public ResponseEntity<CourseSubsectionResponseDTO> updateCourseSubsection(@PathVariable("id") Long id, @Valid @RequestBody CourseSubsectionRequestDTO courseSubsectionDTO) {
         return ResponseEntity.ok(courseSubsectionService.updateCourseSubsection(id, courseSubsectionDTO));
     }
 

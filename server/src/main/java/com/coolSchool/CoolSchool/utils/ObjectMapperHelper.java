@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.utils;
 
 import com.coolSchool.CoolSchool.exceptions.common.ApiException;
-import com.coolSchool.CoolSchool.models.dto.ExceptionResponse;
+import com.coolSchool.CoolSchool.models.dto.response.ExceptionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;

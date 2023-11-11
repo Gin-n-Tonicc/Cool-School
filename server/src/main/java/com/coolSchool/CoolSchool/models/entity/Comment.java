@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -19,9 +20,9 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @NotNull(message = "The content of the blog should not be null!")
-    @NotBlank(message = "The content of the blog should not be blank!")
-    @Size(max = 100, message = "The field must be less than 100 symbols!")
+    @NotNull(message = "The content of the comment should not be null!")
+    @NotBlank(message = "The content of the comment should not be blank!")
+    @Size(max = 200, message = "The comment must be less than 200 symbols!")
     private String comment;
     @Column(name = "created_at")
     private LocalDateTime created_at;

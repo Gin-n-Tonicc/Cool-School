@@ -1,10 +1,11 @@
+import { Link } from 'react-router-dom';
 import './BlogPopularPost.scss';
 
 export interface BlogPopularPostProps {
   img: string;
   redirectUrl: string;
   date: string;
-  summary: string;
+  title: string;
 }
 
 export default function BlogPopularPost(props: BlogPopularPostProps) {
@@ -12,9 +13,9 @@ export default function BlogPopularPost(props: BlogPopularPostProps) {
     <div className="media post_item">
       <img src={props.img} alt="post" />
       <div className="media-body">
-        <a href={props.redirectUrl}>
-          <h3>{props.summary}</h3>
-        </a>
+        <Link to={props.redirectUrl}>
+          <h3>{props.title}</h3>
+        </Link>
         <p>{props.date}</p>
       </div>
     </div>

@@ -7,13 +7,14 @@ import { useAuthContext } from '../../../../contexts/AuthContext';
 import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
 import {
   ADDRESS_VALIDATIONS,
+  DESCRIPTION_VALIDATIONS,
   EMAIL_VALIDATIONS,
   FIRST_NAME_VALIDATIONS,
   LAST_NAME_VALIDATIONS,
   PASSWORD_VALIDATIONS,
   REPEAT_PASSWORD_VALIDATIONS,
   USERNAME_VALIDATIONS,
-} from '../../../../utils/validationConstants';
+} from '../../../../validations/authValidations';
 import FormInput from '../../../common/form-input/FormInput';
 
 type RegisterFormProps = {
@@ -28,6 +29,7 @@ type Inputs = {
   Email: string;
   Password: string;
   'Repeat your password': string;
+  Description: string;
 };
 
 export default function RegisterForm({ redirectTo }: RegisterFormProps) {
@@ -54,6 +56,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
       Email: '',
       Password: '',
       'Repeat your password': '',
+      Description: '',
     },
     mode: 'onChange',
   });
@@ -82,10 +85,11 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
     const user = await post({
       firstname: data['First Name'],
       lastname: data['Last Name'],
-      email: data.Email,
-      password: data.Password,
-      address: data.Address,
-      username: data.Username,
+      email: data.Email.trim(),
+      password: data.Password.trim(),
+      address: data.Address.trim(),
+      username: data.Username.trim(),
+      description: data.Description.trim(),
     });
 
     if (response.ok) {
@@ -127,6 +131,14 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
         type="text"
         iconClasses="zmdi zmdi-account material-icons-name"
         rules={USERNAME_VALIDATIONS}
+      />
+
+      <FormInput
+        control={control}
+        name="Description"
+        type="text"
+        iconClasses="zmdi zmdi-book"
+        rules={DESCRIPTION_VALIDATIONS}
       />
 
       <FormInput

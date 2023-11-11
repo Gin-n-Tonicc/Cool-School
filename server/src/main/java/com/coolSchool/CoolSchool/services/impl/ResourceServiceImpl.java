@@ -3,7 +3,8 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.resource.ResourceNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.resource.ValidationResourceException;
-import com.coolSchool.CoolSchool.models.dto.ResourceDTO;
+import com.coolSchool.CoolSchool.models.dto.request.ResourceRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.response.ResourceResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Resource;
 import com.coolSchool.CoolSchool.repositories.CourseSubsectionRepository;
 import com.coolSchool.CoolSchool.repositories.FileRepository;
@@ -36,35 +37,35 @@ public class ResourceServiceImpl implements ResourceService {
 
 
     @Override
-    public List<ResourceDTO> getAllResources() {
+    public List<ResourceResponseDTO> getAllResources() {
         List<Resource> resources = resourceRepository.findByDeletedFalse();
-        return resources.stream().map(resource -> modelMapper.map(resource, ResourceDTO.class)).toList();
+        return resources.stream().map(resource -> modelMapper.map(resource, ResourceResponseDTO.class)).toList();
     }
 
     @Override
-    public ResourceDTO getResourceById(Long id) {
+    public ResourceResponseDTO getResourceById(Long id) {
         Optional<Resource> resource = resourceRepository.findByIdAndDeletedFalse(id);
         if (resource.isPresent()) {
-            return modelMapper.map(resource.get(), ResourceDTO.class);
+            return modelMapper.map(resource.get(), ResourceResponseDTO.class);
         }
         throw new ResourceNotFoundException();
     }
 
     @Override
-    public ResourceDTO createResource(ResourceDTO resourceDTO) {
+    public ResourceResponseDTO createResource(ResourceRequestDTO resourceDTO) {
         try {
             resourceDTO.setId(null);
             fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(NoSuchElementException::new);
             courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(NoSuchElementException::new);
             Resource resourceEntity = resourceRepository.save(modelMapper.map(resourceDTO, Resource.class));
-            return modelMapper.map(resourceEntity, ResourceDTO.class);
+            return modelMapper.map(resourceEntity, ResourceResponseDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationResourceException(exception.getConstraintViolations());
         }
     }
 
     @Override
-    public ResourceDTO updateResource(Long id, ResourceDTO resourceDTO) {
+    public ResourceResponseDTO updateResource(Long id, ResourceRequestDTO resourceDTO) {
         Optional<Resource> existingResourceOptional = resourceRepository.findByIdAndDeletedFalse(id);
 
         if (existingResourceOptional.isEmpty()) {
@@ -80,7 +81,7 @@ public class ResourceServiceImpl implements ResourceService {
         try {
             existingResource.setId(id);
             Resource updatedResource = resourceRepository.save(existingResource);
-            return modelMapper.map(updatedResource, ResourceDTO.class);
+            return modelMapper.map(updatedResource, ResourceResponseDTO.class);
         } catch (TransactionException exception) {
             if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
                 throw new ValidationResourceException(validationException.getConstraintViolations());

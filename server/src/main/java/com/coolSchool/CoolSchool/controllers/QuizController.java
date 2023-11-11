@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.controllers;
 
-import com.coolSchool.CoolSchool.models.dto.QuizDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuizDTO;
+import com.coolSchool.CoolSchool.models.dto.common.QuizDataDTO;
 import com.coolSchool.CoolSchool.services.QuizService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -35,8 +36,8 @@ public class QuizController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<QuizDTO> createQuiz(@Valid @RequestBody QuizDTO quizDTO) {
-        QuizDTO cratedQuiz = quizService.createQuiz(quizDTO);
+    public ResponseEntity<QuizDTO> createQuiz(@RequestBody QuizDataDTO quizDataDTO) {
+        QuizDTO cratedQuiz = quizService.createQuiz(quizDataDTO);
         return new ResponseEntity<>(cratedQuiz, HttpStatus.CREATED);
     }
 
