@@ -48,3 +48,11 @@ export const FILE_VALIDATIONS: RegisterOptions = {
     return true;
   },
 };
+
+export const CATEGORY_VALIDATIONS: RegisterOptions = {
+  required: 'Category is required.',
+  min: {
+    value: 0,
+    message: 'Please select a valid category',
+  },
+};
