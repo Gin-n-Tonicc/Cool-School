@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
+import { RolesEnum } from '../../../../types/enums/RolesEnum';
 import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
 import {
   ADDRESS_VALIDATIONS,
@@ -15,6 +16,7 @@ import {
   REPEAT_PASSWORD_VALIDATIONS,
   USERNAME_VALIDATIONS,
 } from '../../../../validations/authValidations';
+import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../../common/form-input/FormInput';
 
 type RegisterFormProps = {
@@ -30,6 +32,7 @@ type Inputs = {
   Password: string;
   'Repeat your password': string;
   Description: string;
+  role: RolesEnum;
 };
 
 export default function RegisterForm({ redirectTo }: RegisterFormProps) {
@@ -42,6 +45,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
   const {
     handleSubmit,
     control,
+    register,
     reset,
     watch,
     setError,
@@ -57,6 +61,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
       Password: '',
       'Repeat your password': '',
       Description: '',
+      role: RolesEnum.USER,
     },
     mode: 'onChange',
   });
@@ -90,6 +95,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
       address: data.Address.trim(),
       username: data.Username.trim(),
       description: data.Description.trim(),
+      role: data['role'].trim(),
     });
 
     if (response.ok) {
@@ -172,6 +178,27 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
         iconClasses="zmdi zmdi-lock-outline"
         rules={REPEAT_PASSWORD_VALIDATIONS}
       />
+
+      <FormErrorWrapper message={undefined}>
+        <div className="form-check-inline">
+          <input
+            {...register('role')}
+            type="radio"
+            className="form-check-input"
+            value={RolesEnum.USER}
+          />
+          <p>Student</p>
+        </div>
+        <div className="form-check-inline">
+          <input
+            {...register('role')}
+            type="radio"
+            className="form-check-input"
+            value={RolesEnum.TEACHER}
+          />
+          <p>Teacher</p>
+        </div>
+      </FormErrorWrapper>
 
       <div className="form-group form-button">
         <input

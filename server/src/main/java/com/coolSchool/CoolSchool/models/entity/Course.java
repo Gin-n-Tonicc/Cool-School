@@ -18,11 +18,15 @@ public class Course {
     private Long id;
     @NotNull(message = "The name of the course should not be null!")
     private String name;
-    @NotNull(message = "The name of the class should not be null!")
+    @NotNull(message = "The name of the course should not be null!")
     private String aClass;
+    @NotNull(message = "The objectives of the course should not be null!")
+    private String objectives;
+    @NotNull(message = "The eligibility of the course should not be null!")
+    private String eligibility;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull(message = "The user of the class should not be null!")
+    @NotNull(message = "The trainer of the course should not be null!")
     private User user;
     @ManyToOne
     @JoinColumn(name = "category_id")
