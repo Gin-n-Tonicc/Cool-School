@@ -8,12 +8,13 @@ export default function HomeBanner() {
           <div className="col-lg-6 col-xl-6">
             <div className="banner_text">
               <div className="banner_text_iner">
-                <h5>Every child yearns to learn</h5>
-                <h1>Making Your Childs World Better</h1>
+                <h5>COOL SCHOOL</h5>
+                <h1>THE IDEAL SCHOOL</h1>
                 <p>
-                  Replenish seasons may male hath fruit beast were seas saw you
-                  arrie said man beast whales his void unto last session for
-                  bite. Set have great you'll male grass yielding yielding man
+                Welcome to a transformative educational experience where the pains of traditional
+                learning are replaced with the seamless benefits of online schools.
+                   Discover the unparalleled advantages that make online education
+                   the ideal choice for those seeking a convenient, flexible, and enriching learning journey.
                 </p>
                 <a href="#" className="btn_1">
                   View Course{' '}

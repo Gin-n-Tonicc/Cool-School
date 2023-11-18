@@ -8,13 +8,13 @@ export default function HomeLearningFeature() {
         <div className="row align-items-sm-center align-items-xl-stretch">
           <div className="col-md-6 col-lg-6">
             <div className="learning_member_text">
-              <h5>Advance feature</h5>
-              <h2>Our Advance Educator Learning System</h2>
+              <h5>Personalized Progress</h5>
+              <h2>Learning environment that adapts to you</h2>
               <p>
-                Fifth saying upon divide divide rule for deep their female all
-                hath brind mid Days and beast greater grass signs abundantly
-                have greater also use over face earth days years under brought
-                moveth she star
+                Online schools recognize that every student is unique, offering personalized
+                learning experiences that cater to individual strengths and preferences. Say
+                goodbye to the frustration of moving at someone else's pace and hello to a customized
+                educational journey that fits you like a glove.
               </p>
               <div className="row">
                 <div className="col-sm-6 col-md-12 col-lg-6">
@@ -22,18 +22,16 @@ export default function HomeLearningFeature() {
                     <span className="ti-pencil-alt"></span>
                     <h4>Learn Anywhere</h4>
                     <p>
-                      There earth face earth behold she star so made void two
-                      given and also our
+                      Learn Anywhere with our courses that can be reached at any time!
                     </p>
                   </div>
                 </div>
                 <div className="col-sm-6 col-md-12 col-lg-6">
                   <div className="learning_member_text_iner">
                     <span className="ti-stamp"></span>
-                    <h4>Expert Teacher</h4>
+                    <h4>Add something form yourself</h4>
                     <p>
-                      There earth face earth behold she star so made void two
-                      given and also our
+                      With our functionality to create blogs, comment and like them you can add something for your digital school from yourself!
                     </p>
                   </div>
                 </div>

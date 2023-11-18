@@ -13,21 +13,23 @@ export default function HomeLearning() {
           </div>
           <div className="col-md-5 col-lg-5">
             <div className="learning_member_text">
-              <h5>About us</h5>
-              <h2>Learning with Love and Laughter</h2>
+              <h5>Our site</h5>
+              <h2>Engage and Connect</h2>
               <p>
-                Fifth saying upon divide divide rule for deep their female all
-                hath brind Days and beast greater grass signs abundantly have
-                greater also days years under brought moveth.
+                Contrary to common misconceptions, online education is a dynamic and interactive experience.
+                Engage with instructors and fellow students through courses, blogs, and
+                projects. Forge connections that extend beyond geographical boundaries, creating a
+                supportive community that enhances your learning experience.
               </p>
               <ul>
                 <li>
-                  <span className="ti-pencil-alt"></span>Him lights given i
-                  heaven second yielding seas gathered wear
+                  <span className="ti-pencil-alt"></span>
+                  Dynamic and interactive experience
                 </li>
                 <li>
-                  <span className="ti-ruler-pencil"></span>Fly female them
-                  whales fly them day deep given night.
+                  <span className="ti-ruler-pencil"></span>
+                  Create a
+                  supportive community that enhances your learning experience
                 </li>
               </ul>
               <a href="#" className="btn_1">

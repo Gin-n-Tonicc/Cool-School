@@ -186,9 +186,9 @@
 
   &:after {
     position: absolute;
-    top: 163px;
-    width: 41%;
-    height: 69%;
+    top: 143px;
+    width: 35%;
+    height: 59%;
     content: '';
     background-image: url('./images/banner_img.png');
     background-size: 100% 100%;
@@ -196,7 +196,7 @@
 
     @media #{$small_mobile} {
       position: absolute;
-      top: 150px;
+      top: 90px;
       max-width: 100%;
       max-height: 100%;
       content: '';

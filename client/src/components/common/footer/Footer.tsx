@@ -12,18 +12,17 @@ export default function Footer() {
                 <img className="site-logo" src={logo} alt="" />
               </a>
               <p>
-                But when shot real her. Chamber her one visite removal six
-                sending himself boys scot exquisite existend an{' '}
+                Discover the unparalleled advantages that make online education the ideal choice for
+                those seeking a convenient, flexible, and enriching learning journey.
               </p>
-              <p>But when shot real her hamber her </p>
+              <p>THE IDEAL SCHOOL</p>
             </div>
           </div>
           <div className="col-sm-6 col-md-4 col-xl-4">
             <div className="single-footer-widget footer_2">
               <h4>Newsletter</h4>
               <p>
-                Stay updated with our latest trends Seed heaven so said place
-                winged over given forth fruit.
+                Stay updated with our latest trends.
               </p>
               <form>
                 <div className="form-group">
@@ -68,14 +67,13 @@ export default function Footer() {
               <h4>Contact us</h4>
               <div className="contact_info">
                 <p>
-                  <span> Address:</span> Hath of it fly signs bear be one
-                  blessed after{' '}
+                  <span> Address:</span> 7700 Targovishte town, Targovishte municipality, Targovishte region, ”Cap. Danajiev" 22
                 </p>
                 <p>
-                  <span> Phone:</span> +2 36 265 (8060)
+                  <span> Phone:</span> 00359 601 6-30-70
                 </p>
                 <p>
-                  <span> Email:</span> info@TODO:add_email.com{' '}
+                  <span> Email:</span> stefanbelis932@gmail.com
                 </p>
               </div>
             </div>

@@ -8,12 +8,11 @@ export default function HomeFeatures() {
         <div className="row">
           <div className="col-sm-6 col-xl-3 align-self-center">
             <div className="single_feature_text ">
-              <h2>
-                Awesome <br /> Feature
-              </h2>
+              <h3>
+                What makes it cool?<br />
+              </h3>
               <p>
-                Set have great you male grass yielding an yielding first their
-                you're have called the abundantly fruit were man{' '}
+                Here are 3 features that make the Cool School really cool for all students.
               </p>
               <a href="#" className="btn_1">
                 Read More
@@ -22,23 +21,20 @@ export default function HomeFeatures() {
           </div>
           <HomeFeature
             iconClassName="ti-layers"
-            featureTitle="Better Future"
-            featureDescription="Set have great you male grasses yielding yielding first their
-            to called deep abundantly Set have great you male"
+            featureTitle="FLEXIBILITY"
+            featureDescription="Unlock flexible learning with our online school—study when and where it suits you. Study everytime, everywhere!"
           />
 
           <HomeFeature
             iconClassName="ti-new-window"
-            featureTitle="Qualified Trainers"
-            featureDescription="Set have great you male grasses yielding yielding first their
-            to called deep abundantly Set have great you male"
+            featureTitle="Personalized Pathways"
+            featureDescription="Tailor your education to fit your lifestyle with our personalized online courses."
           />
 
           <HomeFeature
             iconClassName="ti-light-bulb"
-            featureTitle="Job Oppurtunity"
-            featureDescription="Set have great you male grasses yielding yielding first their
-            to called deep abundantly Set have great you male"
+            featureTitle="Anywhere Learning Hub"
+            featureDescription="Seamless access to quality education, anytime, anywhere. Join us today!"
           />
         </div>
       </div>
