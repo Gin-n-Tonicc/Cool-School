@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 public class CourseRequestDTO extends CourseDTO {
     private Long userId;
     private Long categoryId;
+    private Long pictureId;
 }

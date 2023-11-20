@@ -3,33 +3,33 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
-import { IBlog } from '../../../types/interfaces/IBlog';
 import { ICategory } from '../../../types/interfaces/ICategory';
 import { IFile } from '../../../types/interfaces/IFile';
-import {
-  CONTENT_VALIDATIONS,
-  SUMMARY_VALIDATIONS,
-  TITLE_VALIDATIONS,
-} from '../../../validations/blogCreateValidations';
 import {
   CATEGORY_VALIDATIONS,
   IMAGE_FILE_VALIDATIONS,
 } from '../../../validations/commonValidations';
+
+import {
+  ELIGIBILITY_VALIDATIONS,
+  NAME_VALIDATIONS,
+  OBJECTIVES_VALIDATIONS,
+} from '../../../validations/courseCreateValidations';
 import CategorySelect from '../../common/category-select/CategorySelect';
 import FormErrorWrapper from '../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../common/form-input/FormInput';
-import './BlogCreate.scss';
 
 type Inputs = {
-  Title: string;
-  Summary: string;
-  content: string;
+  Name: string;
+  objectives: string;
+  eligibility: string;
   category: number;
   file: File[];
 };
 
-export default function BlogCreate() {
+export default function CoursesCreate() {
   const {
     handleSubmit,
     control,
@@ -40,9 +40,9 @@ export default function BlogCreate() {
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
-      Title: '',
-      Summary: '',
-      content: '',
+      Name: '',
+      objectives: '',
+      eligibility: '',
       category: -1,
       file: [],
     },
@@ -51,10 +51,16 @@ export default function BlogCreate() {
 
   const values = watch();
   const navigate = useNavigate();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     register('category', { ...CATEGORY_VALIDATIONS });
   }, []);
+
+  const fileLabelText = useMemo(
+    () => values.file[0]?.name || 'Choose course image',
+    [values.file]
+  );
 
   const { data: categories } = useFetch<ICategory[]>(
     apiUrlsConfig.categories.get,
@@ -65,13 +71,8 @@ export default function BlogCreate() {
     apiUrlsConfig.files.upload()
   );
 
-  const { post: blogPost, response: postBlogRes } = useFetch<IBlog>(
-    apiUrlsConfig.blogs.upload
-  );
-
-  const labelText = useMemo(
-    () => values.file[0]?.name || 'Choose blog image',
-    [values.file]
+  const { post: coursePost, response: postCourseRes } = useFetch<any>(
+    apiUrlsConfig.courses.upload
   );
 
   const onCategoryChange = useCallback(
@@ -95,18 +96,20 @@ export default function BlogCreate() {
     }
 
     const body = {
-      title: data.Title.trim(),
-      content: data.content.trim(),
-      summary: data.Summary.trim(),
-      liked_users: [],
+      name: data.Name.trim(),
+      objectives: data.objectives.trim(),
+      eligibility: data.eligibility.trim(),
+      stars: 0,
       pictureId: file.id,
       categoryId: data.category,
+      userId: user.id,
     };
 
-    const blog = await blogPost(body);
-    if (postBlogRes.ok) {
+    const course = await coursePost(body);
+
+    if (postCourseRes.ok) {
       reset();
-      navigate(PagesEnum.SingleBlog.replace(':id', blog.id.toString()));
+      navigate(PagesEnum.SingleCourse.replace(':id', course.id.toString()));
     }
   };
 
@@ -115,33 +118,35 @@ export default function BlogCreate() {
       <div className="sign-container">
         <div className="signup-content">
           <div className="signup-form create-blog-form">
-            <h2 className="form-title">Create Blog</h2>
+            <h2 className="form-title">Create Course</h2>
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="register-form"
               id="register-form">
               <FormInput
                 control={control}
-                name="Title"
+                name="Name"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
-                rules={TITLE_VALIDATIONS}
+                rules={NAME_VALIDATIONS}
               />
 
-              <FormInput
-                control={control}
-                name="Summary"
-                type="text"
-                iconClasses="zmdi zmdi-face material-icons-name"
-                rules={SUMMARY_VALIDATIONS}
-              />
-
-              <FormErrorWrapper message={errors.content?.message}>
+              <FormErrorWrapper message={errors.objectives?.message}>
                 <div className="blog-create-textarea-wrapper">
-                  <h5>Blog content</h5>
+                  <h5>Course Objectives</h5>
                   <textarea
                     className="form-control"
-                    {...register('content', { ...CONTENT_VALIDATIONS })}
+                    {...register('objectives', { ...OBJECTIVES_VALIDATIONS })}
+                    rows={3}></textarea>
+                </div>
+              </FormErrorWrapper>
+
+              <FormErrorWrapper message={errors.eligibility?.message}>
+                <div className="blog-create-textarea-wrapper">
+                  <h5>Course Eligibility</h5>
+                  <textarea
+                    className="form-control"
+                    {...register('eligibility', { ...ELIGIBILITY_VALIDATIONS })}
                     rows={3}></textarea>
                 </div>
               </FormErrorWrapper>
@@ -153,7 +158,7 @@ export default function BlogCreate() {
                     className="custom-file-input"
                     {...register('file', { ...IMAGE_FILE_VALIDATIONS })}
                   />
-                  <label className="custom-file-label">{labelText}</label>
+                  <label className="custom-file-label">{fileLabelText}</label>
                 </div>
               </FormErrorWrapper>
 

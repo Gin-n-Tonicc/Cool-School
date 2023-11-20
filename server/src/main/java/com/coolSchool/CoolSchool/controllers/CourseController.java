@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/courses")
@@ -31,6 +32,17 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<CourseResponseDTO> getCourseById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(courseService.getCourseById(id));
+    }
+
+    @GetMapping("/canEnroll/{id}")
+    public ResponseEntity<Boolean> canEnroll(@PathVariable(name = "id") Long id, HttpServletRequest httpServletRequest) {
+        return ResponseEntity.ok(courseService.canEnrollCourse(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
+    }
+
+    @GetMapping("/enroll/{id}")
+    public ResponseEntity<Void> enrollCourse(@PathVariable(name = "id") Long id, HttpServletRequest httpServletRequest) {
+        courseService.enrollCourse(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/create")

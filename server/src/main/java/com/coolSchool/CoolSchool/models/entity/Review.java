@@ -1,10 +1,7 @@
 package com.coolSchool.CoolSchool.models.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,9 +22,11 @@ public class Review {
     @JoinColumn(name = "course_id")
     @NotNull(message = "The course of the review should not be null!")
     private Course course;
-    @Max(5)
-    @Min(1)
+    @Max(value = 5, message = "Stars must be between one and five!")
+    @Min(value = 1, message = "Stars must be between one and five!")
     private Integer stars;
+    @NotNull(message = "The review should not be null!")
+    @NotBlank(message = "The review should not be blank!")
     @Size(max = 50)
     private String text;
     @Column(name = "is_deleted", nullable = false)

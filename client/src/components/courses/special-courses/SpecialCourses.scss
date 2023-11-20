@@ -16,3 +16,11 @@
   @media #{$medium_device} {
   }
 }
+
+.special-courses.row {
+  row-gap: 20px;
+}
+
+.special-courses-pagination {
+  margin-bottom: 5vh;
+}

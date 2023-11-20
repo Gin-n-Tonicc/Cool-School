@@ -14,6 +14,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByDeletedFalse();
 
     Optional<Review> findByIdAndDeletedFalse(Long id);
-    @Query("SELECT r FROM Review r WHERE r.course = :course AND r.deleted = false")
+    @Query("SELECT r FROM Review r WHERE r.course = :course AND r.deleted = false ORDER BY r.id DESC LIMIT 5")
     List<Review> findAllByCourse(@Param("course") Course course);
 }

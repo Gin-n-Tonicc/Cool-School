@@ -13,7 +13,5 @@ public class CourseDTO {
     private String name;
     private String objectives;
     private String eligibility;
-    @JsonProperty(value = "class")
-    private String aClass;
-    private double starts;
+    private double stars;
 }

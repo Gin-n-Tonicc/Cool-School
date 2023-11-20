@@ -10,6 +10,8 @@ public interface CourseService {
     List<CourseResponseDTO> getAllCourses();
 
     CourseResponseDTO getCourseById(Long id);
+    boolean canEnrollCourse(Long id, PublicUserDTO loggedUser);
+    void enrollCourse(Long id, PublicUserDTO loggedUser);
 
     CourseResponseDTO createCourse(CourseRequestDTO courseDTO, PublicUserDTO attribute);
 

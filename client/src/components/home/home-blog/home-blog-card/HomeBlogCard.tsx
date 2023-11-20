@@ -1,6 +1,9 @@
+import { Link } from 'react-router-dom';
+import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import './HomeBlogCard.scss';
 
 export interface HomeBlogCardProps {
+  id: number;
   category: string;
   title: string;
   summary: string;
@@ -16,12 +19,10 @@ export default function HomeBlogCard(props: HomeBlogCardProps) {
         <div className="card">
           <img src={props.image} className="card-img-top" alt="blog" />
           <div className="card-body">
-            <a href="#" className="btn_4">
-              {props.category}
-            </a>
-            <a href="blog.html">
+            <a className="btn_4">{props.category}</a>
+            <Link to={PagesEnum.SingleBlog.replace(':id', props.id.toString())}>
               <h5 className="card-title">{props.title}</h5>
-            </a>
+            </Link>
             <p>{props.summary}</p>
             <ul>
               <li>

@@ -21,7 +21,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     @Query("SELECT b FROM Blog b WHERE b.deleted = false AND b.isEnabled = true ORDER BY b.created_at DESC")
     List<Blog> findAllByNewestFirst();
 
-    @Query("SELECT b FROM Blog b WHERE b.deleted = false AND b.isEnabled = true ORDER BY SIZE(b.liked_users) DESC")
+    @Query("SELECT b FROM Blog b WHERE b.deleted = false AND b.isEnabled = true ORDER BY SIZE(b.liked_users) DESC LIMIT 3")
     List<Blog> findAllByMostLiked();
 
     @Query("SELECT b FROM Blog b WHERE LOWER(b.title) LIKE %:keyword% AND b.deleted = false AND b.isEnabled = true")

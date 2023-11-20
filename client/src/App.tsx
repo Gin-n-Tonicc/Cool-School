@@ -17,6 +17,8 @@ import Header from './components/common/header/Header';
 import ProtectedRoute from './components/common/protected-route/ProtectedRoute';
 import ContactUs from './components/contact-us/ContactUs';
 import Courses from './components/courses/Courses';
+import CoursesCreate from './components/courses/courses-create/CoursesCreate';
+import CoursesSingle from './components/courses/courses-single/CoursesSingle';
 import ErrorBoundary from './components/error-boundary/ErrorBoundary';
 import Home from './components/home/Home';
 import HttpProvider from './components/http-provider/HttpProvider';
@@ -61,6 +63,10 @@ function App() {
                       path={PagesEnum.BlogCreate}
                       element={<BlogCreate />}
                     />
+                    <Route
+                      path={PagesEnum.SingleCourse}
+                      element={<CoursesSingle />}
+                    />
 
                     {/* Admin does it's own auth check on load */}
                     <Route path={PagesEnum.Admin} element={<Admin />}>
@@ -82,6 +88,17 @@ function App() {
                         element={<Navigate to={PagesEnum.NotFound} />}
                       />
                     </Route>
+                  </Route>
+
+                  {/* Only Teachers */}
+                  <Route
+                    element={
+                      <ProtectedRoute onlyUser={true} onlyTeacher={true} />
+                    }>
+                    <Route
+                      path={PagesEnum.CoursesCreate}
+                      element={<CoursesCreate />}
+                    />
                   </Route>
 
                   <Route

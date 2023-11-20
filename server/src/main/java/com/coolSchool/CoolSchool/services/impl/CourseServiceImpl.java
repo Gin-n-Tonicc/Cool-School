@@ -7,12 +7,15 @@ import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.dto.request.CourseRequestDTO;
+import com.coolSchool.CoolSchool.models.dto.request.UserCourseRequestDTO;
 import com.coolSchool.CoolSchool.models.dto.response.CourseResponseDTO;
+import com.coolSchool.CoolSchool.models.dto.response.UserCourseResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
 import com.coolSchool.CoolSchool.repositories.UserRepository;
 import com.coolSchool.CoolSchool.services.CourseService;
+import com.coolSchool.CoolSchool.services.UserCourseService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
@@ -29,13 +32,16 @@ public class CourseServiceImpl implements CourseService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+
+    private final UserCourseService userCourseService;
     private final Validator validator;
 
-    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, Validator validator) {
+    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, UserCourseService userCourseService, Validator validator) {
         this.courseRepository = courseRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
+        this.userCourseService = userCourseService;
         this.validator = validator;
     }
 
@@ -55,13 +61,40 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public boolean canEnrollCourse(Long id, PublicUserDTO loggedUser) {
+       if (loggedUser == null) {
+           return false;
+       }
+
+        List<UserCourseResponseDTO> allUserCourses = userCourseService.getAllUserCourses();
+        Optional<UserCourseResponseDTO> userCourse = allUserCourses.stream().filter(x -> Objects.equals(x.getCourseId().getId(), id) && Objects.equals(x.getUserId().getId(), loggedUser.getId())).findAny();
+
+        // isEmpty() = true -> Can enroll
+        // isEmpty() = false -> Can not enroll
+        return userCourse.isEmpty();
+    }
+
+    @Override
+    public void enrollCourse(Long id, PublicUserDTO loggedUser) {
+        if (loggedUser == null) {
+            return;
+        }
+
+        UserCourseRequestDTO dto = new UserCourseRequestDTO();
+        dto.setCourseId(id);
+        dto.setUserId(loggedUser.getId());
+
+        userCourseService.createUserCourse(dto);
+    }
+
+    @Override
     public CourseResponseDTO createCourse(CourseRequestDTO courseDTO, PublicUserDTO loggedUser) {
         if (loggedUser == null || !(loggedUser.getRole().equals(Role.ADMIN) || loggedUser.getRole().equals(Role.TEACHER))) {
             throw new AccessDeniedException();
         }
         try {
             courseDTO.setId(null);
-            courseDTO.setStarts(0);
+            courseDTO.setStars(0);
             userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
             categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
             Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
