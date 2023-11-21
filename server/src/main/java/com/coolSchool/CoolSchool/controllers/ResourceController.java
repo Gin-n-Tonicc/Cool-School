@@ -25,6 +25,11 @@ public class ResourceController {
         return ResponseEntity.ok(resourceService.getAllResources());
     }
 
+    @GetMapping("/subsection/{id}")
+    public ResponseEntity<List<ResourceResponseDTO>> getAllResourcesBySubsection(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.ok(resourceService.getBySubsection(id));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ResourceResponseDTO> getResourceById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(resourceService.getResourceById(id));

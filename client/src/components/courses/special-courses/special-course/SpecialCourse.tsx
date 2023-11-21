@@ -1,59 +1,61 @@
+import { Link } from 'react-router-dom';
+import { v4 as uuidV4 } from 'uuid';
+import { PagesEnum } from '../../../../types/enums/PagesEnum';
+import { MAX_STARS } from '../../courses-single/courses-rating/CoursesRating';
 import './SpecialCourse.scss';
 import colorStar from './images/color_star.svg';
 import star from './images/star.svg';
 
 export interface SpecialCourseProps {
+  id: number;
   titleSummary: string;
   title: string;
-  price: number;
-  description: string;
+  price?: number;
+  description?: string;
   courseImage: any;
-  authorImage: any;
+  authorImage?: any;
   author: string;
   rating: number;
 }
 
 export default function SpecialCourse(props: SpecialCourseProps) {
+  const stars = Math.round(props.rating);
+
   return (
-    <div className="col-sm-6 col-lg-4">
+    <div className="col-sm-6 col-lg-4 special_course_parent">
       <div className="single_special_cource">
         <img src={props.courseImage} className="special_img" alt="" />
         <div className="special_cource_text">
-          <a href="course-details.html" className="btn_4">
+          <Link
+            to={PagesEnum.SingleCourse.replace(':id', props.id?.toString())}
+            className="btn_4">
             {props.titleSummary}
-          </a>
-          <h4>${props.price.toFixed(2)}</h4>
-          <a href="course-details.html">
+          </Link>
+          <Link to={PagesEnum.SingleCourse.replace(':id', props.id.toString())}>
             <h3>{props.title}</h3>
-          </a>
-          <p>{props.description}</p>
+          </Link>
           <div className="author_info">
             <div className="author_img">
-              <img src={props.authorImage} alt="" />
               <div className="author_info_text">
                 <p>Conduct by:</p>
                 <h5>
-                  <a href="#">{props.author}</a>
+                  <a>{props.author}</a>
                 </h5>
               </div>
             </div>
             <div className="author_rating">
               <div className="rating">
-                <a href="#">
-                  <img src={colorStar} alt="" />
-                </a>
-                <a href="#">
-                  <img src={colorStar} alt="" />
-                </a>
-                <a href="#">
-                  <img src={colorStar} alt="" />
-                </a>
-                <a href="#">
-                  <img src={colorStar} alt="" />
-                </a>
-                <a href="#">
-                  <img src={star} alt="" />
-                </a>
+                {[...new Array(stars)].map((_) => (
+                  <a>
+                    <img src={colorStar} alt="" key={uuidV4()} />
+                  </a>
+                ))}
+
+                {[...new Array(MAX_STARS - stars)].map((_) => (
+                  <a>
+                    <img src={star} alt="" key={uuidV4()} />
+                  </a>
+                ))}
               </div>
               <p>{props.rating} Ratings</p>
             </div>

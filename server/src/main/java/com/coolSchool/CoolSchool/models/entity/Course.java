@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,13 +18,23 @@ public class Course {
     @Column(name = "id")
     private Long id;
     @NotNull(message = "The name of the course should not be null!")
+    @Size(min = 10, message = "The name must be at least 10 symbols!")
     private String name;
-    @NotNull(message = "The name of the class should not be null!")
-    private String aClass;
+    @NotNull(message = "The objectives of the course should not be null!")
+    @Size(min = 150, message = "The objectives must be at least 150 symbols!")
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String objectives;
+    @NotNull(message = "The eligibility of the course should not be null!")
+    @Size(min = 150, message = "The eligibility must be at least 150 symbols!")
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String eligibility;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull(message = "The user of the class should not be null!")
+    @NotNull(message = "The trainer of the course should not be null!")
     private User user;
+    @ManyToOne
+    @JoinColumn(name = "file_id")
+    private File picture;
     @ManyToOne
     @JoinColumn(name = "category_id")
     @NotNull(message = "The category of the class should not be null!")

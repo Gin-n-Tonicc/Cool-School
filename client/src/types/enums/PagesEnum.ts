@@ -6,6 +6,8 @@ export enum PagesEnum {
   Logout = '/logout',
   Quizzes = '/quizzes',
   Courses = '/courses',
+  CoursesCreate = '/courses/create',
+  SingleCourse = '/courses/:id',
   Blog = '/blog',
   BlogCreate = '/blog/create',
   SingleBlog = '/blog/:id',

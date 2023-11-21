@@ -1,6 +1,22 @@
 @import 'src/styles/style.scss';
 
+.special_course_parent {
+  @media #{$big_screen} {
+    flex: 0 0 100%;
+    max-width: 50%;
+  }
+
+  @media #{$extra_big_screen} {
+    flex: 0 0 100%;
+    max-width: 50%;
+  }
+}
+
 .single_special_cource {
+  .special_img {
+    width: 100%;
+    height: 360px;
+  }
   @media #{$small_mobile} {
     margin-bottom: 20px;
 
@@ -86,14 +102,6 @@
 
       .author_img {
         position: relative;
-        padding-left: 60px;
-        @media #{$large_mobile} {
-          padding-left: 53px;
-        }
-        @media #{$tab_device} {
-          padding-left: 53px;
-        }
-
         img {
           position: absolute;
           left: 0;

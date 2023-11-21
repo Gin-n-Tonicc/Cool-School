@@ -1,16 +1,22 @@
+import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IBlog } from '../../../types/interfaces/IBlog';
+import { ICategory } from '../../../types/interfaces/ICategory';
 import { IFile } from '../../../types/interfaces/IFile';
 import {
   CONTENT_VALIDATIONS,
-  FILE_VALIDATIONS,
   SUMMARY_VALIDATIONS,
   TITLE_VALIDATIONS,
 } from '../../../validations/blogCreateValidations';
+import {
+  CATEGORY_VALIDATIONS,
+  IMAGE_FILE_VALIDATIONS,
+} from '../../../validations/commonValidations';
+import CategorySelect from '../../common/category-select/CategorySelect';
 import FormErrorWrapper from '../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../common/form-input/FormInput';
 import './BlogCreate.scss';
@@ -19,6 +25,7 @@ type Inputs = {
   Title: string;
   Summary: string;
   content: string;
+  category: number;
   file: File[];
 };
 
@@ -29,12 +36,14 @@ export default function BlogCreate() {
     reset,
     watch,
     register,
+    setValue,
     formState: { errors },
   } = useForm<Inputs>({
     defaultValues: {
       Title: '',
       Summary: '',
       content: '',
+      category: -1,
       file: [],
     },
     mode: 'onChange',
@@ -42,6 +51,15 @@ export default function BlogCreate() {
 
   const values = watch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    register('category', { ...CATEGORY_VALIDATIONS });
+  }, []);
+
+  const { data: categories } = useFetch<ICategory[]>(
+    apiUrlsConfig.categories.get,
+    []
+  );
 
   const { post: filePost, response: postFileRes } = useFetch<IFile>(
     apiUrlsConfig.files.upload()
@@ -51,7 +69,21 @@ export default function BlogCreate() {
     apiUrlsConfig.blogs.upload
   );
 
-  const labelText = values.file[0]?.name || 'Choose blog image';
+  const labelText = useMemo(
+    () => values.file[0]?.name || 'Choose blog image',
+    [values.file]
+  );
+
+  const onCategoryChange = useCallback(
+    (numberVal: number) => {
+      setValue('category', numberVal, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    },
+    [setValue]
+  );
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const fileFormData = new FormData();
@@ -68,7 +100,7 @@ export default function BlogCreate() {
       summary: data.Summary.trim(),
       liked_users: [],
       pictureId: file.id,
-      categoryId: 1,
+      categoryId: data.category,
     };
 
     const blog = await blogPost(body);
@@ -119,10 +151,22 @@ export default function BlogCreate() {
                   <input
                     type="file"
                     className="custom-file-input"
-                    {...register('file', { ...FILE_VALIDATIONS })}
+                    {...register('file', { ...IMAGE_FILE_VALIDATIONS })}
                   />
                   <label className="custom-file-label">{labelText}</label>
                 </div>
+              </FormErrorWrapper>
+
+              <FormErrorWrapper message={errors.category?.message}>
+                <CategorySelect
+                  categories={
+                    categories?.map((x) => ({
+                      value: x.id.toString(),
+                      label: x.name,
+                    })) || []
+                  }
+                  onCategoryChange={onCategoryChange}
+                />
               </FormErrorWrapper>
 
               <div className="form-group form-button">

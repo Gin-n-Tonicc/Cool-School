@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface ResourceRepository extends JpaRepository<Resource, Long> {
     List<Resource> findByDeletedFalse();
 
+    List<Resource> findAllBySubsectionIdAndDeletedFalse(Long id);
+
     Optional<Resource> findByIdAndDeletedFalse(Long id);
 }

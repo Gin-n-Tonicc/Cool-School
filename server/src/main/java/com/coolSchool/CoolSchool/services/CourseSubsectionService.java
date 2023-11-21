@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface CourseSubsectionService {
     List<CourseSubsectionResponseDTO> getAllCourseSubsections();
+    List<CourseSubsectionResponseDTO> getAllByCourse(Long id);
 
     CourseSubsectionResponseDTO getCourseSubsectionById(Long id);
 

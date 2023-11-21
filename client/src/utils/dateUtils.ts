@@ -3,7 +3,7 @@ const divisors = {
   2592000: 'months',
   86400: 'days',
   3600: 'hours',
-  60: 'days',
+  60: 'minutes',
 };
 
 const divisorEntries = Object.entries(divisors).sort(

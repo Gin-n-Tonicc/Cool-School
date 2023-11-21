@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.enums.Role;
+import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
@@ -19,6 +20,7 @@ import com.coolSchool.CoolSchool.services.ReviewService;
 import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionException;
 
 import java.util.List;
 import java.util.Objects;
@@ -58,6 +60,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewResponseDTO createReview(ReviewRequestDTO reviewDTO, PublicUserDTO loggedUser) {
+        System.out.println(loggedUser);
         if (loggedUser == null) {
             throw new AccessDeniedException();
         }
@@ -69,8 +72,11 @@ public class ReviewServiceImpl implements ReviewService {
             Review review = reviewRepository.save(reviewRequestDTO);
             updateCourseStars(course);
             return modelMapper.map(review, ReviewResponseDTO.class);
-        } catch (ConstraintViolationException exception) {
-            throw new ValidationCourseException(exception.getConstraintViolations());
+        } catch (TransactionException exception) {
+            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
+                throw new ValidationBlogException(validationException.getConstraintViolations());
+            }
+            throw exception;
         }
     }
 
