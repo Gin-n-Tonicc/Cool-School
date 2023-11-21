@@ -7,11 +7,12 @@ import CoursesSingleRating from './courses-single-rating/CoursesSingleRating';
 interface CoursesRatingProps {
   courseId: number;
   refreshReviews: Function;
+  hasEnrolled: boolean;
 }
 
 export const MAX_STARS = 5;
 export default function CoursesRating(props: CoursesRatingProps) {
-  const { user } = useAuthContext();
+  const { user, isAuthenticated } = useAuthContext();
   const [qualityStars, setQualityStars] = useState(0);
   const [punctualityStars, setPunctualityStars] = useState(0);
 
@@ -70,9 +71,11 @@ export default function CoursesRating(props: CoursesRatingProps) {
           cols={10}
           rows={10}></textarea>
         <div className="mt-10 text-right">
-          <button type="submit" className="btn_1">
-            Submit
-          </button>
+          {props.hasEnrolled && (
+            <button type="submit" className="btn_1">
+              Submit
+            </button>
+          )}
         </div>
       </form>
     </>

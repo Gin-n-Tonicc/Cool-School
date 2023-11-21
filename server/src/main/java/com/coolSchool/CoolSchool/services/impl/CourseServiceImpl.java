@@ -70,7 +70,7 @@ public class CourseServiceImpl implements CourseService {
         Optional<UserCourseResponseDTO> userCourse = allUserCourses.stream().filter(x -> Objects.equals(x.getCourseId().getId(), id) && Objects.equals(x.getUserId().getId(), loggedUser.getId())).findAny();
 
         // isEmpty() = true -> Can enroll
-        // isEmpty() = false -> Can not enroll
+        // isEmpty() = false -> Can not enroll (already enrolled)
         return userCourse.isEmpty();
     }
 

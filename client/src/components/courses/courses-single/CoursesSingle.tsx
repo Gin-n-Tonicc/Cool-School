@@ -1,19 +1,23 @@
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFetch } from 'use-http';
+import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import { ICourse } from '../../../types/interfaces/ICourse';
+import { ICourseSubsection } from '../../../types/interfaces/ICourseSubsection';
 import { IReview } from '../../../types/interfaces/IReview';
 import Breadcrumb from '../../common/breadcrumb/Breadcrumb';
 import Spinner from '../../common/spinner/Spinner';
 import './CoursesSingle.scss';
+import CoursesList from './courses-list/CoursesList';
 import CoursesRating from './courses-rating/CoursesRating';
 import CoursesReviews from './courses-reviews/CoursesReviews';
+import CoursesSubsectionCreate from './courses-subsection-create/CoursesSubsectionCreate';
 
 export default function CoursesSingle() {
   const { id } = useParams();
-  const { user } = useAuthContext();
+  const { user, isAuthenticated } = useAuthContext();
 
   const { data: course, loading: courseLoading } = useFetch<ICourse>(
     apiUrlsConfig.courses.getOne(id),
@@ -35,6 +39,10 @@ export default function CoursesSingle() {
     [course]
   );
 
+  const { get: getSubsections, data: subsections } = useFetch<
+    ICourseSubsection[]
+  >(apiUrlsConfig.courseSubsections.getByCourse(numId), [course]);
+
   useEffect(() => {
     (async () => {
       if (!courseLoading) {
@@ -49,12 +57,15 @@ export default function CoursesSingle() {
   };
 
   const refreshReviews = () => getReviews();
+  const refreshSubsections = () => getSubsections();
 
   if (!course) {
     return <Spinner />;
   }
 
-  const canEnroll = user && user.id !== course.user.id && canEnrollReq;
+  const isOwner = isAuthenticated && user.id === course.user.id;
+  const canEnroll = isAuthenticated && !isOwner && canEnrollReq;
+  const hasEnrolled = !canEnrollReq && isAuthenticated;
 
   return (
     <>
@@ -78,10 +89,10 @@ export default function CoursesSingle() {
                     .filter((x) => x)
                     .map((x) => {
                       return (
-                        <>
+                        <Fragment key={uuidV4()}>
                           {x.trim()}
                           <br />
-                        </>
+                        </Fragment>
                       );
                     })}
                 </div>
@@ -93,73 +104,26 @@ export default function CoursesSingle() {
                     .filter((x) => x)
                     .map((x) => {
                       return (
-                        <>
+                        <Fragment key={uuidV4()}>
                           {x.trim()}
                           <br />
-                        </>
+                        </Fragment>
                       );
                     })}
                 </div>
 
-                <h4 className="title">Course Outline</h4>
-                <div className="content">
-                  <ul className="course_list">
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Introduction Lesson</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Basics of HTML</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Getting Know about HTML</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Tags and Attributes</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Basics of CSS</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Getting Familiar with CSS</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Introduction to Bootstrap</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Responsive Design</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                    <li className="justify-content-between align-items-center d-flex">
-                      <p>Canvas in HTML 5</p>
-                      <a className="btn_2 text-uppercase" href="#">
-                        View Details
-                      </a>
-                    </li>
-                  </ul>
-                </div>
+                <CoursesSubsectionCreate
+                  courseId={numId}
+                  refreshSubsections={refreshSubsections}
+                  isOwner={isOwner}
+                />
+                <CoursesList
+                  subsections={subsections || []}
+                  isOwner={isOwner}
+                  hasEnrolled={hasEnrolled}
+                  refreshSubsections={refreshSubsections}
+                  courseId={numId}
+                />
               </div>
             </div>
 
@@ -193,6 +157,7 @@ export default function CoursesSingle() {
                 <CoursesRating
                   courseId={course.id}
                   refreshReviews={refreshReviews}
+                  hasEnrolled={hasEnrolled}
                 />
                 <CoursesReviews reviews={reviews || []} />
               </div>

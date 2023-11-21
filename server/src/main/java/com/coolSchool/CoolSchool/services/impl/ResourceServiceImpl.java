@@ -43,6 +43,12 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
+    public List<ResourceResponseDTO> getBySubsection(Long id) {
+        List<Resource> resources = resourceRepository.findAllBySubsectionIdAndDeletedFalse(id);
+        return resources.stream().map(resource -> modelMapper.map(resource, ResourceResponseDTO.class)).toList();
+    }
+
+    @Override
     public ResourceResponseDTO getResourceById(Long id) {
         Optional<Resource> resource = resourceRepository.findByIdAndDeletedFalse(id);
         if (resource.isPresent()) {

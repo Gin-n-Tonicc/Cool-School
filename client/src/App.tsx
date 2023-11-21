@@ -48,6 +48,10 @@ function App() {
                   <Route path={PagesEnum.SingleBlog} element={<SingleBlog />} />
                   <Route path={PagesEnum.Contact} element={<ContactUs />} />
                   <Route path={PagesEnum.NotFound} element={<NotFound />} />
+                  <Route
+                    path={PagesEnum.SingleCourse}
+                    element={<CoursesSingle />}
+                  />
 
                   {/* Only guests */}
                   <Route element={<ProtectedRoute onlyUser={false} />}>
@@ -62,10 +66,6 @@ function App() {
                     <Route
                       path={PagesEnum.BlogCreate}
                       element={<BlogCreate />}
-                    />
-                    <Route
-                      path={PagesEnum.SingleCourse}
-                      element={<CoursesSingle />}
                     />
 
                     {/* Admin does it's own auth check on load */}

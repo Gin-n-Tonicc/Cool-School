@@ -79,6 +79,21 @@ const reviewsPaths = Object.seal({
   create: `${baseUrl}/reviews/create`,
 });
 
+const courseSubsectionsPaths = Object.seal({
+  getByCourse: (courseId: number) =>
+    `${baseUrl}/courseSubsections/course/${courseId}`,
+  create: `${baseUrl}/courseSubsections/create`,
+  put: (id: number) => `${baseUrl}/courseSubsections/${id}`,
+  delete: (id: number) => `${baseUrl}/courseSubsections/${id}`,
+});
+
+const resourcesPaths = Object.seal({
+  getBySubsection: (subsectionId: number) =>
+    `${baseUrl}/resources/subsection/${subsectionId}`,
+  create: `${baseUrl}/resources/create`,
+  delete: (id: number) => `${baseUrl}/resources/${id}`,
+});
+
 export const apiUrlsConfig = Object.seal({
   admin: adminPaths,
   auth: authPaths,
@@ -88,4 +103,6 @@ export const apiUrlsConfig = Object.seal({
   comments: commentsPaths,
   courses: coursesPaths,
   reviews: reviewsPaths,
+  courseSubsections: courseSubsectionsPaths,
+  resources: resourcesPaths,
 });

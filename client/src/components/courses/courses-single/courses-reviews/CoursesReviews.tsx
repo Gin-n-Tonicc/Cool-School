@@ -9,7 +9,7 @@ export default function CoursesReviews(props: CoursesReviewsProps) {
   return (
     <div className="comments-area mb-30">
       {props.reviews.map((x) => (
-        <CoursesReviewsSingle review={x} />
+        <CoursesReviewsSingle key={x.id} review={x} />
       ))}
     </div>
   );

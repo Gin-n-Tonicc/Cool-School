@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.models.dto.response;
 
+import com.coolSchool.CoolSchool.models.dto.common.CourseSubsectionDTO;
 import com.coolSchool.CoolSchool.models.dto.common.ResourceDTO;
 import com.coolSchool.CoolSchool.models.entity.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,8 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResourceResponseDTO extends ResourceDTO {
-    @JsonProperty(value = "file")
-    private File fileId;
-    @JsonProperty(value = "subsection")
-    private CourseResponseDTO subsectionId;
+    private File file;
+    private CourseSubsectionDTO subsection;
 }

@@ -26,14 +26,14 @@ export default function CoursesReviewsSingle({
             </h5>
             <div className="rating">
               {[...new Array(review.stars)].map((_) => (
-                <a>
-                  <img src={colorStar} alt="" key={uuidV4()} />
+                <a key={uuidV4()}>
+                  <img src={colorStar} alt="" />
                 </a>
               ))}
 
               {[...new Array(MAX_STARS - review.stars)].map((_) => (
-                <a>
-                  <img src={star} alt="" key={uuidV4()} />
+                <a key={uuidV4()}>
+                  <img src={star} alt="" />
                 </a>
               ))}
             </div>

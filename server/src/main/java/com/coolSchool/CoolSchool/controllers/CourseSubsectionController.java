@@ -25,6 +25,11 @@ public class CourseSubsectionController {
         return ResponseEntity.ok(courseSubsectionService.getAllCourseSubsections());
     }
 
+    @GetMapping("/course/{id}")
+    public ResponseEntity<List<CourseSubsectionResponseDTO>> getAllCategoriesByCourseId(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.ok(courseSubsectionService.getAllByCourse(id));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<CourseSubsectionResponseDTO> getCourseSubsectionById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(courseSubsectionService.getCourseSubsectionById(id));

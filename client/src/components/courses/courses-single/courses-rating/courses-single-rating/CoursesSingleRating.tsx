@@ -39,9 +39,8 @@ export default function CoursesSingleRating({
     if (counter < stars) {
       counter++;
       return (
-        <a>
+        <a key={uuidV4()}>
           <img
-            key={uuidV4()}
             src={colorStar}
             alt=""
             onClick={onStarChange.bind(null, i + 1)}
@@ -51,13 +50,8 @@ export default function CoursesSingleRating({
     }
 
     return (
-      <a>
-        <img
-          key={uuidV4()}
-          src={star}
-          alt=""
-          onClick={onStarChange.bind(null, i + 1)}
-        />
+      <a key={uuidV4()}>
+        <img src={star} alt="" onClick={onStarChange.bind(null, i + 1)} />
       </a>
     );
   });
