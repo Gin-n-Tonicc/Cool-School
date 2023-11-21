@@ -14,5 +14,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewResponseDTO extends ReviewDTO {
     private PublicUserDTO user;
-    private CourseResponseDTO course;
 }

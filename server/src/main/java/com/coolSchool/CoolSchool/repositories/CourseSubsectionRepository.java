@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface CourseSubsectionRepository extends JpaRepository<CourseSubsection, Long> {
     List<CourseSubsection> findByDeletedFalse();
-
+    List<CourseSubsection> findAllByCourseIdAndDeletedFalse(Long id);
     Optional<CourseSubsection> findByIdAndDeletedFalse(Long id);
 
 }

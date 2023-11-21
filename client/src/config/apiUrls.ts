@@ -35,6 +35,7 @@ const blogsPaths = Object.seal({
   recent: (n: number) => `${baseUrl}/blogs/mostRecent/${n}`,
   getOne: (id: number | string | undefined) => `${baseUrl}/blogs/${id}`,
   likeBlog: (id: number | string | undefined) => `${baseUrl}/blogs/like/${id}`,
+  mostLiked: `${baseUrl}/blogs/sort/likes`,
 });
 
 const categoriesPaths = Object.seal({
@@ -62,6 +63,37 @@ const commentsPaths = Object.seal({
   post: `${baseUrl}/comments/create`,
 });
 
+const coursesPaths = Object.seal({
+  getAll: `${baseUrl}/courses/all`,
+  upload: `${baseUrl}/courses/create`,
+  getOne: (id: number | string | undefined) => `${baseUrl}/courses/${id}`,
+  canEnroll: (id: number | string | undefined) =>
+    `${baseUrl}/courses/canEnroll/${id}`,
+  enroll: (id: number | string | undefined) =>
+    `${baseUrl}/courses/enroll/${id}`,
+});
+
+const reviewsPaths = Object.seal({
+  getByCourse: (courseId: number | string | undefined) =>
+    `${baseUrl}/reviews/all/${courseId}`,
+  create: `${baseUrl}/reviews/create`,
+});
+
+const courseSubsectionsPaths = Object.seal({
+  getByCourse: (courseId: number) =>
+    `${baseUrl}/courseSubsections/course/${courseId}`,
+  create: `${baseUrl}/courseSubsections/create`,
+  put: (id: number) => `${baseUrl}/courseSubsections/${id}`,
+  delete: (id: number) => `${baseUrl}/courseSubsections/${id}`,
+});
+
+const resourcesPaths = Object.seal({
+  getBySubsection: (subsectionId: number) =>
+    `${baseUrl}/resources/subsection/${subsectionId}`,
+  create: `${baseUrl}/resources/create`,
+  delete: (id: number) => `${baseUrl}/resources/${id}`,
+});
+
 export const apiUrlsConfig = Object.seal({
   admin: adminPaths,
   auth: authPaths,
@@ -69,4 +101,8 @@ export const apiUrlsConfig = Object.seal({
   categories: categoriesPaths,
   files: filesPaths,
   comments: commentsPaths,
+  courses: coursesPaths,
+  reviews: reviewsPaths,
+  courseSubsections: courseSubsectionsPaths,
+  resources: resourcesPaths,
 });

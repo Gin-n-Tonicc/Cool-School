@@ -8,10 +8,14 @@ const loginPath = '/login';
 
 type ProtectedRouteProps = {
   onlyUser: boolean;
+  onlyTeacher?: boolean;
 };
 
-export default function ProtectedRoute({ onlyUser }: ProtectedRouteProps) {
-  const { isAuthenticated } = useAuthContext();
+export default function ProtectedRoute({
+  onlyUser,
+  onlyTeacher,
+}: ProtectedRouteProps) {
+  const { isTeacher, isAuthenticated } = useAuthContext();
   const { pathname } = useLocation();
 
   const generateNavPath = useCallback(
@@ -27,11 +31,11 @@ export default function ProtectedRoute({ onlyUser }: ProtectedRouteProps) {
 
   const passThrew = isAuthenticated === onlyUser;
 
-  if (onlyUser && !passThrew && pathname !== logoutPath) {
+  if (!onlyTeacher && onlyUser && !passThrew && pathname !== logoutPath) {
     return <Navigate to={generateNavPath(loginPath)} />;
   }
 
-  if (!passThrew) {
+  if (!passThrew || (onlyTeacher !== undefined && onlyTeacher !== isTeacher)) {
     return <Navigate to={PagesEnum.Home} />;
   }
 

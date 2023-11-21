@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -18,6 +20,8 @@ public class CourseSubsection {
     private String title;
     @NotNull(message = "The description of the courseSubsection should not be null!")
     private String description;
+    @OneToMany
+    private List<Resource> resources;
     @ManyToOne
     @JoinColumn(name = "course_id")
     @NotNull(message = "The course of the courseSubsection should not be null!")

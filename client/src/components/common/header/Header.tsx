@@ -4,6 +4,7 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import logo from '../../../images/logo.png';
 import { AdminPagesEnum } from '../../../types/enums/AdminPagesEnum';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
+import { RolesEnum } from '../../../types/enums/RolesEnum';
 import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
 
@@ -16,23 +17,29 @@ function GuestLinks() {
   );
 }
 
-function UserLinks() {
+function UserLinks(props: { isTeacher: boolean }) {
   return (
     <>
+      {props.isTeacher && (
+        <HeaderNavItem
+          text="Create Course"
+          pathName={PagesEnum.CoursesCreate}
+        />
+      )}
       <HeaderNavItem text="Create Blog" pathName={PagesEnum.BlogCreate} />
       <HeaderNavItem text="Logout" pathName={PagesEnum.Logout} />
     </>
   );
 }
 
-function UserNav({ isAuthenticated }: { isAuthenticated: boolean }) {
+function UserNav(props: { isAuthenticated: boolean; isTeacher: boolean }) {
   return (
     <ul className="navbar-nav align-items-center">
       <HeaderNavItem text="Home" pathName={PagesEnum.Home} />
-      <HeaderNavItem text="Courses" pathName={PagesEnum.Courses} />
       <HeaderNavItem text="Contact" pathName={PagesEnum.Contact} />
+      <HeaderNavItem text="Courses" pathName={PagesEnum.Courses} />
       <HeaderNavItem text="Blog" pathName={PagesEnum.Blog} />
-      {isAuthenticated ? <UserLinks /> : <GuestLinks />}
+      {props.isAuthenticated ? <UserLinks {...props} /> : <GuestLinks />}
     </ul>
   );
 }
@@ -57,7 +64,8 @@ function AdminNav() {
 }
 
 export default function Header() {
-  const { isAuthenticated } = useAuthContext();
+  const { user, isAuthenticated } = useAuthContext();
+  const isTeacher = RolesEnum.TEACHER === user.role;
 
   const homeMenuPaths = useMemo(
     () =>
@@ -67,6 +75,7 @@ export default function Header() {
         PagesEnum.Register,
         PagesEnum.Logout,
         PagesEnum.BlogCreate,
+        PagesEnum.CoursesCreate,
         PagesEnum.Admin,
         `${PagesEnum.Admin}/${AdminPagesEnum.USERS}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`,
@@ -113,7 +122,10 @@ export default function Header() {
                     {location.pathname.includes(PagesEnum.Admin) ? (
                       <AdminNav />
                     ) : (
-                      <UserNav isAuthenticated={isAuthenticated} />
+                      <UserNav
+                        isTeacher={isTeacher}
+                        isAuthenticated={isAuthenticated}
+                      />
                     )}
                   </ul>
                 </div>

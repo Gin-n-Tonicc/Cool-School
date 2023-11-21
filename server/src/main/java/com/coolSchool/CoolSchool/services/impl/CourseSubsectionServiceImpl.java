@@ -39,6 +39,12 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
     }
 
     @Override
+    public List<CourseSubsectionResponseDTO> getAllByCourse(Long id) {
+        List<CourseSubsection> courseSubsections = courseSubsectionRepository.findAllByCourseIdAndDeletedFalse(id);
+        return courseSubsections.stream().map(courseSubsection -> modelMapper.map(courseSubsection, CourseSubsectionResponseDTO.class)).toList();
+    }
+
+    @Override
     public CourseSubsectionResponseDTO getCourseSubsectionById(Long id) {
         Optional<CourseSubsection> courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(id);
         if (courseSubsection.isPresent()) {

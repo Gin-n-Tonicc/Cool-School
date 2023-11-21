@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class CourseDTO {
     private Long id;
     private String name;
-    @JsonProperty(value = "class")
-    private String aClass;
-    private double starts;
+    private String objectives;
+    private String eligibility;
+    private double stars;
 }

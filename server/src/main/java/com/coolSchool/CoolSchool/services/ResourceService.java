@@ -8,6 +8,8 @@ import java.util.List;
 public interface ResourceService {
     List<ResourceResponseDTO> getAllResources();
 
+    List<ResourceResponseDTO> getBySubsection(Long id);
+
     ResourceResponseDTO getResourceById(Long id);
 
     ResourceResponseDTO createResource(ResourceRequestDTO resourceDTO);

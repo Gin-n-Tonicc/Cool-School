@@ -2,7 +2,7 @@ import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import { IBlog } from '../../../../types/interfaces/IBlog';
-import { timeSince } from '../../../../utils/dateUtilts';
+import { timeSince } from '../../../../utils/dateUtils';
 import BlogPopularPost from './blog-popular-post/BlogPopularPost';
 
 const RECENT_BLOGS_COUNT = 3;

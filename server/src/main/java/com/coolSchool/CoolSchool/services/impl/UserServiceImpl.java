@@ -31,13 +31,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(RegisterRequest request) {
         try {
+            Role roleFromReq = request.getRole();
+            if (roleFromReq == null || roleFromReq.equals(Role.ADMIN)) {
+                request.setRole(Role.USER);
+            }
+
             User user = User
                     .builder()
                     .firstname(request.getFirstname())
                     .lastname(request.getLastname())
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
-                    .role(Role.USER)
+                    .role(request.getRole())
                     .address(request.getAddress())
                     .usernameField(request.getUsername())
                     .description(request.getDescription())
