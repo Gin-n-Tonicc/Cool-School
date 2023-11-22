@@ -59,6 +59,18 @@ function AdminNav() {
         text="Blogs"
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`}
       />
+      <HeaderNavItem
+        text="Courses"
+        pathName={`${PagesEnum.Admin}/${AdminPagesEnum.COURSES}`}
+      />
+      <HeaderNavItem
+        text="Subsections"
+        pathName={`${PagesEnum.Admin}/${AdminPagesEnum.SUBSECTIONS}`}
+      />
+      <HeaderNavItem
+        text="Resources"
+        pathName={`${PagesEnum.Admin}/${AdminPagesEnum.RESOURCES}`}
+      />
     </ul>
   );
 }
@@ -80,6 +92,9 @@ export default function Header() {
         `${PagesEnum.Admin}/${AdminPagesEnum.USERS}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`,
+        `${PagesEnum.Admin}/${AdminPagesEnum.COURSES}`,
+        `${PagesEnum.Admin}/${AdminPagesEnum.SUBSECTIONS}`,
+        `${PagesEnum.Admin}/${AdminPagesEnum.RESOURCES}`,
       ].map((x) => x.toString()),
     []
   );

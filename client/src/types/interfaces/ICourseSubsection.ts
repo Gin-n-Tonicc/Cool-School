@@ -3,4 +3,5 @@ export interface ICourseSubsection {
   title: string;
   description: string;
   resources: any[];
+  courseId: number;
 }

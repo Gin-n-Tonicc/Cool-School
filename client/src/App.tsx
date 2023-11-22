@@ -2,7 +2,10 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Admin from './components/admin/Admin';
 import AdminTableBlogs from './components/admin/admin-tables/AdminTableBlogs';
 import AdminTableCategories from './components/admin/admin-tables/AdminTableCategories';
+import AdminTableCourses from './components/admin/admin-tables/AdminTableCourses';
 import AdminTableDefault from './components/admin/admin-tables/AdminTableDefault';
+import AdminTableResources from './components/admin/admin-tables/AdminTableResources';
+import AdminTableSubsections from './components/admin/admin-tables/AdminTableSubsections';
 import AdminTableUsers from './components/admin/admin-tables/AdminTableUsers';
 import Authenticate from './components/auth/authenticate/Authenticate';
 import Login from './components/auth/login/Login';
@@ -82,6 +85,18 @@ function App() {
                       <Route
                         path={AdminPagesEnum.BLOGS}
                         element={<AdminTableBlogs />}
+                      />
+                      <Route
+                        path={AdminPagesEnum.COURSES}
+                        element={<AdminTableCourses />}
+                      />
+                      <Route
+                        path={AdminPagesEnum.SUBSECTIONS}
+                        element={<AdminTableSubsections />}
+                      />
+                      <Route
+                        path={AdminPagesEnum.RESOURCES}
+                        element={<AdminTableResources />}
                       />
                       <Route
                         path="*"
