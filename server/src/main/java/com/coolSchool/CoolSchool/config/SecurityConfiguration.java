@@ -64,9 +64,9 @@ public class SecurityConfiguration {
                 .requestMatchers(GET, "/api/v1/comments/**").permitAll()
 
                 .requestMatchers(GET, "/api/v1/categories/**").permitAll()
-                .requestMatchers(POST, "/api/v1/categories/**").hasAnyAuthority(ADMIN_CREATE.name())
-                .requestMatchers(PUT, "/api/v1/categories/**").hasAnyAuthority(ADMIN_UPDATE.name())
-                .requestMatchers(DELETE, "/api/v1/categories/**").hasAnyAuthority(ADMIN_DELETE.name())
+                .requestMatchers(POST, "/api/v1/categories/**").hasAnyRole(ADMIN.name())
+                .requestMatchers(PUT, "/api/v1/categories/**").hasAnyRole(ADMIN.name())
+                .requestMatchers(DELETE, "/api/v1/categories/**").hasAnyRole(ADMIN.name())
 
                 .requestMatchers(GET, "/api/v1/reviews/**").permitAll()
                 .requestMatchers(POST, "/api/v1/reviews/**").hasAnyRole(ADMIN.name(), USER.name(), TEACHER.name())
