@@ -8,7 +8,6 @@ import { ICourse } from '../../../types/interfaces/ICourse';
 import { ICourseSubsection } from '../../../types/interfaces/ICourseSubsection';
 import { IReview } from '../../../types/interfaces/IReview';
 import Breadcrumb from '../../common/breadcrumb/Breadcrumb';
-import Spinner from '../../common/spinner/Spinner';
 import './CoursesSingle.scss';
 import CoursesList from './courses-list/CoursesList';
 import CoursesRating from './courses-rating/CoursesRating';
@@ -60,7 +59,7 @@ export default function CoursesSingle() {
   const refreshSubsections = () => getSubsections();
 
   if (!course) {
-    return <Spinner />;
+    return <></>;
   }
 
   const isOwner = isAuthenticated && user.id === course.user.id;

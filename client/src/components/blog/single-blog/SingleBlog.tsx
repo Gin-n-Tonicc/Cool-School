@@ -7,7 +7,6 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import { ICommentsByBlogResponse } from '../../../types/interfaces/ICommentsByBlogResponse';
-import Spinner from '../../common/spinner/Spinner';
 import BlogBreadcrumb from '../blog-breadcrumb/BlogBreadcrumb';
 import './SingleBlog.scss';
 import SingleBlogCommentForm from './single-blog-comment-form/SingleBlogCommentForm';
@@ -68,7 +67,7 @@ export default function SingleBlog() {
   }
 
   if (!blog) {
-    return <Spinner />;
+    return <></>;
   }
 
   let totalLikes = blog.liked_users.length;

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CachePolicies, Res, useFetch } from 'use-http';
 import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
-import Spinner from '../../common/spinner/Spinner';
 import {
   OnCreateFunction,
   OnUpdateFunction,
@@ -107,7 +106,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
   );
 
   if (loading) {
-    return <Spinner />;
+    return <></>;
   }
 
   return (

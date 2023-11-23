@@ -10,6 +10,7 @@ interface AdminEditFormRowProps {
 
 export default function AdminEditFormRow(props: AdminEditFormRowProps) {
   let value = props.value;
+  const shouldDisable = Array.isArray(value) || props.columnName.includes('Id');
   if (Array.isArray(value)) {
     value = `[${value}]`;
   }
@@ -26,6 +27,7 @@ export default function AdminEditFormRow(props: AdminEditFormRowProps) {
           type="text"
           placeholder={capitalizeWord(props.columnName) + '...'}
           defaultValue={value}
+          disabled={shouldDisable}
         />
       </div>
     </div>

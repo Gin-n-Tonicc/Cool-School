@@ -12,35 +12,30 @@ export default function ContactUs() {
               <h2 className="contact-title">Get in Touch</h2>
             </div>
             <div className="col-lg-8">
-              <form className="form-contact contact_form" id="contactForm">
+              <form
+                action="mailto:stefanbelis932@gmail.com"
+                method="get"
+                encType="text/plain"
+                className="form-contact contact_form"
+                id="contactForm">
                 <div className="row">
                   <div className="col-12">
                     <div className="form-group">
                       <textarea
                         className="form-control w-100"
-                        name="message"
-                        id="message"
+                        name="body"
+                        id="body"
                         cols={30}
                         rows={9}
                         placeholder="Enter Message"></textarea>
                     </div>
                   </div>
-                  <div className="col-sm-6">
+
+                  <div className="col-12">
                     <div className="form-group">
                       <input
                         className="form-control"
-                        name="name"
-                        id="name"
-                        type="text"
-                        placeholder="Enter your name"
-                      />
-                    </div>
-                  </div>
-                  <div className="col-sm-6">
-                    <div className="form-group">
-                      <input
-                        className="form-control"
-                        name="email"
+                        name="bcc"
                         id="email"
                         type="email"
                         placeholder="Enter email address"
@@ -92,7 +87,7 @@ export default function ContactUs() {
                   <i className="ti-email"></i>
                 </span>
                 <div className="media-body">
-                  <h3>support@TODO:add_email.com</h3>
+                  <h3>stefanbelis932@gmail.com</h3>
                   <p>Send us your query anytime!</p>
                 </div>
               </div>

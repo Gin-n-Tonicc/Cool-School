@@ -89,6 +89,7 @@ export default function Header() {
         PagesEnum.BlogCreate,
         PagesEnum.CoursesCreate,
         PagesEnum.Admin,
+        PagesEnum.NotFound,
         `${PagesEnum.Admin}/${AdminPagesEnum.USERS}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`,
