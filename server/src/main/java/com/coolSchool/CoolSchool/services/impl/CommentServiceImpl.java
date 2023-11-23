@@ -1,11 +1,12 @@
 package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.enums.Role;
+import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.comment.CommentNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.comment.ValidationCommentException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
-import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 
+import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.dto.request.CommentRequestDTO;
 import com.coolSchool.CoolSchool.models.dto.response.CommentGetByBlogResponseDTO;
@@ -89,9 +90,9 @@ public class CommentServiceImpl implements CommentService {
             commentDTO.setId(null);
             commentDTO.setCreated_at(LocalDateTime.now());
             commentDTO.setOwnerId(loggedUser.getId());
-            userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
+            userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
 
-            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
+            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(BlogNotFoundException::new);
             blog.setCommentCount(blog.getCommentCount() + 1);
             blogRepository.save(blog);
             Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
@@ -112,8 +113,8 @@ public class CommentServiceImpl implements CommentService {
         if (existingCommentOptional.isEmpty()) {
             throw new CommentNotFoundException();
         }
-        User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(NoSuchElementException::new);
-        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(NoSuchElementException::new);
+        User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
+        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(BlogNotFoundException::new);
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), user.getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException();
         }
@@ -141,7 +142,7 @@ public class CommentServiceImpl implements CommentService {
             if (loggedUser == null || (!Objects.equals(loggedUser.getId(), comment.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN) && !Objects.equals(loggedUser.getId(), comment.getBlogId().getOwnerId())))) {
                 throw new AccessDeniedException();
             }
-            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(comment.getBlogId().getId()).orElseThrow(NoSuchElementException::new);
+            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(comment.getBlogId().getId()).orElseThrow(BlogNotFoundException::new);
             blog.setCommentCount(blog.getCommentCount() - 1);
             blogRepository.save(blog);
             comment.setDeleted(true);

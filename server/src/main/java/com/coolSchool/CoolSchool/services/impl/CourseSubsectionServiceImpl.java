@@ -1,8 +1,9 @@
 package com.coolSchool.CoolSchool.services.impl;
 
-import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.courseSubsection.ValidationCourseSubsectionException;
+import com.coolSchool.CoolSchool.exceptions.files.FileNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.request.CourseSubsectionRequestDTO;
 import com.coolSchool.CoolSchool.models.dto.response.CourseSubsectionResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
@@ -63,7 +64,7 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
     public CourseSubsectionResponseDTO createCourseSubsection(CourseSubsectionRequestDTO courseSubsectionDTO) {
         try {
             courseSubsectionDTO.setId(null);
-            courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
+            courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
             CourseSubsection courseSubsectionEntity = courseSubsectionRepository.save(modelMapper.map(courseSubsectionDTO, CourseSubsection.class));
             return modelMapper.map(courseSubsectionEntity, CourseSubsectionResponseDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -79,9 +80,9 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
             throw new CourseSubsectionNotFoundException();
         }
 
-        Set<Resource> resources = courseSubsectionDTO.getResources().stream().map(x -> resourceRepository.findByIdAndDeletedFalse(x).orElseThrow(NoSuchElementException::new)).collect(Collectors.toSet());
+        Set<Resource> resources = courseSubsectionDTO.getResources().stream().map(x -> resourceRepository.findByIdAndDeletedFalse(x).orElseThrow(FileNotFoundException::new)).collect(Collectors.toSet());
 
-        courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
+        courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
         CourseSubsection existingCourseSubsection = existingCourseSubsectionOptional.get();
         modelMapper.map(courseSubsectionDTO, existingCourseSubsection);
 

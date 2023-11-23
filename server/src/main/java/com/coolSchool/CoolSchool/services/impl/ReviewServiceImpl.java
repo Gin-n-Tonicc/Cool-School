@@ -3,9 +3,9 @@ package com.coolSchool.CoolSchool.services.impl;
 import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
-import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
-import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
+import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.review.ReviewNotFoundException;
+import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.dto.request.ReviewRequestDTO;
 import com.coolSchool.CoolSchool.models.dto.response.CourseResponseDTO;
@@ -66,8 +66,8 @@ public class ReviewServiceImpl implements ReviewService {
         }
         try {
             reviewDTO.setId(null);
-            userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(NoSuchElementException::new);
-            Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
+            userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(UserNotFoundException::new);
+            Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
             Review reviewRequestDTO = modelMapper.map(reviewDTO, Review.class);
             Review review = reviewRepository.save(reviewRequestDTO);
             updateCourseStars(course);
