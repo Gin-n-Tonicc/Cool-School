@@ -2,6 +2,7 @@ package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogAlreadyLikedException;
+import com.coolSchool.CoolSchool.exceptions.blog.BlogNotEnabledException;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
@@ -85,23 +86,22 @@ public class BlogServiceImpl implements BlogService {
     @Override
 
     public BlogResponseDTO getBlogById(Long id, PublicUserDTO loggedUser) {
-        Optional<Blog> optionalBlog = Optional.empty();
+        Optional<Blog> optionalBlog = blogRepository.findById(id);
 
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
                 optionalBlog = blogRepository.findById(id);
             }
         }
-
         if (optionalBlog.isEmpty()) {
             optionalBlog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
         }
-
-        if (optionalBlog.isPresent()) {
-            return modelMapper.map(optionalBlog.get(), BlogResponseDTO.class);
+        if(optionalBlog.isPresent()) {
+            if (!(optionalBlog.get().isEnabled())) {
+                throw new BlogNotEnabledException();
+            }
         }
-
-        throw new BlogNotFoundException();
+        return modelMapper.map(optionalBlog.get(), BlogResponseDTO.class);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public BlogResponseDTO updateBlog(Long id, BlogRequestDTO blogDTO, PublicUserDTO loggedUser) {
         Optional<Blog> existingBlogOptional = blogRepository.findById(id);
-        Category category = categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(BlogNotFoundException::new);
+        Category category = categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
         File file = fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
         User user = userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
         Set<User> userSet = blogDTO.getLiked_users().stream().map(x -> userRepository.findByIdAndDeletedFalse(x).orElseThrow(UserNotFoundException::new)).collect(Collectors.toSet());

@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.services.impl;
 
-import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
+import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseAlreadyExistsException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.UserCourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.userCourse.ValidationUserCourseException;
@@ -61,8 +62,8 @@ public class UserCourseServiceImpl implements UserCourseService {
             }
             UserCourse userCourse = new UserCourse();
 
-            User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
-            Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
+            User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
+            Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
 
             userCourse.setUser(user);
             userCourse.setCourse(course);
@@ -83,8 +84,8 @@ public class UserCourseServiceImpl implements UserCourseService {
         }
 
         UserCourse existingUserCourse = existingUserCourseOptional.get();
-        User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
-        Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(NoSuchElementException::new);
+        User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
+        Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
 
         existingUserCourse.setUser(user);
         existingUserCourse.setCourse(course);
