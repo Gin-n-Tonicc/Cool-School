@@ -60,8 +60,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "file_id")
     private File profilePic;
 
-    @Column(name = "is_deleted", nullable = false)
-    private boolean deleted;
+    @Column(name = "is_deleted")
+    private boolean deleted = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
