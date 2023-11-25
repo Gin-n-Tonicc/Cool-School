@@ -6,6 +6,7 @@ import com.coolSchool.CoolSchool.exceptions.courseSubsection.ValidationCourseSub
 import com.coolSchool.CoolSchool.exceptions.files.FileNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.request.CourseSubsectionRequestDTO;
 import com.coolSchool.CoolSchool.models.dto.response.CourseSubsectionResponseDTO;
+import com.coolSchool.CoolSchool.models.entity.Course;
 import com.coolSchool.CoolSchool.models.entity.CourseSubsection;
 import com.coolSchool.CoolSchool.models.entity.Resource;
 import com.coolSchool.CoolSchool.repositories.CourseRepository;
@@ -79,9 +80,11 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
         if (existingCourseSubsectionOptional.isEmpty()) {
             throw new CourseSubsectionNotFoundException();
         }
-
-        Set<Resource> resources = courseSubsectionDTO.getResources().stream().map(x -> resourceRepository.findByIdAndDeletedFalse(x).orElseThrow(FileNotFoundException::new)).collect(Collectors.toSet());
-
+        CourseSubsection subsection = existingCourseSubsectionOptional.get();
+        Set<Resource> resources = subsection.getResources();
+        if(courseSubsectionDTO.getResources()!=null){
+            resources = courseSubsectionDTO.getResources().stream().map(x -> resourceRepository.findByIdAndDeletedFalse(x).orElseThrow(FileNotFoundException::new)).collect(Collectors.toSet());
+        }
         courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
         CourseSubsection existingCourseSubsection = existingCourseSubsectionOptional.get();
         modelMapper.map(courseSubsectionDTO, existingCourseSubsection);
