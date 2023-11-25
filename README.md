@@ -50,7 +50,7 @@ The project application is an educational application called "Cool School". It u
 - Login/Register pages ( URL: /login, /register )
   - Uses JWT (stores the token in localStorage)
 - Courses page ( URL: /courses )
-  - Pagination the courses sorted by newest first
+  - Pagination of the courses sorted by newest first
   - Single Course page ( URL: /courses/:id )
      - Show detailed course info
      - Enroll the course which gives access to subsections and resources of the course
@@ -68,8 +68,3 @@ The project application is an educational application called "Cool School". It u
      - Page which allows you to create a blog by fulfilling a form which is validated
 - Admin Panel ( URL: /admin)
   - There are 6 different pages which can be navigated to from the navigation bar. There are forms containing all of the results of the pages which can be deleted/updated.
-- Post details page ( URL: /#/catalog/post-id-here )
-  - Add item to cart (unable to add if is owner of post or post already in cart)
-- Cart page ( URL: /#/cart )
-  - Display the cart items (stored in local storage)
-  - Manage state and change detection manually
