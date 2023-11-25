@@ -20,14 +20,16 @@ export default function AdminEditFormRow(props: AdminEditFormRowProps) {
       <h3 className="text-dark col-sm-12 col-md-2">
         {camelCaseToWords(props.columnName)}
       </h3>
-      <div className="col-sm-12 col-md-10">
+      <div
+        className="col-sm-12 col-md-10"
+        style={shouldDisable ? { cursor: 'not-allowed' } : {}}>
         <input
           name={props.columnName}
           className="form-control"
           type="text"
           placeholder={capitalizeWord(props.columnName) + '...'}
           defaultValue={value}
-          disabled={shouldDisable}
+          style={shouldDisable ? { pointerEvents: 'none', opacity: '0.4' } : {}}
         />
       </div>
     </div>
