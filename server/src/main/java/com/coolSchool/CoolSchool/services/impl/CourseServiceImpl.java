@@ -47,7 +47,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseResponseDTO> getAllCourses() {
-        List<Course> courses = courseRepository.findByDeletedFalse();
+        List<Course> courses = courseRepository.findByDeletedFalseOrderByCreatedDateDesc();
         return courses.stream().map(course -> modelMapper.map(course, CourseResponseDTO.class)).toList();
     }
 

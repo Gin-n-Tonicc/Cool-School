@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    List<Course> findByDeletedFalse();
+    List<Course> findByDeletedFalseOrderByCreatedDateDesc();
 
     Optional<Course> findByIdAndDeletedFalse(Long id);
 

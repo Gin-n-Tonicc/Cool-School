@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -41,6 +43,14 @@ public class Course {
     private Category category;
     @Column(columnDefinition = "DECIMAL(10, 2)")
     private double stars;
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime createdDate;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdDate = LocalDateTime.now();
+    }
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }
