@@ -63,7 +63,10 @@ public class CommentServiceImpl implements CommentService {
 
         List<CommentResponseDTO> commentGetDTOs = comments.stream().map(comment -> {
             comment.setBlogId(null);
-            return modelMapper.map(comment, CommentResponseDTO.class);
+
+            CommentResponseDTO commentResponseDTO = modelMapper.map(comment, CommentResponseDTO.class);
+            commentResponseDTO.setOwnerId(modelMapper.map(comment.getOwnerId(), PublicUserDTO.class));
+            return commentResponseDTO;
         }).toList();
 
         return CommentGetByBlogResponseDTO
