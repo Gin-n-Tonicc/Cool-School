@@ -18,7 +18,7 @@ const authPaths = Object.seal({
 });
 
 const blogsPaths = Object.seal({
-  upload: `http://localhost:8080/api/v1/blogs/create`,
+  upload: `${baseUrl}/blogs/create`,
   search: (titleSearch: string | null, categorySearch: string | null) => {
     const url = new URL(`${baseUrl}/blogs/search/all`);
 
