@@ -130,13 +130,14 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public BlogResponseDTO updateBlog(Long id, BlogRequestDTO blogDTO, PublicUserDTO loggedUser) {
         Optional<Blog> existingBlogOptional = blogRepository.findById(id);
+        Category category = categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
+        File file = fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
+        User user = userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
+        Set<User> userSet = blogDTO.getLiked_users().stream().map(x -> userRepository.findByIdAndDeletedFalse(x).orElseThrow(UserNotFoundException::new)).collect(Collectors.toSet());
+
         if (existingBlogOptional.isEmpty()) {
             throw new BlogNotFoundException();
         }
-        Category category = categoryRepository.findByIdAndDeletedFalse(existingBlogOptional.get().getCategoryId().getId()).orElseThrow(CategoryNotFoundException::new);
-        File file = fileRepository.findByIdAndDeletedFalse(existingBlogOptional.get().getPicture().getId()).orElseThrow(FileNotFoundException::new);
-        User user = userRepository.findByIdAndDeletedFalse(existingBlogOptional.get().getOwnerId().getId()).orElseThrow(UserNotFoundException::new);
-        Set<User> userSet = blogDTO.getLiked_users().stream().map(x -> userRepository.findByIdAndDeletedFalse(x).orElseThrow(UserNotFoundException::new)).collect(Collectors.toSet());
 
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), existingBlogOptional.get().getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException();
