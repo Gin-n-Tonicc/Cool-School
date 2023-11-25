@@ -180,7 +180,7 @@ export default function CoursesCreate() {
                   name="signup"
                   id="signup"
                   className="btn_1"
-                  value="Create Blog"
+                  value="Create Course"
                 />
               </div>
             </form>
