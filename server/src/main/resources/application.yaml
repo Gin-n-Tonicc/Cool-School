@@ -4,9 +4,9 @@ spring:
       max-file-size: 20MB
       max-request-size: 20MB
   datasource:
-    url: jdbc:${MYSQL_URL}
-    username: ${MYSQLUSER}
-    password: ${MYSQLPASSWORD}
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/cool_school?autoreconnect=true&createDatabaseIfNotExist=true&characterEncoding=utf8
+    username: root
+    password: root1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   flyway:
     enabled: true
@@ -23,9 +23,9 @@ spring:
 application:
   security:
     jwt:
-      secret-key: ${JWT_SECRET}
-      expiration: ${JWT_EXPIRATION} # a day
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000 # a day
       refresh-token:
-        expiration: ${REFRESH_TOKEN_EXPIRATION} # 7 days
+        expiration: 604800000 # 7 days
 upload:
   directory: server/src/main/resources/static/uploads/
