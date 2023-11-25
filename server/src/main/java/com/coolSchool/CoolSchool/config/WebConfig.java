@@ -15,7 +15,7 @@ public class WebConfig {
                 registry
                         .addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("https://cool-school-19352.web.app")
                         .allowCredentials(true);
             }
         };
