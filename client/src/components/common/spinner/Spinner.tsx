@@ -1,3 +1,15 @@
+import { SpinnerRoundFilled } from 'spinners-react';
+import './Spinner.scss';
+
 export default function Spinner() {
-  return <p>TODO: Add spinner...</p>;
+  return (
+    <div className="spinner-wrapper">
+      <SpinnerRoundFilled
+        size={150}
+        thickness={100}
+        speed={150}
+        color="rgba(245, 121, 11, 1)"
+      />
+    </div>
+  );
 }

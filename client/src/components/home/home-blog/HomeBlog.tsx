@@ -5,7 +5,10 @@ import './HomeBlog.scss';
 import HomeBlogCard from './home-blog-card/HomeBlogCard';
 
 export default function HomeBlog() {
-  const { data } = useFetch<IBlog[]>(apiUrlsConfig.blogs.mostLiked, []);
+  const { data, response, loading } = useFetch<IBlog[]>(
+    apiUrlsConfig.blogs.mostLiked,
+    []
+  );
 
   return (
     <section className="blog_part section_padding">
@@ -19,18 +22,20 @@ export default function HomeBlog() {
           </div>
         </div>
         <div className="row">
-          {data?.map((x) => (
-            <HomeBlogCard
-              key={x.id}
-              id={x.id}
-              category={x.category.name}
-              title={x.title}
-              summary={x.summary}
-              totalComments={x.commentCount}
-              totalLikes={x.liked_users.length}
-              image={apiUrlsConfig.files.getByUrl(x.picture.url)}
-            />
-          ))}
+          {!loading && response.ok
+            ? data?.map((x) => (
+                <HomeBlogCard
+                  key={x.id}
+                  id={x.id}
+                  category={x.category.name}
+                  title={x.title}
+                  summary={x.summary}
+                  totalComments={x.commentCount}
+                  totalLikes={x.liked_users.length}
+                  image={apiUrlsConfig.files.getByUrl(x.picture.url)}
+                />
+              ))
+            : null}
         </div>
       </div>
     </section>

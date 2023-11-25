@@ -2,6 +2,7 @@ package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.enums.Role;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogAlreadyLikedException;
+import com.coolSchool.CoolSchool.exceptions.blog.BlogNotEnabledException;
 import com.coolSchool.CoolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
@@ -13,6 +14,8 @@ import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.CoolSchool.models.dto.response.BlogResponseDTO;
 import com.coolSchool.CoolSchool.models.entity.Blog;
+import com.coolSchool.CoolSchool.models.entity.Category;
+import com.coolSchool.CoolSchool.models.entity.File;
 import com.coolSchool.CoolSchool.models.entity.User;
 import com.coolSchool.CoolSchool.repositories.BlogRepository;
 import com.coolSchool.CoolSchool.repositories.CategoryRepository;
@@ -31,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,23 +86,22 @@ public class BlogServiceImpl implements BlogService {
     @Override
 
     public BlogResponseDTO getBlogById(Long id, PublicUserDTO loggedUser) {
-        Optional<Blog> optionalBlog = Optional.empty();
+        Optional<Blog> optionalBlog = blogRepository.findById(id);
 
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
                 optionalBlog = blogRepository.findById(id);
             }
         }
-
         if (optionalBlog.isEmpty()) {
             optionalBlog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
         }
-
-        if (optionalBlog.isPresent()) {
-            return modelMapper.map(optionalBlog.get(), BlogResponseDTO.class);
+        if(optionalBlog.isPresent()) {
+            if (!(optionalBlog.get().isEnabled())) {
+                throw new BlogNotEnabledException();
+            }
         }
-
-        throw new BlogNotFoundException();
+        return modelMapper.map(optionalBlog.get(), BlogResponseDTO.class);
     }
 
     @Override
@@ -126,9 +129,12 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogResponseDTO updateBlog(Long id, BlogRequestDTO blogDTO, PublicUserDTO loggedUser) {
-        Optional<Blog> existingBlogOptional = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
-        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(blogDTO.getCategoryId()).orElseThrow(BlogNotFoundException::new);
-        fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
+        Optional<Blog> existingBlogOptional = blogRepository.findById(id);
+        Category category = categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
+        File file = fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
+        User user = userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
+        Set<User> userSet = blogDTO.getLiked_users().stream().map(x -> userRepository.findByIdAndDeletedFalse(x).orElseThrow(UserNotFoundException::new)).collect(Collectors.toSet());
+
         if (existingBlogOptional.isEmpty()) {
             throw new BlogNotFoundException();
         }
@@ -141,6 +147,7 @@ public class BlogServiceImpl implements BlogService {
         } else {
             blogDTO.setEnabled(existingBlogOptional.get().isEnabled());
         }
+
         Blog existingBlog = existingBlogOptional.get();
         blogDTO.setCommentCount(existingBlog.getCommentCount());
         modelMapper.map(blogDTO, existingBlog);
@@ -148,6 +155,12 @@ public class BlogServiceImpl implements BlogService {
         try {
             existingBlog.setId(id);
             existingBlog.setCreated_at(existingBlog.getCreated_at());
+
+            existingBlog.setPicture(file);
+            existingBlog.setCategoryId(category);
+            existingBlog.setOwnerId(user);
+            existingBlog.setLiked_users(userSet);
+
             Blog updatedBlog = blogRepository.save(existingBlog);
             return modelMapper.map(updatedBlog, BlogResponseDTO.class);
         } catch (TransactionException exception) {

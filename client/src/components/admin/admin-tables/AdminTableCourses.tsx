@@ -1,10 +1,10 @@
 import AdminTableApi from '../admin-table-api/AdminTableApi';
 
-export default function AdminTableBlogs() {
+export default function AdminTableCourses() {
   return (
     <AdminTableApi
-      tableName="Blogs"
-      apiPathname="/blogs"
+      tableName="Courses"
+      apiPathname="/courses"
       create={false}
       delete={true}
       update={true}

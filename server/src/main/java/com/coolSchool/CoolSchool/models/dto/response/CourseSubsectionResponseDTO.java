@@ -16,4 +16,5 @@ import java.util.List;
 @AllArgsConstructor
 public class CourseSubsectionResponseDTO extends CourseSubsectionDTO {
     private List<Resource> resources;
+    private Long courseId;
 }

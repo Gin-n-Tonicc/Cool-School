@@ -1,10 +1,10 @@
 import AdminTableApi from '../admin-table-api/AdminTableApi';
 
-export default function AdminTableBlogs() {
+export default function AdminTableResources() {
   return (
     <AdminTableApi
-      tableName="Blogs"
-      apiPathname="/blogs"
+      tableName="Resources"
+      apiPathname="/resources"
       create={false}
       delete={true}
       update={true}
