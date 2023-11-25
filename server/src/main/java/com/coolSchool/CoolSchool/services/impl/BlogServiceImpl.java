@@ -127,11 +127,6 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public BlogResponseDTO updateBlog(Long id, BlogRequestDTO blogDTO, PublicUserDTO loggedUser) {
         Optional<Blog> existingBlogOptional = blogRepository.findById(id);
-        Category category = categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
-        File file = fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(FileNotFoundException::new);
-        User user = userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
-        Set<User> userSet = blogDTO.getLiked_users().stream().map(x -> userRepository.findByIdAndDeletedFalse(x).orElseThrow(UserNotFoundException::new)).collect(Collectors.toSet());
-
         if (existingBlogOptional.isEmpty()) {
             throw new BlogNotFoundException();
         }
