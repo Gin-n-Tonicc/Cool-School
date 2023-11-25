@@ -79,9 +79,6 @@ public class ResourceServiceImpl implements ResourceService {
             throw new ResourceNotFoundException();
         }
 
-        fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(FileNotFoundException::new);
-        courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(CourseSubsectionNotFoundException::new);
-
         Resource existingResource = existingResourceOptional.get();
         modelMapper.map(resourceDTO, existingResource);
 
