@@ -35,21 +35,36 @@ export default function AdminEditForm(props: AdminEditFormProps) {
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
+    type K = string | number | boolean | (string | number | boolean)[] | null;
     const formData = Object.fromEntries(new FormData(e.currentTarget));
-    const submitData: IDefaultObject<string | null> = Object.entries(
-      formData
-    ).reduce((acc, [key, value]) => {
-      let newValue: string | null = value.toString();
+    const submitData: IDefaultObject<K> = Object.entries(formData).reduce(
+      (acc, [key, value]) => {
+        let newValue: K = value.toString();
+        const isArray = newValue.startsWith('[') && newValue.endsWith(']');
 
-      if (!newValue) {
-        newValue = null;
-      }
+        if (!newValue) {
+          newValue = null;
+        } else if (!isNaN(Number(newValue))) {
+          newValue = Number(newValue);
+        } else if (isArray) {
+          const values = newValue.substring(1, newValue.length - 1);
+          if (values.length <= 0) {
+            newValue = [];
+          } else {
+            newValue = values
+              .split(',')
+              .map((x) => x.trim())
+              .map((x) => (isNaN(Number(x)) ? x : Number(x)));
+          }
+        }
 
-      const newObj: IDefaultObject<string | null> = {};
-      newObj[key] = newValue;
+        const newObj: IDefaultObject<typeof newValue> = {};
+        newObj[key] = newValue;
 
-      return Object.assign(acc, newObj);
-    }, {});
+        return Object.assign(acc, newObj);
+      },
+      {}
+    );
 
     let passed: Promise<boolean>;
 

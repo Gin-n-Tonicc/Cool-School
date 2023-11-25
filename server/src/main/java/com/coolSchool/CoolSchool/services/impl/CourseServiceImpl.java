@@ -1,10 +1,11 @@
 package com.coolSchool.CoolSchool.services.impl;
 
 import com.coolSchool.CoolSchool.enums.Role;
+import com.coolSchool.CoolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.common.AccessDeniedException;
-import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.CoolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.course.ValidationCourseException;
+import com.coolSchool.CoolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.CoolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.CoolSchool.models.dto.request.CourseRequestDTO;
 import com.coolSchool.CoolSchool.models.dto.request.UserCourseRequestDTO;
@@ -95,8 +96,8 @@ public class CourseServiceImpl implements CourseService {
         try {
             courseDTO.setId(null);
             courseDTO.setStars(0);
-            userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
-            categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
+            userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
+            categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
             Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
             return modelMapper.map(courseEntity, CourseResponseDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -114,8 +115,8 @@ public class CourseServiceImpl implements CourseService {
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), courseDTO.getUserId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException();
         }
-        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(NoSuchElementException::new);
-        categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(NoSuchElementException::new);
+        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
+        categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
         Course existingCourse = existingCourseOptional.get();
         modelMapper.map(courseDTO, existingCourse);
 

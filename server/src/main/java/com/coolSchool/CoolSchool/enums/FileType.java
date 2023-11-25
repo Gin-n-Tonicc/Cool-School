@@ -13,6 +13,7 @@ public enum FileType {
     XLSX("xlsx", MediaType.valueOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
     XLS("xls", MediaType.valueOf("application/vnd.ms-excel")),
     DOC("doc", MediaType.valueOf("application/msword")),
+    PPTX("pptx", MediaType.valueOf("application/vnd.openxmlformats-officedocument.presentationml.presentation")),
     DOCX("docx", MediaType.valueOf("application/msword"));
 
     private static final Map<String, MediaType> FILE_TYPE_MEDIA_TYPE_MAP = new HashMap<>();

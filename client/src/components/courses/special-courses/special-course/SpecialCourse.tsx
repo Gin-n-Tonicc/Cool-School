@@ -46,14 +46,14 @@ export default function SpecialCourse(props: SpecialCourseProps) {
             <div className="author_rating">
               <div className="rating">
                 {[...new Array(stars)].map((_) => (
-                  <a>
-                    <img src={colorStar} alt="" key={uuidV4()} />
+                  <a key={uuidV4()}>
+                    <img src={colorStar} alt="" />
                   </a>
                 ))}
 
                 {[...new Array(MAX_STARS - stars)].map((_) => (
-                  <a>
-                    <img src={star} alt="" key={uuidV4()} />
+                  <a key={uuidV4()}>
+                    <img src={star} alt="" />
                   </a>
                 ))}
               </div>

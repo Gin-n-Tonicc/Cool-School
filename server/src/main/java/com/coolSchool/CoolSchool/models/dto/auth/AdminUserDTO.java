@@ -10,6 +10,5 @@ import lombok.*;
 public class AdminUserDTO extends PublicUserDTO {
     private String lastname;
     private boolean deleted;
-    private File profilePic;
     private String address;
 }

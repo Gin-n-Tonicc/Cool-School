@@ -48,6 +48,7 @@ export default function CoursesSubsectionCreateForm(
       title: data.Title.trim(),
       description: data.description.trim(),
       courseId: props.courseId,
+      resources: [],
     };
 
     await post(body);

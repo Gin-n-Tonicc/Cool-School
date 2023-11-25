@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './HomeFeatures.scss';
 import HomeFeature from './home-feature/HomeFeature';
 
@@ -9,14 +11,16 @@ export default function HomeFeatures() {
           <div className="col-sm-6 col-xl-3 align-self-center">
             <div className="single_feature_text ">
               <h3>
-                What makes it cool?<br />
+                What makes it cool?
+                <br />
               </h3>
               <p>
-                Here are 3 features that make the Cool School really cool for all students.
+                Here are 3 features that make the Cool School really cool for
+                all students.
               </p>
-              <a href="#" className="btn_1">
+              <Link to={PagesEnum.Courses} className="btn_1">
                 Read More
-              </a>
+              </Link>
             </div>
           </div>
           <HomeFeature

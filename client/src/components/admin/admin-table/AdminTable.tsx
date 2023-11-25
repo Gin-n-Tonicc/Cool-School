@@ -56,9 +56,41 @@ function CreateButton(props: CreateButtonProps) {
   );
 }
 
-const PAGE_SIZE = 5;
+function validateList(list: AdminTableProps['list']) {
+  for (let i = 0; i < list.length; i++) {
+    const obj = list[i];
+    const newObj: IObjectWithId = { id: obj.id };
 
+    for (let key in obj) {
+      let value = obj[key];
+      const isArray = Array.isArray(value);
+      const isObject = !isArray && typeof value === 'object';
+
+      if (value === null) {
+        newObj[key] = value;
+        continue;
+      }
+
+      if (isObject) {
+        key = `${key}Id`;
+        value = value.id;
+      } else if (isArray) {
+        value = value.map((x: IObjectWithId) => x.id);
+      }
+
+      newObj[key] = value;
+    }
+
+    list[i] = newObj;
+  }
+
+  return list;
+}
+
+const PAGE_SIZE = 5;
 export default function AdminTable(props: AdminTableProps) {
+  const validatedList = useMemo(() => validateList(props.list), [props.list]);
+
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [currentObj, setCurrentObj] = useState<IObjectWithId>({ id: -1 });
@@ -71,13 +103,13 @@ export default function AdminTable(props: AdminTableProps) {
     let columns: string[];
 
     try {
-      columns = Object.keys(props.list[0]);
+      columns = Object.keys(validatedList[0]);
     } catch {
       columns = [];
     }
 
     return [columns, columns.map((x) => x.toLowerCase())];
-  }, [props.list]);
+  }, [validatedList, props.list]);
 
   const onSearch: SubmitHandler<AdminSearchValues> = useCallback((v) => {
     const filteredList = props.list.filter((x) => {
@@ -175,7 +207,13 @@ export default function AdminTable(props: AdminTableProps) {
             {list.map((x) => (
               <tr className="table-admin-row" key={x.id}>
                 {Object.values(x).map((x) => {
+                  const isArray = Array.isArray(x);
+
                   let content = `${x}`;
+                  if (isArray) {
+                    content = `[${content}]`;
+                  }
+
                   return <td key={uuidV4()}>{content}</td>;
                 })}
                 <td className="control-buttons">

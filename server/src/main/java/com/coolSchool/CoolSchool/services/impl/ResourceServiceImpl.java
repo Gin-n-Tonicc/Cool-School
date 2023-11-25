@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.services.impl;
 
-import com.coolSchool.CoolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.CoolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
+import com.coolSchool.CoolSchool.exceptions.files.FileNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.resource.ResourceNotFoundException;
 import com.coolSchool.CoolSchool.exceptions.resource.ValidationResourceException;
 import com.coolSchool.CoolSchool.models.dto.request.ResourceRequestDTO;
@@ -61,8 +62,8 @@ public class ResourceServiceImpl implements ResourceService {
     public ResourceResponseDTO createResource(ResourceRequestDTO resourceDTO) {
         try {
             resourceDTO.setId(null);
-            fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(NoSuchElementException::new);
-            courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(NoSuchElementException::new);
+            fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(FileNotFoundException::new);
+            courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(CourseSubsectionNotFoundException::new);
             Resource resourceEntity = resourceRepository.save(modelMapper.map(resourceDTO, Resource.class));
             return modelMapper.map(resourceEntity, ResourceResponseDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -78,8 +79,8 @@ public class ResourceServiceImpl implements ResourceService {
             throw new ResourceNotFoundException();
         }
 
-        fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(NoSuchElementException::new);
-        courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(NoSuchElementException::new);
+        fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(FileNotFoundException::new);
+        courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(CourseSubsectionNotFoundException::new);
 
         Resource existingResource = existingResourceOptional.get();
         modelMapper.map(resourceDTO, existingResource);

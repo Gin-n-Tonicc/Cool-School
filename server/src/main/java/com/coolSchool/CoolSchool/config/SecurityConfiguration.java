@@ -17,8 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import static com.coolSchool.CoolSchool.enums.Permission.*;
-import static com.coolSchool.CoolSchool.enums.Role.ADMIN;
-import static com.coolSchool.CoolSchool.enums.Role.TEACHER;
+import static com.coolSchool.CoolSchool.enums.Role.*;
 import static org.springframework.http.HttpMethod.*;
 
 @Configuration
@@ -45,19 +44,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/files/upload",
-                        "/api/v1/quizzes/**",
-                        "/api/v1/questions/**",
-                        "/api/v1/answers/**",
-                        "/api/v1/reviews/**",
-                        "/api/v1/userQuizzes/**",
-                        "/api/v1/userAnswers/**",
                         "/api/v1/files/**",
-                        "/api/v1/categories/**",
-                        "/api/v1/courses/**",
                         "/api/v1/userCourses/**",
-                        "/api/v1/courseSubsections/**",
-                        "/api/v1/blogs/**",
-                        "/api/v1/resources/**",
                         "/api/v1/messages/**",
                         "/api/v1/auth/**",
                         "/v2/api-docs",
@@ -75,10 +63,34 @@ public class SecurityConfiguration {
 
                 .requestMatchers(GET, "/api/v1/comments/**").permitAll()
 
+                .requestMatchers(GET, "/api/v1/categories/**").permitAll()
+                .requestMatchers(POST, "/api/v1/categories/**").hasAnyRole(ADMIN.name())
+                .requestMatchers(PUT, "/api/v1/categories/**").hasAnyRole(ADMIN.name())
+                .requestMatchers(DELETE, "/api/v1/categories/**").hasAnyRole(ADMIN.name())
 
-                .requestMatchers(POST, "/api/v1/categories/**").hasAnyAuthority(ADMIN_CREATE.name())
-                .requestMatchers(PUT, "/api/v1/categories/**").hasAnyAuthority(ADMIN_UPDATE.name())
-                .requestMatchers(DELETE, "/api/v1/categories/**").hasAnyAuthority(ADMIN_DELETE.name())
+                .requestMatchers(GET, "/api/v1/reviews/**").permitAll()
+                .requestMatchers(POST, "/api/v1/reviews/**").hasAnyRole(ADMIN.name(), USER.name(), TEACHER.name())
+
+                .requestMatchers(GET, "/api/v1/courses/**").permitAll()
+                .requestMatchers(POST, "/api/v1/courses/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+                .requestMatchers(PUT, "/api/v1/courses/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+                .requestMatchers(DELETE, "/api/v1/courses/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+
+                .requestMatchers(GET, "/api/v1/blogs/**").permitAll()
+                .requestMatchers(POST, "/api/v1/blogs/**").hasAnyRole(ADMIN.name(), USER.name(), TEACHER.name())
+                .requestMatchers(PUT, "/api/v1/blogs/**").hasAnyRole(ADMIN.name(), USER.name(), TEACHER.name())
+                .requestMatchers(DELETE, "/api/v1/blogs/**").hasAnyRole(ADMIN.name(), USER.name(), TEACHER.name())
+
+                .requestMatchers(GET, "/api/v1/courseSubsections/**").permitAll()
+                .requestMatchers(POST, "/api/v1/courseSubsections/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+                .requestMatchers(PUT, "/api/v1/courseSubsections/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+                .requestMatchers(DELETE, "/api/v1/courseSubsections/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+
+                .requestMatchers(GET, "/api/v1/resources/**").permitAll()
+                .requestMatchers(POST, "/api/v1/resources/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+                .requestMatchers(PUT, "/api/v1/resources/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+                .requestMatchers(DELETE, "/api/v1/resources/**").hasAnyRole(TEACHER.name(), ADMIN.name())
+
                 .anyRequest()
                 .authenticated()
                 .and()
