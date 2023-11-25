@@ -115,6 +115,8 @@ public class CourseServiceImpl implements CourseService {
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), courseDTO.getUserId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException();
         }
+        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
+        categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
         Course existingCourse = existingCourseOptional.get();
         modelMapper.map(courseDTO, existingCourse);
 

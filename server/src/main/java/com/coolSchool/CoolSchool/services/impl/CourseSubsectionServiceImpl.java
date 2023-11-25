@@ -80,11 +80,15 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
             throw new CourseSubsectionNotFoundException();
         }
 
+        Set<Resource> resources = courseSubsectionDTO.getResources().stream().map(x -> resourceRepository.findByIdAndDeletedFalse(x).orElseThrow(FileNotFoundException::new)).collect(Collectors.toSet());
+
+        courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
         CourseSubsection existingCourseSubsection = existingCourseSubsectionOptional.get();
         modelMapper.map(courseSubsectionDTO, existingCourseSubsection);
 
         try {
             existingCourseSubsection.setId(id);
+            existingCourseSubsection.setResources(resources);
             CourseSubsection updatedCourseSubsection = courseSubsectionRepository.save(existingCourseSubsection);
             return modelMapper.map(updatedCourseSubsection, CourseSubsectionResponseDTO.class);
         } catch (TransactionException exception) {

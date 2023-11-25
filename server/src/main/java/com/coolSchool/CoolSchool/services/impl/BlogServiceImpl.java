@@ -31,7 +31,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -130,6 +133,10 @@ public class BlogServiceImpl implements BlogService {
         if (existingBlogOptional.isEmpty()) {
             throw new BlogNotFoundException();
         }
+        Category category = categoryRepository.findByIdAndDeletedFalse(existingBlogOptional.get().getCategoryId().getId()).orElseThrow(CategoryNotFoundException::new);
+        File file = fileRepository.findByIdAndDeletedFalse(existingBlogOptional.get().getPicture().getId()).orElseThrow(FileNotFoundException::new);
+        User user = userRepository.findByIdAndDeletedFalse(existingBlogOptional.get().getOwnerId().getId()).orElseThrow(UserNotFoundException::new);
+        Set<User> userSet = blogDTO.getLiked_users().stream().map(x -> userRepository.findByIdAndDeletedFalse(x).orElseThrow(UserNotFoundException::new)).collect(Collectors.toSet());
 
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), existingBlogOptional.get().getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException();
@@ -147,6 +154,12 @@ public class BlogServiceImpl implements BlogService {
         try {
             existingBlog.setId(id);
             existingBlog.setCreated_at(existingBlog.getCreated_at());
+
+            existingBlog.setPicture(file);
+            existingBlog.setCategoryId(category);
+            existingBlog.setOwnerId(user);
+            existingBlog.setLiked_users(userSet);
+
             Blog updatedBlog = blogRepository.save(existingBlog);
             return modelMapper.map(updatedBlog, BlogResponseDTO.class);
         } catch (TransactionException exception) {
