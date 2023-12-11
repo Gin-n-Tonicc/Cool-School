@@ -1,3 +1,5 @@
+[![Java CI with Maven](https://github.com/trifonnt/Cool-School/actions/workflows/maven.yml/badge.svg)](https://github.com/trifonnt/Cool-School/actions/workflows/maven.yml)
+
 ### [Demo](https://cool-school-19352.web.app/)&nbsp;&nbsp;&nbsp;&nbsp;[Cool School](https://github.com/Gin-n-Tonicc/Cool-School)
 
 This codebase was created to show a full application built with React with TypeScript that uses Java with Spring Boot as backend server with CRUD operations, authentication, routing, filtering and more.
