@@ -19,4 +19,5 @@ public class RegisterRequest {
     private String username;
     private String description;
     private Role role;
+    private boolean additionalInfoRequired;
 }

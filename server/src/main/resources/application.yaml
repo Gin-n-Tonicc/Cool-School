@@ -19,13 +19,19 @@ spring:
         format_sql: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
-
-application:
   security:
     jwt:
       secret-key: ${JWT_SECRET}
       expiration: ${JWT_EXPIRATION} # a day
       refresh-token:
         expiration: ${REFRESH_TOKEN_EXPIRATION} # 7 days
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: 4986e2ae73e22faff99d
+            clientSecret: 2234a0d67f8ff08e71c2a5e9a400be411dd53712
+
+application:
 upload:
   directory: server/src/main/resources/static/uploads/
