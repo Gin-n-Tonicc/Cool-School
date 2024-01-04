@@ -1,0 +1,50 @@
+@startuml
+!define DEPLOYMENT
+<style>
+componentDiagram {
+  BackGroundColor FFF7D4
+  LineThickness 1
+  LineColor black
+}
+document {
+  BackGroundColor white
+}
+</style>
+package "Application Diagram" {
+  cloud "Internet" {
+    "Laptop"
+    "Computer"
+    "Smartphone"
+       "..."
+  }
+
+  [Laptop] -0- [React TypeScript  Frontend] : HTTP
+  [Computer] -0- [React TypeScript  Frontend] : HTTP
+  [Smartphone] -0- [React TypeScript  Frontend] : HTTP
+  "..." -0- [React TypeScript  Frontend] : HTTP
+
+  [GitHub Repository] <<Github>>
+  [Spring Boot Java Server] <<Spring Boot>>
+  [React TypeScript  Frontend] <<React>>
+  database "MySQL Database" <<MySQL>>
+
+  [Spring Boot Java Server] --> [React TypeScript  Frontend] : HTTP
+  [React TypeScript  Frontend] --> [Spring Boot Java Server] : HTTP
+  [MySQL Database] --> [Spring Boot Java Server] : JDBC
+  [Spring Boot Java Server] --> [MySQL Database] : JDBC
+
+  [Spring Boot Java Server] --> [GitHub Repository] : Pull/Push Code
+  [React TypeScript  Frontend] --> [GitHub Repository] : Pull/Push Code
+
+  note bottom of [Spring Boot Java Server]
+    Railway hosted
+  end note
+   note right of  [React TypeScript  Frontend]
+    Firebase hosted
+  end note
+}
+@enduml
+
+
+
+

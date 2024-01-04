@@ -1,0 +1,140 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+    entity User {
+        - id: Long
+        - firstname: String
+        - lastname: String
+        - email: String
+        - password: String
+        - address: String
+        - usernameField: String
+        - description: String
+        - role: Role
+        - profilePic: File
+        - deleted: boolean
+   }
+    enum Role {
+        USER,
+        ADMIN,
+        TEACHER
+    }
+     enum FileType {
+         PDF
+         JPEG
+         JPG
+         PNG
+         XLSX
+         XLS
+         DOC
+         PPTX
+         DOCX
+     }
+     entity File {
+         - id: Long
+         - name: String
+         - url: String
+         - type: String
+         - deleted: boolean
+     }
+    entity Blog {
+        - id: Long
+        - title: String
+        - content: String
+        - summary: String
+        - created_at: LocalDateTime
+        - liked_users: Set<User>
+        - picture: File
+        - ownerId: User
+        - categoryId: Category
+        - isEnabled: boolean
+        - commentCount: Integer
+        - deleted: boolean
+    }
+    entity Category {
+        - id: Long
+        - name: String
+        - deleted: boolean
+    }
+    entity Course {
+        - id: Long
+        - name: String
+        - objectives: String
+        - eligibility: String
+        - user: User
+        - picture: File
+        - category: Category
+        - stars: double
+        - createdDate: LocalDateTime
+        - deleted: boolean
+    }
+    entity CourseSubsection {
+        - id: Long
+        - title: String
+        - description: String
+        - resources: Set<Resource>
+        - course: Course
+        - deleted: boolean
+    }
+    entity Resource {
+        - id: Long
+        - name: String
+        - file: File
+        - subsection: CourseSubsection
+        - deleted: boolean
+    }
+    entity Comment {
+        - id: Long
+        - comment: String
+        - created_at: LocalDateTime
+        - ownerId: User
+        - blogId: Blog
+        - liked_users: Set<User>
+        - deleted: boolean
+    }
+    entity Review {
+        - id: Long
+        - user: User
+        - course: Course
+        - stars: Integer
+        - text: String
+        - deleted: boolean
+    }
+    entity Token {
+        - id: Long
+        - token: String
+        - tokenType: TokenType
+        - revoked: boolean
+        - expired: boolean
+        - user: User
+    }
+    entity UserCourse {
+         - id: Long
+         - user: User
+         - course: Course
+         - deleted: boolean
+    }
+    User -[#red,thickness=2]-> Role : has a
+    User -[#red,thickness=2]-> File : has a
+    Blog -[#green,thickness=2]-> User : liked by
+    Blog -[#red,thickness=2]-> File : has a
+    Blog -[#green,thickness=2]-> User : owned by
+    Blog -[#green,thickness=2]-> Category : belongs to
+    Course -[#green,thickness=2]-> User : taught by
+    Course -[#red,thickness=2]-> File : has a
+    Course -[#green,thickness=2]-> Category : belongs to
+    CourseSubsection -[#red,thickness=2]-> Resource : has
+    CourseSubsection -[#green,thickness=2]-> Course : belongs to
+    Resource -[#red,thickness=2]-> File : has a
+    Resource -[#green,thickness=2]-> CourseSubsection : belongs to
+    Comment -[#green,thickness=2]-> User : owned by
+    Comment -[#green,thickness=2]-> Blog : belongs to
+    Comment-[#green,thickness=2]-> User : liked by
+    Review -[#green,thickness=2]-> User : written by
+    Review -[#green,thickness=2]-> Course : belongs to
+    Token -[#green,thickness=2]-> User : belongs to
+    UserCourse -[#green,thickness=2]-> User : enrolled by
+    UserCourse -[#green,thickness=2]-> Course : belongs to
+}
+
+@enduml
