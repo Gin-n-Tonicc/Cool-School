@@ -29,9 +29,6 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     private final UserServiceImpl userService;
     private final UserRepository userRepository;
 
-    @Value("${frontend.url}")
-    private String frontendUrl;
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
 
@@ -61,7 +58,6 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                     });
         }
         this.setAlwaysUseDefaultTargetUrl(true);
-        this.setDefaultTargetUrl(frontendUrl);
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }
