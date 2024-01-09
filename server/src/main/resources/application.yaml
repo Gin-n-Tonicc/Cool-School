@@ -1,3 +1,8 @@
+server:
+  frontend:
+    baseUrl: ${FRONTEND_URL}
+    loginUrl: ${server.frontend.baseUrl}/login
+
 spring:
   servlet:
     multipart:
@@ -13,7 +18,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -28,9 +33,12 @@ spring:
     oauth2:
       client:
         registration:
-          github:
-            clientId: 4986e2ae73e22faff99d
-            clientSecret: 2234a0d67f8ff08e71c2a5e9a400be411dd53712
+          google:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - https://www.googleapis.com/auth/userinfo.email
+              - https://www.googleapis.com/auth/userinfo.profile
 
 application:
 upload:

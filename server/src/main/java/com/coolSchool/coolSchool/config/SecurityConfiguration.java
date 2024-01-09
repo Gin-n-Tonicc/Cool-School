@@ -2,6 +2,8 @@ package com.coolSchool.coolSchool.config;
 
 import com.coolSchool.coolSchool.exceptions.handlers.JwtAuthenticationEntryPoint;
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.security.OAuth2LoginSuccessHandler;
+import com.coolSchool.coolSchool.services.impl.security.CustomOAuth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +12,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,17 +34,18 @@ public class SecurityConfiguration {
     private final LogoutHandler logoutHandler;
     private final ObjectMapper objectMapper;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final FrontendConfig frontendConfig;
+    private final CustomOAuth2UserService oauthUserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
-                .csrf()
-                .disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper))
-                .and()
+                .sessionManagement(sessionManagementCustomizer -> sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(CorsConfigurer::disable)
+                .csrf(CsrfConfigurer::disable)
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper));
+                })
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/files/upload",
@@ -94,19 +99,18 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .oauth2Login(oath2 -> {
-                    oath2.loginPage("/login").permitAll();
-                    oath2.successHandler(oAuth2LoginSuccessHandler);
+                .oauth2Login(oauth2 -> {
+                    oauth2.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oauthUserService));
+                    oauth2.loginPage(frontendConfig.getLoginUrl()).permitAll();
+                    oauth2.successHandler(oAuth2LoginSuccessHandler);
                 })
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout()
-                .logoutUrl("/api/v1/auth/logout")
-                .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
+                .logout(httpSecurityLogoutConfigurer -> {
+                    httpSecurityLogoutConfigurer.logoutUrl("/api/v1/auth/logout");
+                    httpSecurityLogoutConfigurer.addLogoutHandler(logoutHandler);
+                    httpSecurityLogoutConfigurer.logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
+                });
 
         return http.build();
     }

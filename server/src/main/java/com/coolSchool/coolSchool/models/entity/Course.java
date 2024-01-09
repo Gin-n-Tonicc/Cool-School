@@ -44,11 +44,11 @@ public class Course {
     @Column(name = "created_date", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdDate;
+    @Column(name = "is_deleted", nullable = false)
+    private boolean deleted;
 
     @PrePersist
     public void prePersist() {
         this.createdDate = LocalDateTime.now();
     }
-    @Column(name = "is_deleted", nullable = false)
-    private boolean deleted;
 }

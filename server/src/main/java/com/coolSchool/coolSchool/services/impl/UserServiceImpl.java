@@ -10,6 +10,7 @@ import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.security.CustomOAuth2User;
 import com.coolSchool.coolSchool.services.UserService;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
@@ -106,6 +107,11 @@ public class UserServiceImpl implements UserService {
 
         user.setDeleted(true);
         userRepository.save(user);
+    }
+
+    @Override
+    public void processOAuthPostLogin(CustomOAuth2User user) {
+
     }
 
     private User findById(Long id) {
