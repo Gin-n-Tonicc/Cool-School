@@ -16,7 +16,6 @@ public class QuizDTO {
     private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Duration timeLimit;
     private Long subsectionId;
     private Integer attemptLimit;
 }
