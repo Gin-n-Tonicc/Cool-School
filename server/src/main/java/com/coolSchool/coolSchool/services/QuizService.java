@@ -16,5 +16,5 @@ public interface QuizService {
     QuizDTO updateQuiz(Long id, QuizDTO quizDTO);
 
     void deleteQuiz(Long id);
-    QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers);
+    QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId);
 }

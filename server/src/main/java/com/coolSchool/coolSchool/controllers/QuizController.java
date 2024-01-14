@@ -52,8 +52,8 @@ public class QuizController {
     }
 
     @PostMapping("/{quizId}/take")
-    public ResponseEntity<QuizResultDTO> takeQuiz(@PathVariable Long quizId,@RequestBody List<UserAnswerDTO> userAnswers) {
-        QuizResultDTO quizResultDTO = quizService.takeQuiz(quizId, userAnswers);
+    public ResponseEntity<QuizResultDTO> takeQuiz(@PathVariable Long quizId,@RequestBody List<UserAnswerDTO> userAnswers, @RequestParam("userId") Long userId) {
+        QuizResultDTO quizResultDTO = quizService.takeQuiz(quizId, userAnswers, userId);
         return ResponseEntity.ok(quizResultDTO);
     }
 }

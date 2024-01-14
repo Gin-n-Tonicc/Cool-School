@@ -1,16 +1,20 @@
 package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.coolSchool.exceptions.quizzes.NoMoreAttemptsQuizException;
 import com.coolSchool.coolSchool.exceptions.quizzes.QuizNotFoundException;
 import com.coolSchool.coolSchool.exceptions.quizzes.ValidationQuizException;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
-import com.coolSchool.coolSchool.models.entity.Question;
-import com.coolSchool.coolSchool.models.entity.Quiz;
+import com.coolSchool.coolSchool.models.entity.*;
 import com.coolSchool.coolSchool.repositories.CourseSubsectionRepository;
+import com.coolSchool.coolSchool.repositories.QuizAttemptRepository;
 import com.coolSchool.coolSchool.repositories.QuizRepository;
+import com.coolSchool.coolSchool.repositories.UserAnswerRepository;
 import com.coolSchool.coolSchool.services.AnswerService;
 import com.coolSchool.coolSchool.services.QuestionService;
 import com.coolSchool.coolSchool.services.QuizService;
+import com.coolSchool.coolSchool.services.UserService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
@@ -18,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,14 +32,20 @@ public class QuizServiceImpl implements QuizService {
     private final ModelMapper modelMapper;
     private final QuestionService questionService;
     private final AnswerService answerService;
+    private final UserService userService;
+    private final UserAnswerRepository userAnswerRepository;
+    private final QuizAttemptRepository quizAttemptRepository;
     private final Validator validator;
     private final CourseSubsectionRepository courseSubsectionRepository;
 
-    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, Validator validator, CourseSubsectionRepository courseSubsectionRepository) {
+    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, Validator validator, CourseSubsectionRepository courseSubsectionRepository) {
         this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
         this.questionService = questionService;
         this.answerService = answerService;
+        this.userService = userService;
+        this.userAnswerRepository = userAnswerRepository;
+        this.quizAttemptRepository = quizAttemptRepository;
         this.validator = validator;
         this.courseSubsectionRepository = courseSubsectionRepository;
     }
@@ -128,44 +137,53 @@ public class QuizServiceImpl implements QuizService {
         }
     }
 
-    public QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers) {
+    @Override
+    public QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId) {
         Optional<Quiz> quizOptional = quizRepository.findById(quizId);
 
         if (quizOptional.isPresent()) {
             Quiz quiz = quizOptional.get();
-            List<QuestionAndAnswersDTO> questionAndAnswersList = new ArrayList<>();
+
+            int attemptNumber = quizAttemptRepository.countByUserAndQuiz(userService.findById(userId), quiz) + 1;
+            if (attemptNumber > quiz.getAttemptLimit()) {
+                throw new NoMoreAttemptsQuizException();
+            }
+            QuizAttempt quizAttempt = new QuizAttempt();
+            quizAttempt.setQuiz(quiz);
+            quizAttempt.setUser(userService.findById(userId));
+            quizAttempt.setAttemptNumber(attemptNumber);
+
+            quizAttempt = quizAttemptRepository.save(quizAttempt);
+
             BigDecimal totalMarks = BigDecimal.ZERO;
 
-            List<Question> questions = questionService.getQuestionsByQuizId(quizId);
+            for (UserAnswerDTO userAnswerDTO : userAnswers) {
+                QuestionDTO question = questionService.getQuestionById(userAnswerDTO.getQuestionId());
+                AnswerDTO answer = answerService.getAnswerById(userAnswerDTO.getSelectedOptionId());
 
-            for (Question question : questions) {
+                UserAnswer userAnswer = new UserAnswer();
+                userAnswer.setQuestion(modelMapper.map(question, Question.class));
+                userAnswer.setAnswer(modelMapper.map(answer, Answer.class));
+                userAnswer.setQuizAttempt(quizAttempt);
+
+                userAnswerRepository.save(userAnswer);
 
                 List<AnswerDTO> correctAnswers = answerService.getCorrectAnswersByQuestionId(question.getId());
-                UserAnswerDTO userAnswer = findUserAnswer(userAnswers, question.getId());
-
-                boolean isCorrect = isUserAnswerCorrect(userAnswer, correctAnswers);
+                boolean isCorrect = isUserAnswerCorrect(userAnswerDTO, correctAnswers);
 
                 if (isCorrect) {
                     totalMarks = totalMarks.add(question.getMarks());
                 }
-
-                QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
-                QuestionAndAnswersDTO questionAndAnswersDTO = new QuestionAndAnswersDTO(questionDTO, correctAnswers);
-                questionAndAnswersList.add(questionAndAnswersDTO);
             }
-            return new QuizResultDTO(quiz.getId(), quiz.getTitle(), totalMarks, questionAndAnswersList);
+
+            quizAttempt.setTotalMarks(totalMarks);
+            quizAttemptRepository.save(quizAttempt);
+
+            return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class), modelMapper.map(quizAttempt.getUser(), PublicUserDTO.class),
+                    userAnswers, quizAttempt.getTotalMarks(), quizAttempt.getAttemptNumber()));
         } else {
             throw new QuizNotFoundException();
         }
-    }
-
-    private UserAnswerDTO findUserAnswer(List<UserAnswerDTO> userAnswers, Long questionId) {
-        for (UserAnswerDTO userAnswer : userAnswers) {
-            if (userAnswer.getQuestionId().equals(questionId)) {
-                return userAnswer;
-            }
-        }
-        return null;
     }
 
     private boolean isUserAnswerCorrect(UserAnswerDTO userAnswer, List<AnswerDTO> correctAnswers) {
