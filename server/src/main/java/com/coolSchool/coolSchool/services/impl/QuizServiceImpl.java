@@ -58,24 +58,20 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizQuestionsAnswersDTO getQuizById(Long id) {
-        Optional<Quiz> quizOptional = quizRepository.findByIdAndDeletedFalse(id);
+        //TODO: do not show in AnswerDTO is the answer is correct or not
+        Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(QuizNotFoundException::new);
+        List<Question> questions = questionService.getQuestionsByQuizId(id);
+        QuizDTO quizDTO = modelMapper.map(quiz, QuizDTO.class);
 
-        if (quizOptional.isPresent()) {
-            Quiz quiz = quizOptional.get();
+        List<QuestionAndAnswersDTO> questionAndAnswersList = questions.stream()
+                .map(question -> {
+                    List<AnswerDTO> answers = answerService.getAnswersByQuestionId(question.getId());
+                    QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
+                    return new QuestionAndAnswersDTO(questionDTO, answers);
+                })
+                .collect(Collectors.toList());
 
-            List<Question> questions = questionService.getQuestionsByQuizId(id);
-            QuizDTO quizDTO = modelMapper.map(quiz, QuizDTO.class);
-            List<QuestionAndAnswersDTO> questionAndAnswersList = questions.stream()
-                    .map(question -> {
-                        List<AnswerDTO> answers = answerService.getAnswersByQuestionId(question.getId());
-                        QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
-                        return new QuestionAndAnswersDTO(questionDTO, answers);
-                    })
-                    .collect(Collectors.toList());
-
-            return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList);
-        }
-        throw new QuizNotFoundException();
+        return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList);
     }
 
     @Override
@@ -85,7 +81,7 @@ public class QuizServiceImpl implements QuizService {
                 .map(quiz -> modelMapper.map(quiz, QuizDTO.class))
                 .collect(Collectors.toList());
     }
-
+    @Override
     public QuizDTO createQuiz(QuizDataDTO quizData) {
         QuizDTO quizDTO = quizData.getQuizDTO();
         List<QuestionAndAnswersDTO> questionAndAnswersList = quizData.getData();
@@ -139,61 +135,59 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId) {
-        Optional<Quiz> quizOptional = quizRepository.findById(quizId);
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(QuizNotFoundException::new);
 
-        if (quizOptional.isPresent()) {
-            Quiz quiz = quizOptional.get();
-
-            int attemptNumber = quizAttemptRepository.countByUserAndQuiz(userService.findById(userId), quiz) + 1;
-            if (attemptNumber > quiz.getAttemptLimit()) {
-                throw new NoMoreAttemptsQuizException();
-            }
-            QuizAttempt quizAttempt = new QuizAttempt();
-            quizAttempt.setQuiz(quiz);
-            quizAttempt.setUser(userService.findById(userId));
-            quizAttempt.setAttemptNumber(attemptNumber);
-
-            quizAttempt = quizAttemptRepository.save(quizAttempt);
-
-            BigDecimal totalMarks = BigDecimal.ZERO;
-
-            for (UserAnswerDTO userAnswerDTO : userAnswers) {
-                QuestionDTO question = questionService.getQuestionById(userAnswerDTO.getQuestionId());
-                AnswerDTO answer = answerService.getAnswerById(userAnswerDTO.getSelectedOptionId());
-
-                UserAnswer userAnswer = new UserAnswer();
-                userAnswer.setQuestion(modelMapper.map(question, Question.class));
-                userAnswer.setAnswer(modelMapper.map(answer, Answer.class));
-                userAnswer.setQuizAttempt(quizAttempt);
-
-                userAnswerRepository.save(userAnswer);
-
-                List<AnswerDTO> correctAnswers = answerService.getCorrectAnswersByQuestionId(question.getId());
-                boolean isCorrect = isUserAnswerCorrect(userAnswerDTO, correctAnswers);
-
-                if (isCorrect) {
-                    totalMarks = totalMarks.add(question.getMarks());
-                }
-            }
-
-            quizAttempt.setTotalMarks(totalMarks);
-            quizAttemptRepository.save(quizAttempt);
-
-            return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class), modelMapper.map(quizAttempt.getUser(), PublicUserDTO.class),
-                    userAnswers, quizAttempt.getTotalMarks(), quizAttempt.getAttemptNumber()));
-        } else {
-            throw new QuizNotFoundException();
+        int attemptNumber = quizAttemptRepository.countByUserAndQuiz(userService.findById(userId), quiz) + 1;
+        if (attemptNumber > quiz.getAttemptLimit()) {
+            throw new NoMoreAttemptsQuizException();
         }
+
+        QuizAttempt quizAttempt = new QuizAttempt();
+        quizAttempt.setQuiz(quiz);
+        quizAttempt.setUser(userService.findById(userId));
+        quizAttempt.setAttemptNumber(attemptNumber);
+        quizAttempt = quizAttemptRepository.save(quizAttempt);
+
+        BigDecimal totalMarks = BigDecimal.ZERO;
+
+        for (UserAnswerDTO userAnswerDTO : userAnswers) {
+            QuestionDTO question = questionService.getQuestionById(userAnswerDTO.getQuestionId());
+            AnswerDTO answer = answerService.getAnswerById(userAnswerDTO.getSelectedOptionId());
+
+            UserAnswer userAnswer = new UserAnswer();
+            userAnswer.setQuestion(modelMapper.map(question, Question.class));
+            userAnswer.setAnswer(modelMapper.map(answer, Answer.class));
+            userAnswer.setQuizAttempt(quizAttempt);
+
+            userAnswerRepository.save(userAnswer);
+
+            List<AnswerDTO> correctAnswers = answerService.getCorrectAnswersByQuestionId(question.getId());
+            boolean isCorrect = isUserAnswerCorrect(userAnswerDTO, correctAnswers);
+
+            if (isCorrect) {
+                totalMarks = totalMarks.add(question.getMarks());
+            }
+        }
+
+        quizAttempt.setTotalMarks(totalMarks);
+        quizAttemptRepository.save(quizAttempt);
+
+        return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class), modelMapper.map(quizAttempt.getUser(), PublicUserDTO.class),
+                userAnswers, quizAttempt.getTotalMarks(), quizAttempt.getAttemptNumber()));
+
     }
 
     private boolean isUserAnswerCorrect(UserAnswerDTO userAnswer, List<AnswerDTO> correctAnswers) {
         if (userAnswer == null) {
             return false;
         }
+
         Long userSelectedOptionId = userAnswer.getSelectedOptionId();
+
         if (userSelectedOptionId == null) {
             return false;
         }
+
         return correctAnswers.stream()
                 .anyMatch(correctAnswer -> correctAnswer.getId().equals(userSelectedOptionId));
     }
