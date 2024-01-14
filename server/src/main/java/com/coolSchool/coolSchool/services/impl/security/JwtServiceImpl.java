@@ -1,15 +1,22 @@
-package com.coolSchool.coolSchool.services.impl;
+package com.coolSchool.coolSchool.services.impl.security;
 
+import com.coolSchool.coolSchool.enums.TokenType;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.services.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,6 +31,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Value("${spring.security.jwt.expiration}")
     private long jwtExpiration;
+
     @Value("${spring.security.jwt.refresh-token.expiration}")
     private long refreshExpiration;
 

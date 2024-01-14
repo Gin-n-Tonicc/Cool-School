@@ -1,4 +1,4 @@
-package com.coolSchool.coolSchool.services.impl;
+package com.coolSchool.coolSchool.services.impl.security;
 
 import com.coolSchool.coolSchool.enums.TokenType;
 import com.coolSchool.coolSchool.exceptions.token.InvalidTokenException;
@@ -18,7 +18,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.Cookie;
+
 import java.util.List;
+import java.util.function.Consumer;
 
 
 @Service
@@ -33,18 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
         User user = userService.createUser(request);
-        String jwtToken = jwtService.generateToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        tokenService.saveToken(user, jwtToken, TokenType.ACCESS);
-        tokenService.saveToken(user, refreshToken, TokenType.REFRESH);
-
-        return AuthenticationResponse
-                .builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .user(modelMapper.map(user, PublicUserDTO.class))
-                .build();
+        return tokenService.generateAuthResponse(user);
     }
 
     @Override
@@ -61,20 +53,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         User user = userService.findByEmail(request.getEmail());
-
-        String jwtToken = jwtService.generateToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
         tokenService.revokeAllUserTokens(user);
-        tokenService.saveToken(user, jwtToken, TokenType.ACCESS);
-        tokenService.saveToken(user, refreshToken, TokenType.REFRESH);
 
-        return AuthenticationResponse
-                .builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .user(modelMapper.map(user, PublicUserDTO.class))
-                .build();
+        return tokenService.generateAuthResponse(user);
     }
 
     @Override
@@ -170,5 +151,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .refreshToken(refreshTokenString)
                 .user(publicUser)
                 .build();
+    }
+
+    @Override
+    public void attachAuthCookies(AuthenticationResponse authenticationResponse, Consumer<Cookie> cookieConsumer) {
+        tokenService.attachAuthCookies(authenticationResponse, cookieConsumer);
     }
 }

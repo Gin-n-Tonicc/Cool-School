@@ -38,7 +38,6 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
 
-    @NotNull(message = "The password should not be null!")
     private String password;
 
     @NotNull(message = "The address should not be null!")
@@ -59,6 +58,9 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "file_id")
     private File profilePic;
+
+    @Column(name = "is_additional_info_rquired", nullable = false)
+    private boolean additionalInfoRequired;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;

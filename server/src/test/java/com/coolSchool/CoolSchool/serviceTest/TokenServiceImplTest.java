@@ -4,7 +4,7 @@ import com.coolSchool.coolSchool.enums.TokenType;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.TokenRepository;
-import com.coolSchool.coolSchool.services.impl.TokenServiceImpl;
+import com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.services.impl;
 
+import com.coolSchool.coolSchool.enums.Provider;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
@@ -31,25 +32,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(RegisterRequest request) {
+        Role roleFromReq = request.getRole();
+
+        if (roleFromReq == null || roleFromReq.equals(Role.ADMIN)) {
+            request.setRole(Role.USER);
+        }
+
         try {
-            Role roleFromReq = request.getRole();
-            if (roleFromReq == null || roleFromReq.equals(Role.ADMIN)) {
-                request.setRole(Role.USER);
-            }
-
-            User user = User
-                    .builder()
-                    .firstname(request.getFirstname())
-                    .lastname(request.getLastname())
-                    .email(request.getEmail())
-                    .password(passwordEncoder.encode(request.getPassword()))
-                    .role(request.getRole())
-                    .address(request.getAddress())
-                    .usernameField(request.getUsername())
-                    .description(request.getDescription())
-                    .deleted(false)
-                    .build();
-
+            User user = buildUser(request);
             return userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
             throw new UserCreateException(true);
@@ -110,12 +100,55 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void processOAuthPostLogin(CustomOAuth2User user) {
+    public User processOAuthUser(CustomOAuth2User oAuth2User) {
+        User user = userRepository.findByEmail(oAuth2User.getEmail()).orElse(null);
 
+        if (user == null) {
+            final String NAME_PLACEHOLDER = "CHANGE_NAME";
+            final String DESCRIPTION_PLACEHOLDER = "CHANGE_THE_DESCRIPTION_PLEASE_CHANGE_THE_DESCRIPTION_PLEASEEE";
+            final String ADDRESS_PLACEHOLDER = "CHANGE_ADDRESS";
+
+            RegisterRequest registerRequest = RegisterRequest.builder()
+                    .email(oAuth2User.getEmail())
+                    .provider(oAuth2User.getProvider())
+                    .username(oAuth2User.getName().toLowerCase())
+                    .firstname(NAME_PLACEHOLDER)
+                    .lastname(NAME_PLACEHOLDER)
+                    .role(Role.USER)
+                    .description(DESCRIPTION_PLACEHOLDER)
+                    .address(ADDRESS_PLACEHOLDER)
+                    .build();
+
+            user = userRepository.save(buildUser(registerRequest));
+        }
+
+        return user;
     }
 
     private User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("id"));
+    }
+
+    private User buildUser(RegisterRequest request) {
+        boolean additionalInfoRequired = !request.getProvider().equals(Provider.LOCAL);
+
+        User.UserBuilder userBuilder = User
+                .builder()
+                .firstname(request.getFirstname())
+                .lastname(request.getLastname())
+                .email(request.getEmail())
+                .role(request.getRole())
+                .address(request.getAddress())
+                .usernameField(request.getUsername())
+                .description(request.getDescription())
+                .additionalInfoRequired(additionalInfoRequired)
+                .deleted(false);
+
+        if (request.getPassword() != null) {
+            userBuilder.password(passwordEncoder.encode(request.getPassword()));
+        }
+
+        return userBuilder.build();
     }
 }

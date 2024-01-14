@@ -38,5 +38,6 @@ public class LogoutHandler implements org.springframework.security.web.authentic
 
         final String jwt = authHeader.substring(7);
         tokenService.logoutToken(jwt);
+        tokenService.detachAuthCookies(response::addCookie);
     }
 }

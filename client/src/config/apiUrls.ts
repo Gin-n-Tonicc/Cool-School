@@ -1,4 +1,4 @@
-const baseUrl = process.env.REACT_APP_API_URL;
+const baseUrl = process.env.REACT_APP_API_URL || '';
 
 const adminPaths = Object.seal({
   get: (pathName: string) => `${baseUrl}${pathName}/all`,
@@ -95,6 +95,7 @@ const resourcesPaths = Object.seal({
 });
 
 export const apiUrlsConfig = Object.seal({
+  apiUrl: baseUrl,
   admin: adminPaths,
   auth: authPaths,
   blogs: blogsPaths,

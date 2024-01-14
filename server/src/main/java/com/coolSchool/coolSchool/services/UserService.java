@@ -19,5 +19,5 @@ public interface UserService {
 
     void deleteUserById(Long id, PublicUserDTO currentUser);
 
-    void processOAuthPostLogin(CustomOAuth2User user);
+    User processOAuthUser(CustomOAuth2User oAuth2User);
 }

@@ -1,6 +1,9 @@
 package com.coolSchool.coolSchool.services;
 
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.coolSchool.models.entity.User;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Map;

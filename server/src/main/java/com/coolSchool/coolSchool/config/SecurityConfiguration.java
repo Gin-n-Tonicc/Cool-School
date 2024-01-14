@@ -41,8 +41,10 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .sessionManagement(sessionManagementCustomizer -> sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(CorsConfigurer::disable)
-                .csrf(CsrfConfigurer::disable)
+                .cors()
+                .and()
+                .csrf()
+                .disable()
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
                     httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper));
                 })

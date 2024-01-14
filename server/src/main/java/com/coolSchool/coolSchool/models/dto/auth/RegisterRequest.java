@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.models.dto.auth;
 
+import com.coolSchool.coolSchool.enums.Provider;
 import com.coolSchool.coolSchool.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +20,5 @@ public class RegisterRequest {
     private String username;
     private String description;
     private Role role;
-    private boolean additionalInfoRequired;
+    private Provider provider = Provider.LOCAL;
 }

@@ -52,6 +52,10 @@ export default function HttpProvider({ children }: PropsWithChildren) {
 
         removeTokensIfExpired();
 
+        if (url?.includes(apiUrlsConfig.apiUrl)) {
+          options.credentials = 'include';
+        }
+
         if (user.accessToken) {
           // @ts-ignore
           options.headers.Authorization = `Bearer ${user.accessToken}`;

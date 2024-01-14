@@ -9,7 +9,7 @@ import com.coolSchool.coolSchool.services.AuthenticationService;
 import com.coolSchool.coolSchool.services.JwtService;
 import com.coolSchool.coolSchool.services.TokenService;
 import com.coolSchool.coolSchool.services.UserService;
-import com.coolSchool.coolSchool.services.impl.AuthenticationServiceImpl;
+import com.coolSchool.coolSchool.services.impl.security.AuthenticationServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
