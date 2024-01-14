@@ -4,6 +4,7 @@ import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.coolSchool.exceptions.quizzes.QuizNotFoundException;
 import com.coolSchool.coolSchool.exceptions.quizzes.ValidationQuizException;
 import com.coolSchool.coolSchool.models.dto.common.*;
+import com.coolSchool.coolSchool.models.entity.Question;
 import com.coolSchool.coolSchool.models.entity.Quiz;
 import com.coolSchool.coolSchool.repositories.CourseSubsectionRepository;
 import com.coolSchool.coolSchool.repositories.QuizRepository;
@@ -16,6 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,10 +48,23 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizDTO getQuizById(Long id) {
-        Optional<Quiz> quiz = quizRepository.findByIdAndDeletedFalse(id);
-        if (quiz.isPresent()) {
-            return modelMapper.map(quiz.get(), QuizDTO.class);
+    public QuizQuestionsAnswersDTO getQuizById(Long id) {
+        Optional<Quiz> quizOptional = quizRepository.findByIdAndDeletedFalse(id);
+
+        if (quizOptional.isPresent()) {
+            Quiz quiz = quizOptional.get();
+
+            List<Question> questions = questionService.getQuestionsByQuizId(id);
+            QuizDTO quizDTO = modelMapper.map(quiz, QuizDTO.class);
+            List<QuestionAndAnswersDTO> questionAndAnswersList = questions.stream()
+                    .map(question -> {
+                        List<AnswerDTO> answers = answerService.getAnswersByQuestionId(question.getId());
+                        QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
+                        return new QuestionAndAnswersDTO(questionDTO, answers);
+                    })
+                    .collect(Collectors.toList());
+
+            return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList);
         }
         throw new QuizNotFoundException();
     }
@@ -110,5 +126,57 @@ public class QuizServiceImpl implements QuizService {
         } else {
             throw new QuizNotFoundException();
         }
+    }
+
+    public QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers) {
+        Optional<Quiz> quizOptional = quizRepository.findById(quizId);
+
+        if (quizOptional.isPresent()) {
+            Quiz quiz = quizOptional.get();
+            List<QuestionAndAnswersDTO> questionAndAnswersList = new ArrayList<>();
+            BigDecimal totalMarks = BigDecimal.ZERO;
+
+            List<Question> questions = questionService.getQuestionsByQuizId(quizId);
+
+            for (Question question : questions) {
+
+                List<AnswerDTO> correctAnswers = answerService.getCorrectAnswersByQuestionId(question.getId());
+                UserAnswerDTO userAnswer = findUserAnswer(userAnswers, question.getId());
+
+                boolean isCorrect = isUserAnswerCorrect(userAnswer, correctAnswers);
+
+                if (isCorrect) {
+                    totalMarks = totalMarks.add(question.getMarks());
+                }
+
+                QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
+                QuestionAndAnswersDTO questionAndAnswersDTO = new QuestionAndAnswersDTO(questionDTO, correctAnswers);
+                questionAndAnswersList.add(questionAndAnswersDTO);
+            }
+            return new QuizResultDTO(quiz.getId(), quiz.getTitle(), totalMarks, questionAndAnswersList);
+        } else {
+            throw new QuizNotFoundException();
+        }
+    }
+
+    private UserAnswerDTO findUserAnswer(List<UserAnswerDTO> userAnswers, Long questionId) {
+        for (UserAnswerDTO userAnswer : userAnswers) {
+            if (userAnswer.getQuestionId().equals(questionId)) {
+                return userAnswer;
+            }
+        }
+        return null;
+    }
+
+    private boolean isUserAnswerCorrect(UserAnswerDTO userAnswer, List<AnswerDTO> correctAnswers) {
+        if (userAnswer == null) {
+            return false;
+        }
+        Long userSelectedOptionId = userAnswer.getSelectedOptionId();
+        if (userSelectedOptionId == null) {
+            return false;
+        }
+        return correctAnswers.stream()
+                .anyMatch(correctAnswer -> correctAnswer.getId().equals(userSelectedOptionId));
     }
 }

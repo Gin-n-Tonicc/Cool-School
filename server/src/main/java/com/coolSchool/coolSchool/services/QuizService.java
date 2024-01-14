@@ -1,14 +1,13 @@
 package com.coolSchool.coolSchool.services;
 
-import com.coolSchool.coolSchool.models.dto.common.QuizDTO;
-import com.coolSchool.coolSchool.models.dto.common.QuizDataDTO;
+import com.coolSchool.coolSchool.models.dto.common.*;
 
 import java.util.List;
 
 public interface QuizService {
     List<QuizDTO> getAllQuizzes();
 
-    QuizDTO getQuizById(Long id);
+    QuizQuestionsAnswersDTO getQuizById(Long id);
 
     List<QuizDTO> getQuizzesBySubsectionId(Long subsectionId);
 
@@ -17,4 +16,5 @@ public interface QuizService {
     QuizDTO updateQuiz(Long id, QuizDTO quizDTO);
 
     void deleteQuiz(Long id);
+    QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers);
 }

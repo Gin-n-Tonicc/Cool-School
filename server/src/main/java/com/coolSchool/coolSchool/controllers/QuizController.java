@@ -1,7 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.models.dto.common.QuizDTO;
-import com.coolSchool.coolSchool.models.dto.common.QuizDataDTO;
+import com.coolSchool.coolSchool.models.dto.common.*;
 import com.coolSchool.coolSchool.services.QuizService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,7 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuizDTO> getQuizById(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<QuizQuestionsAnswersDTO> getQuizById(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(quizService.getQuizById(id));
     }
 
@@ -50,5 +49,11 @@ public class QuizController {
     public ResponseEntity<String> deleteQuizById(@PathVariable("id") Long id) {
         quizService.deleteQuiz(id);
         return ResponseEntity.ok("Quiz with id: " + id + " has been deleted successfully!");
+    }
+
+    @PostMapping("/{quizId}/take")
+    public ResponseEntity<QuizResultDTO> takeQuiz(@PathVariable Long quizId,@RequestBody List<UserAnswerDTO> userAnswers) {
+        QuizResultDTO quizResultDTO = quizService.takeQuiz(quizId, userAnswers);
+        return ResponseEntity.ok(quizResultDTO);
     }
 }

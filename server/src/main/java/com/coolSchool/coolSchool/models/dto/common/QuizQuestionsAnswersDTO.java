@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAnswerDTO {
-    private Long questionId;
-    private Long selectedOptionId;
+public class QuizQuestionsAnswersDTO {
+    private QuizDTO quiz;
+    private List<QuestionAndAnswersDTO> questions;
 }
