@@ -57,7 +57,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizQuestionsAnswersDTO getQuizById(Long id) {
+    public QuizQuestionsAnswersDTO getQuizById(Long id, Long userId) {
         //TODO: do not show in AnswerDTO is the answer is correct or not
         Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(QuizNotFoundException::new);
         List<Question> questions = questionService.getQuestionsByQuizId(id);
@@ -71,7 +71,14 @@ public class QuizServiceImpl implements QuizService {
                 })
                 .collect(Collectors.toList());
 
-        return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList);
+        List<UserQuizProgress> userQuizProgresses = userQuizProgressRepository.findByUserIdAndQuizId(userId, id);
+        List<UserQuizProgressDTO> userQuizProgressDTOS = userQuizProgresses.stream()
+                .map(userQuizProgress -> modelMapper.map(userQuizProgress, UserQuizProgressDTO.class)).toList();
+
+        if(userQuizProgressDTOS.isEmpty()) {
+            return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList);
+        }
+        return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList, userQuizProgressDTOS);
     }
 
     @Override

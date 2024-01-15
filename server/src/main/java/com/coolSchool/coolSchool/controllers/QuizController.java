@@ -28,8 +28,9 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuizQuestionsAnswersDTO> getQuizById(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.ok(quizService.getQuizById(id));
+    public ResponseEntity<QuizQuestionsAnswersDTO> getQuizById(@PathVariable(name = "id") Long id, HttpServletRequest httpServletRequest) {
+        PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+        return ResponseEntity.ok(quizService.getQuizById(id, publicUserDTO.getId()));
     }
 
     @GetMapping("/subsection/{id}")
