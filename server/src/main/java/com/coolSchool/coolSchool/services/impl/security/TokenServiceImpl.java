@@ -26,16 +26,13 @@ import java.util.function.Consumer;
 public class TokenServiceImpl implements TokenService {
     public final static String AUTH_COOKIE_KEY_JWT = "COOL_SCHOOL_SESSION_JWT";
     public final static String AUTH_COOKIE_KEY_REFRESH = "COOL_SCHOOL_SESSION_REFRESH";
-
-    @Value("${spring.security.jwt.refresh-token.expiration}")
-    private long refreshExpiration;
-
-    @Value("${spring.security.jwt.expiration}")
-    private long jwtExpiration;
-
     private final TokenRepository tokenRepository;
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
+    @Value("${spring.security.jwt.refresh-token.expiration}")
+    private long refreshExpiration;
+    @Value("${spring.security.jwt.expiration}")
+    private long jwtExpiration;
 
     @Override
     public Token findByToken(String jwt) {
@@ -88,7 +85,6 @@ public class TokenServiceImpl implements TokenService {
     public Cookie createJwtCookie(String jwt) {
         Cookie jwtCookie = new Cookie(AUTH_COOKIE_KEY_JWT, URLEncoder.encode(jwt, StandardCharsets.UTF_8));
         jwtCookie.setPath("/");
-        jwtCookie.setHttpOnly(true);
 
         // milliseconds to seconds
         jwtCookie.setMaxAge((int) jwtExpiration / 1000);
@@ -100,7 +96,6 @@ public class TokenServiceImpl implements TokenService {
     public Cookie createRefreshCookie(String refreshToken) {
         Cookie refreshCookie = new Cookie(AUTH_COOKIE_KEY_REFRESH, URLEncoder.encode(refreshToken, StandardCharsets.UTF_8));
         refreshCookie.setPath("/");
-        refreshCookie.setHttpOnly(true);
 
         // milliseconds to seconds
         refreshCookie.setMaxAge((int) refreshExpiration / 1000);

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
-import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
+import { IUser } from '../../../../types/interfaces/IUser';
 import {
   EMAIL_VALIDATIONS,
   PASSWORD_VALIDATIONS,
@@ -24,7 +24,7 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
   const navigate = useNavigate();
 
   const { loginUser } = useAuthContext();
-  const { post, response } = useFetch<IAuthResponse>(apiUrlsConfig.auth.login);
+  const { post, response } = useFetch<IUser>(apiUrlsConfig.auth.login);
 
   const { handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: {

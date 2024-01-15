@@ -1,8 +1,8 @@
 package com.coolSchool.coolSchool.services;
 
-import com.coolSchool.coolSchool.models.dto.auth.*;
-import com.coolSchool.coolSchool.models.entity.User;
-import com.coolSchool.coolSchool.security.CustomOAuth2User;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import jakarta.servlet.http.Cookie;
 
 import java.io.IOException;
@@ -13,10 +13,10 @@ public interface AuthenticationService {
 
     AuthenticationResponse authenticate(AuthenticationRequest request);
 
-    AuthenticationResponse refreshToken(RefreshTokenBodyDTO refreshTokenBodyDTO) throws IOException;
+    AuthenticationResponse refreshToken(String refreshToken) throws IOException;
 
     AuthenticationResponse me(
-            AccessTokenBodyDTO accessTokenBodyDTO
+            String jwtToken
     );
 
     void attachAuthCookies(AuthenticationResponse authenticationResponse, Consumer<Cookie> cookieConsumer);

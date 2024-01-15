@@ -29,11 +29,6 @@ export default function Login() {
                   Login with Google
                 </a>
               </h4>
-              <h4>
-                <a href="http://localhost:8080/oauth2/authorization/github">
-                  Login with Github
-                </a>
-              </h4>
             </div>
             <h2 className="form-title">Login</h2>
             <LoginForm redirectTo={redirectTo} />

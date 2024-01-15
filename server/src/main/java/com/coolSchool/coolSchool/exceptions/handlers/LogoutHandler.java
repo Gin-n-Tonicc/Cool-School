@@ -2,6 +2,7 @@ package com.coolSchool.coolSchool.exceptions.handlers;
 
 import com.coolSchool.coolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.coolSchool.services.TokenService;
+import com.coolSchool.coolSchool.utils.CookieHelper;
 import com.coolSchool.coolSchool.utils.ObjectMapperHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+
+import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +28,9 @@ public class LogoutHandler implements org.springframework.security.web.authentic
             HttpServletResponse response,
             Authentication authentication
     ) {
-        final String authHeader = request.getHeader("Authorization");
+        final String jwt = CookieHelper.readCookie(AUTH_COOKIE_KEY_JWT, request.getCookies()).orElse(null);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (jwt == null || jwt.isEmpty()) {
             try {
                 ObjectMapperHelper.writeExceptionToObjectMapper(objectMapper, new InvalidTokenException(), response);
                 return;
@@ -36,7 +39,6 @@ public class LogoutHandler implements org.springframework.security.web.authentic
             }
         }
 
-        final String jwt = authHeader.substring(7);
         tokenService.logoutToken(jwt);
         tokenService.detachAuthCookies(response::addCookie);
     }

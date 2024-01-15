@@ -108,10 +108,13 @@ public class UserServiceImpl implements UserService {
             final String DESCRIPTION_PLACEHOLDER = "CHANGE_THE_DESCRIPTION_PLEASE_CHANGE_THE_DESCRIPTION_PLEASEEE";
             final String ADDRESS_PLACEHOLDER = "CHANGE_ADDRESS";
 
+            String username = oAuth2User.getName().toLowerCase()
+                    .replaceAll("[^a-zA-Z0-9]", "");
+
             RegisterRequest registerRequest = RegisterRequest.builder()
                     .email(oAuth2User.getEmail())
                     .provider(oAuth2User.getProvider())
-                    .username(oAuth2User.getName().toLowerCase())
+                    .username(username)
                     .firstname(NAME_PLACEHOLDER)
                     .lastname(NAME_PLACEHOLDER)
                     .role(Role.USER)

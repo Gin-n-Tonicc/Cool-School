@@ -3,7 +3,10 @@ package com.coolSchool.coolSchool.services.impl.security;
 import com.coolSchool.coolSchool.enums.TokenType;
 import com.coolSchool.coolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.coolSchool.exceptions.user.UserLoginException;
-import com.coolSchool.coolSchool.models.dto.auth.*;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.services.AuthenticationService;
@@ -11,14 +14,13 @@ import com.coolSchool.coolSchool.services.JwtService;
 import com.coolSchool.coolSchool.services.TokenService;
 import com.coolSchool.coolSchool.services.UserService;
 import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
-
-import jakarta.servlet.http.Cookie;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -59,9 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse refreshToken(RefreshTokenBodyDTO refreshTokenBodyDTO) {
-        final String refreshToken = refreshTokenBodyDTO.getRefreshToken();
-
+    public AuthenticationResponse refreshToken(String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             throw new InvalidTokenException();
         }
@@ -105,8 +105,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse me(AccessTokenBodyDTO accessTokenBodyDTO) {
-        Token accessToken = tokenService.findByToken(accessTokenBodyDTO.getAccessToken());
+    public AuthenticationResponse me(String jwtToken) {
+        if (jwtToken == null || jwtToken.isEmpty()) {
+            throw new InvalidTokenException();
+        }
+
+        Token accessToken = tokenService.findByToken(jwtToken);
 
         if (accessToken == null) {
             throw new InvalidTokenException();

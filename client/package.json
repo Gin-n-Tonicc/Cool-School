@@ -11,6 +11,7 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "firebase": "^10.6.0",
+    "js-cookie": "^3.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.46.1",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/js-cookie": "^3.0.6",
     "@types/uuid": "^9.0.5"
   }
 }
