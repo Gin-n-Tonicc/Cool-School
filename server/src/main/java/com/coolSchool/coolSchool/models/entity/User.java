@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.models.entity;
 
+import com.coolSchool.coolSchool.enums.Provider;
 import com.coolSchool.coolSchool.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -59,7 +60,11 @@ public class User implements UserDetails {
     @JoinColumn(name = "file_id")
     private File profilePic;
 
-    @Column(name = "is_additional_info_rquired", nullable = false)
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
+    @Column(name = "is_additional_info_required", nullable = false)
     private boolean additionalInfoRequired;
 
     @Column(name = "is_deleted", nullable = false)
@@ -98,5 +103,12 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @PrePersist
+    void prePersist() {
+        if (this.provider == null) {
+            this.provider = Provider.LOCAL;
+        }
     }
 }

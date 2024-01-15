@@ -1,9 +1,11 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
+import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.services.AuthenticationService;
 import com.coolSchool.coolSchool.utils.CookieHelper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +37,16 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<PublicUserDTO> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
         AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
+        authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
+
+        return ResponseEntity.ok(authenticationResponse.getUser());
+    }
+
+    @PutMapping("/complete-oauth")
+    public ResponseEntity<PublicUserDTO> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        PublicUserDTO currentLoggedUser = (PublicUserDTO) servletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+
+        AuthenticationResponse authenticationResponse = authenticationService.completeOAuth2(request, currentLoggedUser);
         authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
 
         return ResponseEntity.ok(authenticationResponse.getUser());

@@ -7,6 +7,7 @@ import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
+import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.services.AuthenticationService;
@@ -39,6 +40,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse register(RegisterRequest request) {
         User user = userService.createUser(request);
         return tokenService.generateAuthResponse(user);
+    }
+
+    @Override
+    public AuthenticationResponse completeOAuth2(CompleteOAuthRequest request, PublicUserDTO currentLoggedUser) {
+        User updatedUser = userService.updateOAuth2UserWithFullData(request, currentLoggedUser.getId());
+        return tokenService.generateAuthResponse(updatedUser);
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.AdminUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
+import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.security.CustomOAuth2User;
@@ -111,21 +112,34 @@ public class UserServiceImpl implements UserService {
             String username = oAuth2User.getName().toLowerCase()
                     .replaceAll("[^a-zA-Z0-9]", "");
 
-            RegisterRequest registerRequest = RegisterRequest.builder()
-                    .email(oAuth2User.getEmail())
-                    .provider(oAuth2User.getProvider())
-                    .username(username)
-                    .firstname(NAME_PLACEHOLDER)
-                    .lastname(NAME_PLACEHOLDER)
-                    .role(Role.USER)
-                    .description(DESCRIPTION_PLACEHOLDER)
-                    .address(ADDRESS_PLACEHOLDER)
-                    .build();
+            RegisterRequest registerRequest = new RegisterRequest();
+
+            registerRequest.setEmail(oAuth2User.getEmail());
+            registerRequest.setProvider(oAuth2User.getProvider());
+            registerRequest.setUsername(username);
+            registerRequest.setFirstname(NAME_PLACEHOLDER);
+            registerRequest.setLastname(NAME_PLACEHOLDER);
+            registerRequest.setRole(Role.USER);
+            registerRequest.setDescription(DESCRIPTION_PLACEHOLDER);
+            registerRequest.setAddress(ADDRESS_PLACEHOLDER);
 
             user = userRepository.save(buildUser(registerRequest));
         }
 
         return user;
+    }
+
+    @Override
+    public User updateOAuth2UserWithFullData(CompleteOAuthRequest request, Long userId) {
+        User user = findById(userId);
+        user.setFirstname(request.getFirstname());
+        user.setLastname(request.getLastname());
+        user.setAddress(request.getAddress());
+        user.setDescription(request.getDescription());
+        user.setRole(request.getRole());
+        user.setAdditionalInfoRequired(false);
+
+        return userRepository.save(user);
     }
 
     private User findById(Long id) {
@@ -142,6 +156,7 @@ public class UserServiceImpl implements UserService {
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .role(request.getRole())
+                .provider(request.getProvider())
                 .address(request.getAddress())
                 .usernameField(request.getUsername())
                 .description(request.getDescription())

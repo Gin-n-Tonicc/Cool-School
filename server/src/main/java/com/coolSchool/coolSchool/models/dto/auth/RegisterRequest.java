@@ -2,23 +2,16 @@ package com.coolSchool.coolSchool.models.dto.auth;
 
 import com.coolSchool.coolSchool.enums.Provider;
 import com.coolSchool.coolSchool.enums.Role;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-    private String firstname;
-    private String lastname;
+public class RegisterRequest extends CompleteOAuthRequest {
     private String email;
     private String password;
-    private String address;
     private String username;
-    private String description;
-    private Role role;
     private Provider provider = Provider.LOCAL;
 }

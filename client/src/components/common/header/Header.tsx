@@ -20,7 +20,7 @@ function GuestLinks() {
 function UserLinks(props: { isTeacher: boolean; hasFinishedOAuth2: boolean }) {
   return (
     <>
-      {props.hasFinishedOAuth2 && (
+      {props.hasFinishedOAuth2 ? (
         <>
           {props.isTeacher && (
             <HeaderNavItem
@@ -30,6 +30,11 @@ function UserLinks(props: { isTeacher: boolean; hasFinishedOAuth2: boolean }) {
           )}
           <HeaderNavItem text="Create Blog" pathName={PagesEnum.BlogCreate} />
         </>
+      ) : (
+        <HeaderNavItem
+          text="Complete Register"
+          pathName={PagesEnum.FinishRegister}
+        />
       )}
       <HeaderNavItem text="Logout" pathName={PagesEnum.Logout} />
     </>
@@ -93,6 +98,7 @@ export default function Header() {
         PagesEnum.Home,
         PagesEnum.Login,
         PagesEnum.Register,
+        PagesEnum.FinishRegister,
         PagesEnum.Logout,
         PagesEnum.BlogCreate,
         PagesEnum.CoursesCreate,

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
+import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import { IUser } from '../../../../types/interfaces/IUser';
 import {
   EMAIL_VALIDATIONS,
@@ -36,8 +37,8 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const user = await post({
-      email: data.Email,
-      password: data.Password,
+      email: data.Email.trim(),
+      password: data.Password.trim(),
     });
 
     if (response.ok) {
@@ -47,7 +48,7 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
       if (redirectTo) {
         navigate(redirectTo);
       } else {
-        navigate('/');
+        navigate(PagesEnum.Home);
       }
     }
   };

@@ -11,6 +11,7 @@ const authPaths = Object.seal({
   login: `${baseUrl}/auth/authenticate`,
   logout: `${baseUrl}/auth/logout`,
   refreshTokenPath: '/auth/refresh-token',
+  completeOAuth: `${baseUrl}/auth/complete-oauth`,
   refreshToken() {
     return `${baseUrl}${this.refreshTokenPath}`;
   },
