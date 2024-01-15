@@ -1,7 +1,10 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
 import com.coolSchool.coolSchool.services.QuizService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,8 +55,17 @@ public class QuizController {
     }
 
     @PostMapping("/{quizId}/take")
-    public ResponseEntity<QuizResultDTO> takeQuiz(@PathVariable Long quizId,@RequestBody List<UserAnswerDTO> userAnswers, @RequestParam("userId") Long userId) {
-        QuizResultDTO quizResultDTO = quizService.takeQuiz(quizId, userAnswers, userId);
+    public ResponseEntity<QuizResultDTO> takeQuiz(@PathVariable Long quizId, @RequestBody List<UserAnswerDTO> userAnswers, HttpServletRequest httpServletRequest) {
+        PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+        QuizResultDTO quizResultDTO = quizService.takeQuiz(quizId, userAnswers, publicUserDTO.getId());
+        quizService.deleteAutoSavedProgress(publicUserDTO.getId(), quizId);
         return ResponseEntity.ok(quizResultDTO);
+    }
+
+    @PostMapping("/quiz/{quizId}/save-progress")
+    public ResponseEntity<String> autoSaveUserProgress(@PathVariable Long quizId, @RequestParam Long questionId, @RequestParam Long answerId, HttpServletRequest httpServletRequest) {
+        PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+        quizService.autoSaveUserProgress(quizId, questionId, answerId, publicUserDTO.getId());
+        return ResponseEntity.ok("Saved answer!");
     }
 }

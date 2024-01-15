@@ -7,14 +7,12 @@ import com.coolSchool.coolSchool.exceptions.quizzes.ValidationQuizException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
 import com.coolSchool.coolSchool.models.entity.*;
-import com.coolSchool.coolSchool.repositories.CourseSubsectionRepository;
-import com.coolSchool.coolSchool.repositories.QuizAttemptRepository;
-import com.coolSchool.coolSchool.repositories.QuizRepository;
-import com.coolSchool.coolSchool.repositories.UserAnswerRepository;
+import com.coolSchool.coolSchool.repositories.*;
 import com.coolSchool.coolSchool.services.AnswerService;
 import com.coolSchool.coolSchool.services.QuestionService;
 import com.coolSchool.coolSchool.services.QuizService;
 import com.coolSchool.coolSchool.services.UserService;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
@@ -37,8 +35,9 @@ public class QuizServiceImpl implements QuizService {
     private final QuizAttemptRepository quizAttemptRepository;
     private final Validator validator;
     private final CourseSubsectionRepository courseSubsectionRepository;
+    private final UserQuizProgressRepository userQuizProgressRepository;
 
-    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, Validator validator, CourseSubsectionRepository courseSubsectionRepository) {
+    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, Validator validator, CourseSubsectionRepository courseSubsectionRepository, UserQuizProgressRepository userQuizProgressRepository) {
         this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
         this.questionService = questionService;
@@ -48,6 +47,7 @@ public class QuizServiceImpl implements QuizService {
         this.quizAttemptRepository = quizAttemptRepository;
         this.validator = validator;
         this.courseSubsectionRepository = courseSubsectionRepository;
+        this.userQuizProgressRepository = userQuizProgressRepository;
     }
 
     @Override
@@ -81,6 +81,7 @@ public class QuizServiceImpl implements QuizService {
                 .map(quiz -> modelMapper.map(quiz, QuizDTO.class))
                 .collect(Collectors.toList());
     }
+
     @Override
     public QuizDTO createQuiz(QuizDataDTO quizData) {
         QuizDTO quizDTO = quizData.getQuizDTO();
@@ -175,6 +176,23 @@ public class QuizServiceImpl implements QuizService {
         return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class), modelMapper.map(quizAttempt.getUser(), PublicUserDTO.class),
                 userAnswers, quizAttempt.getTotalMarks(), quizAttempt.getAttemptNumber()));
 
+    }
+
+    @Override
+    public void autoSaveUserProgress(Long quizId, Long questionId, Long answerId, Long userId) {
+        UserQuizProgressDTO userQuizProgressDTO = new UserQuizProgressDTO();
+        userQuizProgressDTO.setUserId(userId);
+        userQuizProgressDTO.setQuizId(quizId);
+        userQuizProgressDTO.setAnswerId(answerId);
+        userQuizProgressDTO.setQuestionId(questionId);
+
+        UserQuizProgress userQuizProgress = modelMapper.map(userQuizProgressDTO, UserQuizProgress.class);
+        userQuizProgressRepository.save(userQuizProgress);
+    }
+    @Override
+    @Transactional
+    public void deleteAutoSavedProgress(Long userId, Long quizId) {
+        userQuizProgressRepository.deleteByUserIdAndQuizId(userId, quizId);
     }
 
     private boolean isUserAnswerCorrect(UserAnswerDTO userAnswer, List<AnswerDTO> correctAnswers) {
