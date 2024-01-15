@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
+import { apiUrlsConfig } from '../../../config/apiUrls';
 import useUrlSearchParam from '../../../hooks/useURLSearchParam';
+import { PagesEnum } from '../../../types/enums/PagesEnum';
 import '../../common/scss/authentication.scss';
+import googleSvg from '../images/google.svg';
 import LoginForm from './login-form/LoginForm';
 import signInImage from './signin-image.jpg';
 
@@ -15,21 +18,35 @@ export default function Login() {
             <figure>
               <img src={signInImage} alt="sing in image" />
             </figure>
-            <Link
-              to={`/register${redirectTo ? `?redirect=${redirectTo}` : ''}`}
-              className="signup-image-link">
-              Create an account?
-            </Link>
+
+            <section className="external-login">
+              <div className="signup-image-link">
+                <h6>
+                  No profile yet?{' '}
+                  <Link
+                    to={`${PagesEnum.Register}${
+                      redirectTo ? `?redirect=${redirectTo}` : ''
+                    }`}>
+                    <h5>Register!</h5>
+                  </Link>
+                </h6>
+              </div>
+              <h6 className="or-login-text">Or login with</h6>
+              <a
+                className="external-login-btn"
+                href={apiUrlsConfig.oAuth.google}
+                title="Log in using your Google account">
+                <img
+                  src={googleSvg}
+                  className="external-login-btn-icon"
+                  alt="Използвай Google"
+                />
+                Google
+              </a>
+            </section>
           </div>
 
           <div className="signin-form">
-            <div>
-              <h4>
-                <a href="http://localhost:8080/oauth2/authorization/google">
-                  Login with Google
-                </a>
-              </h4>
-            </div>
             <h2 className="form-title">Login</h2>
             <LoginForm redirectTo={redirectTo} />
           </div>
