@@ -2,6 +2,7 @@ server:
   frontend:
     baseUrl: ${FRONTEND_URL}
     loginUrl: ${server.frontend.baseUrl}/login
+    finishRegisterUrl: ${server.frontend.baseUrl}/finish-register
 
 spring:
   servlet:

@@ -12,4 +12,5 @@ import org.springframework.context.annotation.Configuration;
 public class FrontendConfig {
     private String baseUrl;
     private String loginUrl;
+    private String finishRegisterUrl;
 }

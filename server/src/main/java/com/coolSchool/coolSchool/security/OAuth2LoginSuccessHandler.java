@@ -23,6 +23,6 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
 
         oAuth2AuthenticationService.processOAuthPostLogin(oauthUser, response::addCookie);
-        response.sendRedirect(frontendConfig.getLoginUrl());
+        response.sendRedirect(frontendConfig.getFinishRegisterUrl());
     }
 }
