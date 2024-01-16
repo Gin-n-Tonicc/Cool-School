@@ -1,6 +1,8 @@
 package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
+import com.coolSchool.coolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
 import com.coolSchool.coolSchool.exceptions.quizzes.NoMoreAttemptsQuizException;
 import com.coolSchool.coolSchool.exceptions.quizzes.QuizNotFoundException;
 import com.coolSchool.coolSchool.exceptions.quizzes.ValidationQuizException;
@@ -14,14 +16,15 @@ import com.coolSchool.coolSchool.services.QuizService;
 import com.coolSchool.coolSchool.services.UserService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,11 +36,11 @@ public class QuizServiceImpl implements QuizService {
     private final UserService userService;
     private final UserAnswerRepository userAnswerRepository;
     private final QuizAttemptRepository quizAttemptRepository;
-    private final Validator validator;
     private final CourseSubsectionRepository courseSubsectionRepository;
+    private final CourseRepository courseRepository;
     private final UserQuizProgressRepository userQuizProgressRepository;
 
-    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, Validator validator, CourseSubsectionRepository courseSubsectionRepository, UserQuizProgressRepository userQuizProgressRepository) {
+    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, CourseSubsectionRepository courseSubsectionRepository, CourseRepository courseRepository, UserQuizProgressRepository userQuizProgressRepository) {
         this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
         this.questionService = questionService;
@@ -45,8 +48,8 @@ public class QuizServiceImpl implements QuizService {
         this.userService = userService;
         this.userAnswerRepository = userAnswerRepository;
         this.quizAttemptRepository = quizAttemptRepository;
-        this.validator = validator;
         this.courseSubsectionRepository = courseSubsectionRepository;
+        this.courseRepository = courseRepository;
         this.userQuizProgressRepository = userQuizProgressRepository;
     }
 
@@ -58,16 +61,28 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizQuestionsAnswersDTO getQuizById(Long id, Long userId) {
-        //TODO: do not show in AnswerDTO is the answer is correct or not
         Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(QuizNotFoundException::new);
         List<Question> questions = questionService.getQuestionsByQuizId(id);
         QuizDTO quizDTO = modelMapper.map(quiz, QuizDTO.class);
 
+        AtomicReference<List<AnswerDTO>> filteredAnswers = new AtomicReference<>();
+
+        boolean isUserTheCreatorOfQuiz = isTheUserQuizCreator(userId, quiz);
+
         List<QuestionAndAnswersDTO> questionAndAnswersList = questions.stream()
                 .map(question -> {
                     List<AnswerDTO> answers = answerService.getAnswersByQuestionId(question.getId());
+
+                    if (isUserTheCreatorOfQuiz) {
+                        filteredAnswers.set(answers.stream()
+                                .map(answer -> new AnswerDTO(answer.getId(), answer.getText(), answer.getQuestionId(), answer.isCorrect())).toList());
+                    } else {
+                        filteredAnswers.set(answers.stream()
+                                .map(answer -> new AnswerDTO(answer.getId(), answer.getText(), answer.getQuestionId())).toList());
+                    }
+
                     QuestionDTO questionDTO = modelMapper.map(question, QuestionDTO.class);
-                    return new QuestionAndAnswersDTO(questionDTO, answers);
+                    return new QuestionAndAnswersDTO(questionDTO, filteredAnswers.get());
                 })
                 .collect(Collectors.toList());
 
@@ -75,7 +90,7 @@ public class QuizServiceImpl implements QuizService {
         List<UserQuizProgressDTO> userQuizProgressDTOS = userQuizProgresses.stream()
                 .map(userQuizProgress -> modelMapper.map(userQuizProgress, UserQuizProgressDTO.class)).toList();
 
-        if(userQuizProgressDTOS.isEmpty()) {
+        if (userQuizProgressDTOS.isEmpty()) {
             return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList);
         }
         return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList, userQuizProgressDTOS);
@@ -196,6 +211,7 @@ public class QuizServiceImpl implements QuizService {
         UserQuizProgress userQuizProgress = modelMapper.map(userQuizProgressDTO, UserQuizProgress.class);
         userQuizProgressRepository.save(userQuizProgress);
     }
+
     @Override
     @Transactional
     public void deleteAutoSavedProgress(Long userId, Long quizId) {
@@ -215,5 +231,11 @@ public class QuizServiceImpl implements QuizService {
 
         return correctAnswers.stream()
                 .anyMatch(correctAnswer -> correctAnswer.getId().equals(userSelectedOptionId));
+    }
+
+    private boolean isTheUserQuizCreator(Long userId, Quiz quiz) {
+        CourseSubsection courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(quiz.getSubsection().getId()).orElseThrow(CourseSubsectionNotFoundException::new);
+        Course course = courseRepository.findByIdAndDeletedFalse(courseSubsection.getCourse().getId()).orElseThrow(CourseNotFoundException::new);
+        return Objects.equals(course.getUser().getId(), userId);
     }
 }

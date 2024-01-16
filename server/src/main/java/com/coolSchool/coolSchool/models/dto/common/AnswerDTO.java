@@ -14,4 +14,10 @@ public class AnswerDTO {
     @JsonProperty(value = "question")
     private Long questionId;
     private boolean isCorrect;
+
+    public AnswerDTO(Long id, String text, Long questionId) {
+        this.id = id;
+        this.text = text;
+        this.questionId = questionId;
+    }
 }
