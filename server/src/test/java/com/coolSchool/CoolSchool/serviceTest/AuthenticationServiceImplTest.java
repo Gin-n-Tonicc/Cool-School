@@ -2,7 +2,11 @@ package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.enums.TokenType;
 import com.coolSchool.coolSchool.exceptions.token.InvalidTokenException;
-import com.coolSchool.coolSchool.models.dto.auth.*;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
+import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.services.AuthenticationService;
@@ -18,16 +22,19 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.JwtException;
+import org.testng.Assert;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collections;
+import java.util.function.Consumer;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertThrows;
 
 class AuthenticationServiceImplTest {
     @Mock
@@ -59,163 +66,138 @@ class AuthenticationServiceImplTest {
     }
 
     @Test
-    void testRegister() {
+    void registerTest() {
         RegisterRequest registerRequest = new RegisterRequest();
         User user = new User();
+        AuthenticationResponse expectedResponse = new AuthenticationResponse();
 
-        when(userService.createUser(any(RegisterRequest.class))).thenReturn(user);
-        when(jwtService.generateToken(user)).thenReturn("mockedAccessToken");
-        when(jwtService.generateRefreshToken(user)).thenReturn("mockedRefreshToken");
+        when(userService.createUser(registerRequest)).thenReturn(user);
+        when(tokenService.generateAuthResponse(user)).thenReturn(expectedResponse);
 
-        AuthenticationResponse response = authenticationService.register(registerRequest);
+        AuthenticationResponse actualResponse = authenticationService.register(registerRequest);
 
-        Assertions.assertNotNull(response);
-        assertEquals("mockedAccessToken", response.getAccessToken());
-        assertEquals("mockedRefreshToken", response.getRefreshToken());
+        assertEquals(expectedResponse, actualResponse);
+        verify(tokenService, times(1)).generateAuthResponse(user);
     }
 
     @Test
-    void testAuthenticate() {
+    void authenticateTest() {
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         User user = new User();
+        String email = "test@example.com";
+        authenticationRequest.setEmail(email);
+        authenticationRequest.setPassword("password");
 
-        when(userService.findByEmail(any(String.class))).thenReturn(user);
+        when(userService.findByEmail(email)).thenReturn(user);
+        when(jwtService.isTokenValid(anyString(), eq(user))).thenReturn(true);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                authenticationRequest.getEmail(),
-                authenticationRequest.getPassword()
+        AuthenticationResponse actualResponse = authenticationService.authenticate(authenticationRequest);
+
+
+        verify(tokenService, times(1)).revokeAllUserTokens(user);
+        verify(tokenService, times(1)).generateAuthResponse(user);
+    }
+
+
+    @Test
+    void refreshTokenTest() throws IOException {
+        String refreshToken = "validRefreshToken";
+        User user = new User();
+        Token token = new Token();
+        token.setTokenType(TokenType.REFRESH);
+
+        when(jwtService.extractUsername(refreshToken)).thenReturn("user@example.com");
+        when(userService.findByEmail("user@example.com")).thenReturn(user);
+        when(tokenService.findByToken(refreshToken)).thenReturn(token);
+        when(jwtService.isTokenValid(refreshToken, user)).thenReturn(true);
+        when(jwtService.generateToken(user)).thenReturn("newAccessToken");
+        when(jwtService.generateRefreshToken(user)).thenReturn("newRefreshToken");
+
+        AuthenticationResponse actualResponse = authenticationService.refreshToken(refreshToken);
+
+        Assertions.assertNotNull(actualResponse);
+        verify(tokenService, times(1)).revokeAllUserTokens(user);
+        verify(tokenService, times(1)).saveToken(user, "newAccessToken", TokenType.ACCESS);
+    }
+
+    @Test
+    void completeOAuth2Test() {
+        CompleteOAuthRequest completeOAuthRequest = new CompleteOAuthRequest();
+        PublicUserDTO publicUserDTO = new PublicUserDTO();
+        publicUserDTO.setId(123L);
+
+        User updatedUser = new User();
+        updatedUser.setId(123L);
+
+        when(userService.updateOAuth2UserWithFullData(completeOAuthRequest, 123L)).thenReturn(updatedUser);
+        when(tokenService.generateAuthResponse(updatedUser)).thenReturn(new AuthenticationResponse());
+
+        AuthenticationResponse actualResponse = authenticationService.completeOAuth2(completeOAuthRequest, publicUserDTO);
+
+        Assertions.assertNotNull(actualResponse);
+        verify(tokenService, times(1)).generateAuthResponse(updatedUser);
+    }
+
+    @Test
+    void meTestInvalidToken() {
+        String invalidJwtToken = "invalidJwtToken";
+        User user = new User();
+        user.setId(123L);
+
+        Token accessToken = new Token();
+        accessToken.setToken(invalidJwtToken);
+        accessToken.setUser(user);
+
+        when(tokenService.findByUser(user)).thenReturn(Collections.singletonList(accessToken));
+
+        when(jwtService.isTokenValid(invalidJwtToken, user)).thenReturn(false);
+
+        InvalidTokenException invalidTokenException = assertThrows(
+                InvalidTokenException.class,
+                () -> authenticationService.me(invalidJwtToken)
         );
-        when(authenticationManager.authenticate(any(Authentication.class))).thenReturn(authentication);
 
-        when(jwtService.generateToken(user)).thenReturn("mockedAccessToken");
-        when(jwtService.generateRefreshToken(user)).thenReturn("mockedRefreshToken");
-
-        AuthenticationResponse response = authenticationService.authenticate(authenticationRequest);
-
-        Assertions.assertNotNull(response);
+        assertEquals("Invalid token", invalidTokenException.getMessage());
+        verify(tokenService, never()).revokeAllUserTokens(user);
+        verify(tokenService, never()).saveToken(eq(user), anyString(), eq(TokenType.REFRESH));
+    }
+    @Test
+    void meTestInvalidJwtToken() {
+        Assert.assertThrows(InvalidTokenException.class, () -> authenticationService.me(null));
+        Assert.assertThrows(InvalidTokenException.class, () -> authenticationService.me(""));
     }
 
     @Test
-    public void testRefreshToken() throws IOException {
-        RefreshTokenBodyDTO refreshTokenBodyDTO = new RefreshTokenBodyDTO("mockRefreshToken");
-        User mockUser = new User();
-        Token mockToken = new Token();
-        mockToken.setToken("mockRefreshToken");
-        mockToken.setTokenType(TokenType.REFRESH);
+    void meTestInvalidAccessToken() {
+        when(tokenService.findByToken(any())).thenReturn(null);
+        Assert.assertThrows(InvalidTokenException.class, () -> authenticationService.me("validJwtToken"));
 
-        when(jwtService.extractUsername(refreshTokenBodyDTO.getRefreshToken())).thenReturn("test@example.com");
-        when(tokenService.findByToken("mockRefreshToken")).thenReturn(mockToken);
-        when(userService.findByEmail("test@example.com")).thenReturn(mockUser);
-        when(jwtService.isTokenValid("mockRefreshToken", mockUser)).thenReturn(true);
-        when(jwtService.generateToken(mockUser)).thenReturn("mockAccessToken");
-
-        AuthenticationResponse response = authenticationService.refreshToken(refreshTokenBodyDTO);
-
-        assertEquals("mockAccessToken", response.getAccessToken());
-        assertEquals("mockRefreshToken", response.getRefreshToken());
-
-        Mockito.verify(tokenService, Mockito.times(1)).revokeAllUserTokens(mockUser);
-        Mockito.verify(tokenService, Mockito.times(1)).saveToken(mockUser, "mockAccessToken", TokenType.ACCESS);
-        Mockito.verify(tokenService, Mockito.times(1)).saveToken(mockUser, "mockRefreshToken", TokenType.REFRESH);
+        verify(tokenService, Mockito.times(1)).findByToken("validJwtToken");
     }
 
     @Test
-    public void testRefreshToken_InvalidRefreshToken() {
-        RefreshTokenBodyDTO refreshTokenBodyDTO = new RefreshTokenBodyDTO(null);
+    void meTestInvalidTokenValidity() {
+        Token accessToken = new Token();
+        accessToken.setToken("validJwtToken");
+        when(tokenService.findByToken("validJwtToken")).thenReturn(accessToken);
+        when(jwtService.isTokenValid("validJwtToken", accessToken.getUser())).thenThrow(JwtException.class);
 
-        assertThrows(InvalidTokenException.class, () -> {
-            authenticationService.refreshToken(refreshTokenBodyDTO);
-        });
+        Assert.assertThrows(JwtException.class, () -> authenticationService.me("validJwtToken"));
 
-        Mockito.verifyNoInteractions(jwtService, tokenService, userService);
+        verify(tokenService, Mockito.times(1)).findByToken("validJwtToken");
+        verify(jwtService, Mockito.times(1)).isTokenValid("validJwtToken", accessToken.getUser());
     }
-
     @Test
-    public void testRefreshToken_InvalidUsernameInToken() {
-        RefreshTokenBodyDTO refreshTokenBodyDTO = new RefreshTokenBodyDTO("mockRefreshToken");
-        when(jwtService.extractUsername(refreshTokenBodyDTO.getRefreshToken())).thenReturn(null);
+    void attachAuthCookiesTest() {
+        AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
+                .accessToken("sampleAccessToken")
+                .refreshToken("sampleRefreshToken")
+                .build();
 
-        assertThrows(InvalidTokenException.class, () -> {
-            authenticationService.refreshToken(refreshTokenBodyDTO);
-        });
-        Mockito.verify(jwtService, Mockito.times(1)).extractUsername("mockRefreshToken");
-    }
+        Consumer cookieConsumer = mock(Consumer.class);
 
-    @Test
-    public void testRefreshToken_InvalidTokenType() {
-        RefreshTokenBodyDTO refreshTokenBodyDTO = new RefreshTokenBodyDTO("mockRefreshToken");
-        User mockUser = new User();
-        Token mockAccessToken = new Token();
-        mockAccessToken.setToken("mockRefreshToken");
-        mockAccessToken.setTokenType(TokenType.ACCESS);
+        authenticationService.attachAuthCookies(authenticationResponse, cookieConsumer);
 
-        when(jwtService.extractUsername(refreshTokenBodyDTO.getRefreshToken())).thenReturn("test@example.com");
-        when(tokenService.findByToken("mockRefreshToken")).thenReturn(mockAccessToken);
-        when(userService.findByEmail("test@example.com")).thenReturn(mockUser);
-
-        assertThrows(InvalidTokenException.class, () -> {
-            authenticationService.refreshToken(refreshTokenBodyDTO);
-        });
-
-        Mockito.verify(tokenService, Mockito.times(1)).findByToken("mockRefreshToken");
-    }
-
-    @Test
-    public void testRefreshToken_InvalidTokenValidation() {
-        RefreshTokenBodyDTO refreshTokenBodyDTO = new RefreshTokenBodyDTO("mockRefreshToken");
-        User mockUser = new User();
-        Token mockToken = new Token();
-        mockToken.setToken("mockRefreshToken");
-        mockToken.setTokenType(TokenType.REFRESH);
-
-        when(jwtService.extractUsername(refreshTokenBodyDTO.getRefreshToken())).thenReturn("test@example.com");
-        when(tokenService.findByToken("mockRefreshToken")).thenReturn(mockToken);
-        when(userService.findByEmail("test@example.com")).thenReturn(mockUser);
-        when(jwtService.isTokenValid("mockRefreshToken", mockUser)).thenReturn(false);
-
-        assertThrows(InvalidTokenException.class, () -> {
-            authenticationService.refreshToken(refreshTokenBodyDTO);
-        });
-
-        Mockito.verify(jwtService, Mockito.times(1)).isTokenValid("mockRefreshToken", mockUser);
-        Mockito.verify(tokenService, Mockito.times(1)).revokeToken(mockToken);
-    }
-
-    @Test
-    public void testMe_InvalidAccessToken() {
-        AccessTokenBodyDTO accessTokenBodyDTO = new AccessTokenBodyDTO("invalidAccessToken");
-
-        when(tokenService.findByToken("invalidAccessToken")).thenReturn(null);
-
-        assertThrows(InvalidTokenException.class, () -> {
-            authenticationService.me(accessTokenBodyDTO);
-        });
-
-        Mockito.verifyNoInteractions(jwtService, modelMapper);
-    }
-
-    @Test
-    public void testMe_InvalidTokenValidation() {
-        // Arrange
-        AccessTokenBodyDTO accessTokenBodyDTO = new AccessTokenBodyDTO("mockAccessToken");
-        User mockUser = new User(); // create a mock User object
-        Token mockAccessToken = new Token();
-        Token mockRefreshToken = new Token();
-
-        mockAccessToken.setToken("mockAccessToken");
-        mockAccessToken.setUser(mockUser);
-
-        mockRefreshToken.setToken("mockRefreshToken");
-        mockRefreshToken.setTokenType(TokenType.REFRESH);
-
-        when(tokenService.findByToken("mockAccessToken")).thenReturn(mockAccessToken);
-        when(tokenService.findByUser(mockUser)).thenReturn(List.of(mockAccessToken, mockRefreshToken));
-        when(jwtService.isTokenValid("mockAccessToken", mockUser)).thenReturn(false);
-        assertThrows(InvalidTokenException.class, () -> {
-            authenticationService.me(accessTokenBodyDTO);
-        });
-
-        Mockito.verify(jwtService, Mockito.times(1)).isTokenValid("mockAccessToken", mockUser);
-        Mockito.verify(tokenService, Mockito.times(1)).revokeAllUserTokens(mockUser);
+        verify(tokenService, Mockito.times(1)).attachAuthCookies(eq(authenticationResponse), eq(cookieConsumer));
     }
 }
