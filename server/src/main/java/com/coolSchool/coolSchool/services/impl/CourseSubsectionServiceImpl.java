@@ -81,7 +81,7 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
         }
         CourseSubsection subsection = existingCourseSubsectionOptional.get();
         Set<Resource> resources = subsection.getResources();
-        if(courseSubsectionDTO.getResources()!=null){
+        if (courseSubsectionDTO.getResources() != null) {
             resources = courseSubsectionDTO.getResources().stream().map(x -> resourceRepository.findByIdAndDeletedFalse(x).orElseThrow(FileNotFoundException::new)).collect(Collectors.toSet());
         }
         courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);

@@ -2,6 +2,8 @@ package com.coolSchool.coolSchool.config;
 
 import com.coolSchool.coolSchool.exceptions.handlers.JwtAuthenticationEntryPoint;
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.security.OAuth2LoginSuccessHandler;
+import com.coolSchool.coolSchool.services.impl.security.CustomOAuth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,17 +31,21 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
     private final ObjectMapper objectMapper;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final FrontendConfig frontendConfig;
+    private final CustomOAuth2UserService oauthUserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .sessionManagement(sessionManagementCustomizer -> sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors()
                 .and()
                 .csrf()
                 .disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper))
-                .and()
+                .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
+                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper));
+                })
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/files/upload",
@@ -56,7 +62,8 @@ public class SecurityConfiguration {
                         "/configuration/security",
                         "/swagger-ui/**",
                         "/webjars/**",
-                        "/swagger-ui.html"
+                        "/swagger-ui.html",
+                        "/oauth/**"
                 )
                 .permitAll()
 
@@ -93,15 +100,18 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                .oauth2Login(oauth2 -> {
+                    oauth2.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oauthUserService));
+                    oauth2.loginPage(frontendConfig.getLoginUrl()).permitAll();
+                    oauth2.successHandler(oAuth2LoginSuccessHandler);
+                })
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout()
-                .logoutUrl("/api/v1/auth/logout")
-                .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
+                .logout(httpSecurityLogoutConfigurer -> {
+                    httpSecurityLogoutConfigurer.logoutUrl("/api/v1/auth/logout");
+                    httpSecurityLogoutConfigurer.addLogoutHandler(logoutHandler);
+                    httpSecurityLogoutConfigurer.logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
+                });
 
         return http.build();
     }

@@ -7,4 +7,5 @@ export interface IUser {
   username: string;
   role: RolesEnum;
   description: string;
+  additionalInfoRequired: boolean;
 }

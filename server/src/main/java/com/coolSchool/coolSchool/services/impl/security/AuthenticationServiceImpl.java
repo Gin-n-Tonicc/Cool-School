@@ -1,9 +1,13 @@
-package com.coolSchool.coolSchool.services.impl;
+package com.coolSchool.coolSchool.services.impl.security;
 
 import com.coolSchool.coolSchool.enums.TokenType;
 import com.coolSchool.coolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.coolSchool.exceptions.user.UserLoginException;
-import com.coolSchool.coolSchool.models.dto.auth.*;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
+import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.services.AuthenticationService;
@@ -11,6 +15,7 @@ import com.coolSchool.coolSchool.services.JwtService;
 import com.coolSchool.coolSchool.services.TokenService;
 import com.coolSchool.coolSchool.services.UserService;
 import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +24,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 
 @Service
@@ -33,18 +39,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
         User user = userService.createUser(request);
-        String jwtToken = jwtService.generateToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        return tokenService.generateAuthResponse(user);
+    }
 
-        tokenService.saveToken(user, jwtToken, TokenType.ACCESS);
-        tokenService.saveToken(user, refreshToken, TokenType.REFRESH);
-
-        return AuthenticationResponse
-                .builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .user(modelMapper.map(user, PublicUserDTO.class))
-                .build();
+    @Override
+    public AuthenticationResponse completeOAuth2(CompleteOAuthRequest request, PublicUserDTO currentLoggedUser) {
+        User updatedUser = userService.updateOAuth2UserWithFullData(request, currentLoggedUser.getId());
+        return tokenService.generateAuthResponse(updatedUser);
     }
 
     @Override
@@ -61,26 +62,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         User user = userService.findByEmail(request.getEmail());
-
-        String jwtToken = jwtService.generateToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
         tokenService.revokeAllUserTokens(user);
-        tokenService.saveToken(user, jwtToken, TokenType.ACCESS);
-        tokenService.saveToken(user, refreshToken, TokenType.REFRESH);
 
-        return AuthenticationResponse
-                .builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .user(modelMapper.map(user, PublicUserDTO.class))
-                .build();
+        return tokenService.generateAuthResponse(user);
     }
 
     @Override
-    public AuthenticationResponse refreshToken(RefreshTokenBodyDTO refreshTokenBodyDTO) {
-        final String refreshToken = refreshTokenBodyDTO.getRefreshToken();
-
+    public AuthenticationResponse refreshToken(String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             throw new InvalidTokenException();
         }
@@ -124,8 +112,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse me(AccessTokenBodyDTO accessTokenBodyDTO) {
-        Token accessToken = tokenService.findByToken(accessTokenBodyDTO.getAccessToken());
+    public AuthenticationResponse me(String jwtToken) {
+        if (jwtToken == null || jwtToken.isEmpty()) {
+            throw new InvalidTokenException();
+        }
+
+        Token accessToken = tokenService.findByToken(jwtToken);
 
         if (accessToken == null) {
             throw new InvalidTokenException();
@@ -170,5 +162,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .refreshToken(refreshTokenString)
                 .user(publicUser)
                 .build();
+    }
+
+    @Override
+    public void attachAuthCookies(AuthenticationResponse authenticationResponse, Consumer<Cookie> cookieConsumer) {
+        tokenService.attachAuthCookies(authenticationResponse, cookieConsumer);
     }
 }

@@ -5,7 +5,7 @@ import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
 import { RolesEnum } from '../../../../types/enums/RolesEnum';
-import { IAuthResponse } from '../../../../types/interfaces/IAuthResponse';
+import { IUser } from '../../../../types/interfaces/IUser';
 import {
   ADDRESS_VALIDATIONS,
   DESCRIPTION_VALIDATIONS,
@@ -38,9 +38,7 @@ type Inputs = {
 export default function RegisterForm({ redirectTo }: RegisterFormProps) {
   const navigate = useNavigate();
   const { loginUser } = useAuthContext();
-  const { post, response } = useFetch<IAuthResponse>(
-    apiUrlsConfig.auth.register
-  );
+  const { post, response } = useFetch<IUser>(apiUrlsConfig.auth.register);
 
   const {
     handleSubmit,
@@ -88,8 +86,8 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const user = await post({
-      firstname: data['First Name'],
-      lastname: data['Last Name'],
+      firstname: data['First Name'].trim(),
+      lastname: data['Last Name'].trim(),
       email: data.Email.trim(),
       password: data.Password.trim(),
       address: data.Address.trim(),

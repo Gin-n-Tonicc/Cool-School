@@ -1,7 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
-
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.CommentRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.CommentGetByBlogResponseDTO;

@@ -1,10 +1,15 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.enums.TokenType;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.TokenRepository;
-import com.coolSchool.coolSchool.services.impl.TokenServiceImpl;
+import com.coolSchool.coolSchool.services.JwtService;
+import com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl;
+import jakarta.servlet.http.Cookie;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,10 +17,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.AssertJUnit.assertEquals;
@@ -28,6 +37,8 @@ class TokenServiceImplTest {
 
     @InjectMocks
     private TokenServiceImpl tokenService;
+    @Mock
+    private JwtService jwtService;
 
     @Test
     public void testSaveToken() {
@@ -115,5 +126,46 @@ class TokenServiceImplTest {
 
         verify(tokenRepository, never()).findAllByUser(any(User.class));
         verify(tokenRepository, never()).deleteAll(anyList());
+    }
+    @Test
+    void createJwtCookieTest() {
+        String jwtToken = "sampleJwtToken";
+        Cookie jwtCookie = tokenService.createJwtCookie(jwtToken);
+
+        Assertions.assertNotNull(jwtCookie);
+        Assertions.assertEquals(TokenServiceImpl.AUTH_COOKIE_KEY_JWT, jwtCookie.getName());
+        Assertions.assertEquals(URLEncoder.encode(jwtToken, StandardCharsets.UTF_8), jwtCookie.getValue());
+        Assertions.assertEquals("/", jwtCookie.getPath());
+    }
+
+    @Test
+    void createRefreshCookieTest() {
+        String refreshToken = "sampleRefreshToken";
+        Cookie refreshCookie = tokenService.createRefreshCookie(refreshToken);
+
+        Assertions.assertNotNull(refreshCookie);
+        Assertions.assertEquals(TokenServiceImpl.AUTH_COOKIE_KEY_REFRESH, refreshCookie.getName());
+        Assertions.assertEquals(URLEncoder.encode(refreshToken, StandardCharsets.UTF_8), refreshCookie.getValue());
+        Assertions.assertEquals("/", refreshCookie.getPath());
+
+    }
+
+    @Test
+    void detachAuthCookiesTest() {
+        Consumer<Cookie> cookieConsumer = mock(Consumer.class);
+
+        tokenService.detachAuthCookies(cookieConsumer);
+
+        verify(cookieConsumer, times(1)).accept(argThat(cookie ->
+                "COOL_SCHOOL_SESSION_JWT".equals(cookie.getName()) &&
+                        "placeholder".equals(cookie.getValue()) &&
+                        cookie.getMaxAge() == 0
+        ));
+
+        verify(cookieConsumer, times(1)).accept(argThat(cookie ->
+                "COOL_SCHOOL_SESSION_REFRESH".equals(cookie.getName()) &&
+                        "placeholder".equals(cookie.getValue()) &&
+                        cookie.getMaxAge() == 0
+        ));
     }
 }

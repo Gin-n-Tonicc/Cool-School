@@ -52,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
             return modelMapper.map(categoryEntity, CategoryDTO.class);
         } catch (ConstraintViolationException exception) {
             throw new ValidationCategoryException(exception.getConstraintViolations());
-        } catch (DataIntegrityViolationException exception){
+        } catch (DataIntegrityViolationException exception) {
             throw new CategoryCreateException(true);
         }
     }

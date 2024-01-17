@@ -1,3 +1,9 @@
+server:
+  frontend:
+    baseUrl: ${FRONTEND_URL}
+    loginUrl: ${server.frontend.baseUrl}/login
+    finishRegisterUrl: ${server.frontend.baseUrl}/finish-register
+
 spring:
   servlet:
     multipart:
@@ -13,19 +19,28 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
-
-application:
   security:
     jwt:
       secret-key: ${JWT_SECRET}
       expiration: ${JWT_EXPIRATION} # a day
       refresh-token:
         expiration: ${REFRESH_TOKEN_EXPIRATION} # 7 days
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - https://www.googleapis.com/auth/userinfo.email
+              - https://www.googleapis.com/auth/userinfo.profile
+
+application:
 upload:
   directory: server/src/main/resources/static/uploads/

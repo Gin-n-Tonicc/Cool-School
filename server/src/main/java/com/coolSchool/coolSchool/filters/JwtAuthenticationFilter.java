@@ -4,6 +4,7 @@ import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.repositories.TokenRepository;
 import com.coolSchool.coolSchool.services.JwtService;
 import com.coolSchool.coolSchool.services.UserService;
+import com.coolSchool.coolSchool.utils.CookieHelper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
+import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
 
 @Component
 @RequiredArgsConstructor
@@ -36,20 +39,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/v1/auth")) {
+        String path = request.getServletPath();
+        if (path.contains("/api/v1/auth") && !path.contains("/api/v1/auth/complete-oauth")) {
             filterChain.doFilter(request, response);
             return;
         }
+
         request.setAttribute(userKey, null);
 
-        final String authHeader = request.getHeader("Authorization");
+        final String jwt = CookieHelper.readCookie(AUTH_COOKIE_KEY_JWT, request.getCookies()).orElse(null);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (jwt == null || jwt.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwt = authHeader.substring(7);
         final String userEmail = jwtService.extractUsername(jwt);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -72,6 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+
             request.setAttribute(userKey, modelMapper.map(userDetails, PublicUserDTO.class));
         }
 

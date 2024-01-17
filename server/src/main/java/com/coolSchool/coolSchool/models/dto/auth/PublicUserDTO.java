@@ -18,4 +18,5 @@ public class PublicUserDTO {
     private String email;
     private Role role;
     private String description;
+    private boolean additionalInfoRequired;
 }
