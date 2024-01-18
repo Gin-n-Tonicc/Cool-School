@@ -1,5 +1,6 @@
 {
   "cool.school": "Cool School",
+  "moto": "ИДЕАЛНОТО УЧИЛИЩЕ",
 
   "navbar.home": "Начало",
   "navbar.contact": "Контакт",
@@ -8,12 +9,12 @@
   "navbar.login": "Впиши се",
   "navbar.register": "Регистрация",
   "navbar.logout": "Излез",
+  "navbar.finish.register": "Завърши регистрация",
 
   "language.picker.title": "Език",
   "language.picker.bulgarian": "Български",
   "language.picker.english": "Английски",
 
-  "home.moto": "ИДЕАЛНОТО УЧИЛИЩЕ",
   "home.app.description": "Добре дошли в трансформиращо образователно изживяване, където болките от традиционното обучение са заменени с безпроблемните предимства на онлайн училищата. Открийте несравнимите предимства, които правят онлайн обучението идеалният избор за тези, които търсят удобно, гъвкаво и обогатяващо учебно пътуване.",
   "home.view.courses.button": "Виж Курсовете",
   "home.get.started.button": "Първи стъпки",
@@ -47,9 +48,12 @@
 
   "footer.text": "Открийте несравнимите предимства, които правят онлайн обучението идеалният избор за тези, които търсят удобно, гъвкаво и обогатяващо учебно пътуване. ИДЕАЛНОТО УЧИЛИЩЕ",
   "footer.contact.us": "Свържете се с нас",
-  "footer.contact.us.address": "7700 Гр.Търговище общ.Търговище обл.Търговище ул. ”Кап. Данаджиев” 22",
-  "footer.contact.us.phone": "Телефон: 00359 601 6-30-70",
-  "footer.contact.us.email": "Имейл: stefanbelis932@gmail.com",
+  "footer.contact.us.address": "Адрес:",
+  "footer.contact.us.address.text": "7700 Гр.Търговище общ.Търговище обл.Търговище ул. ”Кап. Данаджиев” 22",
+  "footer.contact.us.phone": "Телефон:",
+  "footer.contact.us.phone.text": "00359 601 6-30-70",
+  "footer.contact.us.email": "Имейл:",
+  "footer.contact.us.email.text": "stefanbelis932@gmail.com",
 
   "contact.contact.us": "Свържете се с нас",
   "contact.get.in.touch": "Свържете се с нас",

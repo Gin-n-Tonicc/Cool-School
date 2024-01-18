@@ -19,11 +19,13 @@ public class OAuth2AuthenticationServiceImpl implements OAuth2AuthenticationServ
     private final TokenService tokenService;
 
     @Override
-    public void processOAuthPostLogin(CustomOAuth2User oAuth2User, Consumer<Cookie> addCookieFunc) {
+    public boolean processOAuthPostLogin(CustomOAuth2User oAuth2User, Consumer<Cookie> addCookieFunc) {
         User user = userService.processOAuthUser(oAuth2User);
 
         tokenService.revokeAllUserTokens(user);
         AuthenticationResponse authResponse = tokenService.generateAuthResponse(user);
         tokenService.attachAuthCookies(authResponse, addCookieFunc);
+
+        return user.isAdditionalInfoRequired();
     }
 }

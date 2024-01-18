@@ -1,5 +1,6 @@
 {
   "cool.school": "Cool School",
+  "moto": "THE IDEAL SCHOOL",
 
   "navbar.home": "Home",
   "navbar.contact": "Contact",
@@ -8,12 +9,12 @@
   "navbar.login": "Login",
   "navbar.register": "Register",
   "navbar.logout": "Logout",
+  "navbar.finish.register": "Complete Register",
 
   "language.picker.title": "Language",
   "language.picker.bulgarian": "Bulgarian",
   "language.picker.english": "English",
 
-  "home.moto": "THE IDEAL SCHOOL",
   "home.app.description": "Welcome to a transformative educational experience where the pains of traditional learning are replaced with the seamless benefits of online schools. Discover the unparalleled advantages that make online education the ideal choice for those seeking a convenient, flexible, and enriching learning journey.",
   "home.view.courses.button": "View Courses",
   "home.get.started.button": "Get Started",
@@ -47,9 +48,13 @@
 
   "footer.text": "Discover the unparalleled advantages that make online education the ideal choice for those seeking a convenient, flexible, and enriching learning journey. THE IDEAL SCHOOL",
   "footer.contact.us": "Contact us",
-  "footer.contact.us.address": "Address: 7700 Targovishte town, Targovishte municipality, Targovishte region, ”Cap. Danajiev” 22",
-  "footer.contact.us.phone": "Phone: 00359 601 6-30-70",
-  "footer.contact.us.email": "Email: stefanbelis932@gmail.com",
+
+  "footer.contact.us.address": "Address:",
+  "footer.contact.us.address.text": "7700 Targovishte town, Targovishte municipality, Targovishte region, ”Cap. Danajiev” 22",
+  "footer.contact.us.phone": "Phone:",
+  "footer.contact.us.phone.text": "00359 601 6-30-70",
+  "footer.contact.us.email": "Email:",
+  "footer.contact.us.email.text": "stefanbelis932@gmail.com",
 
   "contact.contact.us": "Contact us",
   "contact.get.in.touch": "Get in Touch",

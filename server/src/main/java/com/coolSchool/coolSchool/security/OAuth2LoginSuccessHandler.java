@@ -22,7 +22,12 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                                         Authentication authentication) throws IOException {
         CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
 
-        oAuth2AuthenticationService.processOAuthPostLogin(oauthUser, response::addCookie);
-        response.sendRedirect(frontendConfig.getFinishRegisterUrl());
+        boolean isAdditionalInfoRequired = oAuth2AuthenticationService.processOAuthPostLogin(oauthUser, response::addCookie);
+
+        if (isAdditionalInfoRequired) {
+            response.sendRedirect(frontendConfig.getFinishRegisterUrl());
+        } else {
+            response.sendRedirect(frontendConfig.getBaseUrl());
+        }
     }
 }
