@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 
 public class BlogNotEnabledException extends ApiException {
     public BlogNotEnabledException() {
-            super("The blog will be visible after admin approval!", HttpStatus.BAD_REQUEST);
+        super("The blog will be visible after admin approval!", HttpStatus.BAD_REQUEST);
     }
 }

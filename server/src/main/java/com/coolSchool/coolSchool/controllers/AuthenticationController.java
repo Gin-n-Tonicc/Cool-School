@@ -1,15 +1,23 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.models.dto.auth.*;
+import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
+import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
+import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.services.AuthenticationService;
+import com.coolSchool.coolSchool.utils.CookieHelper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+
+import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
+import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_REFRESH;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -19,22 +27,48 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authenticationService.register(request));
+    public ResponseEntity<PublicUserDTO> register(@RequestBody RegisterRequest request, HttpServletResponse servletResponse) {
+        AuthenticationResponse authenticationResponse = authenticationService.register(request);
+        authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
+
+        return ResponseEntity.ok(authenticationResponse.getUser());
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+    public ResponseEntity<PublicUserDTO> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
+        authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
+
+        return ResponseEntity.ok(authenticationResponse.getUser());
     }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenBodyDTO refreshTokenBody) throws IOException {
-        return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenBody));
+    @PutMapping("/complete-oauth")
+    public ResponseEntity<PublicUserDTO> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        PublicUserDTO currentLoggedUser = (PublicUserDTO) servletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+
+        AuthenticationResponse authenticationResponse = authenticationService.completeOAuth2(request, currentLoggedUser);
+        authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
+
+        return ResponseEntity.ok(authenticationResponse.getUser());
     }
 
-    @PostMapping("/me")
-    public ResponseEntity<AuthenticationResponse> getMe(@RequestBody AccessTokenBodyDTO accessTokenBodyDTO) {
-        return ResponseEntity.ok(authenticationService.me(accessTokenBodyDTO));
+    @GetMapping("/refresh-token")
+    public ResponseEntity<PublicUserDTO> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String refreshToken = CookieHelper.readCookie(AUTH_COOKIE_KEY_REFRESH, request.getCookies()).orElse(null);
+
+        AuthenticationResponse authenticationResponse = authenticationService.refreshToken(refreshToken);
+        authenticationService.attachAuthCookies(authenticationResponse, response::addCookie);
+
+        return ResponseEntity.ok(authenticationResponse.getUser());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<PublicUserDTO> getMe(HttpServletRequest request, HttpServletResponse response) {
+        String jwtToken = CookieHelper.readCookie(AUTH_COOKIE_KEY_JWT, request.getCookies()).orElse(null);
+
+        AuthenticationResponse authenticationResponse = authenticationService.me(jwtToken);
+        authenticationService.attachAuthCookies(authenticationResponse, response::addCookie);
+
+        return ResponseEntity.ok(authenticationResponse.getUser());
     }
 }

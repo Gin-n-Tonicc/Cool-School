@@ -5,7 +5,6 @@ import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.coolSchool.exceptions.comment.CommentNotFoundException;
 import com.coolSchool.coolSchool.exceptions.comment.ValidationCommentException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
-
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.CommentRequestDTO;

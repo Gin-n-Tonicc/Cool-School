@@ -1,6 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
-import com.coolSchool.coolSchool.services.impl.JwtServiceImpl;
+import com.coolSchool.coolSchool.services.impl.security.JwtServiceImpl;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

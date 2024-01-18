@@ -8,6 +8,7 @@ import AdminTableResources from './components/admin/admin-tables/AdminTableResou
 import AdminTableSubsections from './components/admin/admin-tables/AdminTableSubsections';
 import AdminTableUsers from './components/admin/admin-tables/AdminTableUsers';
 import Authenticate from './components/auth/authenticate/Authenticate';
+import FinishRegister from './components/auth/finish-register/FinishRegister';
 import Login from './components/auth/login/Login';
 import Logout from './components/auth/logout/Logout';
 import Register from './components/auth/register/Register';
@@ -69,6 +70,10 @@ function App() {
 
                     {/* Only logged users */}
                     <Route element={<ProtectedRoute onlyUser={true} />}>
+                      <Route
+                        path={PagesEnum.FinishRegister}
+                        element={<FinishRegister />}
+                      />
                       <Route path={PagesEnum.Logout} element={<Logout />} />
                       <Route path={PagesEnum.Quizzes} element={<Quizzes />} />
                       <Route

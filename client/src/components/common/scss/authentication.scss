@@ -76,18 +76,6 @@ figure {
 #signin {
   margin-top: 16px;
 }
-.signup-image-link {
-  font-size: 14px;
-  color: $black-color;
-  display: block;
-  text-align: center;
-  width: fit-content;
-  margin: 0 auto;
-
-  &:hover {
-    color: $btn_hover;
-  }
-}
 
 .term-service {
   font-size: 13px;
@@ -242,6 +230,64 @@ label.valid {
   padding-bottom: 87px;
   // padding: 67px 0;
 }
+
+.external-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  gap: 20px;
+  margin-bottom: 1px;
+
+  & .signup-image-link {
+    text-align: center;
+
+    & h6 {
+      color: $heading_color;
+      margin: 0 auto;
+    }
+
+    & h5 {
+      display: inline;
+      text-align: center;
+      width: fit-content;
+      margin: 0 auto;
+      color: $btn_hover;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  & .or-login-text {
+    text-align: center;
+    margin: 0;
+  }
+
+  & .external-login-btn {
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+      0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+
+    font-size: 14px;
+    line-height: 16px;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #565656;
+    padding: 12px 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    justify-content: center;
+
+    & .external-login-btn-icon {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
 .social-login {
   @extend display-flex;
   @include align-items(center);
