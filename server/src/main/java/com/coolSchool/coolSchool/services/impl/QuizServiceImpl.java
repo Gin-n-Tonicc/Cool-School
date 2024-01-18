@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -158,13 +157,21 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public void deleteQuiz(Long id) {
-        Optional<Quiz> quiz = quizRepository.findByIdAndDeletedFalse(id);
-        if (quiz.isPresent()) {
-            quiz.get().setDeleted(true);
-            quizRepository.save(quiz.get());
-        } else {
-            throw new QuizNotFoundException();
+        Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(QuizNotFoundException::new);
+        List<Question> quizQuestions = questionService.getQuestionsByQuizId(id);
+
+        for (Question question : quizQuestions) {
+            for (AnswerDTO answerDTO : answerService.getAnswersByQuestionId(question.getId())) {
+                Answer answer = modelMapper.map(answerDTO, Answer.class);
+                answer.setDeleted(true);
+                answerService.deleteAnswer(answer.getId());
+            }
+            question.setDeleted(true);
+            questionService.deleteQuestion(question.getId());
         }
+
+        quiz.setDeleted(true);
+        quizRepository.save(quiz);
     }
 
     @Override
