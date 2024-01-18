@@ -13,7 +13,7 @@ public interface QuizService {
 
     QuizDTO createQuiz(QuizDataDTO quizData);
 
-    QuizDTO updateQuiz(Long id, QuizDTO quizDTO);
+    QuizDTO updateQuiz(Long id, QuizDataDTO quizDTO);
 
     void deleteQuiz(Long id);
     QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId);

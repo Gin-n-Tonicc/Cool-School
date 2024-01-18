@@ -142,7 +142,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    private User findById(Long id) {
+    public User findById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("id"));
     }

@@ -5,7 +5,6 @@ import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
 import com.coolSchool.coolSchool.services.QuizService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,8 +44,9 @@ public class QuizController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuizDTO> updateQuiz(@PathVariable("id") Long id, @Valid @RequestBody QuizDTO quizDTO) {
-        return ResponseEntity.ok(quizService.updateQuiz(id, quizDTO));
+    public ResponseEntity<QuizDTO> updateQuiz(@PathVariable Long id, @RequestBody QuizDataDTO updatedQuizData) {
+        QuizDTO updatedQuiz = quizService.updateQuiz(id, updatedQuizData);
+        return ResponseEntity.ok(updatedQuiz);
     }
 
     @DeleteMapping("/{id}")

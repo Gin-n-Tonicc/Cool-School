@@ -1,11 +1,9 @@
 package com.coolSchool.coolSchool.services.impl;
 
-import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.coolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
 import com.coolSchool.coolSchool.exceptions.quizzes.NoMoreAttemptsQuizException;
 import com.coolSchool.coolSchool.exceptions.quizzes.QuizNotFoundException;
-import com.coolSchool.coolSchool.exceptions.quizzes.ValidationQuizException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
 import com.coolSchool.coolSchool.models.entity.*;
@@ -15,10 +13,8 @@ import com.coolSchool.coolSchool.services.QuestionService;
 import com.coolSchool.coolSchool.services.QuizService;
 import com.coolSchool.coolSchool.services.UserService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -123,27 +119,42 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizDTO updateQuiz(Long id, QuizDTO quizDTO) {
-        Optional<Quiz> existingQuizOptional = quizRepository.findByIdAndDeletedFalse(id);
+    public QuizDTO updateQuiz(Long quizId, QuizDataDTO updatedQuizData) {
+        QuizDTO updatedQuizDTO = updatedQuizData.getQuizDTO();
+        List<QuestionAndAnswersDTO> updatedQuestionAndAnswersList = updatedQuizData.getData();
 
-        if (existingQuizOptional.isEmpty()) {
-            throw new QuizNotFoundException();
-        }
-        courseSubsectionRepository.findByIdAndDeletedFalse(quizDTO.getSubsectionId()).orElseThrow(NoSuchElementException::new);
-        Quiz existingQuiz = existingQuizOptional.get();
-        modelMapper.map(quizDTO, existingQuiz);
+        Quiz existingQuiz = quizRepository.findById(quizId)
+                .orElseThrow(QuizNotFoundException::new);
 
-        try {
-            existingQuiz.setId(id);
-            Quiz updatedQuiz = quizRepository.save(existingQuiz);
-            return modelMapper.map(updatedQuiz, QuizDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationQuizException(validationException.getConstraintViolations());
+        CourseSubsection courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(updatedQuizDTO.getSubsectionId()).orElseThrow(CourseSubsectionNotFoundException::new);
+
+        existingQuiz.setTitle(updatedQuizDTO.getTitle());
+        existingQuiz.setDescription(updatedQuizDTO.getDescription());
+        existingQuiz.setStartTime(updatedQuizDTO.getStartTime());
+        existingQuiz.setEndTime(updatedQuizDTO.getEndTime());
+        existingQuiz.setSubsection(courseSubsection);
+        existingQuiz.setAttemptLimit(updatedQuizDTO.getAttemptLimit());
+
+        Quiz savedQuiz = quizRepository.save(existingQuiz);
+
+        for (QuestionAndAnswersDTO updatedQnA : updatedQuestionAndAnswersList) {
+            QuestionDTO updatedQuestionDTO = updatedQnA.getQuestion();
+            updatedQuestionDTO.setQuizId(savedQuiz.getId());
+            updatedQuestionDTO.setDescription(updatedQnA.getQuestion().getDescription());
+            updatedQuestionDTO.setMarks(updatedQnA.getQuestion().getMarks());
+
+            QuestionDTO savedQuestion = questionService.updateQuestion(updatedQuestionDTO.getId(), updatedQuestionDTO);
+
+            for (AnswerDTO updatedAnswerDTO : updatedQnA.getAnswers()) {
+                updatedAnswerDTO.setQuestionId(savedQuestion.getId());
+                updatedAnswerDTO.setCorrect(updatedAnswerDTO.isCorrect());
+                updatedAnswerDTO.setText(updatedAnswerDTO.getText());
+                answerService.updateAnswer(updatedAnswerDTO.getId(), updatedAnswerDTO);
             }
-            throw exception;
         }
+        return modelMapper.map(savedQuiz, QuizDTO.class);
     }
+
 
     @Override
     public void deleteQuiz(Long id) {
