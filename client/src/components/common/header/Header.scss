@@ -55,10 +55,6 @@
         }
       }
       .btn_1 {
-        color: $white-color;
-        font-size: 14px;
-        padding: 11.5px 33px;
-        margin-left: 41px;
       }
     }
   }
@@ -73,19 +69,31 @@
 }
 
 .dropdown {
+  .dropdown-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+  }
   .dropdown-menu {
     transition: all 0.5s;
     overflow: hidden;
     transform-origin: top center;
     transform: scale(1, 0);
     display: block;
-    margin-top: 32px;
     .dropdown-item {
       font-size: 14px;
       padding: 9px 18px !important;
       color: $black_color !important;
+
       &:hover {
         color: $btn_bg !important;
+      }
+
+      &.active {
+        color: #ee390f !important;
+        background-color: transparent;
       }
     }
   }

@@ -7,6 +7,7 @@ import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { RolesEnum } from '../../../types/enums/RolesEnum';
 import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
+import LanguagePicker from './language-picker/LanguagePicker';
 
 function GuestLinks() {
   return (
@@ -158,6 +159,10 @@ export default function Header() {
                         hasFinishedOAuth2={hasFinishedOAuth2}
                       />
                     )}
+
+                    <li className="d-none d-lg-block">
+                      <LanguagePicker />
+                    </li>
                   </ul>
                 </div>
               </nav>
