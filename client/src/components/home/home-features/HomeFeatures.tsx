@@ -1,9 +1,12 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './HomeFeatures.scss';
 import HomeFeature from './home-feature/HomeFeature';
 
 export default function HomeFeatures() {
+  const { t } = useTranslation();
+
   return (
     <section className="feature_part">
       <div className="container">
@@ -11,34 +14,31 @@ export default function HomeFeatures() {
           <div className="col-sm-6 col-xl-3 align-self-center">
             <div className="single_feature_text ">
               <h3>
-                What makes it cool?
+                {t('home.what.makes.it.cool')}
                 <br />
               </h3>
-              <p>
-                Here are 3 features that make the Cool School really cool for
-                all students.
-              </p>
+              <p>{t('home.what.makes.it.cool.description')}</p>
               <Link to={PagesEnum.Courses} className="btn_1">
-                Read More
+                {t('home.read.more.button')}
               </Link>
             </div>
           </div>
           <HomeFeature
             iconClassName="ti-layers"
-            featureTitle="FLEXIBILITY"
-            featureDescription="Unlock flexible learning with our online school—study when and where it suits you. Study everytime, everywhere!"
+            featureTitle={t('home.flexibility')}
+            featureDescription={t('home.flexibility.description')}
           />
 
           <HomeFeature
             iconClassName="ti-new-window"
-            featureTitle="Personalized Pathways"
-            featureDescription="Tailor your education to fit your lifestyle with our personalized online courses."
+            featureTitle={t('home.personalized.pathways')}
+            featureDescription={t('home.personalized.pathways.description')}
           />
 
           <HomeFeature
             iconClassName="ti-light-bulb"
-            featureTitle="Anywhere Learning Hub"
-            featureDescription="Seamless access to quality education, anytime, anywhere. Join us today!"
+            featureTitle={t('home.anywhere.learning.hub')}
+            featureDescription={t('home.anywhere.learning.hub.description')}
           />
         </div>
       </div>

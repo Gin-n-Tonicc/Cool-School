@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './HomeBanner.scss';
 
 export default function HomeBanner() {
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuthContext();
 
   let url = PagesEnum.Blog;
@@ -18,21 +20,14 @@ export default function HomeBanner() {
           <div className="col-lg-6 col-xl-6">
             <div className="banner_text">
               <div className="banner_text_iner">
-                <h5>COOL SCHOOL</h5>
-                <h1>THE IDEAL SCHOOL</h1>
-                <p>
-                  Welcome to a transformative educational experience where the
-                  pains of traditional learning are replaced with the seamless
-                  benefits of online schools. Discover the unparalleled
-                  advantages that make online education the ideal choice for
-                  those seeking a convenient, flexible, and enriching learning
-                  journey.
-                </p>
+                <h5>{t('cool.school').toUpperCase()}</h5>
+                <h1>{t('moto')}</h1>
+                <p>{t('home.app.description')}</p>
                 <Link to={PagesEnum.Courses} className="btn_1">
-                  View Courses{' '}
+                  {t('home.view.courses.button')}{' '}
                 </Link>
                 <Link to={url} className="btn_2">
-                  Get Started{' '}
+                  {t('home.get.started.button')}{' '}
                 </Link>
               </div>
             </div>

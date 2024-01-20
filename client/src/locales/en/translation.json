@@ -11,7 +11,6 @@
   "navbar.logout": "Logout",
   "navbar.finish.register": "Complete Register",
 
-  "language.picker.title": "Language",
   "language.picker.bulgarian": "Bulgarian",
   "language.picker.english": "English",
 
@@ -22,6 +21,7 @@
   "home.what.makes.it.cool": "What makes it cool?",
   "home.what.makes.it.cool.description": "Here are 3 features that make the Cool School really cool for all students.",
   "home.read.more.button": "Read more",
+
   "home.flexibility": "FLEXIBILITY",
   "home.flexibility.description": "Unlock flexible learning with our online school—study when and where it suits you. Study everytime, everywhere!",
   "home.personalized.pathways": "Personalized Pathways",
