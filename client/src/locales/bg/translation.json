@@ -1,4 +1,12 @@
 {
+  "date.ago": "преди",
+  "date.years": "години",
+  "date.months": "месеци",
+  "date.days": "дни",
+  "date.hours": "часове",
+  "date.minutes": "минути",
+  "date.seconds": "секунди",
+
   "cool.school": "Cool School",
   "moto": "ИДЕАЛНОТО УЧИЛИЩЕ",
 

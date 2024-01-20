@@ -1,4 +1,12 @@
 {
+  "date.ago": "ago",
+  "date.years": "years",
+  "date.months": "months",
+  "date.days": "days",
+  "date.hours": "hours",
+  "date.minutes": "minutes",
+  "date.seconds": "seconds",
+
   "cool.school": "Cool School",
   "moto": "THE IDEAL SCHOOL",
 
