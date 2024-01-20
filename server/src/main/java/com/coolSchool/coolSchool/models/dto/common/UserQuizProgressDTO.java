@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserAnswerDTO {
+public class UserQuizProgressDTO {
+    private Long id;
     private Long questionId;
-    private Long selectedOptionId;
+    private Long answerId;
+    private Long quizId;
+    private Long userId;
 }

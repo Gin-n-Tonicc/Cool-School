@@ -1,6 +1,6 @@
 CREATE TABLE reviews (
-    id BIGINT PRIMARY KEY,
-    user_id INT NOT NULL,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
     course_id BIGINT NOT NULL,
     stars INTEGER CHECK (stars >= 1 AND stars <= 5),
     text VARCHAR(50) NOT NULL,

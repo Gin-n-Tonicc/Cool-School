@@ -1,9 +1,10 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.models.dto.common.QuizDTO;
-import com.coolSchool.coolSchool.models.dto.common.QuizDataDTO;
+import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.common.*;
 import com.coolSchool.coolSchool.services.QuizService;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +27,9 @@ public class QuizController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<QuizDTO> getQuizById(@PathVariable(name = "id") Long id) {
-        return ResponseEntity.ok(quizService.getQuizById(id));
+    public ResponseEntity<QuizQuestionsAnswersDTO> getQuizById(@PathVariable(name = "id") Long id, HttpServletRequest httpServletRequest) {
+        PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+        return ResponseEntity.ok(quizService.getQuizById(id, publicUserDTO.getId()));
     }
 
     @GetMapping("/subsection/{id}")
@@ -42,13 +44,29 @@ public class QuizController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuizDTO> updateQuiz(@PathVariable("id") Long id, @Valid @RequestBody QuizDTO quizDTO) {
-        return ResponseEntity.ok(quizService.updateQuiz(id, quizDTO));
+    public ResponseEntity<QuizDTO> updateQuiz(@PathVariable Long id, @RequestBody QuizDataDTO updatedQuizData) {
+        QuizDTO updatedQuiz = quizService.updateQuiz(id, updatedQuizData);
+        return ResponseEntity.ok(updatedQuiz);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteQuizById(@PathVariable("id") Long id) {
         quizService.deleteQuiz(id);
         return ResponseEntity.ok("Quiz with id: " + id + " has been deleted successfully!");
+    }
+
+    @PostMapping("/{quizId}/take")
+    public ResponseEntity<QuizResultDTO> takeQuiz(@PathVariable Long quizId, @RequestBody List<UserAnswerDTO> userAnswers, HttpServletRequest httpServletRequest) {
+        PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+        QuizResultDTO quizResultDTO = quizService.takeQuiz(quizId, userAnswers, publicUserDTO.getId());
+        quizService.deleteAutoSavedProgress(publicUserDTO.getId(), quizId);
+        return ResponseEntity.ok(quizResultDTO);
+    }
+
+    @PostMapping("/quiz/{quizId}/save-progress")
+    public ResponseEntity<String> autoSaveUserProgress(@PathVariable Long quizId, @RequestParam Long questionId, @RequestParam Long answerId, HttpServletRequest httpServletRequest) {
+        PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+        quizService.autoSaveUserProgress(quizId, questionId, answerId, publicUserDTO.getId());
+        return ResponseEntity.ok("Saved answer!");
     }
 }

@@ -92,4 +92,12 @@ public class AnswerServiceImpl implements AnswerService {
             throw new AnswerNotFoundException();
         }
     }
+    public List<AnswerDTO> getCorrectAnswersByQuestionId(Long questionId) {
+        List<Answer> correctAnswers = answerRepository.findCorrectAnswersByQuestionId(questionId);
+        return correctAnswers.stream().map(answer -> modelMapper.map(answer, AnswerDTO.class)).toList();
+    }
+    public List<AnswerDTO> getAnswersByQuestionId(Long questionId) {
+        List<Answer> answers = answerRepository.findAnswersByQuestionId(questionId);
+        return answers.stream().map(answer -> modelMapper.map(answer, AnswerDTO.class)).toList();
+    }
 }

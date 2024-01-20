@@ -1,9 +1,9 @@
 CREATE TABLE courses (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     objectives MEDIUMTEXT NOT NULL,
     eligibility MEDIUMTEXT NOT NULL,
-    user_id INT,
+    user_id BIGINT,
     file_id BIGINT,
     category_id BIGINT,
     stars DECIMAL(10, 2),

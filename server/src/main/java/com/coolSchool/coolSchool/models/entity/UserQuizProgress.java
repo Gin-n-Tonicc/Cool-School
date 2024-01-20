@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "user_answers")
-public class UserAnswer {
+@Table(name = "user_quizzes_progress")
+public class UserQuizProgress {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne
@@ -22,7 +24,10 @@ public class UserAnswer {
     private Answer answer;
 
     @ManyToOne
-    @JoinColumn(name = "quiz_attempt_id")
-    private QuizAttempt quizAttempt;
-}
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+}

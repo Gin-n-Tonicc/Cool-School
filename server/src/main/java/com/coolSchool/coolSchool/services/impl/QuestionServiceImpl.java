@@ -91,4 +91,7 @@ public class QuestionServiceImpl implements QuestionService {
             throw new QuestionNotFoundException();
         }
     }
+    public List<Question> getQuestionsByQuizId(Long quizId) {
+        return questionRepository.findByQuizId(quizId);
+    }
 }
