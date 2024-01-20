@@ -66,6 +66,7 @@
   "contact.email.description": "Изпратете ни вашето запитване по всяко време!",
 
   "courses.courses": "Курсове",
+  "courses.ratings": "Оценки",
   "courses.all": "ВСИЧКИ КУРСОВЕ",
   "courses.reviews": "Отзиви",
   "courses.conduct.by": "Ръководен от:",
@@ -118,9 +119,11 @@
   "blogs.create.button": "Съзвай Блог",
 
   "blogs.blog": "Блог",
-  "blogs.our.blog": "НАШИЯТ БЛОГ",
+  "blogs.our.blog": "Нашият Блог",
   "blogs.search.button": "ТЪРСЕНЕ",
   "blogs.search.keyword": "Търсете по ключова дума",
+  "blogs.categories": "Категории",
+  "blogs.recent": "Скорошни блогове",
   "blogs.comments": "Коментари",
   "blogs.not.available": "В момента няма налични блогове!",
   "blogs.leave.comment": "Остави коментар",

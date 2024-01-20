@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
@@ -8,6 +9,8 @@ import BlogPopularPost from './blog-popular-post/BlogPopularPost';
 const RECENT_BLOGS_COUNT = 3;
 
 export default function BlogPopularPostWidget() {
+  const { t } = useTranslation();
+
   const { data: blogs } = useFetch<IBlog[]>(
     apiUrlsConfig.blogs.recent(RECENT_BLOGS_COUNT),
     []
@@ -15,7 +18,7 @@ export default function BlogPopularPostWidget() {
 
   return (
     <aside className="single_sidebar_widget popular_post_widget">
-      <h3 className="widget_title">Recent Blogs</h3>
+      <h3 className="widget_title">{t('blogs.recent')}</h3>
 
       {blogs?.map((x) => {
         const date = timeSince(

@@ -1,10 +1,12 @@
 import { FormEventHandler } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import './BlogSearchWidget.scss';
 
 export const TITLE_PARAM_KEY = 'title';
 
 export default function BlogSearchWidget() {
+  const { t } = useTranslation();
   const [_, setSearchParams] = useSearchParams();
 
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
@@ -37,7 +39,7 @@ export default function BlogSearchWidget() {
             <input
               type="text"
               className="form-control"
-              placeholder="Search Keyword"
+              placeholder={t('blogs.search.keyword')}
               name="title"
             />
             <div className="input-group-append">
@@ -50,7 +52,7 @@ export default function BlogSearchWidget() {
         <button
           className="button rounded-0 primary-bg text-white w-100 btn_1"
           type="submit">
-          Search
+          {t('blogs.search.button')}
         </button>
       </form>
     </aside>

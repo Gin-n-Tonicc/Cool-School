@@ -68,6 +68,7 @@
   "contact.email.description": "Send us your query anytime!",
 
   "courses.courses": "Courses",
+  "courses.ratings": "Ratings",
   "courses.all": "ALL COURSES",
   "courses.reviews": "Reviews",
   "courses.conduct.by": "Conduct by:",
@@ -120,9 +121,11 @@
   "blogs.create.button": "Create Blog",
 
   "blogs.blog": "Blog",
-  "blogs.our.blog": "OUR BLOG",
+  "blogs.our.blog": "Our Blog",
   "blogs.search.button": "SEARCH",
   "blogs.search.keyword": "Search Keyword",
+  "blogs.categories": "Categories",
+  "blogs.recent": "Recent Blogs",
   "blogs.comments": "Comments",
   "blogs.not.available": "No blogs available right now!",
   "blogs.leave.comment": "Leave a Comment",
