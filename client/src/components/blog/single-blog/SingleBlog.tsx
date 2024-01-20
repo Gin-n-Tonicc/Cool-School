@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
@@ -16,6 +17,7 @@ const DEFAULT_COMMENT_COUNT = 2;
 const COMMENT_INCREMENT = 5;
 
 export default function SingleBlog() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuthContext();
 

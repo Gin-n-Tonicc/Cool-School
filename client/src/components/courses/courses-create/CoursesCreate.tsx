@@ -7,16 +7,9 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { ICategory } from '../../../types/interfaces/ICategory';
 import { IFile } from '../../../types/interfaces/IFile';
-import {
-  CATEGORY_VALIDATIONS,
-  IMAGE_FILE_VALIDATIONS,
-} from '../../../validations/commonValidations';
 
-import {
-  ELIGIBILITY_VALIDATIONS,
-  NAME_VALIDATIONS,
-  OBJECTIVES_VALIDATIONS,
-} from '../../../validations/courseCreateValidations';
+import { useTranslation } from 'react-i18next';
+import useValidators from '../../../hooks/useValidator/useValidators';
 import CategorySelect from '../../common/category-select/CategorySelect';
 import FormErrorWrapper from '../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../common/form-input/FormInput';
@@ -30,6 +23,9 @@ type Inputs = {
 };
 
 export default function CoursesCreate() {
+  const { t } = useTranslation();
+  const { common, courseCreate } = useValidators();
+
   const {
     handleSubmit,
     control,
@@ -54,12 +50,12 @@ export default function CoursesCreate() {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    register('category', { ...CATEGORY_VALIDATIONS });
+    register('category', { ...common.CATEGORY_VALIDATIONS });
   }, []);
 
   const fileLabelText = useMemo(
-    () => values.file[0]?.name || 'Choose course image',
-    [values.file]
+    () => values.file[0]?.name || t('courses.choose.image'),
+    [values.file, t]
   );
 
   const { data: categories } = useFetch<ICategory[]>(
@@ -118,35 +114,40 @@ export default function CoursesCreate() {
       <div className="sign-container">
         <div className="signup-content">
           <div className="signup-form create-blog-form">
-            <h2 className="form-title">Create Course</h2>
+            <h2 className="form-title">{t('courses.create')}</h2>
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="register-form"
               id="register-form">
               <FormInput
                 control={control}
+                placeholder={t('courses.create.name')}
                 name="Name"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
-                rules={NAME_VALIDATIONS}
+                rules={courseCreate.NAME_VALIDATIONS}
               />
 
               <FormErrorWrapper message={errors.objectives?.message}>
                 <div className="blog-create-textarea-wrapper">
-                  <h5>Course Objectives</h5>
+                  <h5>{t('courses.create.objectives')}</h5>
                   <textarea
                     className="form-control"
-                    {...register('objectives', { ...OBJECTIVES_VALIDATIONS })}
+                    {...register('objectives', {
+                      ...courseCreate.OBJECTIVES_VALIDATIONS,
+                    })}
                     rows={3}></textarea>
                 </div>
               </FormErrorWrapper>
 
               <FormErrorWrapper message={errors.eligibility?.message}>
                 <div className="blog-create-textarea-wrapper">
-                  <h5>Course Eligibility</h5>
+                  <h5>{t('courses.create.eligibility')}</h5>
                   <textarea
                     className="form-control"
-                    {...register('eligibility', { ...ELIGIBILITY_VALIDATIONS })}
+                    {...register('eligibility', {
+                      ...courseCreate.ELIGIBILITY_VALIDATIONS,
+                    })}
                     rows={3}></textarea>
                 </div>
               </FormErrorWrapper>
@@ -156,7 +157,7 @@ export default function CoursesCreate() {
                   <input
                     type="file"
                     className="custom-file-input"
-                    {...register('file', { ...IMAGE_FILE_VALIDATIONS })}
+                    {...register('file', { ...common.FILE_VALIDATIONS })}
                   />
                   <label className="custom-file-label">{fileLabelText}</label>
                 </div>
@@ -180,7 +181,7 @@ export default function CoursesCreate() {
                   name="signup"
                   id="signup"
                   className="btn_1"
-                  value="Create Course"
+                  value={t('courses.create.button')}
                 />
               </div>
             </form>

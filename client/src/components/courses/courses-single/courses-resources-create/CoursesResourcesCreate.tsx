@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import './CoursesResourcesCreate.scss';
 import CoursesResourcesCreateForm from './courses-resources-create-form/CoursesResourcesCreateForm';
 
@@ -11,10 +12,12 @@ export default function CoursesResourcesCreate({
   isOwner,
   ...props
 }: CoursesSubsectionCreateProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="accordion" id="resCreateAccordion">
       <div className="title-wrapper d-flex justify-content-between align-items-center">
-        <h5>Resources</h5>
+        <h5>{t('courses.resources')}</h5>
 
         {isOwner && (
           <button
@@ -24,7 +27,7 @@ export default function CoursesResourcesCreate({
             aria-expanded="true"
             aria-controls="resCreateContent"
             className="btn_1 res-create-btn">
-            Add
+            {t('courses.resources.add.button')}
           </button>
         )}
       </div>

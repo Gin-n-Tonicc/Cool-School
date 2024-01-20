@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import useValidators from '../../../hooks/useValidator/useValidators';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import { ICategory } from '../../../types/interfaces/ICategory';
@@ -12,10 +13,6 @@ import {
   SUMMARY_VALIDATIONS,
   TITLE_VALIDATIONS,
 } from '../../../validations/blogCreateValidations';
-import {
-  CATEGORY_VALIDATIONS,
-  IMAGE_FILE_VALIDATIONS,
-} from '../../../validations/commonValidations';
 import CategorySelect from '../../common/category-select/CategorySelect';
 import FormErrorWrapper from '../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../common/form-input/FormInput';
@@ -30,6 +27,8 @@ type Inputs = {
 };
 
 export default function BlogCreate() {
+  const { common } = useValidators();
+
   const {
     handleSubmit,
     control,
@@ -53,7 +52,7 @@ export default function BlogCreate() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    register('category', { ...CATEGORY_VALIDATIONS });
+    register('category', { ...common.CATEGORY_VALIDATIONS });
   }, []);
 
   const { data: categories } = useFetch<ICategory[]>(
@@ -151,7 +150,7 @@ export default function BlogCreate() {
                   <input
                     type="file"
                     className="custom-file-input"
-                    {...register('file', { ...IMAGE_FILE_VALIDATIONS })}
+                    {...register('file', { ...common.FILE_VALIDATIONS })}
                   />
                   <label className="custom-file-label">{labelText}</label>
                 </div>

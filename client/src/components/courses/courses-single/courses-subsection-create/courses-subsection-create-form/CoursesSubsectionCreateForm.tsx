@@ -1,13 +1,11 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import {
-  DESCRIPTION_VALIDATIONS,
-  TITLE_VALIDATIONS,
-} from '../../../../../validations/courseSubsectionValidations';
 import FormInput from '../../../../common/form-input/FormInput';
 
+import { useTranslation } from 'react-i18next';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
+import useValidators from '../../../../../hooks/useValidator/useValidators';
 import { ICourseSubsection } from '../../../../../types/interfaces/ICourseSubsection';
 import FormErrorWrapper from '../../../../common/form-error-wrapper/FormErrorWrapper';
 import './CoursesSubsectionCreateForm.scss';
@@ -25,6 +23,9 @@ type Inputs = {
 export default function CoursesSubsectionCreateForm(
   props: CoursesSubsectionCreateFormProps
 ) {
+  const { courseSubsection: validators } = useValidators();
+  const { t } = useTranslation();
+
   const {
     handleSubmit,
     control,
@@ -64,7 +65,7 @@ export default function CoursesSubsectionCreateForm(
       <div className="sign-container sub-create-container">
         <div className="signup-content sub-create-content">
           <div className="signup-form create-blog-form">
-            <h2 className="form-title">Create Subsection</h2>
+            <h2 className="form-title">{t('courses.subsection.create')}</h2>
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="register-form"
@@ -74,15 +75,17 @@ export default function CoursesSubsectionCreateForm(
                 name="Title"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
-                rules={TITLE_VALIDATIONS}
+                rules={validators.TITLE_VALIDATIONS}
               />
 
               <FormErrorWrapper message={errors.description?.message}>
                 <div className="blog-create-textarea-wrapper">
-                  <h5>Description</h5>
+                  <h5>{t('courses.subsection.description')}</h5>
                   <textarea
                     className="form-control"
-                    {...register('description', { ...DESCRIPTION_VALIDATIONS })}
+                    {...register('description', {
+                      ...validators.DESCRIPTION_VALIDATIONS,
+                    })}
                     rows={3}></textarea>
                 </div>
               </FormErrorWrapper>
@@ -93,7 +96,7 @@ export default function CoursesSubsectionCreateForm(
                   name="signup"
                   id="signup"
                   className="btn_1"
-                  value="Submit"
+                  value={t('courses.subsection.submit.button')}
                 />
               </div>
             </form>

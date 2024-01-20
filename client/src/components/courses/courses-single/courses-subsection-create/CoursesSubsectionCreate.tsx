@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import './CoursesSubsectionCreate.scss';
 import CoursesSubsectionCreateForm from './courses-subsection-create-form/CoursesSubsectionCreateForm';
 
@@ -11,10 +12,12 @@ export default function CoursesSubsectionCreate({
   isOwner,
   ...props
 }: CoursesSubsectionCreateProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="accordion" id="subCreateAccordion">
       <div className="title-wrapper d-flex justify-content-between align-items-center">
-        <h4 className="title sub-create-title">Course Outline</h4>
+        <h4 className="title sub-create-title">{t('courses.outline')}</h4>
         {isOwner && (
           <button
             type="button"
@@ -23,7 +26,7 @@ export default function CoursesSubsectionCreate({
             aria-expanded="true"
             aria-controls="subCreateContent"
             className="btn_1 sub-create-btn">
-            Create
+            {t('courses.outline.create.button')}
           </button>
         )}
       </div>
