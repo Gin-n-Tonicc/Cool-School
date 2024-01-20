@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import useUrlSearchParam from '../../../hooks/useURLSearchParam';
@@ -8,6 +9,7 @@ import LoginForm from './login-form/LoginForm';
 import signInImage from './signin-image.jpg';
 
 export default function Login() {
+  const { t } = useTranslation();
   const redirectTo = useUrlSearchParam('redirect');
 
   return (
@@ -22,24 +24,24 @@ export default function Login() {
             <section className="external-login">
               <div className="signup-image-link">
                 <h6>
-                  No profile yet?{' '}
+                  {t('login.no.profile.yet')}{' '}
                   <Link
                     to={`${PagesEnum.Register}${
                       redirectTo ? `?redirect=${redirectTo}` : ''
                     }`}>
-                    <h5>Register!</h5>
+                    <h5>{t('login.register')}</h5>
                   </Link>
                 </h6>
               </div>
-              <h6 className="or-login-text">Or login with</h6>
+              <h6 className="or-login-text">{t('login.or.with')}</h6>
               <a
                 className="external-login-btn"
                 href={apiUrlsConfig.oAuth.google}
-                title="Log in using your Google account">
+                title={t('auth.with.google')}>
                 <img
                   src={googleSvg}
                   className="external-login-btn-icon"
-                  alt="Използвай Google"
+                  alt="Use Google"
                 />
                 Google
               </a>
@@ -47,7 +49,7 @@ export default function Login() {
           </div>
 
           <div className="signin-form">
-            <h2 className="form-title">Login</h2>
+            <h2 className="form-title">{t('login.login')}</h2>
             <LoginForm redirectTo={redirectTo} />
           </div>
         </div>
