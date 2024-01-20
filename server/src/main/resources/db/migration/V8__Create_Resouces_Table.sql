@@ -1,5 +1,5 @@
 CREATE TABLE resources (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     file_id BIGINT,
     subsection_id BIGINT,

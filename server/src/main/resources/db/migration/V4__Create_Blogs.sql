@@ -1,11 +1,11 @@
 CREATE TABLE blogs (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(50) NOT NULL,
     content MEDIUMTEXT NOT NULL,
     summary VARCHAR(255) NOT NULL,
     created_at TIMESTAMP,
     file_id BIGINT,
-    user_id INT,
+    user_id BIGINT,
     category_id BIGINT,
     is_deleted TINYINT(1) DEFAULT FALSE,
     is_enabled TINYINT(1) DEFAULT FALSE,
