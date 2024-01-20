@@ -173,7 +173,7 @@ export default function Header() {
                       />
                     )}
 
-                    <li className="d-none d-lg-block">
+                    <li className="d-lg-block">
                       <LanguagePicker />
                     </li>
                   </ul>

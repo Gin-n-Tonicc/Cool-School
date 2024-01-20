@@ -1,17 +1,22 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
+import { initialAuthUtils } from '../../../utils/initialAuthUtils';
 import signUpImg from '../register/signup-image.jpg';
 import FinishRegisterForm from './finish-register-form/FinishRegisterForm';
 
 export default function FinishRegister() {
   const { t } = useTranslation();
-  const { hasFinishedOAuth2 } = useAuthContext();
+  const { hasFinishedOAuth2, user } = useAuthContext();
+  const navigate = useNavigate();
 
-  if (hasFinishedOAuth2) {
-    return <Navigate to={PagesEnum.Home} />;
-  }
+  useEffect(() => {
+    if (initialAuthUtils.hasFinishedInitialAuth() && hasFinishedOAuth2) {
+      navigate(PagesEnum.Home);
+    }
+  }, [user]);
 
   return (
     <section className="signup">

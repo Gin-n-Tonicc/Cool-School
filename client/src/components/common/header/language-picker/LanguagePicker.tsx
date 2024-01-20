@@ -7,7 +7,7 @@ export default function LanguagePicker() {
 
   return (
     <>
-      <li className="nav-item dropdown">
+      <div className="nav-item dropdown">
         <p className="nav-link dropdown-toggle">
           <i className="zmdi zmdi-globe-alt"></i> <span>{i18n.language}</span>
         </p>
@@ -21,7 +21,7 @@ export default function LanguagePicker() {
             translationKey="language.picker.english"
           />
         </div>
-      </li>
+      </div>
     </>
   );
 }
