@@ -95,7 +95,7 @@ public class BlogServiceImpl implements BlogService {
         if (optionalBlog.isEmpty()) {
             optionalBlog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
         }
-        if(optionalBlog.isPresent()) {
+        if (optionalBlog.isPresent()) {
             if (!(optionalBlog.get().isEnabled())) {
                 throw new BlogNotEnabledException();
             }

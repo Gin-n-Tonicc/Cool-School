@@ -17,22 +17,35 @@ function GuestLinks() {
   );
 }
 
-function UserLinks(props: { isTeacher: boolean }) {
+function UserLinks(props: { isTeacher: boolean; hasFinishedOAuth2: boolean }) {
   return (
     <>
-      {props.isTeacher && (
+      {props.hasFinishedOAuth2 ? (
+        <>
+          {props.isTeacher && (
+            <HeaderNavItem
+              text="Create Course"
+              pathName={PagesEnum.CoursesCreate}
+            />
+          )}
+          <HeaderNavItem text="Create Blog" pathName={PagesEnum.BlogCreate} />
+        </>
+      ) : (
         <HeaderNavItem
-          text="Create Course"
-          pathName={PagesEnum.CoursesCreate}
+          text="Complete Register"
+          pathName={PagesEnum.FinishRegister}
         />
       )}
-      <HeaderNavItem text="Create Blog" pathName={PagesEnum.BlogCreate} />
       <HeaderNavItem text="Logout" pathName={PagesEnum.Logout} />
     </>
   );
 }
 
-function UserNav(props: { isAuthenticated: boolean; isTeacher: boolean }) {
+function UserNav(props: {
+  isAuthenticated: boolean;
+  isTeacher: boolean;
+  hasFinishedOAuth2: boolean;
+}) {
   return (
     <ul className="navbar-nav align-items-center">
       <HeaderNavItem text="Home" pathName={PagesEnum.Home} />
@@ -76,7 +89,7 @@ function AdminNav() {
 }
 
 export default function Header() {
-  const { user, isAuthenticated } = useAuthContext();
+  const { user, isAuthenticated, hasFinishedOAuth2 } = useAuthContext();
   const isTeacher = RolesEnum.TEACHER === user.role;
 
   const homeMenuPaths = useMemo(
@@ -85,6 +98,7 @@ export default function Header() {
         PagesEnum.Home,
         PagesEnum.Login,
         PagesEnum.Register,
+        PagesEnum.FinishRegister,
         PagesEnum.Logout,
         PagesEnum.BlogCreate,
         PagesEnum.CoursesCreate,
@@ -141,6 +155,7 @@ export default function Header() {
                       <UserNav
                         isTeacher={isTeacher}
                         isAuthenticated={isAuthenticated}
+                        hasFinishedOAuth2={hasFinishedOAuth2}
                       />
                     )}
                   </ul>

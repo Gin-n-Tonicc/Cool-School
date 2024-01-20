@@ -3,36 +3,35 @@ import { CachePolicies, CustomOptions, Provider, useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../config/apiUrls';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useErrorContext } from '../../contexts/ErrorContext';
-import { IAuthRefreshResponse } from '../../types/interfaces/IAuthRefreshResponse';
+import { IUser } from '../../types/interfaces/IUser';
+import {
+  deleteJwtCookie,
+  deleteRefreshCookie,
+  getJwtCookie,
+  getRefreshCookie,
+} from '../../utils/cookieUtils';
 import { initialAuthUtils } from '../../utils/initialAuthUtils';
 import { isJwtExpired } from '../../utils/jwtUtils';
 
 export default function HttpProvider({ children }: PropsWithChildren) {
-  const { user, isAuthenticated, setAccessToken, removeRefreshToken } =
-    useAuthContext();
+  const { isAuthenticated } = useAuthContext();
 
   const { addError } = useErrorContext();
 
-  const { post, response } = useFetch<IAuthRefreshResponse>(
-    apiUrlsConfig.auth.refreshToken()
-  );
+  const { get } = useFetch<IUser>(apiUrlsConfig.auth.refreshToken());
 
   const removeTokensIfExpired = () => {
-    if (isJwtExpired(user.accessToken)) {
-      setAccessToken(undefined);
+    if (isJwtExpired(getJwtCookie())) {
+      deleteJwtCookie();
     }
 
-    if (isJwtExpired(user.refreshToken)) {
-      removeRefreshToken();
+    if (isJwtExpired(getRefreshCookie())) {
+      deleteRefreshCookie();
     }
   };
 
   const refreshToken = async () => {
-    const data = await post({ refreshToken: user.refreshToken });
-
-    if (response.ok) {
-      setAccessToken(data.accessToken);
-    }
+    await get();
   };
 
   const options: Partial<CustomOptions> = {
@@ -44,17 +43,15 @@ export default function HttpProvider({ children }: PropsWithChildren) {
           apiUrlsConfig.auth.refreshTokenPath
         );
 
-        const isExpired = Boolean(user.accessToken) && !isAuthenticated;
+        removeTokensIfExpired();
 
-        if (!isRefreshRequest && isExpired) {
+        const isExpired = !Boolean(getJwtCookie()) && !isAuthenticated;
+        if (!isRefreshRequest && isExpired && getRefreshCookie()) {
           await refreshToken();
         }
 
-        removeTokensIfExpired();
-
-        if (user.accessToken) {
-          // @ts-ignore
-          options.headers.Authorization = `Bearer ${user.accessToken}`;
+        if (url?.includes(apiUrlsConfig.apiUrl)) {
+          options.credentials = 'include';
         }
 
         return options;

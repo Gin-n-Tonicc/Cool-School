@@ -63,9 +63,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public boolean canEnrollCourse(Long id, PublicUserDTO loggedUser) {
-       if (loggedUser == null) {
-           return false;
-       }
+        if (loggedUser == null) {
+            return false;
+        }
 
         List<UserCourseResponseDTO> allUserCourses = userCourseService.getAllUserCourses();
         Optional<UserCourseResponseDTO> userCourse = allUserCourses.stream().filter(x -> Objects.equals(x.getCourseId().getId(), id) && Objects.equals(x.getUserId().getId(), loggedUser.getId())).findAny();
