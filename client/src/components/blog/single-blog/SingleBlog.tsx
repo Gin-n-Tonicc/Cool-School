@@ -105,7 +105,7 @@ export default function SingleBlog() {
                     </li>
                     <li>
                       <i className="far fa-comments"></i>{' '}
-                      {commentsRes?.totalComments} Comments
+                      {commentsRes?.totalComments} {t('blogs.comments')}
                     </li>
                   </ul>
                   {blog.content
@@ -127,14 +127,14 @@ export default function SingleBlog() {
                       onClick={() => likeBlog()}>
                       <i className="far fa-heart"></i>
                     </span>{' '}
-                    {totalLikes} people like this
+                    {totalLikes} {t('blogs.amount.people.like')}
                   </p>
                   <div className="col-sm-4 text-center my-2 my-sm-0">
                     <p className="comment-count">
                       <span className="align-middle">
                         <i className="far fa-comment"></i>
                       </span>{' '}
-                      {commentsRes?.totalComments} Comments
+                      {commentsRes?.totalComments} {t('blogs.comments')}
                     </p>
                   </div>
                 </div>

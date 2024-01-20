@@ -54,7 +54,7 @@ export default function CoursesCreate() {
   }, []);
 
   const fileLabelText = useMemo(
-    () => values.file[0]?.name || t('courses.choose.image'),
+    () => values.file[0]?.name || t('courses.create.choose.image'),
     [values.file, t]
   );
 
