@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../../../config/apiUrls';
 import { IResource } from '../../../../../../types/interfaces/IResource';
@@ -14,6 +15,8 @@ export default function CoursesResource({
   refreshResources,
   isOwner,
 }: CoursesResourceProps) {
+  const { t } = useTranslation();
+
   const { del, response } = useFetch<string>(
     apiUrlsConfig.resources.delete(resource.id)
   );
@@ -70,7 +73,7 @@ export default function CoursesResource({
       <button
         onClick={handleDownload}
         className="btn_1 badge badge-primary badge-pill">
-        Download
+        {t('courses.resources.download')}
       </button>
     </li>
   );

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { v4 as uuidV4 } from 'uuid';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
@@ -19,6 +20,7 @@ export interface SpecialCourseProps {
 }
 
 export default function SpecialCourse(props: SpecialCourseProps) {
+  const { t } = useTranslation();
   const stars = Math.round(props.rating);
 
   return (
@@ -37,7 +39,7 @@ export default function SpecialCourse(props: SpecialCourseProps) {
           <div className="author_info">
             <div className="author_img">
               <div className="author_info_text">
-                <p>Conduct by:</p>
+                <p>{t('courses.conduct.by')}</p>
                 <h5>
                   <a>{props.author}</a>
                 </h5>
@@ -57,7 +59,9 @@ export default function SpecialCourse(props: SpecialCourseProps) {
                   </a>
                 ))}
               </div>
-              <p>{props.rating} Ratings</p>
+              <p>
+                {props.rating} {t('courses.ratings')}
+              </p>
             </div>
           </div>
         </div>

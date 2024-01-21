@@ -1,11 +1,12 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { TITLE_VALIDATIONS } from '../../../../../validations/courseSubsectionValidations';
 import FormInput from '../../../../common/form-input/FormInput';
 
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
+import useValidators from '../../../../../hooks/useValidator/useValidators';
 import { IFile } from '../../../../../types/interfaces/IFile';
 import { IResource } from '../../../../../types/interfaces/IResource';
 import FormErrorWrapper from '../../../../common/form-error-wrapper/FormErrorWrapper';
@@ -23,6 +24,9 @@ type Inputs = {
 export default function CoursesResourcesCreateForm(
   props: CoursesSubsectionCreateFormProps
 ) {
+  const { t } = useTranslation();
+  const { courseSubsection: validators } = useValidators();
+
   const {
     handleSubmit,
     watch,
@@ -81,7 +85,7 @@ export default function CoursesResourcesCreateForm(
       <div className="sign-container sub-create-container">
         <div className="signup-content sub-create-content">
           <div className="signup-form create-blog-form">
-            <h5 className="form-title">Add Resource</h5>
+            <h5 className="form-title">{t('courses.resources.add')}</h5>
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="register-form"
@@ -91,7 +95,7 @@ export default function CoursesResourcesCreateForm(
                 name="Name"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
-                rules={TITLE_VALIDATIONS}
+                rules={validators.TITLE_VALIDATIONS}
               />
 
               <FormErrorWrapper message={errors.file?.message}>
@@ -111,7 +115,7 @@ export default function CoursesResourcesCreateForm(
                   name="signup"
                   id="signup"
                   className="btn_1"
-                  value="Submit"
+                  value={t('courses.subsection.submit.button')}
                 />
               </div>
             </form>

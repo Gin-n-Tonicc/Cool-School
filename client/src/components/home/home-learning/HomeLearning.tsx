@@ -1,9 +1,12 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import '../styles/common_learning.scss';
 import learningImg from './images/learning_img.png';
 
 export default function HomeLearning() {
+  const { t } = useTranslation();
+
   return (
     <section className="learning_part">
       <div className="container">
@@ -15,28 +18,21 @@ export default function HomeLearning() {
           </div>
           <div className="col-md-5 col-lg-5">
             <div className="learning_member_text">
-              <h5>Our site</h5>
-              <h2>Engage and Connect</h2>
-              <p>
-                Contrary to common misconceptions, online education is a dynamic
-                and interactive experience. Engage with instructors and fellow
-                students through courses, blogs, and projects. Forge connections
-                that extend beyond geographical boundaries, creating a
-                supportive community that enhances your learning experience.
-              </p>
+              <h5>{t('home.our.site')}</h5>
+              <h2>{t('home.engage.and.connect')}</h2>
+              <p>{t('home.engage.and.connect.description')}</p>
               <ul>
                 <li>
                   <span className="ti-pencil-alt"></span>
-                  Dynamic and interactive experience
+                  {t('home.engage.and.connect.description.first.text')}
                 </li>
                 <li>
                   <span className="ti-ruler-pencil"></span>
-                  Create a supportive community that enhances your learning
-                  experience
+                  {t('home.engage.and.connect.description.second.text')}
                 </li>
               </ul>
               <Link to={PagesEnum.Blog} className="btn_1">
-                Read More
+                {t('home.read.more.button')}
               </Link>
             </div>
           </div>

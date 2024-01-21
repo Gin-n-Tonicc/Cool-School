@@ -1,4 +1,5 @@
 import { SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 import { v4 as uuidV4 } from 'uuid';
 import colorStar from '../../../icons/color_star.svg';
 import star from '../../../icons/star.svg';
@@ -16,6 +17,8 @@ export default function CoursesSingleRating({
   ratingName,
   MAX_STARS,
 }: CoursesSingleRatingProps) {
+  const { t } = useTranslation();
+
   const onStarChange = (newStars: number) => {
     if (newStars > MAX_STARS) {
       return setStars(MAX_STARS);
@@ -60,7 +63,7 @@ export default function CoursesSingleRating({
     <div className="d-flex flex-row reviews justify-content-between">
       <span>{ratingName}</span>
       <div className="rating">{starsArr}</div>
-      <span>Outstanding</span>
+      <span>{t('courses.outstanding')}</span>
     </div>
   );
 }

@@ -5,6 +5,7 @@ export type FormInputProps = {
   type: string;
   inputClasses?: string;
   iconClasses?: string;
+  placeholder?: string;
 } & UseControllerProps<any>;
 
 export default function FormInput(props: FormInputProps) {
@@ -20,7 +21,7 @@ export default function FormInput(props: FormInputProps) {
         {...field}
         className={props.inputClasses}
         type={props.type}
-        placeholder={props.name}
+        placeholder={props.placeholder || props.name}
       />
     </FormErrorWrapper>
   );

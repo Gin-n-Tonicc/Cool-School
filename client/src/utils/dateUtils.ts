@@ -1,16 +1,12 @@
-const divisors = {
-  31536000: 'years',
-  2592000: 'months',
-  86400: 'days',
-  3600: 'hours',
-  60: 'minutes',
-};
+export function timeSince(
+  date: Date,
+  divisors: { [key: number]: string },
+  defaultUnit: string
+) {
+  const divisorEntries = Object.entries(divisors).sort(
+    ([divisorA, _A], [divisorB, _B]) => Number(divisorB) - Number(divisorA)
+  );
 
-const divisorEntries = Object.entries(divisors).sort(
-  ([divisorA, _A], [divisorB, _B]) => Number(divisorB) - Number(divisorA)
-);
-
-export function timeSince(date: Date) {
   const seconds = Math.floor(new Date().getTime() - date.getTime()) / 1000;
 
   for (const [divisor, description] of divisorEntries) {
@@ -21,5 +17,5 @@ export function timeSince(date: Date) {
     }
   }
 
-  return Math.floor(seconds) + ' seconds';
+  return Math.floor(seconds) + ` ${defaultUnit}`;
 }

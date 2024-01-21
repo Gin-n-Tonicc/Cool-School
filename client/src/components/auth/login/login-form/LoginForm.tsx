@@ -1,14 +1,12 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
+import useValidators from '../../../../hooks/useValidator/useValidators';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import { IUser } from '../../../../types/interfaces/IUser';
-import {
-  EMAIL_VALIDATIONS,
-  PASSWORD_VALIDATIONS,
-} from '../../../../validations/authValidations';
 import FormInput from '../../../common/form-input/FormInput';
 
 type LoginFormProps = {
@@ -22,6 +20,8 @@ type Inputs = {
 };
 
 export default function LoginForm({ redirectTo }: LoginFormProps) {
+  const { t } = useTranslation();
+  const { auth: validators } = useValidators();
   const navigate = useNavigate();
 
   const { loginUser } = useAuthContext();
@@ -60,18 +60,20 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
       id="login-form">
       <FormInput
         control={control}
+        placeholder={t('login.email')}
         name="Email"
         type="email"
         iconClasses="zmdi zmdi-account material-icons-name"
-        rules={EMAIL_VALIDATIONS}
+        rules={validators.EMAIL_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('login.password')}
         name="Password"
         type="password"
         iconClasses="zmdi zmdi-lock"
-        rules={PASSWORD_VALIDATIONS}
+        rules={validators.PASSWORD_VALIDATIONS}
       />
 
       <div className="form-group form-button">
@@ -80,7 +82,7 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
           name="signin"
           id="signin"
           className="btn_1"
-          value="Log in"
+          value={t('login.button')}
         />
       </div>
     </form>

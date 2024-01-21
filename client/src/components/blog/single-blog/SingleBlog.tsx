@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
@@ -16,6 +17,7 @@ const DEFAULT_COMMENT_COUNT = 2;
 const COMMENT_INCREMENT = 5;
 
 export default function SingleBlog() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuthContext();
 
@@ -103,7 +105,7 @@ export default function SingleBlog() {
                     </li>
                     <li>
                       <i className="far fa-comments"></i>{' '}
-                      {commentsRes?.totalComments} Comments
+                      {commentsRes?.totalComments} {t('blogs.comments')}
                     </li>
                   </ul>
                   {blog.content
@@ -125,14 +127,14 @@ export default function SingleBlog() {
                       onClick={() => likeBlog()}>
                       <i className="far fa-heart"></i>
                     </span>{' '}
-                    {totalLikes} people like this
+                    {totalLikes} {t('blogs.amount.people.like')}
                   </p>
                   <div className="col-sm-4 text-center my-2 my-sm-0">
                     <p className="comment-count">
                       <span className="align-middle">
                         <i className="far fa-comment"></i>
                       </span>{' '}
-                      {commentsRes?.totalComments} Comments
+                      {commentsRes?.totalComments} {t('blogs.comments')}
                     </p>
                   </div>
                 </div>

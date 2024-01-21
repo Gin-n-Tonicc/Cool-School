@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
@@ -23,6 +24,8 @@ export default function CoursesListItem({
   refreshSubsections,
   courseId,
 }: CoursesListItemProps) {
+  const { t } = useTranslation();
+
   const { get, data: resources } = useFetch<IResource[]>(
     apiUrlsConfig.resources.getBySubsection(subsection.id),
     []
@@ -94,7 +97,7 @@ export default function CoursesListItem({
             aria-expanded="true"
             aria-controls={collapseId}
             className="btn_2 text-uppercase">
-            View Details
+            {t('courses.view.details')}
           </button>
         )}
       </div>
@@ -105,7 +108,7 @@ export default function CoursesListItem({
           aria-labelledby="headingOne"
           data-parent="#coursesAccordion">
           <div className="card-body">
-            <h5>Description</h5>
+            <h5>{t('courses.subsection.description')}</h5>
             {subsection.description}
 
             <div>

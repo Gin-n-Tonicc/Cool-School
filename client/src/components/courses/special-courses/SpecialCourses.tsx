@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { usePagination } from '../../../hooks/usePagination';
@@ -8,6 +9,7 @@ import HomeCourse from './special-course/SpecialCourse';
 
 const PAGE_SIZE = 2;
 export default function SpecialCourses() {
+  const { t } = useTranslation();
   const { data } = useFetch<ICourse[]>(apiUrlsConfig.courses.getAll, []);
 
   const {
@@ -25,8 +27,8 @@ export default function SpecialCourses() {
         <div className="row justify-content-center">
           <div className="col-xl-5">
             <div className="section_tittle text-center">
-              <p>all courses</p>
-              <h2>Courses</h2>
+              <p>{t('courses.all')}</p>
+              <h2>{t('courses.courses')}</h2>
             </div>
           </div>
         </div>
