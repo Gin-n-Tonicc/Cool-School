@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
@@ -12,6 +13,8 @@ import { TITLE_PARAM_KEY } from '../blog-right-sidebar/blog-search-widget/BlogSe
 const PAGE_SIZE = 5;
 
 export default function BlogLeftSidebar() {
+  const { t } = useTranslation();
+
   const [searchParams] = useSearchParams({
     [TITLE_PARAM_KEY]: '',
     [CATEGORY_PARAM_KEY]: '',
@@ -44,7 +47,7 @@ export default function BlogLeftSidebar() {
     <div className="col-lg-8 mb-5 mb-lg-0">
       <div className="blog_left_sidebar">
         {paginatedBlogs.length === 0 && (
-          <h1 className="text-center">No blogs available right now!</h1>
+          <h1 className="text-center">{t('blogs.not.available')}</h1>
         )}
         {paginatedBlogs?.map((x) => (
           <BlogItem

@@ -6,5 +6,5 @@ import jakarta.servlet.http.Cookie;
 import java.util.function.Consumer;
 
 public interface OAuth2AuthenticationService {
-    void processOAuthPostLogin(CustomOAuth2User oAuth2User, Consumer<Cookie> addCookieFunc);
+    boolean processOAuthPostLogin(CustomOAuth2User oAuth2User, Consumer<Cookie> addCookieFunc);
 }

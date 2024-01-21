@@ -1,17 +1,13 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
+import useValidators from '../../../../hooks/useValidator/useValidators';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import { RolesEnum } from '../../../../types/enums/RolesEnum';
 import { IUser } from '../../../../types/interfaces/IUser';
-import {
-  ADDRESS_VALIDATIONS,
-  DESCRIPTION_VALIDATIONS,
-  FIRST_NAME_VALIDATIONS,
-  LAST_NAME_VALIDATIONS,
-} from '../../../../validations/authValidations';
 import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../../common/form-input/FormInput';
 
@@ -24,6 +20,8 @@ type Inputs = {
 };
 
 export default function FinishRegisterForm() {
+  const { t } = useTranslation();
+  const { auth: validators } = useValidators();
   const navigate = useNavigate();
 
   const { loginUser } = useAuthContext();
@@ -63,34 +61,38 @@ export default function FinishRegisterForm() {
       id="register-form">
       <FormInput
         control={control}
+        placeholder={t('finish.register.first.name')}
         name="First Name"
         type="text"
         iconClasses="zmdi zmdi-face material-icons-name"
-        rules={FIRST_NAME_VALIDATIONS}
+        rules={validators.FIRST_NAME_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('finish.register.last.name')}
         name="Last Name"
         type="text"
         iconClasses="zmdi zmdi-face material-icons-name"
-        rules={LAST_NAME_VALIDATIONS}
+        rules={validators.LAST_NAME_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('finish.register.description')}
         name="Description"
         type="text"
         iconClasses="zmdi zmdi-book"
-        rules={DESCRIPTION_VALIDATIONS}
+        rules={validators.DESCRIPTION_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('finish.register.address')}
         name="Address"
         type="text"
         iconClasses="zmdi zmdi-pin"
-        rules={ADDRESS_VALIDATIONS}
+        rules={validators.ADDRESS_VALIDATIONS}
       />
 
       <FormErrorWrapper message={undefined}>
@@ -101,7 +103,7 @@ export default function FinishRegisterForm() {
             className="form-check-input"
             value={RolesEnum.USER}
           />
-          <p>Student</p>
+          <p>{t('finish.register.role.student')}</p>
         </div>
         <div className="form-check-inline">
           <input
@@ -110,7 +112,7 @@ export default function FinishRegisterForm() {
             className="form-check-input"
             value={RolesEnum.TEACHER}
           />
-          <p>Teacher</p>
+          <p>{t('finish.register.role.teacher')}</p>
         </div>
       </FormErrorWrapper>
 
@@ -120,7 +122,7 @@ export default function FinishRegisterForm() {
           name="signup"
           id="signup"
           className="btn_1"
-          value="Register"
+          value={t('finish.register.complete')}
         />
       </div>
     </form>

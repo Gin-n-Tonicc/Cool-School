@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
@@ -14,6 +15,8 @@ export interface BlogItemProps {
 }
 
 export default function BlogItem(props: BlogItemProps) {
+  const { t } = useTranslation();
+
   const month = props.date.toLocaleString('en-US', { month: 'short' });
   const day = props.date.getDate();
 
@@ -45,7 +48,8 @@ export default function BlogItem(props: BlogItemProps) {
           <li>
             <span>
               <i className="far fa-comments"></i>
-              {props.commentCount?.toString().padStart(2, '0')} Comments
+              {props.commentCount?.toString().padStart(2, '0')}{' '}
+              {t('blogs.comments')}
             </span>
           </li>
         </ul>

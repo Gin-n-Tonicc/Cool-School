@@ -1,38 +1,32 @@
+import { useTranslation } from 'react-i18next';
 import '../styles/common_learning.scss';
 import advanceFeatureImg from './images/advance_feature_img.png';
 
 export default function HomeLearningFeature() {
+  const { t } = useTranslation();
+
   return (
     <section className="advance_feature learning_part">
       <div className="container">
         <div className="row align-items-sm-center align-items-xl-stretch">
           <div className="col-md-6 col-lg-6">
             <div className="learning_member_text">
-              <h5>Personalized Progress</h5>
-              <h2>Learning environment that adapts to you</h2>
-              <p>
-                Online schools recognize that every student is unique, offering personalized
-                learning experiences that cater to individual strengths and preferences. Say
-                goodbye to the frustration of moving at someone else's pace and hello to a customized
-                educational journey that fits you like a glove.
-              </p>
+              <h5>{t('home.personalized.progress')}</h5>
+              <h2>{t('home.learning.environment')}</h2>
+              <p>{t('home.learning.environment.description')}</p>
               <div className="row">
                 <div className="col-sm-6 col-md-12 col-lg-6">
                   <div className="learning_member_text_iner">
                     <span className="ti-pencil-alt"></span>
-                    <h4>Learn Anywhere</h4>
-                    <p>
-                      Learn Anywhere with our courses that can be reached at any time!
-                    </p>
+                    <h4>{t('home.learn.everywhere')}</h4>
+                    <p>{t('home.learn.everywhere.description')}</p>
                   </div>
                 </div>
                 <div className="col-sm-6 col-md-12 col-lg-6">
                   <div className="learning_member_text_iner">
                     <span className="ti-stamp"></span>
-                    <h4>Add something form yourself</h4>
-                    <p>
-                      With our functionality to create blogs, comment and like them you can add something for your digital school from yourself!
-                    </p>
+                    <h4>{t('home.add.something.form.yourself')}</h4>
+                    <p>{t('home.add.something.form.yourself.description')}</p>
                   </div>
                 </div>
               </div>

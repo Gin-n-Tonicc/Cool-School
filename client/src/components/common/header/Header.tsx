@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import logo from '../../../images/logo.png';
@@ -7,36 +8,47 @@ import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { RolesEnum } from '../../../types/enums/RolesEnum';
 import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
+import LanguagePicker from './language-picker/LanguagePicker';
 
 function GuestLinks() {
+  const { t } = useTranslation();
+
   return (
     <>
-      <HeaderNavItem text="Login" pathName={PagesEnum.Login} />
-      <HeaderNavItem text="Register" pathName={PagesEnum.Register} />
+      <HeaderNavItem text={t('navbar.login')} pathName={PagesEnum.Login} />
+      <HeaderNavItem
+        text={t('navbar.register')}
+        pathName={PagesEnum.Register}
+      />
     </>
   );
 }
 
 function UserLinks(props: { isTeacher: boolean; hasFinishedOAuth2: boolean }) {
+  const { t } = useTranslation();
+
   return (
     <>
       {props.hasFinishedOAuth2 ? (
         <>
           {props.isTeacher && (
             <HeaderNavItem
-              text="Create Course"
+              text={t('courses.create.button')}
               pathName={PagesEnum.CoursesCreate}
             />
           )}
-          <HeaderNavItem text="Create Blog" pathName={PagesEnum.BlogCreate} />
+          <HeaderNavItem
+            text={t('blogs.create.button')}
+            pathName={PagesEnum.BlogCreate}
+          />
         </>
       ) : (
         <HeaderNavItem
-          text="Complete Register"
+          text={t('navbar.finish.register')}
           pathName={PagesEnum.FinishRegister}
         />
       )}
-      <HeaderNavItem text="Logout" pathName={PagesEnum.Logout} />
+      <HeaderNavItem text={t('navbar.logout')} pathName={PagesEnum.Logout} />
     </>
   );
 }
@@ -46,12 +58,14 @@ function UserNav(props: {
   isTeacher: boolean;
   hasFinishedOAuth2: boolean;
 }) {
+  const { t } = useTranslation();
+
   return (
     <ul className="navbar-nav align-items-center">
-      <HeaderNavItem text="Home" pathName={PagesEnum.Home} />
-      <HeaderNavItem text="Contact" pathName={PagesEnum.Contact} />
-      <HeaderNavItem text="Courses" pathName={PagesEnum.Courses} />
-      <HeaderNavItem text="Blog" pathName={PagesEnum.Blog} />
+      <HeaderNavItem text={t('navbar.home')} pathName={PagesEnum.Home} />
+      <HeaderNavItem text={t('navbar.contact')} pathName={PagesEnum.Contact} />
+      <HeaderNavItem text={t('navbar.courses')} pathName={PagesEnum.Courses} />
+      <HeaderNavItem text={t('navbar.blogs')} pathName={PagesEnum.Blog} />
       {props.isAuthenticated ? <UserLinks {...props} /> : <GuestLinks />}
     </ul>
   );
@@ -158,6 +172,10 @@ export default function Header() {
                         hasFinishedOAuth2={hasFinishedOAuth2}
                       />
                     )}
+
+                    <li className="d-lg-block">
+                      <LanguagePicker />
+                    </li>
                   </ul>
                 </div>
               </nav>

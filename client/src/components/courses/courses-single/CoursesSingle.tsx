@@ -1,4 +1,5 @@
 import { Fragment, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
@@ -15,6 +16,7 @@ import CoursesReviews from './courses-reviews/CoursesReviews';
 import CoursesSubsectionCreate from './courses-subsection-create/CoursesSubsectionCreate';
 
 export default function CoursesSingle() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { user, isAuthenticated } = useAuthContext();
 
@@ -81,7 +83,7 @@ export default function CoursesSingle() {
                 />
               </div>
               <div className="content_wrapper">
-                <h4 className="title_top">Objectives</h4>
+                <h4 className="title_top">{t('courses.objectives')}</h4>
                 <div className="content">
                   {course.objectives
                     .split('\n')
@@ -96,7 +98,7 @@ export default function CoursesSingle() {
                     })}
                 </div>
 
-                <h4 className="title">Eligibility</h4>
+                <h4 className="title">{t('courses.eligibility')}</h4>
                 <div className="content">
                   {course.eligibility
                     .split('\n')
@@ -131,13 +133,13 @@ export default function CoursesSingle() {
                 <ul>
                   <li>
                     <a className="justify-content-between d-flex">
-                      <p>Course name</p>
+                      <p>{t('courses.name')}</p>
                       <span className="color">{course.name}</span>
                     </a>
                   </li>
                   <li>
                     <a className="justify-content-between d-flex">
-                      <p>Trainer’s Name</p>
+                      <p>{t('courses.trainer.name')}</p>
                       <span className="color">
                         {course.user.firstname} (@{course.user.username})
                       </span>
@@ -146,12 +148,12 @@ export default function CoursesSingle() {
                 </ul>
                 {canEnroll && (
                   <button className="btn_1 d-block" onClick={onEnroll}>
-                    Enroll the course
+                    {t('courses.enroll')}
                   </button>
                 )}
               </div>
 
-              <h4 className="title">Reviews</h4>
+              <h4 className="title">{t('courses.reviews')}</h4>
               <div className="content">
                 <CoursesRating
                   courseId={course.id}

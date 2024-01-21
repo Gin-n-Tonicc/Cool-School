@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { IBlog } from '../../../types/interfaces/IBlog';
@@ -5,6 +6,7 @@ import './HomeBlog.scss';
 import HomeBlogCard from './home-blog-card/HomeBlogCard';
 
 export default function HomeBlog() {
+  const { t } = useTranslation();
   const { data, response, loading } = useFetch<IBlog[]>(
     apiUrlsConfig.blogs.mostLiked,
     []
@@ -16,8 +18,8 @@ export default function HomeBlog() {
         <div className="row justify-content-center">
           <div className="col-xl-5">
             <div className="section_tittle text-center">
-              <p>Our Blog</p>
-              <h2>Students Blog</h2>
+              <p>{t('home.our.blog')}</p>
+              <h2>{t('home.students.blog')}</h2>
             </div>
           </div>
         </div>

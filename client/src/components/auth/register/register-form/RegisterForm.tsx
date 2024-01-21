@@ -1,21 +1,13 @@
 import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
+import useValidators from '../../../../hooks/useValidator/useValidators';
 import { RolesEnum } from '../../../../types/enums/RolesEnum';
 import { IUser } from '../../../../types/interfaces/IUser';
-import {
-  ADDRESS_VALIDATIONS,
-  DESCRIPTION_VALIDATIONS,
-  EMAIL_VALIDATIONS,
-  FIRST_NAME_VALIDATIONS,
-  LAST_NAME_VALIDATIONS,
-  PASSWORD_VALIDATIONS,
-  REPEAT_PASSWORD_VALIDATIONS,
-  USERNAME_VALIDATIONS,
-} from '../../../../validations/authValidations';
 import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../../common/form-input/FormInput';
 
@@ -36,6 +28,9 @@ type Inputs = {
 };
 
 export default function RegisterForm({ redirectTo }: RegisterFormProps) {
+  const { t } = useTranslation();
+  const { auth: validators } = useValidators();
+
   const navigate = useNavigate();
   const { loginUser } = useAuthContext();
   const { post, response } = useFetch<IUser>(apiUrlsConfig.auth.register);
@@ -75,7 +70,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
     if (!hasError && !areEqual) {
       setError('Repeat your password', {
         type: 'manual',
-        message: 'Repeat password must match password.',
+        message: t('auth.repeat.password.not-match'),
       });
     }
 
@@ -115,66 +110,74 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
       id="register-form">
       <FormInput
         control={control}
+        placeholder={t('register.first.name')}
         name="First Name"
         type="text"
         iconClasses="zmdi zmdi-face material-icons-name"
-        rules={FIRST_NAME_VALIDATIONS}
+        rules={validators.FIRST_NAME_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('register.last.name')}
         name="Last Name"
         type="text"
         iconClasses="zmdi zmdi-face material-icons-name"
-        rules={LAST_NAME_VALIDATIONS}
+        rules={validators.LAST_NAME_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('register.username')}
         name="Username"
         type="text"
         iconClasses="zmdi zmdi-account material-icons-name"
-        rules={USERNAME_VALIDATIONS}
+        rules={validators.USERNAME_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('register.description')}
         name="Description"
         type="text"
         iconClasses="zmdi zmdi-book"
-        rules={DESCRIPTION_VALIDATIONS}
+        rules={validators.DESCRIPTION_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('register.address')}
         name="Address"
         type="text"
         iconClasses="zmdi zmdi-pin"
-        rules={ADDRESS_VALIDATIONS}
+        rules={validators.ADDRESS_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('register.email')}
         name="Email"
         type="email"
         iconClasses="zmdi zmdi-email"
-        rules={EMAIL_VALIDATIONS}
+        rules={validators.EMAIL_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('register.password')}
         name="Password"
         type="password"
         iconClasses="zmdi zmdi-lock"
-        rules={PASSWORD_VALIDATIONS}
+        rules={validators.PASSWORD_VALIDATIONS}
       />
 
       <FormInput
         control={control}
+        placeholder={t('register.repeat.password')}
         name="Repeat your password"
         type="password"
         iconClasses="zmdi zmdi-lock-outline"
-        rules={REPEAT_PASSWORD_VALIDATIONS}
+        rules={validators.REPEAT_PASSWORD_VALIDATIONS}
       />
 
       <FormErrorWrapper message={undefined}>
@@ -185,7 +188,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
             className="form-check-input"
             value={RolesEnum.USER}
           />
-          <p>Student</p>
+          <p>{t('register.role.student')}</p>
         </div>
         <div className="form-check-inline">
           <input
@@ -194,7 +197,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
             className="form-check-input"
             value={RolesEnum.TEACHER}
           />
-          <p>Teacher</p>
+          <p>{t('register.role.teacher')}</p>
         </div>
       </FormErrorWrapper>
 
@@ -204,7 +207,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
           name="signup"
           id="signup"
           className="btn_1"
-          value="Register"
+          value={t('finish.register.complete')}
         />
       </div>
     </form>
