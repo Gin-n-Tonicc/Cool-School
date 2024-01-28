@@ -7,7 +7,6 @@ import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.BlogResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Blog;
-import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.BlogRepository;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.repositories.FileRepository;
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.Collections;
@@ -47,6 +47,7 @@ public class BlogServiceImplTest {
     @Mock
     private CategoryRepository categoryRepository;
     private LocalValidatorFactoryBean validator;
+    private MessageSource m
 
     @BeforeEach
     void setUp() {
@@ -56,7 +57,7 @@ public class BlogServiceImplTest {
         userRepository = mock(UserRepository.class);
         validator = new LocalValidatorFactoryBean();
         categoryRepository = mock(CategoryRepository.class);
-        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, validator);
+        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, validator, messageSource);
     }
 
     @Test

@@ -25,6 +25,7 @@ import com.coolSchool.coolSchool.services.BlogService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,14 +45,16 @@ public class BlogServiceImpl implements BlogService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final Validator validator;
+    private final MessageSource messageSource;
 
-    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, Validator validator) {
+    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, Validator validator, MessageSource messageSource) {
         this.blogRepository = blogRepository;
         this.modelMapper = modelMapper;
         this.fileRepository = fileRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.validator = validator;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -64,8 +67,7 @@ public class BlogServiceImpl implements BlogService {
                 blog = blogRepository.save(blog);
                 return modelMapper.map(blog, BlogResponseDTO.class);
             }
-
-            throw new BlogAlreadyLikedException();
+            throw new BlogAlreadyLikedException(messageSource);
         }
         throw new AccessDeniedException();
     }
@@ -97,7 +99,7 @@ public class BlogServiceImpl implements BlogService {
         }
         if (optionalBlog.isPresent()) {
             if (!(optionalBlog.get().isEnabled())) {
-                throw new BlogNotEnabledException();
+                throw new BlogNotEnabledException(messageSource);
             }
         }
         return modelMapper.map(optionalBlog.get(), BlogResponseDTO.class);
