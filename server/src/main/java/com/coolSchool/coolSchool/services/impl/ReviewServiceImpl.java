@@ -19,6 +19,7 @@ import com.coolSchool.coolSchool.services.CourseService;
 import com.coolSchool.coolSchool.services.ReviewService;
 import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -33,13 +34,15 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
     private final ModelMapper modelMapper;
+    private final MessageSource messageSource;
 
-    public ReviewServiceImpl(ReviewRepository reviewRepository, CourseService courseService, UserRepository userRepository, CourseRepository courseRepository, ModelMapper modelMapper) {
+    public ReviewServiceImpl(ReviewRepository reviewRepository, CourseService courseService, UserRepository userRepository, CourseRepository courseRepository, ModelMapper modelMapper, MessageSource messageSource) {
         this.reviewRepository = reviewRepository;
         this.courseService = courseService;
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
         this.modelMapper = modelMapper;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -55,19 +58,19 @@ public class ReviewServiceImpl implements ReviewService {
         if (review.isPresent()) {
             return modelMapper.map(review.get(), ReviewResponseDTO.class);
         }
-        throw new ReviewNotFoundException();
+        throw new ReviewNotFoundException(messageSource);
     }
 
     @Override
     public ReviewResponseDTO createReview(ReviewRequestDTO reviewDTO, PublicUserDTO loggedUser) {
         System.out.println(loggedUser);
         if (loggedUser == null) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(messageSource);
         }
         try {
             reviewDTO.setId(null);
-            userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(UserNotFoundException::new);
-            Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
+            userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+            Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(() -> new CourseNotFoundException(messageSource));
             Review reviewRequestDTO = modelMapper.map(reviewDTO, Review.class);
             Review review = reviewRepository.save(reviewRequestDTO);
             updateCourseStars(course);
@@ -85,13 +88,13 @@ public class ReviewServiceImpl implements ReviewService {
         Optional<Review> review = reviewRepository.findByIdAndDeletedFalse(id);
         if (review.isPresent()) {
             if (loggedUser == null || !(Objects.equals(loggedUser.getId(), review.get().getUser().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
-                throw new AccessDeniedException();
+                throw new AccessDeniedException(messageSource);
             }
             review.get().setDeleted(true);
             reviewRepository.save(review.get());
             updateCourseStars(review.get().getCourse());
         } else {
-            throw new ReviewNotFoundException();
+            throw new ReviewNotFoundException(messageSource);
         }
     }
 

@@ -47,7 +47,7 @@ public class BlogServiceImplTest {
     @Mock
     private CategoryRepository categoryRepository;
     private LocalValidatorFactoryBean validator;
-    private MessageSource m
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {

@@ -6,6 +6,7 @@ import com.coolSchool.coolSchool.security.OAuth2LoginSuccessHandler;
 import com.coolSchool.coolSchool.services.impl.security.CustomOAuth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -33,6 +34,7 @@ public class SecurityConfiguration {
     private final ObjectMapper objectMapper;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final FrontendConfig frontendConfig;
+    private final MessageSource messageSource;
     private final CustomOAuth2UserService oauthUserService;
 
     @Bean
@@ -44,7 +46,7 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
-                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper));
+                    httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper, messageSource));
                 })
                 .authorizeHttpRequests()
                 .requestMatchers(

@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,12 +36,13 @@ class FileServiceImplTest {
     private FileServiceImpl fileService;
     @Mock
     private FileRepository fileRepository;
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         String imageDirectory = "server/src/main/resources/static/uploads/";
-        fileService = new FileServiceImpl(fileRepository, imageDirectory);
+        fileService = new FileServiceImpl(fileRepository, messageSource, imageDirectory);
     }
 
     @Test

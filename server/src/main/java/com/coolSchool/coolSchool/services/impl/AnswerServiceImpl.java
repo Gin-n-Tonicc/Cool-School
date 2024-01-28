@@ -53,7 +53,7 @@ public class AnswerServiceImpl implements AnswerService {
     public AnswerDTO createAnswer(AnswerDTO answerDTO) {
         try {
             answerDTO.setId(null);
-            questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(NoSuchElementException::new);
+            questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(()-> new NoSuchElementException(messageSource));
             Answer answerEntity = answerRepository.save(modelMapper.map(answerDTO, Answer.class));
             return modelMapper.map(answerEntity, AnswerDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -68,7 +68,7 @@ public class AnswerServiceImpl implements AnswerService {
         if (existingAnswerOptional.isEmpty()) {
             throw new AnswerNotFoundException(messageSource);
         }
-        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(NoSuchElementException::new);
+        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(()-> new NoSuchElementException(messageSource));
 
         Answer existingAnswer = existingAnswerOptional.get();
         modelMapper.map(answerDTO, existingAnswer);
