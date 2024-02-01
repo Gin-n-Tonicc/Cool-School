@@ -44,16 +44,14 @@ public class BlogServiceImpl implements BlogService {
     private final FileRepository fileRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
-    private final Validator validator;
     private final MessageSource messageSource;
 
-    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, Validator validator, MessageSource messageSource) {
+    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource) {
         this.blogRepository = blogRepository;
         this.modelMapper = modelMapper;
         this.fileRepository = fileRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
-        this.validator = validator;
         this.messageSource = messageSource;
     }
 

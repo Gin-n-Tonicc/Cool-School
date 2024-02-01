@@ -46,7 +46,6 @@ public class BlogServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private CategoryRepository categoryRepository;
-    private LocalValidatorFactoryBean validator;
     private MessageSource messageSource;
 
     @BeforeEach
@@ -55,9 +54,8 @@ public class BlogServiceImplTest {
         modelMapper = new ModelMapper();
         fileRepository = mock(FileRepository.class);
         userRepository = mock(UserRepository.class);
-        validator = new LocalValidatorFactoryBean();
         categoryRepository = mock(CategoryRepository.class);
-        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, validator, messageSource);
+        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource);
     }
 
     @Test
