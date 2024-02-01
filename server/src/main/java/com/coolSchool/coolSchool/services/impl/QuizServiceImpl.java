@@ -14,6 +14,7 @@ import com.coolSchool.coolSchool.services.QuizService;
 import com.coolSchool.coolSchool.services.UserService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -34,8 +35,9 @@ public class QuizServiceImpl implements QuizService {
     private final CourseSubsectionRepository courseSubsectionRepository;
     private final CourseRepository courseRepository;
     private final UserQuizProgressRepository userQuizProgressRepository;
+    private final MessageSource messageSource;
 
-    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, CourseSubsectionRepository courseSubsectionRepository, CourseRepository courseRepository, UserQuizProgressRepository userQuizProgressRepository) {
+    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, CourseSubsectionRepository courseSubsectionRepository, CourseRepository courseRepository, UserQuizProgressRepository userQuizProgressRepository, MessageSource messageSource) {
         this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
         this.questionService = questionService;
@@ -46,6 +48,7 @@ public class QuizServiceImpl implements QuizService {
         this.courseSubsectionRepository = courseSubsectionRepository;
         this.courseRepository = courseRepository;
         this.userQuizProgressRepository = userQuizProgressRepository;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -56,7 +59,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizQuestionsAnswersDTO getQuizById(Long id, Long userId) {
-        Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(QuizNotFoundException::new);
+        Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(()-> new QuizNotFoundException(messageSource));
         List<Question> questions = questionService.getQuestionsByQuizId(id);
         QuizDTO quizDTO = modelMapper.map(quiz, QuizDTO.class);
 
@@ -122,10 +125,9 @@ public class QuizServiceImpl implements QuizService {
         QuizDTO updatedQuizDTO = updatedQuizData.getQuizDTO();
         List<QuestionAndAnswersDTO> updatedQuestionAndAnswersList = updatedQuizData.getData();
 
-        Quiz existingQuiz = quizRepository.findById(quizId)
-                .orElseThrow(QuizNotFoundException::new);
+        Quiz existingQuiz = quizRepository.findById(quizId).orElseThrow(()-> new QuizNotFoundException(messageSource));
 
-        CourseSubsection courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(updatedQuizDTO.getSubsectionId()).orElseThrow(CourseSubsectionNotFoundException::new);
+        CourseSubsection courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(updatedQuizDTO.getSubsectionId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
 
         existingQuiz.setTitle(updatedQuizDTO.getTitle());
         existingQuiz.setDescription(updatedQuizDTO.getDescription());
@@ -157,7 +159,7 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public void deleteQuiz(Long id) {
-        Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(QuizNotFoundException::new);
+        Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(()-> new QuizNotFoundException(messageSource));
         List<Question> quizQuestions = questionService.getQuestionsByQuizId(id);
 
         for (Question question : quizQuestions) {
@@ -176,11 +178,11 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(QuizNotFoundException::new);
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(()-> new QuizNotFoundException(messageSource));
 
         int attemptNumber = quizAttemptRepository.countByUserAndQuiz(userService.findById(userId), quiz) + 1;
         if (attemptNumber > quiz.getAttemptLimit()) {
-            throw new NoMoreAttemptsQuizException();
+            throw new NoMoreAttemptsQuizException(messageSource);
         }
 
         QuizAttempt quizAttempt = new QuizAttempt();
@@ -252,8 +254,8 @@ public class QuizServiceImpl implements QuizService {
     }
 
     private boolean isTheUserQuizCreator(Long userId, Quiz quiz) {
-        CourseSubsection courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(quiz.getSubsection().getId()).orElseThrow(CourseSubsectionNotFoundException::new);
-        Course course = courseRepository.findByIdAndDeletedFalse(courseSubsection.getCourse().getId()).orElseThrow(CourseNotFoundException::new);
+        CourseSubsection courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(quiz.getSubsection().getId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
+        Course course = courseRepository.findByIdAndDeletedFalse(courseSubsection.getCourse().getId()).orElseThrow(() -> new CourseNotFoundException(messageSource));
         return Objects.equals(course.getUser().getId(), userId);
     }
 }

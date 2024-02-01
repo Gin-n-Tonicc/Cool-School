@@ -1,4 +1,5 @@
 import { FormEventHandler, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
@@ -12,7 +13,8 @@ interface CoursesRatingProps {
 
 export const MAX_STARS = 5;
 export default function CoursesRating(props: CoursesRatingProps) {
-  const { user, isAuthenticated } = useAuthContext();
+  const { t } = useTranslation();
+  const { user } = useAuthContext();
   const [qualityStars, setQualityStars] = useState(0);
   const [punctualityStars, setPunctualityStars] = useState(0);
 
@@ -48,15 +50,15 @@ export default function CoursesRating(props: CoursesRatingProps) {
     <>
       <div className="review-top row pt-40">
         <div className="col-lg-12">
-          <h6 className="mb-15">Provide Your Rating</h6>
+          <h6 className="mb-15">{t('courses.provide.rating')}</h6>
           <CoursesSingleRating
-            ratingName="Quality"
+            ratingName={t('courses.quality')}
             stars={qualityStars}
             setStars={setQualityStars}
             MAX_STARS={MAX_STARS}
           />
           <CoursesSingleRating
-            ratingName="Punctuality"
+            ratingName={t('courses.punctuality')}
             stars={punctualityStars}
             setStars={setPunctualityStars}
             MAX_STARS={MAX_STARS}
@@ -64,7 +66,7 @@ export default function CoursesRating(props: CoursesRatingProps) {
         </div>
       </div>
       <form onSubmit={onSubmit} className="feedeback">
-        <h6>Your Feedback</h6>
+        <h6>{t('courses.feedback')}</h6>
         <textarea
           name="feedback"
           className="form-control"
@@ -73,7 +75,7 @@ export default function CoursesRating(props: CoursesRatingProps) {
         <div className="mt-10 text-right">
           {props.hasEnrolled && (
             <button type="submit" className="btn_1">
-              Submit
+              {t('courses.subsection.submit.button')}
             </button>
           )}
         </div>

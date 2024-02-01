@@ -1,7 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import './ContactUs.scss';
 import ContactUsBreadcrumb from './contact-us-breadcrumb/ContactUsBreadcrumb';
 
 export default function ContactUs() {
+  const { t } = useTranslation();
+
   return (
     <>
       <ContactUsBreadcrumb />
@@ -9,7 +12,7 @@ export default function ContactUs() {
         <div className="container">
           <div className="row">
             <div className="col-12">
-              <h2 className="contact-title">Get in Touch</h2>
+              <h2 className="contact-title">{t('contact.get.in.touch')}</h2>
             </div>
             <div className="col-lg-8">
               <form
@@ -27,7 +30,7 @@ export default function ContactUs() {
                         id="body"
                         cols={30}
                         rows={9}
-                        placeholder="Enter Message"></textarea>
+                        placeholder={t('contact.message')}></textarea>
                     </div>
                   </div>
 
@@ -38,7 +41,7 @@ export default function ContactUs() {
                         name="bcc"
                         id="email"
                         type="email"
-                        placeholder="Enter email address"
+                        placeholder={t('contact.message.email')}
                       />
                     </div>
                   </div>
@@ -49,7 +52,7 @@ export default function ContactUs() {
                         name="subject"
                         id="subject"
                         type="text"
-                        placeholder="Enter Subject"
+                        placeholder={t('contact.message.subject')}
                       />
                     </div>
                   </div>
@@ -58,7 +61,7 @@ export default function ContactUs() {
                   <button
                     type="submit"
                     className="button button-contactForm btn_1">
-                    Send Message
+                    {t('contact.button')}
                   </button>
                 </div>
               </form>
@@ -69,8 +72,8 @@ export default function ContactUs() {
                   <i className="ti-home"></i>
                 </span>
                 <div className="media-body">
-                  <h3>Buttonwood, California.</h3>
-                  <p>Rosemead, CA 91770</p>
+                  <h3>{t('contact.address')}</h3>
+                  <p>{t('contact.address.description')}</p>
                 </div>
               </div>
               <div className="media contact-info">
@@ -79,7 +82,7 @@ export default function ContactUs() {
                 </span>
                 <div className="media-body">
                   <h3>00 (440) 9865 562</h3>
-                  <p>Mon to Fri 9am to 6pm</p>
+                  <p>{t('contact.phone.description')}</p>
                 </div>
               </div>
               <div className="media contact-info">
@@ -88,7 +91,7 @@ export default function ContactUs() {
                 </span>
                 <div className="media-body">
                   <h3>stefanbelis932@gmail.com</h3>
-                  <p>Send us your query anytime!</p>
+                  <p>{t('contact.email.description')}</p>
                 </div>
               </div>
             </div>

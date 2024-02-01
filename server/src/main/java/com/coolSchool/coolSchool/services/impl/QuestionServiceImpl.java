@@ -11,6 +11,7 @@ import com.coolSchool.coolSchool.services.QuestionService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -22,13 +23,13 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
     private final ModelMapper modelMapper;
     private final QuizRepository quizRepository;
-    private final Validator validator;
+    private final MessageSource messageSource;
 
-    public QuestionServiceImpl(QuestionRepository questionRepository, ModelMapper modelMapper, QuizRepository quizRepository, Validator validator) {
+    public QuestionServiceImpl(QuestionRepository questionRepository, ModelMapper modelMapper, QuizRepository quizRepository, MessageSource messageSource) {
         this.questionRepository = questionRepository;
         this.modelMapper = modelMapper;
         this.quizRepository = quizRepository;
-        this.validator = validator;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -43,14 +44,14 @@ public class QuestionServiceImpl implements QuestionService {
         if (question.isPresent()) {
             return modelMapper.map(question.get(), QuestionDTO.class);
         }
-        throw new QuestionNotFoundException();
+        throw new QuestionNotFoundException(messageSource);
     }
 
     @Override
     public QuestionDTO createQuestion(QuestionDTO questionDTO) {
         try {
             questionDTO.setId(null);
-            quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(NoSuchElementException::new);
+            quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(()-> new NoSuchElementException(messageSource));
             Question questionEntity = questionRepository.save(modelMapper.map(questionDTO, Question.class));
             return modelMapper.map(questionEntity, QuestionDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -63,9 +64,9 @@ public class QuestionServiceImpl implements QuestionService {
         Optional<Question> existingQuestionOptional = questionRepository.findByIdAndDeletedFalse(id);
 
         if (existingQuestionOptional.isEmpty()) {
-            throw new QuestionNotFoundException();
+            throw new QuestionNotFoundException(messageSource);
         }
-        quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(NoSuchElementException::new);
+        quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(()-> new NoSuchElementException(messageSource));
         Question existingQuestion = existingQuestionOptional.get();
         modelMapper.map(questionDTO, existingQuestion);
 
@@ -88,7 +89,7 @@ public class QuestionServiceImpl implements QuestionService {
             question.get().setDeleted(true);
             questionRepository.save(question.get());
         } else {
-            throw new QuestionNotFoundException();
+            throw new QuestionNotFoundException(messageSource);
         }
     }
     public List<Question> getQuestionsByQuizId(Long quizId) {

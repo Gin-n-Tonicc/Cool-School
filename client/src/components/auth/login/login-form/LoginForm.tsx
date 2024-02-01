@@ -21,7 +21,7 @@ type Inputs = {
 
 export default function LoginForm({ redirectTo }: LoginFormProps) {
   const { t } = useTranslation();
-  const validators = useValidators();
+  const { auth: validators } = useValidators();
   const navigate = useNavigate();
 
   const { loginUser } = useAuthContext();

@@ -11,6 +11,7 @@ import com.coolSchool.coolSchool.services.AnswerService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -23,12 +24,14 @@ public class AnswerServiceImpl implements AnswerService {
     private final ModelMapper modelMapper;
     private final QuestionRepository questionRepository;
     private final Validator validator;
+    private final MessageSource messageSource;
 
-    public AnswerServiceImpl(AnswerRepository answerRepository, ModelMapper modelMapper, QuestionRepository questionRepository, Validator validator) {
+    public AnswerServiceImpl(AnswerRepository answerRepository, ModelMapper modelMapper, QuestionRepository questionRepository, Validator validator, MessageSource messageSource) {
         this.answerRepository = answerRepository;
         this.modelMapper = modelMapper;
         this.questionRepository = questionRepository;
         this.validator = validator;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -43,14 +46,14 @@ public class AnswerServiceImpl implements AnswerService {
         if (answer.isPresent()) {
             return modelMapper.map(answer.get(), AnswerDTO.class);
         }
-        throw new AnswerNotFoundException();
+        throw new AnswerNotFoundException(messageSource);
     }
 
     @Override
     public AnswerDTO createAnswer(AnswerDTO answerDTO) {
         try {
             answerDTO.setId(null);
-            questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(NoSuchElementException::new);
+            questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(()-> new NoSuchElementException(messageSource));
             Answer answerEntity = answerRepository.save(modelMapper.map(answerDTO, Answer.class));
             return modelMapper.map(answerEntity, AnswerDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -63,9 +66,9 @@ public class AnswerServiceImpl implements AnswerService {
         Optional<Answer> existingAnswerOptional = answerRepository.findByIdAndDeletedFalse(id);
 
         if (existingAnswerOptional.isEmpty()) {
-            throw new AnswerNotFoundException();
+            throw new AnswerNotFoundException(messageSource);
         }
-        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(NoSuchElementException::new);
+        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(()-> new NoSuchElementException(messageSource));
 
         Answer existingAnswer = existingAnswerOptional.get();
         modelMapper.map(answerDTO, existingAnswer);
@@ -89,7 +92,7 @@ public class AnswerServiceImpl implements AnswerService {
             answer.get().setDeleted(true);
             answerRepository.save(answer.get());
         } else {
-            throw new AnswerNotFoundException();
+            throw new AnswerNotFoundException(messageSource);
         }
     }
     public List<AnswerDTO> getCorrectAnswersByQuestionId(Long questionId) {

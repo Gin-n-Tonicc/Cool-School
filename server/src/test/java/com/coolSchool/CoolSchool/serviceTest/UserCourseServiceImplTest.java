@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,13 +42,12 @@ class UserCourseServiceImplTest {
     private CourseRepository courseRepository;
 
     private ModelMapper modelMapper;
-    private Validator validator;
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-        userCourseService = new UserCourseServiceImpl(userCourseRepository, userRepository, courseRepository, modelMapper, validator);
+        userCourseService = new UserCourseServiceImpl(userCourseRepository, userRepository, courseRepository, modelMapper, messageSource);
     }
 
     @Test

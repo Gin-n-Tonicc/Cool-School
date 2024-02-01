@@ -69,6 +69,8 @@ public class User implements UserDetails {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
+    @Column(name = "enabled")
+    private boolean enabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -100,9 +102,12 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @PrePersist

@@ -20,6 +20,7 @@ import com.coolSchool.coolSchool.services.CommentService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,14 +36,14 @@ public class CommentServiceImpl implements CommentService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final BlogRepository blogRepository;
-    private final Validator validator;
+    private final MessageSource messageSource;
 
-    public CommentServiceImpl(CommentRepository commentRepository, ModelMapper modelMapper, UserRepository userRepository, BlogRepository blogRepository, Validator validator) {
+    public CommentServiceImpl(CommentRepository commentRepository, ModelMapper modelMapper, UserRepository userRepository, BlogRepository blogRepository, MessageSource messageSource) {
         this.commentRepository = commentRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.blogRepository = blogRepository;
-        this.validator = validator;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -81,7 +82,7 @@ public class CommentServiceImpl implements CommentService {
         if (comment.isPresent()) {
             return modelMapper.map(comment.get(), CommentResponseDTO.class);
         }
-        throw new CommentNotFoundException();
+        throw new CommentNotFoundException(messageSource);
     }
 
     @Override
@@ -92,9 +93,9 @@ public class CommentServiceImpl implements CommentService {
             commentDTO.setId(null);
             commentDTO.setCreated_at(LocalDateTime.now());
             commentDTO.setOwnerId(loggedUser.getId());
-            userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
+            userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
 
-            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(BlogNotFoundException::new);
+            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
             blog.setCommentCount(blog.getCommentCount() + 1);
             blogRepository.save(blog);
             Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
@@ -113,12 +114,12 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDTO updateComment(Long id, CommentRequestDTO commentDTO, PublicUserDTO loggedUser) {
         Optional<Comment> existingCommentOptional = commentRepository.findByIdAndDeletedFalse(id);
         if (existingCommentOptional.isEmpty()) {
-            throw new CommentNotFoundException();
+            throw new CommentNotFoundException(messageSource);
         }
-        User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(UserNotFoundException::new);
-        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(BlogNotFoundException::new);
+        User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), user.getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(messageSource);
         }
         Comment existingComment = existingCommentOptional.get();
         modelMapper.map(commentDTO, existingComment);
@@ -142,15 +143,15 @@ public class CommentServiceImpl implements CommentService {
         if (commentOptional.isPresent()) {
             Comment comment = commentOptional.get();
             if (loggedUser == null || (!Objects.equals(loggedUser.getId(), comment.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN) && !Objects.equals(loggedUser.getId(), comment.getBlogId().getOwnerId())))) {
-                throw new AccessDeniedException();
+                throw new AccessDeniedException(messageSource);
             }
-            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(comment.getBlogId().getId()).orElseThrow(BlogNotFoundException::new);
+            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(comment.getBlogId().getId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
             blog.setCommentCount(blog.getCommentCount() - 1);
             blogRepository.save(blog);
             comment.setDeleted(true);
             commentRepository.save(comment);
         } else {
-            throw new CommentNotFoundException();
+            throw new CommentNotFoundException(messageSource);
         }
     }
 

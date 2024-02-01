@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 
 import java.util.*;
 
@@ -35,13 +36,12 @@ class CategoryServiceImplTest {
     private CategoryServiceImpl categoryService;
 
     private ModelMapper modelMapper;
-    private Validator validator;
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-        categoryService = new CategoryServiceImpl(categoryRepository, modelMapper, validator);
+        categoryService = new CategoryServiceImpl(categoryRepository, modelMapper, messageSource);
     }
 
     @Test

@@ -1,21 +1,14 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import useValidators from '../../../hooks/useValidator/useValidators';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import { ICategory } from '../../../types/interfaces/ICategory';
 import { IFile } from '../../../types/interfaces/IFile';
-import {
-  CONTENT_VALIDATIONS,
-  SUMMARY_VALIDATIONS,
-  TITLE_VALIDATIONS,
-} from '../../../validations/blogCreateValidations';
-import {
-  CATEGORY_VALIDATIONS,
-  IMAGE_FILE_VALIDATIONS,
-} from '../../../validations/commonValidations';
 import CategorySelect from '../../common/category-select/CategorySelect';
 import FormErrorWrapper from '../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../common/form-input/FormInput';
@@ -30,6 +23,9 @@ type Inputs = {
 };
 
 export default function BlogCreate() {
+  const { t } = useTranslation();
+  const { common, blogCreate } = useValidators();
+
   const {
     handleSubmit,
     control,
@@ -53,7 +49,7 @@ export default function BlogCreate() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    register('category', { ...CATEGORY_VALIDATIONS });
+    register('category', { ...common.CATEGORY_VALIDATIONS });
   }, []);
 
   const { data: categories } = useFetch<ICategory[]>(
@@ -70,8 +66,8 @@ export default function BlogCreate() {
   );
 
   const labelText = useMemo(
-    () => values.file[0]?.name || 'Choose blog image',
-    [values.file]
+    () => values.file[0]?.name || t('blogs.create.choose.image'),
+    [values.file, t]
   );
 
   const onCategoryChange = useCallback(
@@ -115,33 +111,37 @@ export default function BlogCreate() {
       <div className="sign-container">
         <div className="signup-content">
           <div className="signup-form create-blog-form">
-            <h2 className="form-title">Create Blog</h2>
+            <h2 className="form-title">{t('blogs.create')}</h2>
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="register-form"
               id="register-form">
               <FormInput
                 control={control}
+                placeholder={t('blogs.create.title')}
                 name="Title"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
-                rules={TITLE_VALIDATIONS}
+                rules={blogCreate.TITLE_VALIDATIONS}
               />
 
               <FormInput
                 control={control}
+                placeholder={t('blogs.create.summary')}
                 name="Summary"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
-                rules={SUMMARY_VALIDATIONS}
+                rules={blogCreate.SUMMARY_VALIDATIONS}
               />
 
               <FormErrorWrapper message={errors.content?.message}>
                 <div className="blog-create-textarea-wrapper">
-                  <h5>Blog content</h5>
+                  <h5>{t('blogs.create.content')}</h5>
                   <textarea
                     className="form-control"
-                    {...register('content', { ...CONTENT_VALIDATIONS })}
+                    {...register('content', {
+                      ...blogCreate.CONTENT_VALIDATIONS,
+                    })}
                     rows={3}></textarea>
                 </div>
               </FormErrorWrapper>
@@ -151,7 +151,7 @@ export default function BlogCreate() {
                   <input
                     type="file"
                     className="custom-file-input"
-                    {...register('file', { ...IMAGE_FILE_VALIDATIONS })}
+                    {...register('file', { ...common.FILE_VALIDATIONS })}
                   />
                   <label className="custom-file-label">{labelText}</label>
                 </div>
@@ -175,7 +175,7 @@ export default function BlogCreate() {
                   name="signup"
                   id="signup"
                   className="btn_1"
-                  value="Create Blog"
+                  value={t('blogs.create.button')}
                 />
               </div>
             </form>

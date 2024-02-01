@@ -20,6 +20,7 @@ import com.coolSchool.coolSchool.services.UserCourseService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -35,15 +36,15 @@ public class CourseServiceImpl implements CourseService {
     private final CategoryRepository categoryRepository;
 
     private final UserCourseService userCourseService;
-    private final Validator validator;
+    private final MessageSource messageSource;
 
-    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, UserCourseService userCourseService, Validator validator) {
+    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, UserCourseService userCourseService, MessageSource messageSource) {
         this.courseRepository = courseRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.userCourseService = userCourseService;
-        this.validator = validator;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -58,7 +59,7 @@ public class CourseServiceImpl implements CourseService {
         if (course.isPresent()) {
             return modelMapper.map(course.get(), CourseResponseDTO.class);
         }
-        throw new CourseNotFoundException();
+        throw new CourseNotFoundException(messageSource);
     }
 
     @Override
@@ -91,13 +92,13 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponseDTO createCourse(CourseRequestDTO courseDTO, PublicUserDTO loggedUser) {
         if (loggedUser == null || !(loggedUser.getRole().equals(Role.ADMIN) || loggedUser.getRole().equals(Role.TEACHER))) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(messageSource);
         }
         try {
             courseDTO.setId(null);
             courseDTO.setStars(0);
-            userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
-            categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
+            userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+            categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
             Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
             return modelMapper.map(courseEntity, CourseResponseDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -110,13 +111,13 @@ public class CourseServiceImpl implements CourseService {
         Optional<Course> existingCourseOptional = courseRepository.findByIdAndDeletedFalse(id);
 
         if (existingCourseOptional.isEmpty()) {
-            throw new CourseNotFoundException();
+            throw new CourseNotFoundException(messageSource);
         }
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), courseDTO.getUserId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(messageSource);
         }
-        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
-        categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(CategoryNotFoundException::new);
+        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+        categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
         Course existingCourse = existingCourseOptional.get();
         modelMapper.map(courseDTO, existingCourse);
 
@@ -137,12 +138,12 @@ public class CourseServiceImpl implements CourseService {
         Optional<Course> course = courseRepository.findByIdAndDeletedFalse(id);
         if (course.isPresent()) {
             if (loggedUser == null || (!Objects.equals(loggedUser.getId(), course.get().getUser().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
-                throw new AccessDeniedException();
+                throw new AccessDeniedException(messageSource);
             }
             course.get().setDeleted(true);
             courseRepository.save(course.get());
         } else {
-            throw new CourseNotFoundException();
+            throw new CourseNotFoundException(messageSource);
         }
     }
 }

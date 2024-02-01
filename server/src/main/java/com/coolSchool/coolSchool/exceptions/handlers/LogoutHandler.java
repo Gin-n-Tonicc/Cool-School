@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class LogoutHandler implements org.springframework.security.web.authentic
 
     private final TokenService tokenService;
     private final ObjectMapper objectMapper;
+    private final MessageSource messageSource;
 
     @Override
     public void logout(
@@ -32,7 +34,7 @@ public class LogoutHandler implements org.springframework.security.web.authentic
 
         if (jwt == null || jwt.isEmpty()) {
             try {
-                ObjectMapperHelper.writeExceptionToObjectMapper(objectMapper, new InvalidTokenException(), response);
+                ObjectMapperHelper.writeExceptionToObjectMapper(objectMapper, new InvalidTokenException(messageSource), response);
                 return;
             } catch (IOException exception) {
                 return;

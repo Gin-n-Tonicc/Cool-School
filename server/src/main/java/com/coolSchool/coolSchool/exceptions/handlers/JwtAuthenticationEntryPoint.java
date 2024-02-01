@@ -5,6 +5,7 @@ import com.coolSchool.coolSchool.utils.ObjectMapperHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -15,9 +16,11 @@ import java.io.IOException;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper;
+    private final MessageSource messageSource;
 
-    public JwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
+    public JwtAuthenticationEntryPoint(ObjectMapper objectMapper, MessageSource messageSource) {
         this.objectMapper = objectMapper;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         ObjectMapperHelper
                 .writeExceptionToObjectMapper(
                         objectMapper,
-                        new AccessDeniedException(),
+                        new AccessDeniedException(messageSource),
                         httpServletResponse
                 );
     }

@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.Objects;
+
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ExceptionResponse> handleRuntimeExceptions(RuntimeException exception) {
         // Log data
         exception.printStackTrace();
-        return handleApiExceptions(new InternalServerErrorException());
+        return handleApiExceptions(new InternalServerErrorException(Objects.requireNonNull(getMessageSource())));
     }
 
     @ExceptionHandler(InternalAuthenticationServiceException.class)
@@ -35,12 +37,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> handleBadCredentialsExceptions() {
-        return handleApiExceptions(new UserLoginException());
+        return handleApiExceptions(new UserLoginException(getMessageSource()));
     }
 
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
     public ResponseEntity<ExceptionResponse> handleAccessDeniedExceptions() {
-        return handleApiExceptions(new AccessDeniedException());
+        return handleApiExceptions(new AccessDeniedException(getMessageSource()));
     }
 
     @ExceptionHandler(ApiException.class)
