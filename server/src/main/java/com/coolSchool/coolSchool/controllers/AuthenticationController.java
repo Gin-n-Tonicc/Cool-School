@@ -1,5 +1,7 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.exceptions.email.EmailNotVerified;
+import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
@@ -18,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +43,7 @@ public class AuthenticationController {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final MessageSource messageSource;
 
     @PostMapping("/register")
     public ResponseEntity<PublicUserDTO> register(@RequestBody RegisterRequest request, HttpServletResponse servletResponse) {
@@ -67,11 +71,19 @@ public class AuthenticationController {
     }
     @PostMapping("/authenticate")
     public ResponseEntity<PublicUserDTO> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(messageSource));
+
+        if (!user.isEnabled()) {
+            throw new EmailNotVerified(messageSource);
+        }
+
         AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
         authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
 
         return ResponseEntity.ok(authenticationResponse.getUser());
     }
+
 
     @PutMapping("/complete-oauth")
     public ResponseEntity<PublicUserDTO> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
