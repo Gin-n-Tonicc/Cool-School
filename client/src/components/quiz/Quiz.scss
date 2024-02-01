@@ -1,0 +1,113 @@
+@import 'src/styles/style.scss';
+
+.quiz-parent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 115%;
+
+  button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
+
+  #start-button,
+  #restart {
+    font-size: 1.3em;
+    padding: 0.5em 1.8em;
+    border-radius: 0.2em;
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  #display-container {
+    @include box-shadow(0px 6px 16.83px 0.17px rgba(0, 0, 0, 0.15));
+    background-color: #ffffff;
+    padding: 3.1em 1.8em;
+    width: 80%;
+    max-width: 37.5em;
+
+    border-radius: 0.6em;
+
+    .header {
+      margin-bottom: 1.8em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.6em;
+      border-bottom: 0.1em solid #c0bfd2;
+    }
+
+    .timer-div {
+      background-color: #e1f5fe;
+      width: 7.5em;
+      border-radius: 1.8em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7em 1.8em;
+    }
+
+    #container {
+      .question {
+        margin-bottom: 1.25em;
+        font-weight: 600;
+        color: black;
+      }
+
+      .option-div {
+        --bg-clr: transparent;
+        --border-clr: #c0bfd2;
+
+        background-color: var(--bg-clr);
+        border: 1px solid var(--border-clr);
+        border-radius: 0.3em;
+
+        transition-duration: 0.1s;
+        font-size: 0.9em;
+        width: 100%;
+        padding: 1em;
+        margin: 0.3em 0;
+        text-align: left;
+        outline: none;
+
+        &.selected {
+          --bg-clr: rgba(50, 50, 50, 0.2);
+          --border-clr: rgb(50, 50, 50, 0.5);
+        }
+
+        &:disabled {
+          color: #000000;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    #next-button {
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 1.5em;
+      background-color: #ff663b;
+      color: #ffffff;
+      padding: 0.7em 1.8em;
+      border-radius: 0.3em;
+      box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3);
+      width: 100%;
+    }
+  }
+
+  // .incorrect {
+  //   background-color: #ffdde0;
+  //   color: #d32f2f;
+  //   border-color: #d32f2f;
+  // }
+  // .correct {
+  //   background-color: #e7f6d5;
+  //   color: #689f38;
+  //   border-color: #689f38;
+  // }
+  #user-score {
+    font-size: 1.5em;
+    color: #ffffff;
+  }
+}
