@@ -11,7 +11,10 @@ import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.User;
+import com.coolSchool.coolSchool.models.entity.VerificationToken;
+import com.coolSchool.coolSchool.repositories.TokenRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.repositories.VerificationTokenRepository;
 import com.coolSchool.coolSchool.security.CustomOAuth2User;
 import com.coolSchool.coolSchool.services.UserService;
 import jakarta.validation.ConstraintViolationException;
@@ -32,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final MessageSource messageSource;
+    private final VerificationTokenRepository verificationTokenRepository;
 
     @Override
     public User createUser(RegisterRequest request) {
@@ -170,5 +174,15 @@ public class UserServiceImpl implements UserService {
         }
 
         return userBuilder.build();
+    }
+    @Override
+    public VerificationToken getVerificationToken(String VerificationToken) {
+        return verificationTokenRepository.findByToken(VerificationToken);
+    }
+
+    @Override
+    public void createVerificationToken(User user, String token) {
+        VerificationToken myToken = new VerificationToken(token, user);
+        verificationTokenRepository.save(myToken);
     }
 }

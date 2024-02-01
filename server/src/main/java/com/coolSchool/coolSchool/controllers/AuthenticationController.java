@@ -6,15 +6,25 @@ import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
+import com.coolSchool.coolSchool.models.entity.User;
+import com.coolSchool.coolSchool.models.entity.VerificationToken;
+import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.repositories.VerificationTokenRepository;
 import com.coolSchool.coolSchool.services.AuthenticationService;
+import com.coolSchool.coolSchool.services.impl.security.OnRegistrationCompleteEvent;
 import com.coolSchool.coolSchool.utils.CookieHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Locale;
 
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_REFRESH;
@@ -26,14 +36,35 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    private final ApplicationEventPublisher eventPublisher;
+    private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
+
     @PostMapping("/register")
     public ResponseEntity<PublicUserDTO> register(@RequestBody RegisterRequest request, HttpServletResponse servletResponse) {
         AuthenticationResponse authenticationResponse = authenticationService.register(request);
-        authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
-
+        sendVerificationEmail(modelMapper.map(authenticationResponse.getUser(), User.class), servletResponse);
         return ResponseEntity.ok(authenticationResponse.getUser());
     }
+    @GetMapping("/registrationConfirm")
+    public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {
 
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        if (verificationToken == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token expired!");
+        }
+
+        User user = verificationToken.getUser();
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token expired!");
+        }
+
+        user.setEnabled(true);
+        userRepository.save(user);
+        return ResponseEntity.ok("User registration confirmed successfully!");
+    }
     @PostMapping("/authenticate")
     public ResponseEntity<PublicUserDTO> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
         AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
@@ -70,5 +101,12 @@ public class AuthenticationController {
         authenticationService.attachAuthCookies(authenticationResponse, response::addCookie);
 
         return ResponseEntity.ok(authenticationResponse.getUser());
+    }
+    private void sendVerificationEmail(User user, HttpServletResponse servletResponse) {
+        String appUrl = getApplicationUrl(servletResponse);
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, appUrl));
+    }
+    private String getApplicationUrl(HttpServletResponse servletResponse) {
+        return servletResponse.encodeURL("http://frontend.com");
     }
 }
