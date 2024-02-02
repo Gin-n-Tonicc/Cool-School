@@ -19,7 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +47,7 @@ public class BlogServiceImplTest {
     @Mock
     private CategoryRepository categoryRepository;
     private MessageSource messageSource;
+    private JavaMailSender emailSender;
 
     @BeforeEach
     void setUp() {
@@ -55,7 +56,7 @@ public class BlogServiceImplTest {
         fileRepository = mock(FileRepository.class);
         userRepository = mock(UserRepository.class);
         categoryRepository = mock(CategoryRepository.class);
-        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource);
+        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource, emailSender);
     }
 
     @Test

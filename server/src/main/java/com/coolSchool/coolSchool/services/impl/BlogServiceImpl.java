@@ -22,10 +22,14 @@ import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.repositories.FileRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.BlogService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,14 +49,19 @@ public class BlogServiceImpl implements BlogService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final MessageSource messageSource;
+    private final JavaMailSender emailSender;
+    @Value("${server.frontend.baseUrl}")
+    private String frontendUrl;
 
-    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource) {
+
+    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource, JavaMailSender emailSender) {
         this.blogRepository = blogRepository;
         this.modelMapper = modelMapper;
         this.fileRepository = fileRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
         this.messageSource = messageSource;
+        this.emailSender = emailSender;
     }
 
     @Override
@@ -143,6 +152,9 @@ public class BlogServiceImpl implements BlogService {
         }
         if (loggedUser.getRole().equals(Role.ADMIN)) {
             blogDTO.setEnabled(blogDTO.isEnabled());
+            if(blogDTO.isEnabled()) {
+                sendEnabledBlogEmailNotification(blogDTO.getOwnerId(), id);
+            }
         } else {
             blogDTO.setEnabled(existingBlogOptional.get().isEnabled());
         }
@@ -169,7 +181,36 @@ public class BlogServiceImpl implements BlogService {
             throw exception;
         }
     }
+    public void sendEnabledBlogEmailNotification(Long ownerId, Long blogId) {
+        User user = userRepository.findById(ownerId)
+                .orElseThrow(() -> new UserNotFoundException(messageSource));
 
+        String recipientAddress = user.getEmail();
+        String blogLink = frontendUrl + "/blog/" + blogId;
+        String subject = "Your Blog is Enabled";
+        String content = "Dear " + user.getFirstname() + " " + user.getLastname() + ",\n\n"
+                + "We are pleased to inform you that your blog has been successfully enabled.\n"
+                + "You can now see your blog in our blogs page!\n\n"
+                + "If you have received this email before for the same blog,\n" +
+                "it means that our administrator has made some changes to your work.\n\n"
+                + "Take a look at: " + blogLink + "\n\n"
+                + "Best regards,\n"
+                + "Cool School Team!";
+
+        sendEmail(recipientAddress, subject, content);
+    }
+    private void sendEmail(String to, String subject, String text) {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        try {
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(text);
+            emailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     @Transactional
     public void deleteBlog(Long id, PublicUserDTO loggedUser) {
