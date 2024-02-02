@@ -15,9 +15,9 @@ jobs:
     steps:
       - name: Send Slack Notification
         env:
-          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
+          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, this is a notification from GitHub!"}' https://hooks.slack.com/services/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
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, this is a notification from GitHub!"}' https://hooks.slack.com/services/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
           if [ $? -eq 0 ]; then
             echo "Notification sent successfully"
           else
