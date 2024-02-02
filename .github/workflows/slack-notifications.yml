@@ -15,6 +15,6 @@ jobs:
     steps:
       - name: Send Slack Notification
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ SLACK_WEBHOOK_URL }}
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, this is a notification from GitHub!"}' $SLACK_WEBHOOK_URL
