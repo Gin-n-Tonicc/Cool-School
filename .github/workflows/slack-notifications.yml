@@ -18,3 +18,10 @@ jobs:
           SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
         run: |
           curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, this is a notification from GitHub!"}' https://hooks.slack.com/services/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
+          if [ $? -eq 0 ]; then
+            echo "Notification sent successfully"
+          else
+            echo "Failed to send notification"
+            echo "$response"  # Print response for debugging
+            exit 1
+          fi
