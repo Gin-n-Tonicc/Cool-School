@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 @Slf4j
 public class SlackNotifier {
-        @Value("${webhook.url}")
+    @Value("${webhook.url}")
     private String webhookUrl;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 

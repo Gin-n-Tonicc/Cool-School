@@ -5,7 +5,6 @@ import com.coolSchool.coolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.coolSchool.exceptions.course.ValidationCourseException;
-import com.coolSchool.coolSchool.exceptions.files.FileNotFoundException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.CourseRequestDTO;
@@ -14,7 +13,6 @@ import com.coolSchool.coolSchool.models.dto.response.CourseResponseDTO;
 import com.coolSchool.coolSchool.models.dto.response.UserCourseResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Category;
 import com.coolSchool.coolSchool.models.entity.Course;
-import com.coolSchool.coolSchool.models.entity.File;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.repositories.CourseRepository;
@@ -23,7 +21,6 @@ import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.CourseService;
 import com.coolSchool.coolSchool.services.UserCourseService;
 import com.coolSchool.coolSchool.slack.SlackNotifier;
-import com.slack.api.model.Attachment;
 import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -110,7 +107,7 @@ public class CourseServiceImpl implements CourseService {
         try {
             courseDTO.setId(null);
             courseDTO.setStars(0);
-            userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+            userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(() -> new UserNotFoundException(messageSource));
             categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
             Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
             sendSlackNotification(courseEntity);
@@ -130,7 +127,7 @@ public class CourseServiceImpl implements CourseService {
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), courseDTO.getUserId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException(messageSource);
         }
-        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(() -> new UserNotFoundException(messageSource));
         categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
         Course existingCourse = existingCourseOptional.get();
         modelMapper.map(courseDTO, existingCourse);
@@ -156,14 +153,14 @@ public class CourseServiceImpl implements CourseService {
             }
             course.get().setDeleted(true);
             courseRepository.save(course.get());
-        } else {
-            throw new CourseNotFoundException(messageSource);
         }
+        throw new CourseNotFoundException(messageSource);
     }
+
     private void sendSlackNotification(Course course) {
-        User author = userRepository.findById(course.getUser().getId()).orElseThrow(()-> new UserNotFoundException(messageSource));
-        Category category = categoryRepository.findById(course.getCategory().getId()).orElseThrow(()-> new CategoryNotFoundException(messageSource));
-        File file = fileRepository.findById(course.getPicture().getId()).orElseThrow(()-> new FileNotFoundException(messageSource));
+        User author = userRepository.findById(course.getUser().getId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        Category category = categoryRepository.findById(course.getCategory().getId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
+
         String message = "New course created in Cool School:\n" +
                 "Name: " + course.getName() + "\n" +
                 "Author: " + author.getFirstname() + " " + author.getLastname() + "\n" +

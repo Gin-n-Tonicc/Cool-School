@@ -15,6 +15,6 @@ jobs:
     steps:
       - name: Send Slack Notification
         env:
-          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
+          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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
