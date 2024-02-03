@@ -16,8 +16,12 @@ public interface QuizService {
     QuizDTO updateQuiz(Long id, QuizDataDTO quizDTO);
 
     void deleteQuiz(Long id);
+
     QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId);
-    List<UserQuizProgressDTO> autoSaveUserProgress(Long quizId, Long questionId, Long answerId, Long userId);
+
+    List<UserQuizProgressDTO> autoSaveUserProgress(Long quizId, Long questionId, Long answerId, Long userId, Long quizAttemptId);
+
     void deleteAutoSavedProgress(Long userId, Long quizId);
+
     QuizAttemptDTO getQuizAttemptDetails(Long quizAttemptId);
 }

@@ -64,9 +64,9 @@ public class QuizController {
     }
 
     @PostMapping("/quiz/{quizId}/save-progress")
-    public  List<UserQuizProgressDTO> autoSaveUserProgress(@PathVariable Long quizId, @RequestParam Long questionId, @RequestParam Long answerId, HttpServletRequest httpServletRequest) {
+    public List<UserQuizProgressDTO> autoSaveUserProgress(@PathVariable Long quizId, @RequestParam Long questionId, @RequestParam Long answerId, @RequestParam Long quizAttemptId, HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
-        return quizService.autoSaveUserProgress(quizId, questionId, answerId, publicUserDTO.getId());
+        return quizService.autoSaveUserProgress(quizId, questionId, answerId, publicUserDTO.getId(), quizAttemptId);
     }
 
     @GetMapping("/{quizAttemptId}")

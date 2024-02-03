@@ -36,7 +36,9 @@ public class QuizAttempt {
     private LocalDateTime quizCompletionTime;
 
     private LocalDateTime startTime;
-    private Long timeLeft;
+
+    private Integer timeLeft;
+
 
     @Column(name = "completed", nullable = false)
     private boolean completed;

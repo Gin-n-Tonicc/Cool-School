@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.services.impl;
 
+import com.coolSchool.coolSchool.config.QuizAttemptTimer;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.coolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
 import com.coolSchool.coolSchool.exceptions.quizzes.*;
@@ -37,8 +38,9 @@ public class QuizServiceImpl implements QuizService {
     private final CourseRepository courseRepository;
     private final UserQuizProgressRepository userQuizProgressRepository;
     private final MessageSource messageSource;
+    private final QuizAttemptTimer quizAttemptTimer;
 
-    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, CourseSubsectionRepository courseSubsectionRepository, CourseRepository courseRepository, UserQuizProgressRepository userQuizProgressRepository, MessageSource messageSource) {
+    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, CourseSubsectionRepository courseSubsectionRepository, CourseRepository courseRepository, UserQuizProgressRepository userQuizProgressRepository, MessageSource messageSource, QuizAttemptTimer quizAttemptTimer) {
         this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
         this.questionService = questionService;
@@ -50,6 +52,7 @@ public class QuizServiceImpl implements QuizService {
         this.courseRepository = courseRepository;
         this.userQuizProgressRepository = userQuizProgressRepository;
         this.messageSource = messageSource;
+        this.quizAttemptTimer = quizAttemptTimer;
     }
 
     @Override
@@ -200,7 +203,6 @@ public class QuizServiceImpl implements QuizService {
         quizAttempt.setAttemptNumber(attemptNumber);
         quizAttempt.setStartTime(LocalDateTime.now());
         quizAttempt = quizAttemptRepository.save(quizAttempt);
-
         BigDecimal totalMarks = BigDecimal.ZERO;
 
         for (UserAnswerDTO userAnswerDTO : userAnswers) {
@@ -230,7 +232,6 @@ public class QuizServiceImpl implements QuizService {
         }
 
         quizAttempt.setTotalMarks(totalMarks);
-        quizAttempt.setCompleted(true);
         quizAttemptRepository.save(quizAttempt);
 
         return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class), modelMapper.map(quizAttempt.getUser(), PublicUserDTO.class),
@@ -241,7 +242,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public QuizAttemptDTO getQuizAttemptDetails(Long quizAttemptId) {
         QuizAttempt quizAttempt = quizAttemptRepository.findById(quizAttemptId)
-                .orElseThrow(()-> new QuizAttemptNotFoundException(messageSource));
+                .orElseThrow(() -> new QuizAttemptNotFoundException(messageSource));
 
         long timeLeft = calculateTimeLeftForQuizAttempt(quizAttempt.getId(), quizAttempt.getQuiz().getQuizDurationInMinutes());
 
@@ -252,12 +253,19 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public List<UserQuizProgressDTO> autoSaveUserProgress(Long quizId, Long questionId, Long answerId, Long userId) {
+    public List<UserQuizProgressDTO> autoSaveUserProgress(Long quizId, Long questionId, Long answerId, Long userId, Long quizAttemptId) {
         UserQuizProgressDTO userQuizProgressDTO = new UserQuizProgressDTO();
+        QuizAttempt quizAttempt = quizAttemptRepository.findById(quizAttemptId).orElseThrow(() -> new QuizAttemptNotFoundException(messageSource));
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(messageSource));
         userQuizProgressDTO.setUserId(userId);
         userQuizProgressDTO.setQuizId(quizId);
         userQuizProgressDTO.setAnswerId(answerId);
         userQuizProgressDTO.setQuestionId(questionId);
+        quizAttempt.setTimeLeft(quiz.getQuizDurationInMinutes());
+        quizAttemptTimer.updateQuizAttemptsTimeLeft();
+        if (quizAttempt.getTimeLeft() <= 0) {
+            throw new TimeLimitForQuizExceededException(messageSource);
+        }
         UserQuizProgress userQuizProgress = modelMapper.map(userQuizProgressDTO, UserQuizProgress.class);
         userQuizProgressRepository.save(userQuizProgress);
 
@@ -269,9 +277,10 @@ public class QuizServiceImpl implements QuizService {
     public void deleteAutoSavedProgress(Long userId, Long quizId) {
         userQuizProgressRepository.deleteByUserIdAndQuizId(userId, quizId);
     }
+
     public long calculateTimeLeftForQuizAttempt(Long quizAttemptId, int quizDurationInMinutes) {
         QuizAttempt quizAttempt = quizAttemptRepository.findById(quizAttemptId)
-                .orElseThrow(()-> new QuizAttemptNotFoundException(messageSource));
+                .orElseThrow(() -> new QuizAttemptNotFoundException(messageSource));
         LocalDateTime startTime = quizAttempt.getStartTime();
         LocalDateTime currentTime = LocalDateTime.now();
         long elapsedTimeInMinutes = Duration.between(startTime, currentTime).toMinutes();
@@ -285,6 +294,7 @@ public class QuizServiceImpl implements QuizService {
                 .map(progress -> modelMapper.map(progress, UserQuizProgressDTO.class))
                 .collect(Collectors.toList());
     }
+
     private boolean isUserAnswerCorrect(UserAnswerDTO userAnswer, List<AnswerDTO> correctAnswers) {
         if (userAnswer == null) {
             return false;

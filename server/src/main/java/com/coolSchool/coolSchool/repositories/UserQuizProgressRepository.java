@@ -12,6 +12,5 @@ import java.util.List;
 public interface UserQuizProgressRepository extends JpaRepository<UserQuizProgress, Long> {
     void deleteByUserIdAndQuizId(Long userId, Long quizId);
     List<UserQuizProgress> findByUserIdAndQuizId(Long userId, Long quizId);
-    @Query("SELECT uqp FROM UserQuizProgress uqp WHERE uqp.quizId = :quizId")
-    List<UserQuizProgress> findByQuizId(@Param("quizId") Long quizId);
+    List<UserQuizProgress> findByQuizId(Long quizId);
 }
