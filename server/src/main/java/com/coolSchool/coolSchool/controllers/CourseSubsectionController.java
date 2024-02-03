@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.request.CourseSubsectionRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.CourseSubsectionResponseDTO;
 import com.coolSchool.coolSchool.services.CourseSubsectionService;
@@ -35,17 +36,20 @@ public class CourseSubsectionController {
         return ResponseEntity.ok(courseSubsectionService.getCourseSubsectionById(id));
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<CourseSubsectionResponseDTO> createCourseSubsection(@Valid @RequestBody CourseSubsectionRequestDTO courseSubsectionDTO) {
         CourseSubsectionResponseDTO cratedCourseSubsection = courseSubsectionService.createCourseSubsection(courseSubsectionDTO);
         return new ResponseEntity<>(cratedCourseSubsection, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @PutMapping("/{id}")
     public ResponseEntity<CourseSubsectionResponseDTO> updateCourseSubsection(@PathVariable("id") Long id, @Valid @RequestBody CourseSubsectionRequestDTO courseSubsectionDTO) {
         return ResponseEntity.ok(courseSubsectionService.updateCourseSubsection(id, courseSubsectionDTO));
     }
 
+    @RateLimited
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCourseSubsectionById(@PathVariable("id") Long id) {
         courseSubsectionService.deleteCourseSubsection(id);

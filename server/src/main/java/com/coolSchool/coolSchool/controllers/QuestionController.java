@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.common.QuestionDTO;
 import com.coolSchool.coolSchool.services.QuestionService;
 import jakarta.validation.Valid;
@@ -29,17 +30,20 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.getQuestionById(id));
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<QuestionDTO> createQuestion(@Valid @RequestBody QuestionDTO questionDTO) {
         QuestionDTO cratedQuestion = questionService.createQuestion(questionDTO);
         return new ResponseEntity<>(cratedQuestion, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @PutMapping("/{id}")
     public ResponseEntity<QuestionDTO> updateQuestion(@PathVariable("id") Long id, @Valid @RequestBody QuestionDTO questionDTO) {
         return ResponseEntity.ok(questionService.updateQuestion(id, questionDTO));
     }
 
+    @RateLimited
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteQuestionById(@PathVariable("id") Long id) {
         questionService.deleteQuestion(id);

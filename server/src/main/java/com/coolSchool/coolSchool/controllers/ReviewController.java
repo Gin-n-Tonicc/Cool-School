@@ -1,6 +1,7 @@
 package com.coolSchool.coolSchool.controllers;
 
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.ReviewRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.ReviewResponseDTO;
@@ -32,12 +33,14 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewById(id));
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<ReviewResponseDTO> createReview(@Valid @RequestBody ReviewRequestDTO reviewDTO, HttpServletRequest httpServletRequest) {
         ReviewResponseDTO createdReview = reviewService.createReview(reviewDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteReviewById(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
         reviewService.deleteReview(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));

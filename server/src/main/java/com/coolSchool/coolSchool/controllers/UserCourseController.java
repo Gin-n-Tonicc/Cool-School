@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.request.UserCourseRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.UserCourseResponseDTO;
 import com.coolSchool.coolSchool.services.UserCourseService;
@@ -30,17 +31,20 @@ public class UserCourseController {
         return ResponseEntity.ok(userCourseService.getUserCourseById(id));
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<UserCourseResponseDTO> createUserCourse(@Valid @RequestBody UserCourseRequestDTO userCourseDTO) {
         UserCourseResponseDTO cratedUserCourse = userCourseService.createUserCourse(userCourseDTO);
         return new ResponseEntity<>(cratedUserCourse, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @PutMapping("/{id}")
     public ResponseEntity<UserCourseResponseDTO> updateUserCourse(@PathVariable("id") Long id, @Valid @RequestBody UserCourseRequestDTO userCourseDTO) {
         return ResponseEntity.ok(userCourseService.updateUserCourse(id, userCourseDTO));
     }
 
+    @RateLimited
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUserCourseById(@PathVariable("id") Long id) {
         userCourseService.deleteUserCourse(id);

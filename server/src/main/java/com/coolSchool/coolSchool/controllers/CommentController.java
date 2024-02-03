@@ -1,6 +1,7 @@
 package com.coolSchool.coolSchool.controllers;
 
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.CommentRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.CommentGetByBlogResponseDTO;
@@ -40,6 +41,7 @@ public class CommentController {
         return ResponseEntity.ok(commentService.getCommentById(id));
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<CommentResponseDTO> createComment(@Valid @RequestBody CommentRequestDTO commentDTO, HttpServletRequest httpServletRequest) {
         CommentResponseDTO cratedComment = commentService.createComment(commentDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
