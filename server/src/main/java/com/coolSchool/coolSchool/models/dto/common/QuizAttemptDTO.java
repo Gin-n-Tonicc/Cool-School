@@ -24,4 +24,5 @@ public class QuizAttemptDTO {
     private List<UserAnswerDTO> userAnswers;
     private BigDecimal totalMarks;
     private int attemptNumber;
+    private Long timeLeft;
 }

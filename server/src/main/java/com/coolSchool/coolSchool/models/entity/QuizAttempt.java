@@ -1,14 +1,11 @@
 package com.coolSchool.coolSchool.models.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
-
-
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -30,6 +27,17 @@ public class QuizAttempt {
 
     @OneToMany(mappedBy = "quizAttempt", cascade = CascadeType.ALL)
     private List<UserAnswer> userAnswers;
+
     private BigDecimal totalMarks;
+
     private int attemptNumber;
+
+    @Column(name = "quiz_completion_time")
+    private LocalDateTime quizCompletionTime;
+
+    private LocalDateTime startTime;
+    private Long timeLeft;
+
+    @Column(name = "completed", nullable = false)
+    private boolean completed;
 }

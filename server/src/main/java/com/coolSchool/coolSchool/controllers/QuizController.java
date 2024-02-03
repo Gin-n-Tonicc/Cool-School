@@ -64,9 +64,14 @@ public class QuizController {
     }
 
     @PostMapping("/quiz/{quizId}/save-progress")
-    public ResponseEntity<String> autoSaveUserProgress(@PathVariable Long quizId, @RequestParam Long questionId, @RequestParam Long answerId, HttpServletRequest httpServletRequest) {
+    public  List<UserQuizProgressDTO> autoSaveUserProgress(@PathVariable Long quizId, @RequestParam Long questionId, @RequestParam Long answerId, HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
-        quizService.autoSaveUserProgress(quizId, questionId, answerId, publicUserDTO.getId());
-        return ResponseEntity.ok("Saved answer!");
+        return quizService.autoSaveUserProgress(quizId, questionId, answerId, publicUserDTO.getId());
+    }
+
+    @GetMapping("/{quizAttemptId}")
+    public ResponseEntity<QuizAttemptDTO> getQuizAttemptDetails(@PathVariable Long quizAttemptId) {
+        QuizAttemptDTO quizAttemptDTO = quizService.getQuizAttemptDetails(quizAttemptId);
+        return new ResponseEntity<>(quizAttemptDTO, HttpStatus.OK);
     }
 }
