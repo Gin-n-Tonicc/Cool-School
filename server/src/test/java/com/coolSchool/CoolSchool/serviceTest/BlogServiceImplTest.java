@@ -12,6 +12,7 @@ import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.repositories.FileRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.impl.BlogServiceImpl;
+import com.coolSchool.coolSchool.slack.SlackNotifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,8 @@ public class BlogServiceImplTest {
     @Mock
     private CategoryRepository categoryRepository;
     private MessageSource messageSource;
+    private JavaMailSender emailSender;
+    private SlackNotifier slackNotifier;
 
     @BeforeEach
     void setUp() {
@@ -55,7 +58,7 @@ public class BlogServiceImplTest {
         fileRepository = mock(FileRepository.class);
         userRepository = mock(UserRepository.class);
         categoryRepository = mock(CategoryRepository.class);
-        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource);
+        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource, emailSender, slackNotifier);
     }
 
     @Test

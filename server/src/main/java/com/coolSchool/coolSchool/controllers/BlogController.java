@@ -1,6 +1,7 @@
 package com.coolSchool.coolSchool.controllers;
 
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.BlogResponseDTO;
@@ -28,6 +29,7 @@ public class BlogController {
         return ResponseEntity.ok(blogService.getAllBlogs((PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
+    @RateLimited
     @PostMapping("/like/{blogId}")
     public ResponseEntity<BlogResponseDTO> likeBlog(@PathVariable Long blogId, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(blogService.addLike(blogId, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
@@ -38,6 +40,7 @@ public class BlogController {
         return ResponseEntity.ok(blogService.getBlogById(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<BlogResponseDTO> createBlog(@Valid @RequestBody BlogRequestDTO blogDTO, HttpServletRequest httpServletRequest) {
         Locale locale = httpServletRequest.getLocale();
@@ -45,11 +48,13 @@ public class BlogController {
         return new ResponseEntity<>(cratedBlog, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @PutMapping("/{id}")
     public ResponseEntity<BlogResponseDTO> updateBlog(@PathVariable("id") Long id, @Valid @RequestBody BlogRequestDTO blogDTO, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(blogService.updateBlog(id, blogDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
+    @RateLimited
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteBlogById(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
         blogService.deleteBlog(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));

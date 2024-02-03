@@ -34,14 +34,22 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         service.createVerificationToken(user, token);
 
         String recipientAddress = user.getEmail();
-        String subject = "Cool School";
-        String confirmationUrl
-                = event.getAppUrl() + "/regitrationConfirm?token=" + token + "\r\n";
+        String subject = "Cool School Registration Confirmation";
+        String confirmationUrl = event.getAppUrl() + "/regitrationConfirm?token=" + token;
+
+        String message = "Dear, " + user.getFirstname() + " " + user.getLastname() +"\n\n"
+                + "Thank you for registering with Cool School!\n\n"
+                + "To complete your registration, please click the following link to verify your email:\n"
+                + confirmationUrl + "\n\n"
+                + "If you did not create an account with us, please ignore this email.\n\n"
+                + "Best regards,\n"
+                + "Cool School Team!";
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
         email.setSubject(subject);
-        email.setText("PLEASE CLICK THE FOLLOWING LINK TO VERIFY YOU EMAIL" + "\r\n" + "http://localhost:8080/api/v1/auth/registrationConfirm?token=" + token);
+        email.setText(message);
+
         mailSender.send(email);
     }
 }

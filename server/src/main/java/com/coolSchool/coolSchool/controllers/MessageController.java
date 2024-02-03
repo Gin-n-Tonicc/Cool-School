@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.common.MessageDTO;
 import com.coolSchool.coolSchool.services.MessageService;
 import jakarta.validation.Valid;
@@ -29,17 +30,20 @@ public class MessageController {
         return ResponseEntity.ok(messageService.getMessageById(id));
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<MessageDTO> createMessage(@Valid @RequestBody MessageDTO messageDTO) {
         MessageDTO cratedMessage = messageService.createMessage(messageDTO);
         return new ResponseEntity<>(cratedMessage, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @PutMapping("/{id}")
     public ResponseEntity<MessageDTO> updateMessage(@PathVariable("id") Long id, @Valid @RequestBody MessageDTO messageDTO) {
         return ResponseEntity.ok(messageService.updateMessage(id, messageDTO));
     }
 
+    @RateLimited
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMessageById(@PathVariable("id") Long id) {
         messageService.deleteMessage(id);

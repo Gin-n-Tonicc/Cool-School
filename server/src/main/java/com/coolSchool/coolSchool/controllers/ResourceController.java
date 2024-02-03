@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.request.ResourceRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.ResourceResponseDTO;
 import com.coolSchool.coolSchool.services.ResourceService;
@@ -35,17 +36,20 @@ public class ResourceController {
         return ResponseEntity.ok(resourceService.getResourceById(id));
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<ResourceResponseDTO> createResource(@Valid @RequestBody ResourceRequestDTO resourceDTO) {
         ResourceResponseDTO cratedResource = resourceService.createResource(resourceDTO);
         return new ResponseEntity<>(cratedResource, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @PutMapping("/{id}")
     public ResponseEntity<ResourceResponseDTO> updateResource(@PathVariable("id") Long id, @Valid @RequestBody ResourceRequestDTO resourceDTO) {
         return ResponseEntity.ok(resourceService.updateResource(id, resourceDTO));
     }
 
+    @RateLimited
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteResourceById(@PathVariable("id") Long id) {
         resourceService.deleteResource(id);

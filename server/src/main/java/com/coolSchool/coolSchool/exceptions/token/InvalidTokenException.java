@@ -7,6 +7,6 @@ import org.springframework.http.HttpStatus;
 
 public class InvalidTokenException extends ApiException {
     public InvalidTokenException(MessageSource messageSource) {
-        super(messageSource.getMessage("invalid.token", null, LocaleContextHolder.getLocale()), HttpStatus.UNAUTHORIZED);
+        super(messageSource.getMessage("token.invalid", null, LocaleContextHolder.getLocale()), HttpStatus.UNAUTHORIZED);
     }
 }

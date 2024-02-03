@@ -3,6 +3,7 @@ package com.coolSchool.coolSchool.controllers;
 import com.coolSchool.coolSchool.exceptions.email.EmailNotVerified;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
@@ -44,7 +45,7 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MessageSource messageSource;
-
+    @RateLimited
     @PostMapping("/register")
     public ResponseEntity<PublicUserDTO> register(@RequestBody RegisterRequest request, HttpServletResponse servletResponse) {
         AuthenticationResponse authenticationResponse = authenticationService.register(request);
@@ -69,6 +70,7 @@ public class AuthenticationController {
         userRepository.save(user);
         return ResponseEntity.ok("User registration confirmed successfully!");
     }
+    @RateLimited
     @PostMapping("/authenticate")
     public ResponseEntity<PublicUserDTO> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
         User user = userRepository.findByEmail(request.getEmail())
@@ -84,7 +86,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationResponse.getUser());
     }
 
-
+    @RateLimited
     @PutMapping("/complete-oauth")
     public ResponseEntity<PublicUserDTO> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         PublicUserDTO currentLoggedUser = (PublicUserDTO) servletRequest.getAttribute(JwtAuthenticationFilter.userKey);

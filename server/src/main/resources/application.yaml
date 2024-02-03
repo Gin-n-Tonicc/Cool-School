@@ -58,3 +58,5 @@ spring:
 application:
 upload:
   directory: server/src/main/resources/static/uploads/
+webhook:
+  url: ${WEBHOOK_URL}

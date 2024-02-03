@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.entity.File;
 import com.coolSchool.coolSchool.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class FileController {
         this.fileService = fileService;
     }
 
+    @RateLimited
     @PostMapping("/upload")
     public ResponseEntity<File> uploadFile(@RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(fileService.uploadFile(file));
