@@ -28,7 +28,7 @@ import ErrorBoundary from './components/error-boundary/ErrorBoundary';
 import Home from './components/home/Home';
 import HttpProvider from './components/http-provider/HttpProvider';
 import NotFound from './components/not-found/NotFound';
-import Quiz from './components/quiz/Quiz';
+import QuizStart from './components/quiz/quiz-start/QuizStart';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
 import './styles/style.scss';
@@ -75,7 +75,10 @@ function App() {
                         element={<FinishRegister />}
                       />
                       <Route path={PagesEnum.Logout} element={<Logout />} />
-                      <Route path={PagesEnum.Quizzes} element={<Quiz />} />
+                      <Route
+                        path={PagesEnum.QuizStart}
+                        element={<QuizStart />}
+                      />
                       <Route
                         path={PagesEnum.BlogCreate}
                         element={<BlogCreate />}

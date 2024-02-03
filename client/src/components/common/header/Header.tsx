@@ -118,7 +118,7 @@ export default function Header() {
         PagesEnum.CoursesCreate,
         PagesEnum.Admin,
         PagesEnum.NotFound,
-        PagesEnum.Quizzes,
+        PagesEnum.QuizStart,
         `${PagesEnum.Admin}/${AdminPagesEnum.USERS}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`,
