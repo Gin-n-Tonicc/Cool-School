@@ -1,10 +1,13 @@
 @import 'src/styles/style.scss';
 
 .quiz-parent {
+  margin-top: 15vh;
+  margin-bottom: 10vh;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 115%;
+  font-size: 110%;
 
   button {
     border: none;
@@ -12,15 +15,7 @@
     cursor: pointer;
   }
 
-  #start-button,
-  #restart {
-    font-size: 1.3em;
-    padding: 0.5em 1.8em;
-    border-radius: 0.2em;
-    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.4);
-  }
-
-  #display-container {
+  .display-container {
     @include box-shadow(0px 6px 16.83px 0.17px rgba(0, 0, 0, 0.15));
     background-color: #ffffff;
     padding: 3.1em 1.8em;
@@ -48,7 +43,7 @@
       padding: 0.7em 1.8em;
     }
 
-    #container {
+    .question-container {
       .question {
         margin-bottom: 1.25em;
         font-weight: 600;
@@ -83,31 +78,40 @@
       }
     }
 
-    #next-button {
-      cursor: pointer;
-      font-size: 1em;
-      margin-top: 1.5em;
-      background-color: #ff663b;
-      color: #ffffff;
-      padding: 0.7em 1.8em;
-      border-radius: 0.3em;
-      box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3);
-      width: 100%;
+    .quiz-arrow-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+
+      .next-button {
+        font-size: 1em;
+        margin-top: 1.5em;
+        background-color: #ff663b;
+        color: #ffffff;
+        padding: 0.7em 1.8em;
+        border-radius: 0.3em;
+        box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 33%;
+
+        i {
+          font-size: 150%;
+        }
+      }
     }
   }
 
-  // .incorrect {
-  //   background-color: #ffdde0;
-  //   color: #d32f2f;
-  //   border-color: #d32f2f;
-  // }
-  // .correct {
-  //   background-color: #e7f6d5;
-  //   color: #689f38;
-  //   border-color: #689f38;
-  // }
-  #user-score {
-    font-size: 1.5em;
-    color: #ffffff;
+  .incorrect {
+    background-color: #ffdde0;
+    color: #d32f2f;
+    border-color: #d32f2f;
+  }
+
+  .correct {
+    background-color: #e7f6d5;
+    color: #689f38;
+    border-color: #689f38;
   }
 }

@@ -10,8 +10,8 @@ export default function Quiz() {
   }));
 
   return (
-    <section className="quiz-parent container section_padding">
-      <div id="display-container">
+    <section className="quiz-parent">
+      <div className="display-container">
         <div className="header">
           <div className="number-of-count">
             <span className="number-of-question">1 of 3 questions</span>
@@ -24,7 +24,7 @@ export default function Quiz() {
             <span className="time-left">10s</span>
           </div>
         </div>
-        <div id="container">
+        <div className="question-container">
           <div className="container-mid">
             <p className="question">Google (www.google.com) is a:</p>
             {mockedAnswers.map((x) => (
@@ -41,7 +41,14 @@ export default function Quiz() {
             ))}
           </div>
         </div>
-        <button id="next-button">Next</button>
+        <div className="quiz-arrow-buttons">
+          <button className="next-button">
+            <i className="zmdi zmdi-arrow-left"></i>
+          </button>
+          <button className="next-button">
+            <i className="zmdi zmdi-arrow-right"></i>
+          </button>
+        </div>
       </div>
     </section>
   );
