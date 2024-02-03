@@ -3,8 +3,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import FormInput from '../../../../../common/form-input/FormInput';
 
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../../../config/apiUrls';
+import { useFetch } from '../../../../../../hooks/useFetch';
 import useValidators from '../../../../../../hooks/useValidator/useValidators';
 import { ICourseSubsection } from '../../../../../../types/interfaces/ICourseSubsection';
 import FormErrorWrapper from '../../../../../common/form-error-wrapper/FormErrorWrapper';

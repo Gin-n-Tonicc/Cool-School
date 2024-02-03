@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import { useFetch } from '../../../hooks/useFetch';
 import { usePagination } from '../../../hooks/usePagination';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import BlogItem from '../blog-item/BlogItem';

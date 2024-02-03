@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useAuthContext } from '../../../contexts/AuthContext';
+import { useFetch } from '../../../hooks/useFetch';
 
 export default function Logout() {
   const { logoutUser } = useAuthContext();

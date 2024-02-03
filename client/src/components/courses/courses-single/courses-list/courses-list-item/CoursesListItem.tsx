@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
+import { useFetch } from '../../../../../hooks/useFetch';
 import { ICourseSubsection } from '../../../../../types/interfaces/ICourseSubsection';
 import { IResource } from '../../../../../types/interfaces/IResource';
 import CoursesResourcesCreate from '../../courses-resources-create/CoursesResourcesCreate';

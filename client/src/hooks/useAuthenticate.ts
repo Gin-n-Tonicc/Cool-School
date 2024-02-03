@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { CachePolicies, useFetch } from 'use-http';
+import { CachePolicies } from 'use-http';
 import { apiUrlsConfig } from '../config/apiUrls';
 import { useAuthContext } from '../contexts/AuthContext';
 import { IUser } from '../types/interfaces/IUser';
 import { initialAuthUtils } from '../utils/initialAuthUtils';
+import { useFetch } from './useFetch';
 
 export default function useAuthenticate(shouldLogoutUser: boolean = true) {
   const { user, loginUser, logoutUser } = useAuthContext();

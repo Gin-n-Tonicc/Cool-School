@@ -1,8 +1,8 @@
 import { FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
+import { useFetch } from '../../../../hooks/useFetch';
 import { IComment } from '../../../../types/interfaces/IComment';
 
 interface SingleBlogCommentFormProps {
