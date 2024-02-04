@@ -1,24 +1,41 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import { useLocaleContext } from '../../../contexts/LocaleContext';
+import { useFetch } from '../../../hooks/useFetch';
 import { useLinkState } from '../../../hooks/useLinkState';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IQuiz } from '../../../types/interfaces/IQuiz';
+import { IQuizResult } from '../../../types/interfaces/IQuizResult';
 import QuizSingle from '../quiz-single/QuizSingle';
 import './QuizStart.scss';
 
 export default function QuizStart() {
   const [hasStarted, setHasStarted] = useState(false);
+  const { locale } = useLocaleContext();
 
   const { id } = useParams();
   const { data } = useLinkState<IQuiz>(apiUrlsConfig.quizzes.getInfoById(id));
 
-  const startQuiz = () => {
-    setHasStarted(true);
+  const { post, response } = useFetch<IQuizResult>(
+    apiUrlsConfig.quizzes.take(id)
+  );
+
+  const nowDate = new Date(Date.now());
+  const startDate = new Date(`${data?.startTime}`);
+  const endDate = new Date(`${data?.endTime}`);
+
+  const canStartQuiz = nowDate > startDate && startDate < endDate;
+
+  const startQuiz = async () => {
+    // const result = await post({ userAnswers: [] });
+    // if (response.ok) {
+    //   setHasStarted(true);
+    // }
   };
 
-  if (hasStarted) {
-    return <QuizSingle />;
+  if (hasStarted && data) {
+    return <QuizSingle quizId={data?.id} />;
   }
 
   return (
@@ -28,10 +45,11 @@ export default function QuizStart() {
         <h2 className="text-lg font-semibold mb-2">{data?.description}</h2>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
+            <div className="text-sm">Тестът е отворен между:</div>
             <div className="text-sm">
-              Тестът е затворен от събота, 16 декември 2023, 23:59
+              {startDate.toLocaleString(locale)} -{' '}
+              {endDate.toLocaleString(locale)}
             </div>
-            <div className="text-sm">Категория: {data?.category?.name}</div>
           </div>
           <div>
             <div className="text-sm">
@@ -74,8 +92,16 @@ export default function QuizStart() {
           <div className="flex flex-col gap-2">
             <button
               className="bg-blue-600 text-white px-4 py-2 rounded btn_1"
-              onClick={startQuiz}>
-              Започни тест
+              onClick={startQuiz}
+              style={
+                canStartQuiz
+                  ? {}
+                  : {
+                      opacity: 0.7,
+                      cursor: 'not-allowed',
+                    }
+              }>
+              {canStartQuiz ? 'ЗАПОЧНИ ТЕСТ' : 'ТЕСТЪТ ВМОМЕНТА Е ЗАТВОРЕН'}
             </button>
           </div>
         </div>

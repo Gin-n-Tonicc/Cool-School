@@ -108,6 +108,10 @@ const quizzesPaths = Object.seal({
     `${baseApiUrl}/quizzes/info/${id}`,
   getFullById: (id: number | string | undefined) =>
     `${baseApiUrl}/quizzes/${id}`,
+  getAttemptsById: (id: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/all/attempts/${id}`,
+  take: (quizId: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/${quizId}/take`,
 });
 
 export const apiUrlsConfig = Object.seal({

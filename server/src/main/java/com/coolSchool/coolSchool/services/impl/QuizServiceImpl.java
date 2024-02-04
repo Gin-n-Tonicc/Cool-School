@@ -242,7 +242,7 @@ public class QuizServiceImpl implements QuizService {
         quizAttemptRepository.save(quizAttempt);
 
         return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class), modelMapper.map(quizAttempt.getUser(), PublicUserDTO.class),
-                userAnswers, quizAttempt.getTotalMarks(), quizAttempt.getAttemptNumber(), 0L));
+                userAnswers, quizAttempt.getTotalMarks(), quizAttempt.getAttemptNumber(), 0L, quizAttempt.isCompleted()));
 
     }
 

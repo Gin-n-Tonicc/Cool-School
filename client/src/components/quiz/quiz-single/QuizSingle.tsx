@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import './QuizSingle.scss';
 
-export default function QuizSingle() {
+interface QuizSingleProps {
+  quizId: number;
+}
+
+export default function QuizSingle(props: QuizSingleProps) {
   const [selectedAnswer, setSelectedAnswer] = useState(-1);
 
   const mockedAnswers = [...new Array(4)].map((x, i) => ({

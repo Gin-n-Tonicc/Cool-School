@@ -25,4 +25,5 @@ public class QuizAttemptDTO {
     private BigDecimal totalMarks;
     private int attemptNumber;
     private Long timeLeft;
+    private boolean completed;
 }
