@@ -1,4 +1,4 @@
-package com.coolSchool.coolSchool.services.impl.security;
+package com.coolSchool.coolSchool.services.impl.security.events;
 
 import com.coolSchool.coolSchool.models.entity.User;
 import org.springframework.context.ApplicationEvent;

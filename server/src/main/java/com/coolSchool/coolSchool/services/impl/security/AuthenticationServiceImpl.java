@@ -10,6 +10,7 @@ import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
+import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.AuthenticationService;
 import com.coolSchool.coolSchool.services.JwtService;
 import com.coolSchool.coolSchool.services.TokenService;
@@ -37,6 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final ModelMapper modelMapper;
     private final MessageSource messageSource;
+    private final UserRepository userRepository;
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
