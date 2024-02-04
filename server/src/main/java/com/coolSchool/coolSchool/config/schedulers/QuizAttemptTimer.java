@@ -1,4 +1,4 @@
-package com.coolSchool.coolSchool.config;
+package com.coolSchool.coolSchool.config.schedulers;
 
 import com.coolSchool.coolSchool.models.entity.QuizAttempt;
 import com.coolSchool.coolSchool.repositories.QuizAttemptRepository;

@@ -1,6 +1,6 @@
 package com.coolSchool.coolSchool.services.impl;
 
-import com.coolSchool.coolSchool.config.QuizAttemptTimer;
+import com.coolSchool.coolSchool.config.schedulers.QuizAttemptTimer;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.coolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
 import com.coolSchool.coolSchool.exceptions.quizzes.*;

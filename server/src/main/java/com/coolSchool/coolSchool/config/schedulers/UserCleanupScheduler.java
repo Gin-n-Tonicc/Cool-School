@@ -1,4 +1,4 @@
-package com.coolSchool.coolSchool.config;
+package com.coolSchool.coolSchool.config.schedulers;
 
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
@@ -29,7 +29,7 @@ public class UserCleanupScheduler {
         this.verificationTokenRepository = verificationTokenRepository;
     }
 
-    @Scheduled(cron = "0 23 9 * * *") // Run every 24 hours
+    @Scheduled(cron = "0 12 15 * * *") // Run every 24 hours
     public void deleteUnconfirmedUsers() {
         LocalDateTime thresholdDateTime = LocalDateTime.now().minusHours(24);
         List<User> unconfirmedUsers = userRepository.findByEnabledFalseAndCreatedAtBefore(thresholdDateTime);
