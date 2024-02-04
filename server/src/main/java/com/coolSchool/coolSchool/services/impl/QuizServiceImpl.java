@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -241,7 +240,7 @@ public class QuizServiceImpl implements QuizService {
         quizAttempt.setTotalMarks(totalMarks);
         quizAttemptRepository.save(quizAttempt);
 
-        return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class), modelMapper.map(quizAttempt.getUser(), PublicUserDTO.class),
+        return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class),
                 userAnswers, quizAttempt.getTotalMarks(), quizAttempt.getAttemptNumber(), 0L, quizAttempt.isCompleted()));
 
     }
@@ -291,6 +290,31 @@ public class QuizServiceImpl implements QuizService {
     @Transactional
     public void deleteAutoSavedProgress(Long userId, Long quizId) {
         userQuizProgressRepository.deleteByUserIdAndQuizId(userId, quizId);
+    }
+    @Override
+    public List<QuizAttemptDTO> getAllUserHighestScoresInQuizzes(Long userId) {
+        List<QuizAttempt> quizAttempts = quizAttemptRepository.findByUserId(userId);
+
+        List<QuizAttemptDTO> quizAttemptDTOs = quizAttempts.stream()
+                .map(quizAttempt -> modelMapper.map(quizAttempt, QuizAttemptDTO.class)).toList();
+
+        Map<Long, List<QuizAttemptDTO>> quizAttemptsByQuizId = quizAttemptDTOs.stream()
+                .collect(Collectors.groupingBy(quizAttemptDTO -> quizAttemptDTO.getQuiz().getId()));
+
+        List<QuizAttemptDTO> highestScores = new ArrayList<>();
+        for (Map.Entry<Long, List<QuizAttemptDTO>> entry : quizAttemptsByQuizId.entrySet()) {
+            List<QuizAttemptDTO> attemptsForQuiz = entry.getValue();
+
+            QuizAttemptDTO highestScoreAttempt = attemptsForQuiz.stream()
+                    .max(Comparator.comparing(QuizAttemptDTO::getTotalMarks))
+                    .orElse(null);
+
+            if (highestScoreAttempt != null) {
+                highestScores.add(highestScoreAttempt);
+            }
+        }
+
+        return highestScores;
     }
 
     public long calculateTimeLeftForQuizAttempt(Long quizAttemptId, int quizDurationInMinutes) {
