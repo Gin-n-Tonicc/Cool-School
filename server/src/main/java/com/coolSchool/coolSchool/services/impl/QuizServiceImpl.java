@@ -62,6 +62,13 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
+    public QuizDTO getQuizInfoById(Long id) {
+        Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new QuizNotFoundException(messageSource));
+
+        return modelMapper.map(quiz, QuizDTO.class);
+    }
+
+    @Override
     public QuizQuestionsAnswersDTO getQuizById(Long id, Long userId) {
         Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new QuizNotFoundException(messageSource));
         List<Question> questions = questionService.getQuestionsByQuizId(id);

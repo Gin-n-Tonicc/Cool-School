@@ -1,5 +1,7 @@
 package com.coolSchool.coolSchool.models.dto.common;
 
+import com.coolSchool.coolSchool.models.entity.Category;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +20,5 @@ public class QuizDTO {
     private LocalDateTime endTime;
     private Long subsectionId;
     private Integer attemptLimit;
+    private Integer quizDurationInMinutes;
 }

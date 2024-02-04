@@ -1,12 +1,15 @@
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
 import { useFetch } from '../../../../../hooks/useFetch';
+import { PagesEnum } from '../../../../../types/enums/PagesEnum';
 import { ICourseSubsection } from '../../../../../types/interfaces/ICourseSubsection';
 import { IResource } from '../../../../../types/interfaces/IResource';
 import CoursesResourcesCreate from '../../courses-resources-create/CoursesResourcesCreate';
 import './CoursesListItem.scss';
 import CoursesListItemEdit from './courses-list-item-edit/CoursesListItemEdit';
+import CoursesQuizzes from './courses-quizzes/CoursesQuizzes';
 import CoursesResource from './courses-resource/CoursesResource';
 
 interface CoursesListItemProps {
@@ -108,8 +111,24 @@ export default function CoursesListItem({
           aria-labelledby="headingOne"
           data-parent="#coursesAccordion">
           <div className="card-body">
-            <h5>{t('courses.subsection.description')}</h5>
-            {subsection.description}
+            <div>
+              <h5>{t('courses.subsection.description')}</h5>
+              {subsection.description}
+            </div>
+
+            <div>
+              <div className="title-wrapper d-flex justify-content-between align-items-center">
+                <h5>Тестове</h5>
+
+                {isOwner && (
+                  <Link to={PagesEnum.Home} className="btn_1 res-create-btn">
+                    {t('courses.resources.add.button')}
+                  </Link>
+                )}
+              </div>
+              <ul className="list-group"></ul>
+              <CoursesQuizzes subsectionId={subsection.id} isOwner={isOwner} />
+            </div>
 
             <div>
               <CoursesResourcesCreate

@@ -96,6 +96,7 @@
     .author_info {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding-top: 23px;
       margin-top: 23px;
       border-top: 1px solid $border_color;
@@ -135,6 +136,8 @@
         float: right;
 
         .rating {
+          display: flex;
+          align-items: center;
           a {
             margin-left: 5px;
             @media #{$large_mobile} {

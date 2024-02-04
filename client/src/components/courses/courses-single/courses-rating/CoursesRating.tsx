@@ -48,7 +48,7 @@ export default function CoursesRating(props: CoursesRatingProps) {
 
   return (
     <>
-      <div className="review-top row pt-40">
+      <div className="review-top row">
         <div className="col-lg-12">
           <h6 className="mb-15">{t('courses.provide.rating')}</h6>
           <CoursesSingleRating

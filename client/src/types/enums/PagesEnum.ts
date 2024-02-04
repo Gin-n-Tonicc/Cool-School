@@ -5,7 +5,7 @@ export enum PagesEnum {
   Register = '/register',
   Logout = '/logout',
   FinishRegister = '/finish-register',
-  QuizStart = '/quiz',
+  QuizStart = '/quiz/:id',
   Courses = '/courses',
   CoursesCreate = '/courses/create',
   SingleCourse = '/courses/:id',
