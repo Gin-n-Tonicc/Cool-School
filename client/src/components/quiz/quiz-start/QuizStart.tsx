@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useLocaleContext } from '../../../contexts/LocaleContext';
@@ -6,18 +6,27 @@ import { useFetch } from '../../../hooks/useFetch';
 import { useLinkState } from '../../../hooks/useLinkState';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IQuiz } from '../../../types/interfaces/IQuiz';
-import { IQuizResult } from '../../../types/interfaces/IQuizResult';
+import { IQuizAttempt } from '../../../types/interfaces/IQuizAttempt';
 import QuizSingle from '../quiz-single/QuizSingle';
 import './QuizStart.scss';
 
 export default function QuizStart() {
   const [hasStarted, setHasStarted] = useState(false);
+  const [currentAttempt, setCurrentAttempt] = useState<IQuizAttempt | null>(
+    null
+  );
   const { locale } = useLocaleContext();
 
   const { id } = useParams();
   const { data } = useLinkState<IQuiz>(apiUrlsConfig.quizzes.getInfoById(id));
+  const { data: attempts, get } = useFetch<IQuizAttempt[]>(
+    apiUrlsConfig.quizzes.getAttemptsById(id),
+    []
+  );
 
-  const { post, response } = useFetch<IQuizResult>(
+  const ongoingAttempt = attempts?.find((x) => !x.completed) || null;
+
+  const { post, response } = useFetch<IQuizAttempt>(
     apiUrlsConfig.quizzes.take(id)
   );
 
@@ -28,15 +37,41 @@ export default function QuizStart() {
   const canStartQuiz = nowDate > startDate && startDate < endDate;
 
   const startQuiz = async () => {
-    // const result = await post({ userAnswers: [] });
-    // if (response.ok) {
-    //   setHasStarted(true);
-    // }
+    let attempt = ongoingAttempt;
+    let quizResult: IQuizAttempt;
+
+    if (!attempt) {
+      quizResult = await post();
+
+      if (response.ok) {
+        attempt = quizResult;
+      }
+    }
+
+    if (attempt) {
+      setCurrentAttempt(attempt);
+      setHasStarted(true);
+    }
   };
 
-  if (hasStarted && data) {
-    return <QuizSingle quizId={data?.id} />;
+  const onQuizFinish = async () => {
+    const result = get();
+    setHasStarted(false);
+    await result;
+  };
+
+  if (hasStarted && currentAttempt && data) {
+    return (
+      <QuizSingle
+        quizId={data?.id}
+        currentAttempt={currentAttempt}
+        onQuizFinishEvent={onQuizFinish}
+      />
+    );
   }
+
+  const highestGrade =
+    attempts?.sort((a, b) => b.totalMarks - a.totalMarks)[0]?.totalMarks || 0;
 
   return (
     <div className="quiz-start-wrapper max-w-4xl mx-auto p-5">
@@ -66,33 +101,31 @@ export default function QuizStart() {
           </h3>
           <div className="attempt-grid grid grid-cols-3 gap-4 mb-4 text-center overflow-y-scroll">
             <div className="text-base font-semibold">Състояние</div>
-            <div className="text-base font-semibold">Оценка / 15,00</div>
-            <div className="text-base font-semibold">Забележка</div>
-            <div className="text-sm">Завършен</div>
-            <div className="text-sm">10,00</div>
-            <div className="text-sm">Мн. добър</div>
-            <div className="text-sm">Завършен</div>
-            <div className="text-sm">10,00</div>
-            <div className="text-sm">Мн. добър</div>
-            <div className="text-sm">Завършен</div>
-            <div className="text-sm">10,00</div>
-            <div className="text-sm">Мн. добър</div>
-            <div className="text-sm">Завършен</div>
-            <div className="text-sm">10,00</div>
-            <div className="text-sm">Мн. добър</div>
-            {/* <div className="text-sm">Няма опити</div> */}
+            <div className="text-base font-semibold">Оценка / </div>
+            <div className="text-base font-semibold">Процент</div>
+            {attempts?.map((x) => (
+              <Fragment key={x.id}>
+                <div className="text-sm">{!x.completed && 'Не '}Завършен</div>
+                <div className="text-sm">{x.totalMarks.toFixed(2)}</div>
+                <div className="text-sm">10%</div>
+              </Fragment>
+            ))}
+
+            {!attempts?.length && <div className="text-sm">Няма опити</div>}
           </div>
           <div className="text-sm font-semibold mb-2 text-center">
-            Финалната Ви оценка за този тест е 10,00/15,00.
+            Финалната Ви оценка за този тест е {highestGrade.toFixed(2)}
+            /15,00.
           </div>
           <div className="my-10 mb-0 border-t border-gray-300 pt-4">
             <h2 className="text-lg">Цялостна забележка</h2>
-            <div className="text-sm mb-4">Не са разрешени повече опити</div>
+            <div className="text-sm mb-4">Няма все още!</div>
           </div>
           <div className="flex flex-col gap-2">
             <button
               className="bg-blue-600 text-white px-4 py-2 rounded btn_1"
               onClick={startQuiz}
+              disabled={!canStartQuiz}
               style={
                 canStartQuiz
                   ? {}

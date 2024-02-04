@@ -19,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuizAttemptDTO {
+    private Long id;
     private QuizDTO quiz;
     private List<UserAnswerDTO> userAnswers;
     private BigDecimal totalMarks;

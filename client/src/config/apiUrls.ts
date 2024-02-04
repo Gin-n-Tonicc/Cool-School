@@ -112,6 +112,10 @@ const quizzesPaths = Object.seal({
     `${baseApiUrl}/quizzes/all/attempts/${id}`,
   take: (quizId: number | string | undefined) =>
     `${baseApiUrl}/quizzes/${quizId}/take`,
+  saveProgress: (quizId: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/${quizId}/save-progress`,
+  submit: (quizId: number | string | undefined, attemptId: number) =>
+    `${baseApiUrl}/quizzes/${quizId}/submit/${attemptId}`,
 });
 
 export const apiUrlsConfig = Object.seal({

@@ -4,6 +4,7 @@ import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
+import com.coolSchool.coolSchool.models.dto.request.SaveUserProgressRequestDTO;
 import com.coolSchool.coolSchool.services.QuizService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -67,19 +68,27 @@ public class QuizController {
 
     @RateLimited
     @PostMapping("/{quizId}/take")
-    public ResponseEntity<QuizResultDTO> takeQuiz(@PathVariable Long quizId, @RequestBody List<UserAnswerDTO> userAnswers, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<QuizAttemptDTO> takeQuiz(@PathVariable Long quizId, HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
-        QuizResultDTO quizResultDTO = quizService.takeQuiz(quizId, userAnswers, publicUserDTO.getId());
+        QuizAttemptDTO quizAttemptDTO = quizService.takeQuiz(quizId, publicUserDTO.getId());
+        quizService.deleteAutoSavedProgress(publicUserDTO.getId(), quizId);
+        return ResponseEntity.ok(quizAttemptDTO);
+    }
+
+    @RateLimited
+    @PutMapping("/{quizId}/submit/{attemptId}")
+    public ResponseEntity<QuizResultDTO> submitQuiz(@PathVariable Long quizId, @PathVariable Long attemptId, @RequestBody List<UserAnswerDTO> userAnswers, HttpServletRequest httpServletRequest) {
+        PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+        QuizResultDTO quizResultDTO = quizService.submitQuiz(quizId, userAnswers, publicUserDTO.getId(), attemptId);
         quizService.deleteAutoSavedProgress(publicUserDTO.getId(), quizId);
         return ResponseEntity.ok(quizResultDTO);
     }
 
-    @RateLimited
     @PostMapping("/{quizId}/save-progress")
-    public ResponseEntity<String> autoSaveUserProgress(@PathVariable Long quizId, @RequestParam Long questionId, @RequestParam Long answerId, @RequestParam Long quizAttemptId, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<List<UserQuizProgressDTO>> autoSaveUserProgress(@PathVariable Long quizId, @RequestBody SaveUserProgressRequestDTO saveUserProgressRequestDTO, HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
-        quizService.autoSaveUserProgress(quizId, questionId, answerId, publicUserDTO.getId(), quizAttemptId);
-        return ResponseEntity.ok("Saved progress!");
+        List<UserQuizProgressDTO> userProgresses = quizService.autoSaveUserProgress(quizId, saveUserProgressRequestDTO.getQuestionId(), saveUserProgressRequestDTO.getAnswerId(), publicUserDTO.getId(), saveUserProgressRequestDTO.getAttemptId());
+        return ResponseEntity.ok(userProgresses);
     }
 
     @GetMapping("/attempt/{quizAttemptId}")

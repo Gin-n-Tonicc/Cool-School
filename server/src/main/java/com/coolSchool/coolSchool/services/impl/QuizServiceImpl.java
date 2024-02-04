@@ -15,6 +15,7 @@ import com.coolSchool.coolSchool.services.UserService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -187,7 +188,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizResultDTO takeQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId) {
+    public QuizAttemptDTO takeQuiz(Long quizId, Long userId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(messageSource));
 
         int quizDurationInMinutes = quiz.getQuizDurationInMinutes();
@@ -204,11 +205,39 @@ public class QuizServiceImpl implements QuizService {
         }
 
         QuizAttempt quizAttempt = new QuizAttempt();
+
+        LocalDateTime endTime = LocalDateTime.now();
+        long elapsedTimeInMinutes = Duration.between(startTime, endTime).toMinutes();
+        if (elapsedTimeInMinutes > quizDurationInMinutes) {
+            quizAttempt.setCompleted(true);
+            throw new TimeLimitForQuizExceededException(messageSource);
+        }
+
         quizAttempt.setQuiz(quiz);
         quizAttempt.setUser(userService.findById(userId));
         quizAttempt.setAttemptNumber(attemptNumber);
         quizAttempt.setStartTime(LocalDateTime.now());
         quizAttempt = quizAttemptRepository.save(quizAttempt);
+        quizAttempt.setTotalMarks(BigDecimal.ZERO);
+        quizAttempt.setTimeLeft(quiz.getQuizDurationInMinutes());
+        quizAttemptRepository.save(quizAttempt);
+
+        return modelMapper.map(quizAttempt, QuizAttemptDTO.class);
+    }
+
+    @Override
+    public QuizResultDTO submitQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId, Long attemptId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(messageSource));
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        if (currentTime.isBefore(quiz.getStartTime()) || currentTime.isAfter(quiz.getEndTime())) {
+            throw new QuizTimeNotValidException(messageSource);
+        }
+
+        QuizAttempt quizAttempt = quizAttemptRepository.findById(attemptId).orElseThrow(() -> new QuizAttemptNotFoundException(messageSource));
+        quizAttempt.setQuiz(quiz);
+        quizAttempt.setUser(userService.findById(userId));
+
         BigDecimal totalMarks = BigDecimal.ZERO;
 
         for (UserAnswerDTO userAnswerDTO : userAnswers) {
@@ -230,19 +259,12 @@ public class QuizServiceImpl implements QuizService {
             }
         }
 
-        LocalDateTime endTime = LocalDateTime.now();
-        long elapsedTimeInMinutes = Duration.between(startTime, endTime).toMinutes();
-        if (elapsedTimeInMinutes > quizDurationInMinutes) {
-            quizAttempt.setCompleted(true);
-            throw new TimeLimitForQuizExceededException(messageSource);
-        }
-
         quizAttempt.setTotalMarks(totalMarks);
-        quizAttemptRepository.save(quizAttempt);
-
-        return new QuizResultDTO(new QuizAttemptDTO(modelMapper.map(quiz, QuizDTO.class),
-                userAnswers, quizAttempt.getTotalMarks(), quizAttempt.getAttemptNumber(), 0L, quizAttempt.isCompleted()));
-
+        quizAttempt.setCompleted(true);
+        quizAttempt.setQuizCompletionTime(LocalDateTime.now());
+        QuizAttempt savedQuizAttempt = quizAttemptRepository.save(quizAttempt);
+        return new QuizResultDTO(new QuizAttemptDTO(savedQuizAttempt.getId(), modelMapper.map(quiz, QuizDTO.class),
+                userAnswers, savedQuizAttempt.getTotalMarks(), savedQuizAttempt.getAttemptNumber(), 0L, savedQuizAttempt.isCompleted()));
     }
 
     @Override
@@ -267,20 +289,26 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
+    @Transactional
     public List<UserQuizProgressDTO> autoSaveUserProgress(Long quizId, Long questionId, Long answerId, Long userId, Long quizAttemptId) {
         UserQuizProgressDTO userQuizProgressDTO = new UserQuizProgressDTO();
+
         QuizAttempt quizAttempt = quizAttemptRepository.findById(quizAttemptId).orElseThrow(() -> new QuizAttemptNotFoundException(messageSource));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(messageSource));
+
         userQuizProgressDTO.setUserId(userId);
         userQuizProgressDTO.setQuizId(quizId);
         userQuizProgressDTO.setAnswerId(answerId);
         userQuizProgressDTO.setQuestionId(questionId);
         quizAttempt.setTimeLeft(quiz.getQuizDurationInMinutes());
         quizAttemptTimer.updateQuizAttemptsTimeLeft();
+
         if (quizAttempt.getTimeLeft() <= 0) {
             throw new TimeLimitForQuizExceededException(messageSource);
         }
+
         UserQuizProgress userQuizProgress = modelMapper.map(userQuizProgressDTO, UserQuizProgress.class);
+        userQuizProgressRepository.deleteByUserIdAndQuizIdAndQuestionId(userId, quizId, questionId);
         userQuizProgressRepository.save(userQuizProgress);
 
         return getAllUserProgressForQuiz(quizId);

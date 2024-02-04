@@ -104,7 +104,7 @@ function AdminNav() {
 
 export default function Header() {
   const { user, isAuthenticated, hasFinishedOAuth2 } = useAuthContext();
-  const isTeacher = RolesEnum.TEACHER === user.role;
+  const location = useLocation();
 
   const homeMenuPaths = useMemo(
     () =>
@@ -129,11 +129,22 @@ export default function Header() {
     []
   );
 
-  const location = useLocation();
+  const placeholderPaths = useMemo(
+    () =>
+      [PagesEnum.QuizStart].map((x) => {
+        const indexOfPlaceholder = x.indexOf(':');
+        return x.substring(0, indexOfPlaceholder);
+      }),
+    []
+  );
 
+  const isTeacher = RolesEnum.TEACHER === user.role;
   let headerClasses = 'main_menu ';
 
-  if (homeMenuPaths.includes(location.pathname)) {
+  if (
+    homeMenuPaths.includes(location.pathname) ||
+    placeholderPaths.some((x) => location.pathname.includes(x))
+  ) {
     headerClasses += 'home_menu';
   } else {
     headerClasses += 'single_page_menu';

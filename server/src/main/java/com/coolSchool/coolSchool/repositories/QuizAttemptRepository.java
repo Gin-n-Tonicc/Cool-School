@@ -10,6 +10,8 @@ import java.util.List;
 public interface QuizAttemptRepository extends JpaRepository<QuizAttempt, Long> {
     int countByUserAndQuiz(User user, Quiz quiz);
     List<QuizAttempt> findByCompletedFalse();
+
+    List<QuizAttempt> findByIdAndCompletedFalse(Long id);
     List<QuizAttempt> findByQuizIdAndUserId(Long quizId, Long userId);
     List<QuizAttempt> findByUserId(Long userId);
 }
