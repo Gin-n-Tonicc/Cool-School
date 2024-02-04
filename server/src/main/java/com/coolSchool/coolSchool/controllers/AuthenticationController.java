@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Locale;
 
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_REFRESH;
@@ -45,13 +45,17 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MessageSource messageSource;
+
+    @Value("${server.app.base-url}")
+    private String appBaseUrl;
     @RateLimited
     @PostMapping("/register")
-    public ResponseEntity<PublicUserDTO> register(@RequestBody RegisterRequest request, HttpServletResponse servletResponse) {
+    public ResponseEntity<PublicUserDTO> register(@RequestBody RegisterRequest request) {
         AuthenticationResponse authenticationResponse = authenticationService.register(request);
-        sendVerificationEmail(modelMapper.map(authenticationResponse.getUser(), User.class), servletResponse);
+        sendVerificationEmail(modelMapper.map(authenticationResponse.getUser(), User.class));
         return ResponseEntity.ok(authenticationResponse.getUser());
     }
+
     @GetMapping("/registrationConfirm")
     public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {
 
@@ -70,6 +74,7 @@ public class AuthenticationController {
         userRepository.save(user);
         return ResponseEntity.ok("User registration confirmed successfully!");
     }
+
     @RateLimited
     @PostMapping("/authenticate")
     public ResponseEntity<PublicUserDTO> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
@@ -116,11 +121,8 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(authenticationResponse.getUser());
     }
-    private void sendVerificationEmail(User user, HttpServletResponse servletResponse) {
-        String appUrl = getApplicationUrl(servletResponse);
-        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, appUrl));
-    }
-    private String getApplicationUrl(HttpServletResponse servletResponse) {
-        return servletResponse.encodeURL("http://frontend.com");
+
+    private void sendVerificationEmail(User user) {
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, appBaseUrl));
     }
 }

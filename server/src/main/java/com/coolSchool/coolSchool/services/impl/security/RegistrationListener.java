@@ -2,7 +2,9 @@ package com.coolSchool.coolSchool.services.impl.security;
 
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.services.UserService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
@@ -23,8 +25,11 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${server.app.base-url}")
+    private String appBaseUrl;
+
     @Override
-    public void onApplicationEvent(OnRegistrationCompleteEvent event) {
+    public void onApplicationEvent(@NotNull OnRegistrationCompleteEvent event) {
         this.confirmRegistration(event);
     }
 
@@ -35,13 +40,13 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
         String recipientAddress = user.getEmail();
         String subject = "Cool School Registration Confirmation";
-        String confirmationUrl = event.getAppUrl() + "/regitrationConfirm?token=" + token;
+        String confirmationUrl = event.getAppUrl() + "auth/registrationConfirm?token=" + token;
 
-        String message = "Dear, " + user.getFirstname() + " " + user.getLastname() +"\n\n"
+        String message = "Dear, " + user.getFirstname() + "\n\n"
                 + "Thank you for registering with Cool School!\n\n"
                 + "To complete your registration, please click the following link to verify your email:\n"
-                + confirmationUrl + "\n\n"
-                + "If you did not create an account with us, please ignore this email.\n\n"
+                + confirmationUrl + "\n"
+                + "If you did not create an account with us, please ignore this email.\n"
                 + "Best regards,\n"
                 + "Cool School Team!";
 

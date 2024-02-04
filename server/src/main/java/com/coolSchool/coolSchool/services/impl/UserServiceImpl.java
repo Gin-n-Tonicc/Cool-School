@@ -1,6 +1,5 @@
 package com.coolSchool.coolSchool.services.impl;
 
-import com.coolSchool.coolSchool.config.UserCleanupScheduler;
 import com.coolSchool.coolSchool.enums.Provider;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.ValidationBlogException;
@@ -37,7 +36,6 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
     private final MessageSource messageSource;
     private final VerificationTokenRepository verificationTokenRepository;
-    private final UserCleanupScheduler userCleanupScheduler;
 
     @Override
     public User createUser(RegisterRequest request) {
@@ -52,7 +50,7 @@ public class UserServiceImpl implements UserService {
             user.setCreatedAt(LocalDateTime.now());
             return userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
-            throw new UserCreateException(messageSource,true);
+            throw new UserCreateException(messageSource, true);
         } catch (ConstraintViolationException exception) {
             throw new UserCreateException(exception.getConstraintViolations());
         }
@@ -178,6 +176,7 @@ public class UserServiceImpl implements UserService {
 
         return userBuilder.build();
     }
+
     @Override
     public VerificationToken getVerificationToken(String VerificationToken) {
         return verificationTokenRepository.findByToken(VerificationToken);

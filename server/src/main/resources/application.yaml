@@ -3,6 +3,9 @@ server:
     baseUrl: ${FRONTEND_URL}
     loginUrl: ${server.frontend.baseUrl}/login
     finishRegisterUrl: ${server.frontend.baseUrl}/finish-register
+  server:
+    app:
+      base-url: ${server.app.base-url}
 
 spring:
   servlet:
