@@ -258,6 +258,14 @@ public class QuizServiceImpl implements QuizService {
 
         return quizAttemptDTO;
     }
+    @Override
+    public List<QuizAttemptDTO> getAllUserAttemptsInAQuiz(Long quizId, PublicUserDTO publicUserDTO) {
+        List<QuizAttempt> quizAttempts = quizAttemptRepository.findByQuizIdAndUserId(quizId, publicUserDTO.getId());
+
+        return quizAttempts.stream()
+                .map(quizAttempt -> modelMapper.map(quizAttempt, QuizAttemptDTO.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public List<UserQuizProgressDTO> autoSaveUserProgress(Long quizId, Long questionId, Long answerId, Long userId, Long quizAttemptId) {

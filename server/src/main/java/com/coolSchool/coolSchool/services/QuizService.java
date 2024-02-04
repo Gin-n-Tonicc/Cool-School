@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.services;
 
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
 
 import java.util.List;
@@ -26,4 +27,5 @@ public interface QuizService {
     void deleteAutoSavedProgress(Long userId, Long quizId);
 
     QuizAttemptDTO getQuizAttemptDetails(Long quizAttemptId);
+    List<QuizAttemptDTO> getAllUserAttemptsInAQuiz(Long quizId, PublicUserDTO publicUserDTO);
 }

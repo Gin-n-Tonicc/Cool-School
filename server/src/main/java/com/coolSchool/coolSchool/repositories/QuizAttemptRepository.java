@@ -10,4 +10,5 @@ import java.util.List;
 public interface QuizAttemptRepository extends JpaRepository<QuizAttempt, Long> {
     int countByUserAndQuiz(User user, Quiz quiz);
     List<QuizAttempt> findByCompletedFalse();
+    List<QuizAttempt> findByQuizIdAndUserId(Long quizId, Long userId);
 }
