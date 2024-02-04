@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.services.impl;
 
+import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogAlreadyLikedException;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotEnabledException;
@@ -28,7 +29,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -53,11 +53,10 @@ public class BlogServiceImpl implements BlogService {
     private final MessageSource messageSource;
     private final JavaMailSender emailSender;
     private final SlackNotifier slackNotifier;
-    @Value("${server.frontend.baseUrl}")
-    private String frontendUrl;
+    private final FrontendConfig frontendConfig;
 
 
-    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource, JavaMailSender emailSender, SlackNotifier slackNotifier) {
+    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource, JavaMailSender emailSender, SlackNotifier slackNotifier, FrontendConfig frontendConfig) {
         this.blogRepository = blogRepository;
         this.modelMapper = modelMapper;
         this.fileRepository = fileRepository;
@@ -66,6 +65,7 @@ public class BlogServiceImpl implements BlogService {
         this.messageSource = messageSource;
         this.emailSender = emailSender;
         this.slackNotifier = slackNotifier;
+        this.frontendConfig = frontendConfig;
     }
 
     @Override
@@ -192,7 +192,7 @@ public class BlogServiceImpl implements BlogService {
                 .orElseThrow(() -> new UserNotFoundException(messageSource));
 
         String recipientAddress = user.getEmail();
-        String blogLink = frontendUrl + "/blog/" + blogId;
+        String blogLink = frontendConfig.getBaseUrl() + "/blog/" + blogId;
         String subject = "Your Blog is Enabled";
         String content = "Dear " + user.getFirstname() + " " + user.getLastname() + ",\n\n"
                 + "We are pleased to inform you that your blog has been successfully enabled.\n"
@@ -278,7 +278,7 @@ public class BlogServiceImpl implements BlogService {
                 "Title: " + blogDTO.getTitle() + "\n" +
                 "Author: " + user.getFirstname() + " " + user.getLastname() + "\n" +
                 "Category: " + category.getName() + "\n" +
-                "Read more: " + frontendUrl + "/blog/" + id;
+                "Read more: " + frontendConfig.getBaseUrl() + "/blog/" + id;
         slackNotifier.sendNotification(message);
     }
 

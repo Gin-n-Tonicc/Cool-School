@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
+import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
@@ -58,7 +59,8 @@ public class BlogServiceImplTest {
         fileRepository = mock(FileRepository.class);
         userRepository = mock(UserRepository.class);
         categoryRepository = mock(CategoryRepository.class);
-        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource, emailSender, slackNotifier);
+        FrontendConfig frontendConfig = mock(FrontendConfig.class);
+        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource, emailSender, slackNotifier, frontendConfig);
     }
 
     @Test

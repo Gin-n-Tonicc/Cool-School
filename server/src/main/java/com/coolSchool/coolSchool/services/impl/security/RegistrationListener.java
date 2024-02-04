@@ -25,9 +25,6 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${server.app.base-url}")
-    private String appBaseUrl;
-
     @Override
     public void onApplicationEvent(@NotNull OnRegistrationCompleteEvent event) {
         this.confirmRegistration(event);
