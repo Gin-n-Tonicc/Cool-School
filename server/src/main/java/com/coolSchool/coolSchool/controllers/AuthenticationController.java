@@ -46,7 +46,7 @@ public class AuthenticationController {
     private final VerificationTokenRepository verificationTokenRepository;
     private final MessageSource messageSource;
 
-    @Value("${server.app.base-url}")
+    @Value("${server.backend.baseUrl}")
     private String appBaseUrl;
     @RateLimited
     @PostMapping("/register")
