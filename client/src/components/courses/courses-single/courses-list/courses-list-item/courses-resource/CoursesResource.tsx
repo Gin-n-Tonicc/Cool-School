@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../../../config/apiUrls';
+import { useFetch } from '../../../../../../hooks/useFetch';
 import { IResource } from '../../../../../../types/interfaces/IResource';
 import './CoursesResource.scss';
 

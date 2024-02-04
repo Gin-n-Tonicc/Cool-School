@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useErrorContext } from '../../../../contexts/ErrorContext';
 import './ErrorAlert.scss';
 
@@ -13,6 +14,7 @@ export default function ErrorAlert({
   message,
   id,
 }: ErrorAlertProps) {
+  const { t } = useTranslation();
   const { deleteError } = useErrorContext();
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function ErrorAlert({
           <span className="sr-only">Close</span>
         </button>
         <i className="start-icon far fa-times-circle faa-pulse animated"></i>
-        <strong className="font__weight-semibold">Error! </strong>
+        <strong className="font__weight-semibold">{t('error')}! </strong>
         {message}
       </div>
     </div>

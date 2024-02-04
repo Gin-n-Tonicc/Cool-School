@@ -38,6 +38,12 @@
     border: 1px solid #edeff2;
   }
 }
+.content .rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
 .comments-area {
   .thumb img {
     width: 100px !important;

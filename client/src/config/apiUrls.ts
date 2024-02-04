@@ -101,6 +101,15 @@ const oAuthPaths = Object.seal({
   google: `${baseOAuthUrl}/google`,
 });
 
+const quizzesPaths = Object.seal({
+  getBySubsection: (subsectionId: number) =>
+    `${baseApiUrl}/quizzes/subsection/${subsectionId}`,
+  getInfoById: (id: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/info/${id}`,
+  getFullById: (id: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/${id}`,
+});
+
 export const apiUrlsConfig = Object.seal({
   apiUrl: baseApiUrl,
   admin: adminPaths,
@@ -113,5 +122,6 @@ export const apiUrlsConfig = Object.seal({
   reviews: reviewsPaths,
   courseSubsections: courseSubsectionsPaths,
   resources: resourcesPaths,
+  quizzes: quizzesPaths,
   oAuth: oAuthPaths,
 });

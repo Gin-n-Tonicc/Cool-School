@@ -28,9 +28,10 @@ import ErrorBoundary from './components/error-boundary/ErrorBoundary';
 import Home from './components/home/Home';
 import HttpProvider from './components/http-provider/HttpProvider';
 import NotFound from './components/not-found/NotFound';
-import Quizzes from './components/quizzes/Quizzes';
+import QuizStart from './components/quiz/quiz-start/QuizStart';
 import { AuthProvider } from './contexts/AuthContext';
 import { ErrorProvider } from './contexts/ErrorContext';
+import { LocaleProvider } from './contexts/LocaleContext';
 import './styles/style.scss';
 import { AdminPagesEnum } from './types/enums/AdminPagesEnum';
 import { PagesEnum } from './types/enums/PagesEnum';
@@ -39,104 +40,112 @@ function App() {
   return (
     <>
       <ErrorBoundary>
-        <ErrorProvider>
-          <AuthProvider>
-            <HttpProvider>
-              <Authenticate>
-                <NavigationMiddleware>
-                  <AlertBox />
-                  <Header />
-                  <Routes>
-                    {/* Everyone */}
-                    <Route path={PagesEnum.Home} element={<Home />} />
-                    <Route path={PagesEnum.Courses} element={<Courses />} />
-                    <Route path={PagesEnum.Blog} element={<Blog />} />
-                    <Route
-                      path={PagesEnum.SingleBlog}
-                      element={<SingleBlog />}
-                    />
-                    <Route path={PagesEnum.Contact} element={<ContactUs />} />
-                    <Route path={PagesEnum.NotFound} element={<NotFound />} />
-                    <Route
-                      path={PagesEnum.SingleCourse}
-                      element={<CoursesSingle />}
-                    />
-
-                    {/* Only guests */}
-                    <Route element={<ProtectedRoute onlyUser={false} />}>
-                      <Route path={PagesEnum.Login} element={<Login />} />
-                      <Route path={PagesEnum.Register} element={<Register />} />
-                    </Route>
-
-                    {/* Only logged users */}
-                    <Route element={<ProtectedRoute onlyUser={true} />}>
+        <LocaleProvider>
+          <ErrorProvider>
+            <AuthProvider>
+              <HttpProvider>
+                <Authenticate>
+                  <NavigationMiddleware>
+                    <AlertBox />
+                    <Header />
+                    <Routes>
+                      {/* Everyone */}
+                      <Route path={PagesEnum.Home} element={<Home />} />
+                      <Route path={PagesEnum.Courses} element={<Courses />} />
+                      <Route path={PagesEnum.Blog} element={<Blog />} />
                       <Route
-                        path={PagesEnum.FinishRegister}
-                        element={<FinishRegister />}
+                        path={PagesEnum.SingleBlog}
+                        element={<SingleBlog />}
                       />
-                      <Route path={PagesEnum.Logout} element={<Logout />} />
-                      <Route path={PagesEnum.Quizzes} element={<Quizzes />} />
+                      <Route path={PagesEnum.Contact} element={<ContactUs />} />
+                      <Route path={PagesEnum.NotFound} element={<NotFound />} />
                       <Route
-                        path={PagesEnum.BlogCreate}
-                        element={<BlogCreate />}
+                        path={PagesEnum.SingleCourse}
+                        element={<CoursesSingle />}
                       />
 
-                      {/* Admin does it's own auth check on load */}
-                      <Route path={PagesEnum.Admin} element={<Admin />}>
-                        <Route index element={<AdminTableDefault />} />
+                      {/* Only guests */}
+                      <Route element={<ProtectedRoute onlyUser={false} />}>
+                        <Route path={PagesEnum.Login} element={<Login />} />
                         <Route
-                          path={AdminPagesEnum.USERS}
-                          element={<AdminTableUsers />}
-                        />
-                        <Route
-                          path={AdminPagesEnum.CATEGORIES}
-                          element={<AdminTableCategories />}
-                        />
-                        <Route
-                          path={AdminPagesEnum.BLOGS}
-                          element={<AdminTableBlogs />}
-                        />
-                        <Route
-                          path={AdminPagesEnum.COURSES}
-                          element={<AdminTableCourses />}
-                        />
-                        <Route
-                          path={AdminPagesEnum.SUBSECTIONS}
-                          element={<AdminTableSubsections />}
-                        />
-                        <Route
-                          path={AdminPagesEnum.RESOURCES}
-                          element={<AdminTableResources />}
-                        />
-                        <Route
-                          path="*"
-                          element={<Navigate to={PagesEnum.NotFound} />}
+                          path={PagesEnum.Register}
+                          element={<Register />}
                         />
                       </Route>
-                    </Route>
 
-                    {/* Only Teachers */}
-                    <Route
-                      element={
-                        <ProtectedRoute onlyUser={true} onlyTeacher={true} />
-                      }>
+                      {/* Only logged users */}
+                      <Route element={<ProtectedRoute onlyUser={true} />}>
+                        <Route
+                          path={PagesEnum.FinishRegister}
+                          element={<FinishRegister />}
+                        />
+                        <Route path={PagesEnum.Logout} element={<Logout />} />
+                        <Route
+                          path={PagesEnum.QuizStart}
+                          element={<QuizStart />}
+                        />
+                        <Route
+                          path={PagesEnum.BlogCreate}
+                          element={<BlogCreate />}
+                        />
+
+                        {/* Admin does it's own auth check on load */}
+                        <Route path={PagesEnum.Admin} element={<Admin />}>
+                          <Route index element={<AdminTableDefault />} />
+                          <Route
+                            path={AdminPagesEnum.USERS}
+                            element={<AdminTableUsers />}
+                          />
+                          <Route
+                            path={AdminPagesEnum.CATEGORIES}
+                            element={<AdminTableCategories />}
+                          />
+                          <Route
+                            path={AdminPagesEnum.BLOGS}
+                            element={<AdminTableBlogs />}
+                          />
+                          <Route
+                            path={AdminPagesEnum.COURSES}
+                            element={<AdminTableCourses />}
+                          />
+                          <Route
+                            path={AdminPagesEnum.SUBSECTIONS}
+                            element={<AdminTableSubsections />}
+                          />
+                          <Route
+                            path={AdminPagesEnum.RESOURCES}
+                            element={<AdminTableResources />}
+                          />
+                          <Route
+                            path="*"
+                            element={<Navigate to={PagesEnum.NotFound} />}
+                          />
+                        </Route>
+                      </Route>
+
+                      {/* Only Teachers */}
                       <Route
-                        path={PagesEnum.CoursesCreate}
-                        element={<CoursesCreate />}
-                      />
-                    </Route>
+                        element={
+                          <ProtectedRoute onlyUser={true} onlyTeacher={true} />
+                        }>
+                        <Route
+                          path={PagesEnum.CoursesCreate}
+                          element={<CoursesCreate />}
+                        />
+                      </Route>
 
-                    <Route
-                      path="*"
-                      element={<Navigate to={PagesEnum.NotFound} />}
-                    />
-                  </Routes>
-                </NavigationMiddleware>
-                <Footer />
-              </Authenticate>
-            </HttpProvider>
-          </AuthProvider>
-        </ErrorProvider>
+                      <Route
+                        path="*"
+                        element={<Navigate to={PagesEnum.NotFound} />}
+                      />
+                    </Routes>
+                  </NavigationMiddleware>
+                  <Footer />
+                </Authenticate>
+              </HttpProvider>
+            </AuthProvider>
+          </ErrorProvider>
+        </LocaleProvider>
       </ErrorBoundary>
     </>
   );

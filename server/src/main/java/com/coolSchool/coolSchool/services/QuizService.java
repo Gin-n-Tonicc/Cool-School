@@ -7,6 +7,8 @@ import java.util.List;
 public interface QuizService {
     List<QuizDTO> getAllQuizzes();
 
+    QuizDTO getQuizInfoById(Long id);
+
     QuizQuestionsAnswersDTO getQuizById(Long id, Long userId);
 
     List<QuizDTO> getQuizzesBySubsectionId(Long subsectionId);

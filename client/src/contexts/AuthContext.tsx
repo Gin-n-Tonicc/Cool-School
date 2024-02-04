@@ -5,6 +5,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { RolesEnum } from '../types/enums/RolesEnum';
 import { IAuthStorage } from '../types/interfaces/IAuthStorage';
 import { IUser } from '../types/interfaces/IUser';
+import { deleteJwtCookie, deleteRefreshCookie } from '../utils/cookieUtils';
 import { isJwtExpired } from '../utils/jwtUtils';
 
 type AuthContextType = {
@@ -15,7 +16,6 @@ type AuthContextType = {
   updateUser: (v: IUser) => void;
   loginUser: (v: IUser) => void;
   logoutUser: () => void;
-  removeRefreshToken: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -41,10 +41,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const logoutUser: AuthContextType['logoutUser'] = () => {
     setAuth({});
-  };
-
-  const removeRefreshToken: AuthContextType['removeRefreshToken'] = () => {
-    setAuth((auth) => ({ ...auth, refreshToken: undefined }));
+    deleteJwtCookie();
+    deleteRefreshCookie();
   };
 
   const jwt = Cookies.get(AUTH_COOKIE_KEY_JWT);
@@ -64,7 +62,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
         loginUser,
         logoutUser,
         updateUser,
-        removeRefreshToken,
       }}>
       {children}
     </AuthContext.Provider>

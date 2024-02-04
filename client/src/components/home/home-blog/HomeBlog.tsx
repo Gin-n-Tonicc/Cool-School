@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import { useFetch } from '../../../hooks/useFetch';
 import { IBlog } from '../../../types/interfaces/IBlog';
 import './HomeBlog.scss';
 import HomeBlogCard from './home-blog-card/HomeBlogCard';

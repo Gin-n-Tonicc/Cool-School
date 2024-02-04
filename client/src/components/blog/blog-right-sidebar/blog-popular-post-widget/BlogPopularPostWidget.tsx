@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
+import { useFetch } from '../../../../hooks/useFetch';
 import { LanguageEnum } from '../../../../types/enums/LanguageEnum';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import { IBlog } from '../../../../types/interfaces/IBlog';

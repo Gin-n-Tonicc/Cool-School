@@ -1,4 +1,5 @@
-export interface ICategory {
-  id: number;
+import { IObjectWithId } from './IObjectWithId';
+
+export interface ICategory extends IObjectWithId {
   name: string;
 }

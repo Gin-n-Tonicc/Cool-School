@@ -1,10 +1,10 @@
 import { Fragment, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useAuthContext } from '../../../contexts/AuthContext';
+import { useFetch } from '../../../hooks/useFetch';
 import { ICourse } from '../../../types/interfaces/ICourse';
 import { ICourseSubsection } from '../../../types/interfaces/ICourseSubsection';
 import { IReview } from '../../../types/interfaces/IReview';

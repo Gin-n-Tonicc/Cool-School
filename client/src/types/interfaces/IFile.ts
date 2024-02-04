@@ -1,5 +1,6 @@
-export interface IFile {
-  id: number;
+import { IObjectWithId } from './IObjectWithId';
+
+export interface IFile extends IObjectWithId {
   name: string;
   url: string;
   type: string;

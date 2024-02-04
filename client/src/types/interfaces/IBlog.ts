@@ -1,9 +1,9 @@
 import { ICategory } from './ICategory';
 import { IFile } from './IFile';
+import { IObjectWithId } from './IObjectWithId';
 import { IUser } from './IUser';
 
-export interface IBlog {
-  id: number;
+export interface IBlog extends IObjectWithId {
   title: string;
   content: string;
   summary: string;
