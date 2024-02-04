@@ -2,8 +2,8 @@ package com.coolSchool.coolSchool.services.impl.security;
 
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.services.UserService;
-import com.coolSchool.coolSchool.services.impl.security.events.OnRegistrationCompleteEvent;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
@@ -16,20 +16,14 @@ import java.util.UUID;
 @Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
 
-    private final UserService service;
+    @Autowired
+    private UserService service;
 
-    private final MessageSource messages;
+    @Autowired
+    private MessageSource messages;
 
-    private final JavaMailSender mailSender;
-
-    @Value("${server.app.base-url}")
-    private String appBaseUrl;
-
-    public RegistrationListener(UserService service, MessageSource messages, JavaMailSender mailSender) {
-        this.service = service;
-        this.messages = messages;
-        this.mailSender = mailSender;
-    }
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Override
     public void onApplicationEvent(@NotNull OnRegistrationCompleteEvent event) {

@@ -50,7 +50,7 @@ public class AuthenticationController {
     private final MessageSource messageSource;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${server.app.base-url}")
+    @Value("${server.backend.baseUrl}")
     private String appBaseUrl;
 
     @RateLimited
