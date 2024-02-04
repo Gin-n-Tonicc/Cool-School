@@ -24,7 +24,9 @@ public interface UserService {
     User processOAuthUser(CustomOAuth2User oAuth2User);
 
     User updateOAuth2UserWithFullData(CompleteOAuthRequest request, Long userId);
+
     User findById(Long id);
+
     void createVerificationToken(User user, String token);
 
     VerificationToken getVerificationToken(String VerificationToken);

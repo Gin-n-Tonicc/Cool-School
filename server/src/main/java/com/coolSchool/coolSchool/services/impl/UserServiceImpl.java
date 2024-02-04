@@ -12,7 +12,6 @@ import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.models.entity.VerificationToken;
-import com.coolSchool.coolSchool.repositories.TokenRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.repositories.VerificationTokenRepository;
 import com.coolSchool.coolSchool.security.CustomOAuth2User;
@@ -26,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -47,9 +47,10 @@ public class UserServiceImpl implements UserService {
 
         try {
             User user = buildUser(request);
+            user.setCreatedAt(LocalDateTime.now());
             return userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
-            throw new UserCreateException(messageSource,true);
+            throw new UserCreateException(messageSource, true);
         } catch (ConstraintViolationException exception) {
             throw new UserCreateException(exception.getConstraintViolations());
         }
@@ -175,6 +176,7 @@ public class UserServiceImpl implements UserService {
 
         return userBuilder.build();
     }
+
     @Override
     public VerificationToken getVerificationToken(String VerificationToken) {
         return verificationTokenRepository.findByToken(VerificationToken);
