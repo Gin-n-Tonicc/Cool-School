@@ -2,9 +2,9 @@ package com.coolSchool.coolSchool.services.impl.security;
 
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.services.UserService;
+import com.coolSchool.coolSchool.services.impl.security.events.OnRegistrationCompleteEvent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
