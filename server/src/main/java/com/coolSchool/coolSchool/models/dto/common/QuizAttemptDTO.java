@@ -20,7 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 public class QuizAttemptDTO {
     private QuizDTO quiz;
-    private PublicUserDTO user;
     private List<UserAnswerDTO> userAnswers;
     private BigDecimal totalMarks;
     private int attemptNumber;
