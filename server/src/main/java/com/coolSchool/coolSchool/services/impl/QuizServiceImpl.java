@@ -407,7 +407,7 @@ public class QuizServiceImpl implements QuizService {
                         .multiply(BigDecimal.valueOf(100));
             }
 
-            UserCourseResponseDTO userCourseDTO = new UserCourseResponseDTO(publicUserDTO, courseResponseDTO, quizSuccessPercentage);
+            UserCourseResponseDTO userCourseDTO = new UserCourseResponseDTO(publicUserDTO.getId(), courseResponseDTO, quizSuccessPercentage);
             userCourseDTOs.add(userCourseDTO);
         }
 

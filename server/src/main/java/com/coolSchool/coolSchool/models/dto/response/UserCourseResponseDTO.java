@@ -15,8 +15,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCourseResponseDTO extends UserCourseDTO {
-    @JsonProperty(value = "user")
-    private PublicUserDTO userId;
+    private Long userId;
     @JsonProperty(value = "course")
     private CourseResponseDTO courseId;
     private BigDecimal quizSuccessPercentage;
