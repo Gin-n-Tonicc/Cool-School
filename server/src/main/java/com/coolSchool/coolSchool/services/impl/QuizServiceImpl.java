@@ -129,14 +129,26 @@ public class QuizServiceImpl implements QuizService {
             QuestionDTO questionDTO = questionAndAnswers.getQuestion();
             questionDTO.setQuizId(savedQuiz.getId());
             QuestionDTO savedQuestion = questionService.createQuestion(questionDTO);
+
+            boolean foundCorrectAnswer = false;
+
             for (AnswerDTO answerDTO : questionAndAnswers.getAnswers()) {
                 answerDTO.setQuestionId(savedQuestion.getId());
+                if (answerDTO.isCorrect()) {
+                    if (foundCorrectAnswer) {
+                        throw new MultipleCorrectAnswersException(messageSource);
+                    } else {
+                        foundCorrectAnswer = true;
+                    }
+                }
                 answerService.createAnswer(answerDTO);
             }
             quizTotalMarks = quizTotalMarks.add(savedQuestion.getMarks());
         }
+
         savedQuiz.setTotalMarks(quizTotalMarks);
         quizRepository.save(savedQuiz);
+
         return modelMapper.map(savedQuiz, QuizDTO.class);
     }
 
