@@ -29,25 +29,20 @@ public class UserCleanupScheduler {
         this.verificationTokenRepository = verificationTokenRepository;
     }
 
-    @Scheduled(cron = "0 19 9 * * *") // Run every 24 hours
+    @Scheduled(cron = "0 00 0 * * *") // Run every 24 hours
     public void deleteUnconfirmedUsers() {
         LocalDateTime thresholdDateTime = LocalDateTime.now().minusHours(24);
         List<User> unconfirmedUsers = userRepository.findByEnabledFalseAndCreatedAtBefore(thresholdDateTime);
 
         for (User user : unconfirmedUsers) {
             List<VerificationToken> userVerificationTokens = verificationTokenRepository.findByUserAndCreatedAtBefore(user, thresholdDateTime);
-
-            for (VerificationToken verificationToken : userVerificationTokens) {
-                verificationTokenRepository.delete(verificationToken);
-            }
+            verificationTokenRepository.deleteAll(userVerificationTokens);
 
             List<Token> userTokens = tokenRepository.findAllByUser(user);
-            for (Token token : userTokens) {
-                tokenRepository.delete(token);
-            }
+            tokenRepository.deleteAll(userTokens);
+            userRepository.deleteAll(unconfirmedUsers);
         }
-
-        userRepository.deleteAll(unconfirmedUsers);
     }
 }
+
 
