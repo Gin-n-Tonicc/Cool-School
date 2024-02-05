@@ -103,10 +103,18 @@ public class QuizController {
         List<QuizAttemptDTO> quizAttemptsDTO = quizService.getAllUserAttemptsInAQuiz(quizId, publicUserDTO);
         return new ResponseEntity<>(quizAttemptsDTO, HttpStatus.OK);
     }
+
     @GetMapping("/highest-scores")
     public ResponseEntity<List<QuizAttemptDTO>> getUserHighestScoresInQuizzes(HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
         List<QuizAttemptDTO> highestScores = quizService.getAllUserHighestScoresInQuizzes(publicUserDTO.getId());
         return ResponseEntity.ok().body(highestScores);
+    }
+
+    @GetMapping("/calculate-success-percentage")
+    public ResponseEntity<List<UserCourseDTO>> calculateQuizSuccessPercentageForCurrentUser(HttpServletRequest httpServletRequest) {
+        PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
+        List<UserCourseDTO> userCourseDTOs = quizService.calculateQuizSuccessPercentageForCurrentUser(publicUserDTO);
+        return ResponseEntity.ok(userCourseDTOs);
     }
 }

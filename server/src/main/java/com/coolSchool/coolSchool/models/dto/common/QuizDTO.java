@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -20,5 +21,6 @@ public class QuizDTO {
     private LocalDateTime endTime;
     private Long subsectionId;
     private Integer attemptLimit;
+    private BigDecimal totalMarks;
     private Integer quizDurationInMinutes;
 }

@@ -31,4 +31,5 @@ public interface QuizService {
     QuizAttemptDTO getQuizAttemptDetails(Long quizAttemptId);
     List<QuizAttemptDTO> getAllUserAttemptsInAQuiz(Long quizId, PublicUserDTO publicUserDTO);
     List<QuizAttemptDTO> getAllUserHighestScoresInQuizzes(Long userId);
+    List<UserCourseDTO> calculateQuizSuccessPercentageForCurrentUser(PublicUserDTO publicUserDTO);
 }

@@ -31,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
@@ -68,6 +69,7 @@ public class AuthenticationController {
         if (verificationToken == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token expired!");
         }
+        verificationToken.setCreatedAt(LocalDateTime.now());
 
         User user = verificationToken.getUser();
         Calendar cal = Calendar.getInstance();
@@ -146,6 +148,8 @@ public class AuthenticationController {
         if (user == null) {
             throw new InvalidTokenException(messageSource);
         }
+        verificationToken.setCreatedAt(LocalDateTime.now());
+
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         return ResponseEntity.ok("Password reset successfully");

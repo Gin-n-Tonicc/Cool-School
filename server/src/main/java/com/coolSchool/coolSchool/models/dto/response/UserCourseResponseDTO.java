@@ -8,13 +8,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCourseResponseDTO extends UserCourseDTO {
-    @JsonProperty(value = "user")
-    private PublicUserDTO userId;
+    private Long userId;
     @JsonProperty(value = "course")
     private CourseResponseDTO courseId;
+    private BigDecimal quizSuccessPercentage;
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface UserCourseRepository extends JpaRepository<UserCourse, Long> {
     List<UserCourse> findByDeletedFalse();
+    List<UserCourse> findByUserId(Long id);
 
     Optional<UserCourse> findByIdAndDeletedFalse(Long id);
 
