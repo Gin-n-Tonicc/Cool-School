@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 @Entity
@@ -27,6 +28,8 @@ public class VerificationToken {
     private User user;
 
     private Date expiryDate;
+
+    public LocalDateTime createdAt;
 
     public VerificationToken(String token, User user) {
         this.token = token;
