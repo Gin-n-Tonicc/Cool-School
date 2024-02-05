@@ -6,6 +6,8 @@ import com.coolSchool.coolSchool.exceptions.courseSubsection.CourseSubsectionNot
 import com.coolSchool.coolSchool.exceptions.quizzes.*;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
+import com.coolSchool.coolSchool.models.dto.response.CourseResponseDTO;
+import com.coolSchool.coolSchool.models.dto.response.UserCourseResponseDTO;
 import com.coolSchool.coolSchool.models.entity.*;
 import com.coolSchool.coolSchool.repositories.*;
 import com.coolSchool.coolSchool.services.AnswerService;
@@ -15,10 +17,10 @@ import com.coolSchool.coolSchool.services.UserService;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -39,8 +41,9 @@ public class QuizServiceImpl implements QuizService {
     private final UserQuizProgressRepository userQuizProgressRepository;
     private final MessageSource messageSource;
     private final QuizAttemptTimer quizAttemptTimer;
+    private final UserCourseRepository userCourseRepository;
 
-    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, CourseSubsectionRepository courseSubsectionRepository, CourseRepository courseRepository, UserQuizProgressRepository userQuizProgressRepository, MessageSource messageSource, QuizAttemptTimer quizAttemptTimer) {
+    public QuizServiceImpl(QuizRepository quizRepository, ModelMapper modelMapper, QuestionService questionService, AnswerService answerService, UserService userService, UserAnswerRepository userAnswerRepository, QuizAttemptRepository quizAttemptRepository, CourseSubsectionRepository courseSubsectionRepository, CourseRepository courseRepository, UserQuizProgressRepository userQuizProgressRepository, MessageSource messageSource, QuizAttemptTimer quizAttemptTimer, UserCourseRepository userCourseRepository) {
         this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
         this.questionService = questionService;
@@ -53,6 +56,7 @@ public class QuizServiceImpl implements QuizService {
         this.userQuizProgressRepository = userQuizProgressRepository;
         this.messageSource = messageSource;
         this.quizAttemptTimer = quizAttemptTimer;
+        this.userCourseRepository = userCourseRepository;
     }
 
     @Override
@@ -359,7 +363,56 @@ public class QuizServiceImpl implements QuizService {
         long timeLeft = quizDurationInMinutes - elapsedTimeInMinutes;
         return Math.max(timeLeft, 0);
     }
+    @Override
+    public List<UserCourseDTO> calculateQuizSuccessPercentageForCurrentUser(PublicUserDTO publicUserDTO) {
+        List<QuizAttempt> quizAttempts = quizAttemptRepository.findByUserId(publicUserDTO.getId());
 
+        Map<Long, List<QuizAttempt>> quizAttemptsByQuizId = quizAttempts.stream()
+                .collect(Collectors.groupingBy(quizAttempt -> quizAttempt.getQuiz().getId()));
+
+        Map<Long, BigDecimal> highestScoresByQuizId = new HashMap<>();
+
+        for (List<QuizAttempt> attemptsForQuiz : quizAttemptsByQuizId.values()) {
+            BigDecimal highestScoreForQuiz = attemptsForQuiz.stream()
+                    .map(QuizAttempt::getTotalMarks)
+                    .max(BigDecimal::compareTo)
+                    .orElse(BigDecimal.ZERO);
+            highestScoresByQuizId.put(attemptsForQuiz.get(0).getQuiz().getId(), highestScoreForQuiz);
+        }
+
+        Map<Long, List<Quiz>> quizzesByCourseId = highestScoresByQuizId.keySet().stream()
+                .map(quizId -> quizRepository.findById(quizId).orElse(null))
+                .filter(Objects::nonNull)
+                .collect(Collectors.groupingBy(quiz -> quiz.getSubsection().getCourse().getId()));
+
+        List<UserCourseDTO> userCourseDTOs = new ArrayList<>();
+        for (Map.Entry<Long, List<Quiz>> entry : quizzesByCourseId.entrySet()) {
+            Long courseId = entry.getKey();
+            Course course = courseRepository.findByIdAndDeletedFalse(courseId).orElseThrow(()-> new CourseNotFoundException(messageSource));
+            CourseResponseDTO courseResponseDTO = modelMapper.map(course, CourseResponseDTO.class);
+            List<Quiz> quizzesInCourse = entry.getValue();
+
+            BigDecimal totalHighestScore = BigDecimal.ZERO;
+            BigDecimal totalPossibleScore = BigDecimal.ZERO;
+
+            for (Quiz quiz : quizzesInCourse) {
+                BigDecimal highestScore = highestScoresByQuizId.getOrDefault(quiz.getId(), BigDecimal.ZERO);
+                totalHighestScore = totalHighestScore.add(highestScore);
+                totalPossibleScore = totalPossibleScore.add(quiz.getTotalMarks());
+            }
+
+            BigDecimal quizSuccessPercentage = BigDecimal.ZERO;
+            if (totalPossibleScore.compareTo(BigDecimal.ZERO) > 0) {
+                quizSuccessPercentage = totalHighestScore.divide(totalPossibleScore, 2, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100));
+            }
+
+            UserCourseResponseDTO userCourseDTO = new UserCourseResponseDTO(publicUserDTO, courseResponseDTO, quizSuccessPercentage);
+            userCourseDTOs.add(userCourseDTO);
+        }
+
+        return userCourseDTOs;
+    }
     private List<UserQuizProgressDTO> getAllUserProgressForQuiz(Long quizId) {
         List<UserQuizProgress> userQuizProgressList = userQuizProgressRepository.findByQuizId(quizId);
         return userQuizProgressList.stream()
