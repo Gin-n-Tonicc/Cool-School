@@ -1,3 +1,4 @@
+import { ICourse } from '../../../../types/interfaces/ICourse';
 import { ICourseSubsection } from '../../../../types/interfaces/ICourseSubsection';
 import CoursesListItem from './courses-list-item/CoursesListItem';
 
@@ -7,6 +8,7 @@ interface CoursesListProps {
   hasEnrolled: boolean;
   refreshSubsections: Function;
   courseId: number;
+  course: ICourse;
 }
 
 export default function CoursesList(props: CoursesListProps) {
@@ -22,6 +24,7 @@ export default function CoursesList(props: CoursesListProps) {
               hasEnrolled={props.hasEnrolled || props.isOwner}
               refreshSubsections={props.refreshSubsections}
               courseId={props.courseId}
+              course={props.course}
             />
           ))}
         </ul>

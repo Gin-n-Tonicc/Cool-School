@@ -1,0 +1,49 @@
+.quiz-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5vh;
+
+  & > * {
+    width: 100%;
+  }
+
+  .number-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    & > .form-group {
+      width: 100%;
+      margin: 0;
+    }
+  }
+
+  .quiz-create-subforms {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    .quiz-subform-wrapper {
+      box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+        0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+
+      width: 100%;
+      padding: 1rem;
+
+      .quiz-subform-title-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .quiz-subform {
+        margin-top: 1.5rem;
+      }
+    }
+  }
+}

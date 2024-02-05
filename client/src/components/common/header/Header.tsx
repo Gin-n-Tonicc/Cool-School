@@ -118,7 +118,6 @@ export default function Header() {
         PagesEnum.CoursesCreate,
         PagesEnum.Admin,
         PagesEnum.NotFound,
-        PagesEnum.QuizStart,
         `${PagesEnum.Admin}/${AdminPagesEnum.USERS}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`,
         `${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`,
@@ -131,7 +130,7 @@ export default function Header() {
 
   const placeholderPaths = useMemo(
     () =>
-      [PagesEnum.QuizStart].map((x) => {
+      [PagesEnum.QuizStart, PagesEnum.QuizCreate].map((x) => {
         const indexOfPlaceholder = x.indexOf(':');
         return x.substring(0, indexOfPlaceholder);
       }),

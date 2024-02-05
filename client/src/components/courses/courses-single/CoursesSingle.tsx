@@ -119,6 +119,7 @@ export default function CoursesSingle() {
                   isOwner={isOwner}
                 />
                 <CoursesList
+                  course={course}
                   subsections={subsections || []}
                   isOwner={isOwner}
                   hasEnrolled={hasEnrolled}

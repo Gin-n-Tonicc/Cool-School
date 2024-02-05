@@ -69,9 +69,7 @@ export default function QuizSingle(props: QuizSingleProps) {
   const quiz = data.quiz;
   const questions = data.questions;
 
-  const switchQuestion = async (questionIndex: number) => {
-    let currentQuestion = questions[currentQuestionIndex];
-
+  const getAndPostProgress = async (currentQuestion: IQuestionAndAnswers) => {
     if (selectedAnswer) {
       const userProgress: ISaveUserProgress = {
         quizId: quiz.id,
@@ -82,8 +80,30 @@ export default function QuizSingle(props: QuizSingleProps) {
         attemptId: props.currentAttempt.id,
       };
 
-      setProgresses(await postProgress(userProgress));
+      const newProgresses = await postProgress(userProgress);
+      setProgresses(newProgresses);
+      return newProgresses;
     }
+
+    return progresses;
+  };
+
+  const switchQuestion = async (questionIndex: number) => {
+    let currentQuestion = questions[currentQuestionIndex];
+
+    // if (selectedAnswer) {
+    //   const userProgress: ISaveUserProgress = {
+    //     quizId: quiz.id,
+    //     questionId: currentQuestion.question.id,
+    //     answerId: selectedAnswer.id,
+    //     userId: 1,
+    //     id: 0,
+    //     attemptId: props.currentAttempt.id,
+    //   };
+
+    //   setProgresses(await postProgress(userProgress));
+    // }
+    await getAndPostProgress(currentQuestion);
 
     const newIndex = validateIndex(questions.length, questionIndex);
     setCurrentQuestionIndex(newIndex);
@@ -100,7 +120,11 @@ export default function QuizSingle(props: QuizSingleProps) {
   };
 
   const onSubmitQuiz = async () => {
-    const userAnswers: IUserAnswer[] = progresses.map((x) => ({
+    const newProgresses = await getAndPostProgress(
+      questions[currentQuestionIndex]
+    );
+
+    const userAnswers: IUserAnswer[] = newProgresses.map((x) => ({
       questionId: x.questionId,
       selectedOptionId: x.answerId,
     }));

@@ -2,6 +2,6 @@ import { IObjectWithId } from './IObjectWithId';
 
 export interface IAnswer extends IObjectWithId {
   text: string;
-  isCorrect: boolean;
+  correct: boolean;
   question: number;
 }

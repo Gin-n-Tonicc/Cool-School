@@ -4,6 +4,7 @@ import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
 import { useFetch } from '../../../../../hooks/useFetch';
 import { PagesEnum } from '../../../../../types/enums/PagesEnum';
+import { ICourse } from '../../../../../types/interfaces/ICourse';
 import { ICourseSubsection } from '../../../../../types/interfaces/ICourseSubsection';
 import { IResource } from '../../../../../types/interfaces/IResource';
 import CoursesResourcesCreate from '../../courses-resources-create/CoursesResourcesCreate';
@@ -18,6 +19,7 @@ interface CoursesListItemProps {
   hasEnrolled: boolean;
   refreshSubsections: Function;
   courseId: number;
+  course: ICourse;
 }
 
 export default function CoursesListItem({
@@ -26,6 +28,7 @@ export default function CoursesListItem({
   hasEnrolled,
   refreshSubsections,
   courseId,
+  course,
 }: CoursesListItemProps) {
   const { t } = useTranslation();
 
@@ -45,7 +48,7 @@ export default function CoursesListItem({
   const handleDelete = async () => {
     if (
       !window.confirm(
-        `Are you sure you want to delete subsection \'${subsection.title}\'`
+        `Are you sure you want to delete subsection '${subsection.title}'`
       )
     ) {
       return;
@@ -121,7 +124,13 @@ export default function CoursesListItem({
                 <h5>Тестове</h5>
 
                 {isOwner && (
-                  <Link to={PagesEnum.Home} className="btn_1 res-create-btn">
+                  <Link
+                    to={PagesEnum.QuizCreate.replace(
+                      ':courseId',
+                      `${courseId}`
+                    ).replace(':subsectionId', `${subsection.id}`)}
+                    state={course}
+                    className="btn_1 res-create-btn">
                     {t('courses.resources.add.button')}
                   </Link>
                 )}
