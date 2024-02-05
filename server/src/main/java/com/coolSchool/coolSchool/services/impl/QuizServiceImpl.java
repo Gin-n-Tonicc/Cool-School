@@ -119,6 +119,8 @@ public class QuizServiceImpl implements QuizService {
         List<QuestionAndAnswersDTO> questionAndAnswersList = quizData.getData();
         Quiz savedQuiz = quizRepository.save(modelMapper.map(quizDTO, Quiz.class));
 
+        BigDecimal quizTotalMarks = BigDecimal.valueOf(0);
+
         for (QuestionAndAnswersDTO questionAndAnswers : questionAndAnswersList) {
             QuestionDTO questionDTO = questionAndAnswers.getQuestion();
             questionDTO.setQuizId(savedQuiz.getId());
@@ -127,7 +129,10 @@ public class QuizServiceImpl implements QuizService {
                 answerDTO.setQuestionId(savedQuestion.getId());
                 answerService.createAnswer(answerDTO);
             }
+            quizTotalMarks = quizTotalMarks.add(savedQuestion.getMarks());
         }
+        savedQuiz.setTotalMarks(quizTotalMarks);
+        quizRepository.save(savedQuiz);
         return modelMapper.map(savedQuiz, QuizDTO.class);
     }
 
