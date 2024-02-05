@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
-import { ICategory } from '../../../types/interfaces/ICategory';
-import { IFile } from '../../../types/interfaces/IFile';
+import { ICategory } from '../../../types/interfaces/common/ICategory';
+import { IFile } from '../../../types/interfaces/common/IFile';
 
 import { useTranslation } from 'react-i18next';
 import { useFetch } from '../../../hooks/useFetch';

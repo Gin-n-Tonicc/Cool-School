@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuidV4 } from 'uuid';
-import { IDefaultObject } from '../../../../types/interfaces/IDefaultObject';
-import { IQuestion } from '../../../../types/interfaces/IQuestion';
+import { IDefaultObject } from '../../../../types/interfaces/common/IDefaultObject';
+import { IQuestion } from '../../../../types/interfaces/quizzes/IQuestion';
 import FormInput from '../../../common/form-input/FormInput';
 
 export type QuestionFormQuestion = Partial<IQuestion> & {

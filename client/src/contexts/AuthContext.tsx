@@ -3,8 +3,8 @@ import { PropsWithChildren, createContext, useContext } from 'react';
 import { AUTH_COOKIE_KEY_JWT } from '../constants/cookieConstants';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { RolesEnum } from '../types/enums/RolesEnum';
-import { IAuthStorage } from '../types/interfaces/IAuthStorage';
-import { IUser } from '../types/interfaces/IUser';
+import { IAuthStorage } from '../types/interfaces/auth/IAuthStorage';
+import { IUser } from '../types/interfaces/auth/IUser';
 import { deleteJwtCookie, deleteRefreshCookie } from '../utils/cookieUtils';
 import { isJwtExpired } from '../utils/jwtUtils';
 

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../../../../config/apiUrls';
 import { useFetch } from '../../../../../../hooks/useFetch';
 import { PagesEnum } from '../../../../../../types/enums/PagesEnum';
-import { IQuiz } from '../../../../../../types/interfaces/IQuiz';
+import { IQuiz } from '../../../../../../types/interfaces/quizzes/IQuiz';
 
 interface CoursesQuizzesProps {
   subsectionId: number;

@@ -4,7 +4,7 @@ import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useFetch } from '../../../../hooks/useFetch';
 import { LanguageEnum } from '../../../../types/enums/LanguageEnum';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
-import { IBlog } from '../../../../types/interfaces/IBlog';
+import { IBlog } from '../../../../types/interfaces/blogs/IBlog';
 import { timeSince } from '../../../../utils/dateUtils';
 import BlogPopularPost from './blog-popular-post/BlogPopularPost';
 

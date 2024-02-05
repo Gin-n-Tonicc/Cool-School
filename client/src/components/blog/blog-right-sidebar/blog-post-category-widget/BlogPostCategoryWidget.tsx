@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useFetch } from '../../../../hooks/useFetch';
-import { ICategory } from '../../../../types/interfaces/ICategory';
+import { ICategory } from '../../../../types/interfaces/common/ICategory';
 import './BlogPostCategoryWidget.scss';
 import BlogPostCategory from './blog-post-category/BlogPostCategory';
 

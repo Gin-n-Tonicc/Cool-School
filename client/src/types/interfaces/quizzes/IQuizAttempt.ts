@@ -1,6 +1,6 @@
-import { IObjectWithId } from './IObjectWithId';
+import { IUser } from '../auth/IUser';
+import { IObjectWithId } from '../common/IObjectWithId';
 import { IQuiz } from './IQuiz';
-import { IUser } from './IUser';
 
 export interface IQuizAttempt extends IObjectWithId {
   quiz: IQuiz;

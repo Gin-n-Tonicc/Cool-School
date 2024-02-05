@@ -4,7 +4,7 @@ import { apiUrlsConfig } from '../../config/apiUrls';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useErrorContext } from '../../contexts/ErrorContext';
 import { useFetch } from '../../hooks/useFetch';
-import { IUser } from '../../types/interfaces/IUser';
+import { IUser } from '../../types/interfaces/auth/IUser';
 import {
   deleteJwtCookie,
   deleteRefreshCookie,

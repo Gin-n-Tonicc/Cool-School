@@ -7,7 +7,7 @@ import { useFetch } from '../../../../hooks/useFetch';
 import useValidators from '../../../../hooks/useValidator/useValidators';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import { RolesEnum } from '../../../../types/enums/RolesEnum';
-import { IUser } from '../../../../types/interfaces/IUser';
+import { IUser } from '../../../../types/interfaces/auth/IUser';
 import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../../common/form-input/FormInput';
 

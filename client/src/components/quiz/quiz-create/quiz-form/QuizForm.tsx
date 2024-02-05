@@ -1,6 +1,6 @@
 import { RefObject } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { IQuiz } from '../../../../types/interfaces/IQuiz';
+import { IQuiz } from '../../../../types/interfaces/quizzes/IQuiz';
 import FormInput from '../../../common/form-input/FormInput';
 
 export type QuizFormInputs = {
@@ -48,6 +48,7 @@ export default function QuizForm(props: QuizFormProps) {
       attemptLimit: Number(data['Attempt Limit']),
       quizDurationInMinutes: Number(data['Minute Duration']),
       subsectionId: props.subsectionId,
+      totalMarks: 0,
       id: 0,
     };
 

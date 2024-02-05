@@ -1,4 +1,4 @@
-import { IObjectWithId } from './IObjectWithId';
+import { IObjectWithId } from '../common/IObjectWithId';
 
 export interface IUserQuizProgress extends IObjectWithId {
   questionId: number;

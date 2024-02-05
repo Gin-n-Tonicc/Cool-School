@@ -6,7 +6,7 @@ import { useAuthContext } from '../../../../contexts/AuthContext';
 import { useFetch } from '../../../../hooks/useFetch';
 import useValidators from '../../../../hooks/useValidator/useValidators';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
-import { IUser } from '../../../../types/interfaces/IUser';
+import { IUser } from '../../../../types/interfaces/auth/IUser';
 import FormInput from '../../../common/form-input/FormInput';
 
 type LoginFormProps = {

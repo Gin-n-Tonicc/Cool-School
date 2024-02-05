@@ -5,12 +5,12 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import { useFetch } from '../../../hooks/useFetch';
 import { useLinkState } from '../../../hooks/useLinkState';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
-import { IAnswer } from '../../../types/interfaces/IAnswer';
-import { ICourse } from '../../../types/interfaces/ICourse';
-import { ICourseSubsection } from '../../../types/interfaces/ICourseSubsection';
-import { IQuestionAndAnswers } from '../../../types/interfaces/IQuestionAndAnswers';
-import { IQuiz } from '../../../types/interfaces/IQuiz';
-import { IQuizData } from '../../../types/interfaces/IQuizData';
+import { ICourse } from '../../../types/interfaces/courses/ICourse';
+import { ICourseSubsection } from '../../../types/interfaces/courses/ICourseSubsection';
+import { IAnswer } from '../../../types/interfaces/quizzes/IAnswer';
+import { IQuestionAndAnswers } from '../../../types/interfaces/quizzes/IQuestionAndAnswers';
+import { IQuiz } from '../../../types/interfaces/quizzes/IQuiz';
+import { IQuizData } from '../../../types/interfaces/quizzes/IQuizData';
 import Spinner from '../../common/spinner/Spinner';
 import './QuizCreate.scss';
 import AnswerForm, {
@@ -104,7 +104,7 @@ export default function QuizCreate() {
 
     await post(body);
     if (postQuizResponse.ok) {
-      navigate(PagesEnum.Courses.replace(':id', `${courseId}`));
+      navigate(PagesEnum.SingleCourse.replace(':id', `${course.id}`));
     }
   };
 

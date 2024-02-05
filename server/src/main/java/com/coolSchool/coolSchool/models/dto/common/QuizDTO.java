@@ -23,4 +23,7 @@ public class QuizDTO {
     private Integer attemptLimit;
     private BigDecimal totalMarks;
     private Integer quizDurationInMinutes;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long courseId;
 }

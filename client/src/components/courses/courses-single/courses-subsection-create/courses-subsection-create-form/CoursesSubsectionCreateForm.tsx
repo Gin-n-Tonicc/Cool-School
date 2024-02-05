@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
 import { useFetch } from '../../../../../hooks/useFetch';
 import useValidators from '../../../../../hooks/useValidator/useValidators';
-import { ICourseSubsection } from '../../../../../types/interfaces/ICourseSubsection';
+import { ICourseSubsection } from '../../../../../types/interfaces/courses/ICourseSubsection';
 import FormErrorWrapper from '../../../../common/form-error-wrapper/FormErrorWrapper';
 import './CoursesSubsectionCreateForm.scss';
 

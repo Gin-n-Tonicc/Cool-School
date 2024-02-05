@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { IAnswer } from '../../../../types/interfaces/IAnswer';
-import { IDefaultObject } from '../../../../types/interfaces/IDefaultObject';
+import { IDefaultObject } from '../../../../types/interfaces/common/IDefaultObject';
+import { IAnswer } from '../../../../types/interfaces/quizzes/IAnswer';
 import CategorySelect from '../../../common/category-select/CategorySelect';
 import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../../common/form-input/FormInput';

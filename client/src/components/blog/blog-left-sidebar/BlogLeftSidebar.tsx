@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useFetch } from '../../../hooks/useFetch';
 import { usePagination } from '../../../hooks/usePagination';
-import { IBlog } from '../../../types/interfaces/IBlog';
+import { IBlog } from '../../../types/interfaces/blogs/IBlog';
 import BlogItem from '../blog-item/BlogItem';
 import BlogPagination from '../blog-right-sidebar/blog-pagination/BlogPagination';
 import { CATEGORY_PARAM_KEY } from '../blog-right-sidebar/blog-post-category-widget/blog-post-category/BlogPostCategory';

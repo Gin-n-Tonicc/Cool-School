@@ -68,8 +68,10 @@ public class QuizServiceImpl implements QuizService {
     @Override
     public QuizDTO getQuizInfoById(Long id) {
         Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new QuizNotFoundException(messageSource));
+        QuizDTO quizDTO = modelMapper.map(quiz, QuizDTO.class);
+        quizDTO.setCourseId(quiz.getSubsection().getCourse().getId());
 
-        return modelMapper.map(quiz, QuizDTO.class);
+        return quizDTO;
     }
 
     @Override
@@ -113,7 +115,12 @@ public class QuizServiceImpl implements QuizService {
     public List<QuizDTO> getQuizzesBySubsectionId(Long subsectionId) {
         List<Quiz> quizzes = quizRepository.findBySubsectionIdAndDeletedFalse(subsectionId);
         return quizzes.stream()
-                .map(quiz -> modelMapper.map(quiz, QuizDTO.class))
+                .map(quiz -> {
+                    QuizDTO quizDTO = modelMapper.map(quiz, QuizDTO.class);
+                    quizDTO.setCourseId(quiz.getSubsection().getCourse().getId());
+
+                    return quizDTO;
+                })
                 .collect(Collectors.toList());
     }
 

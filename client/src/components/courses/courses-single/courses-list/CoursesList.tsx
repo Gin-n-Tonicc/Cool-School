@@ -1,5 +1,5 @@
-import { ICourse } from '../../../../types/interfaces/ICourse';
-import { ICourseSubsection } from '../../../../types/interfaces/ICourseSubsection';
+import { ICourse } from '../../../../types/interfaces/courses/ICourse';
+import { ICourseSubsection } from '../../../../types/interfaces/courses/ICourseSubsection';
 import CoursesListItem from './courses-list-item/CoursesListItem';
 
 interface CoursesListProps {
