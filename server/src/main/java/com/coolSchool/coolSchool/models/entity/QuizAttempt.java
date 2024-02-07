@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.time.Duration;
 
 @Entity
 @Data
@@ -38,6 +39,8 @@ public class QuizAttempt {
     private LocalDateTime startTime;
 
     private Integer timeLeft;
+
+    private Long remainingTimeInSeconds;
 
 
     @Column(name = "completed", nullable = false)
