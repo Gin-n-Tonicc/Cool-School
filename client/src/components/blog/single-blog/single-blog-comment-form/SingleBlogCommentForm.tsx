@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
 import { useFetch } from '../../../../hooks/useFetch';
-import { IComment } from '../../../../types/interfaces/IComment';
+import { IComment } from '../../../../types/interfaces/blogs/IComment';
 
 interface SingleBlogCommentFormProps {
   blogId: number;

@@ -1,5 +1,5 @@
 import { v4 as uuidV4 } from 'uuid';
-import { IReview } from '../../../../../types/interfaces/IReview';
+import { IReview } from '../../../../../types/interfaces/courses/IReview';
 import colorStar from '../../../icons/color_star.svg';
 import star from '../../../icons/star.svg';
 import { MAX_STARS } from '../../courses-rating/CoursesRating';

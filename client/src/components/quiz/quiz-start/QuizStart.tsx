@@ -5,8 +5,8 @@ import { useLocaleContext } from '../../../contexts/LocaleContext';
 import { useFetch } from '../../../hooks/useFetch';
 import { useLinkState } from '../../../hooks/useLinkState';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
-import { IQuiz } from '../../../types/interfaces/IQuiz';
-import { IQuizAttempt } from '../../../types/interfaces/IQuizAttempt';
+import { IQuiz } from '../../../types/interfaces/quizzes/IQuiz';
+import { IQuizAttempt } from '../../../types/interfaces/quizzes/IQuizAttempt';
 import QuizSingle from '../quiz-single/QuizSingle';
 import './QuizStart.scss';
 
@@ -73,6 +73,11 @@ export default function QuizStart() {
   const highestGrade =
     attempts?.sort((a, b) => b.totalMarks - a.totalMarks)[0]?.totalMarks || 0;
 
+  const totalMarks = data?.totalMarks || 0;
+  const redirectUrl = data?.courseId
+    ? PagesEnum.SingleCourse.replace(':id', `${data.courseId}`)
+    : PagesEnum.Courses;
+
   return (
     <div className="quiz-start-wrapper max-w-4xl mx-auto p-5">
       <div className="quiz-start bg-white p-6 rounded-md">
@@ -101,21 +106,25 @@ export default function QuizStart() {
           </h3>
           <div className="attempt-grid grid grid-cols-3 gap-4 mb-4 text-center overflow-y-scroll">
             <div className="text-base font-semibold">Състояние</div>
-            <div className="text-base font-semibold">Оценка / </div>
+            <div className="text-base font-semibold">
+              Оценка / {totalMarks.toFixed(2)}
+            </div>
             <div className="text-base font-semibold">Процент</div>
             {attempts?.map((x) => (
               <Fragment key={x.id}>
                 <div className="text-sm">{!x.completed && 'Не '}Завършен</div>
                 <div className="text-sm">{x.totalMarks.toFixed(2)}</div>
-                <div className="text-sm">10%</div>
+                <div className="text-sm">
+                  {((x.totalMarks / totalMarks) * 100).toFixed(2)}%
+                </div>
               </Fragment>
             ))}
 
             {!attempts?.length && <div className="text-sm">Няма опити</div>}
           </div>
           <div className="text-sm font-semibold mb-2 text-center">
-            Финалната Ви оценка за този тест е {highestGrade.toFixed(2)}
-            /15,00.
+            Финалната Ви оценка за този тест е {highestGrade.toFixed(2)}/
+            {totalMarks.toFixed(2)}.
           </div>
           <div className="my-10 mb-0 border-t border-gray-300 pt-4">
             <h2 className="text-lg">Цялостна забележка</h2>
@@ -139,11 +148,9 @@ export default function QuizStart() {
           </div>
         </div>
         <div className="flex justify-between items-center border-t border-gray-300 pt-4 mt-4">
-          <Link
-            to={PagesEnum.Courses}
-            className="flex gap-2 text-sm text-gray-600">
+          <Link to={redirectUrl} className="flex gap-2 text-sm text-gray-600">
             <span>&#9664;</span>
-            <span>Обратно към курсовете</span>
+            <span>Обратно към курса</span>
           </Link>
           <div className="flex gap-2 text-sm text-gray-600">
             <span>{data?.description}</span>

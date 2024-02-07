@@ -1,4 +1,4 @@
-import { IObjectWithId } from './IObjectWithId';
+import { IObjectWithId } from '../common/IObjectWithId';
 
 export interface IQuiz extends IObjectWithId {
   title: string;
@@ -7,5 +7,7 @@ export interface IQuiz extends IObjectWithId {
   endTime: Date;
   subsectionId: number;
   attemptLimit: number;
+  totalMarks: number;
   quizDurationInMinutes: number;
+  courseId?: number;
 }

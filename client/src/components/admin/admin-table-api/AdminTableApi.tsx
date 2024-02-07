@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { CachePolicies, Res } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useFetch } from '../../../hooks/useFetch';
-import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
+import { IObjectWithId } from '../../../types/interfaces/common/IObjectWithId';
 import {
   OnCreateFunction,
   OnUpdateFunction,

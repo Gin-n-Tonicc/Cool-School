@@ -1,5 +1,5 @@
-import { RolesEnum } from '../enums/RolesEnum';
-import { IObjectWithId } from './IObjectWithId';
+import { RolesEnum } from '../../enums/RolesEnum';
+import { IObjectWithId } from '../common/IObjectWithId';
 
 export interface IUser extends IObjectWithId {
   firstname: string;

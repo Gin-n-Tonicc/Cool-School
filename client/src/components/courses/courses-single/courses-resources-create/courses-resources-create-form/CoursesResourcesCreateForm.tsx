@@ -7,8 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
 import { useFetch } from '../../../../../hooks/useFetch';
 import useValidators from '../../../../../hooks/useValidator/useValidators';
-import { IFile } from '../../../../../types/interfaces/IFile';
-import { IResource } from '../../../../../types/interfaces/IResource';
+import { IFile } from '../../../../../types/interfaces/common/IFile';
+import { IResource } from '../../../../../types/interfaces/common/IResource';
 import FormErrorWrapper from '../../../../common/form-error-wrapper/FormErrorWrapper';
 
 interface CoursesSubsectionCreateFormProps {

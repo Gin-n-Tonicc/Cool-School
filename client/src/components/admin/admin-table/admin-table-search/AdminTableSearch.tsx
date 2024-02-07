@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { IDefaultObject } from '../../../../types/interfaces/IDefaultObject';
+import { IDefaultObject } from '../../../../types/interfaces/common/IDefaultObject';
 
 export type AdminSearchValues = IDefaultObject<number | string>;
 

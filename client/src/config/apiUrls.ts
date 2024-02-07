@@ -83,6 +83,8 @@ const reviewsPaths = Object.seal({
 });
 
 const courseSubsectionsPaths = Object.seal({
+  getById: (id: number | string | undefined) =>
+    `${baseApiUrl}/courseSubsections/${id}`,
   getByCourse: (courseId: number) =>
     `${baseApiUrl}/courseSubsections/course/${courseId}`,
   create: `${baseApiUrl}/courseSubsections/create`,
@@ -116,6 +118,7 @@ const quizzesPaths = Object.seal({
     `${baseApiUrl}/quizzes/${quizId}/save-progress`,
   submit: (quizId: number | string | undefined, attemptId: number) =>
     `${baseApiUrl}/quizzes/${quizId}/submit/${attemptId}`,
+  create: `${baseApiUrl}/quizzes/create`,
 });
 
 export const apiUrlsConfig = Object.seal({

@@ -1,4 +1,4 @@
-import { ICourseSubsection } from './ICourseSubsection';
+import { ICourseSubsection } from '../courses/ICourseSubsection';
 import { IFile } from './IFile';
 import { IObjectWithId } from './IObjectWithId';
 

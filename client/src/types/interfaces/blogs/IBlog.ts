@@ -1,7 +1,7 @@
-import { ICategory } from './ICategory';
-import { IFile } from './IFile';
-import { IObjectWithId } from './IObjectWithId';
-import { IUser } from './IUser';
+import { IUser } from '../auth/IUser';
+import { ICategory } from '../common/ICategory';
+import { IFile } from '../common/IFile';
+import { IObjectWithId } from '../common/IObjectWithId';
 
 export interface IBlog extends IObjectWithId {
   title: string;

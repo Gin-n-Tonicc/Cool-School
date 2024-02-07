@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { CachePolicies } from 'use-http';
 import { apiUrlsConfig } from '../config/apiUrls';
 import { useAuthContext } from '../contexts/AuthContext';
-import { IUser } from '../types/interfaces/IUser';
+import { IUser } from '../types/interfaces/auth/IUser';
 import { initialAuthUtils } from '../utils/initialAuthUtils';
 import { useFetch } from './useFetch';
 
