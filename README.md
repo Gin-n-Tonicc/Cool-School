@@ -1,4 +1,4 @@
-### [Demo](https://cool-school-19352.web.app/)&nbsp;&nbsp;&nbsp;&nbsp;[Cool School](https://github.com/Gin-n-Tonicc/Cool-School)
+### [Demo](https://cool-school-19352.web.app/)&nbsp;&nbsp;&nbsp;&nbsp;[Cool School](https://github.com/Gin-n-Tonicc/Cool-School)&nbsp;&nbsp;&nbsp;&nbsp; [Presentation](https://www.canva.com/design/DAF6t7RobJc/BQxZcX03JqcYA-PWatBdbg/view)
 
 This codebase was created to show a full application built with React with TypeScript that uses Java with Spring Boot as backend server with CRUD operations, authentication, routing, filtering and more.
 
