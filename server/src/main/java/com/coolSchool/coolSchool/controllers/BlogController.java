@@ -1,14 +1,20 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.exceptions.AI.ErrorProcessingAIResponseException;
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.coolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.BlogResponseDTO;
+import com.coolSchool.coolSchool.models.entity.Category;
 import com.coolSchool.coolSchool.services.AIAssistanceService;
 import com.coolSchool.coolSchool.services.BlogService;
+import com.coolSchool.coolSchool.services.CategoryService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +25,15 @@ import java.util.*;
 @RequestMapping("/api/v1/blogs")
 public class BlogController {
     private final BlogService blogService;
+    private final CategoryService categoryService;
     private final AIAssistanceService aiAssistanceService;
+    private final MessageSource messageSource;
 
-    public BlogController(BlogService blogService, AIAssistanceService aiAssistanceService) {
+    public BlogController(BlogService blogService, CategoryService categoryService, AIAssistanceService aiAssistanceService, MessageSource messageSource) {
         this.blogService = blogService;
+        this.categoryService = categoryService;
         this.aiAssistanceService = aiAssistanceService;
+        this.messageSource = messageSource;
     }
 
 
@@ -56,6 +66,17 @@ public class BlogController {
         String aiGeneratedContent = aiAssistanceService.generateText(content);
         String extractedContent = aiAssistanceService.extractContent(aiGeneratedContent);
         return ResponseEntity.ok(extractedContent);
+    }
+    @PostMapping("/recommend-category/AI")
+    public ResponseEntity<CategoryDTO> recommendCategoryForBlog(@RequestBody Map<String, String> requestBody) throws JsonProcessingException {
+        String content = requestBody.get("blogContent");
+        List<CategoryDTO> allCategories = categoryService.getAllCategories();
+
+        String prompt = aiAssistanceService.buildPrompt(content, allCategories);
+        String aiResponse = aiAssistanceService.analyzeContent(prompt);
+        CategoryDTO recommendedCategory = aiAssistanceService.matchCategory(aiResponse, allCategories);
+
+        return ResponseEntity.ok(recommendedCategory);
     }
 
     @RateLimited
