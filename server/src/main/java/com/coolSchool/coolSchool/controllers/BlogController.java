@@ -5,6 +5,7 @@ import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.BlogResponseDTO;
+import com.coolSchool.coolSchool.services.AIAssistanceService;
 import com.coolSchool.coolSchool.services.BlogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -18,9 +19,11 @@ import java.util.*;
 @RequestMapping("/api/v1/blogs")
 public class BlogController {
     private final BlogService blogService;
+    private final AIAssistanceService aiAssistanceService;
 
-    public BlogController(BlogService blogService) {
+    public BlogController(BlogService blogService, AIAssistanceService aiAssistanceService) {
         this.blogService = blogService;
+        this.aiAssistanceService = aiAssistanceService;
     }
 
 
@@ -43,9 +46,16 @@ public class BlogController {
     @RateLimited
     @PostMapping("/create")
     public ResponseEntity<BlogResponseDTO> createBlog(@Valid @RequestBody BlogRequestDTO blogDTO, HttpServletRequest httpServletRequest) {
-        Locale locale = httpServletRequest.getLocale();
         BlogResponseDTO cratedBlog = blogService.createBlog(blogDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         return new ResponseEntity<>(cratedBlog, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/generate/AI/text")
+    public ResponseEntity<String> generateAIBlogContent(@RequestBody Map<String, String> requestBody) {
+        String content = requestBody.get("content");
+        String aiGeneratedContent = aiAssistanceService.generateText(content);
+        String extractedContent = aiAssistanceService.extractContent(aiGeneratedContent);
+        return ResponseEntity.ok(extractedContent);
     }
 
     @RateLimited

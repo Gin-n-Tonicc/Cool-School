@@ -35,6 +35,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,6 +55,7 @@ public class BlogServiceImpl implements BlogService {
     private final JavaMailSender emailSender;
     private final SlackNotifier slackNotifier;
     private final FrontendConfig frontendConfig;
+
 
 
     public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource, JavaMailSender emailSender, SlackNotifier slackNotifier, FrontendConfig frontendConfig) {
@@ -126,11 +128,10 @@ public class BlogServiceImpl implements BlogService {
             blogDTO.setCreated_at(LocalDateTime.now());
             blogDTO.setOwnerId(loggedUser.getId());
             blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
-
+            blogDTO.setPictureId(1L);
             userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
             categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
             fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(() -> new FileNotFoundException(messageSource));
-
             blogDTO.setCommentCount(0);
             Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
 
