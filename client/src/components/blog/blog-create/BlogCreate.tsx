@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { SingleValue } from 'react-select';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useFetch } from '../../../hooks/useFetch';
 import useValidators from '../../../hooks/useValidator/useValidators';
@@ -9,7 +10,9 @@ import { PagesEnum } from '../../../types/enums/PagesEnum';
 import { IBlog } from '../../../types/interfaces/blogs/IBlog';
 import { ICategory } from '../../../types/interfaces/common/ICategory';
 import { IFile } from '../../../types/interfaces/common/IFile';
-import CategorySelect from '../../common/category-select/CategorySelect';
+import CategorySelect, {
+  CategoryOption,
+} from '../../common/category-select/CategorySelect';
 import FormErrorWrapper from '../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../common/form-input/FormInput';
 import './BlogCreate.scss';
@@ -23,6 +26,10 @@ type Inputs = {
 };
 
 export default function BlogCreate() {
+  const [selectedCategory, setSelectedCategory] = useState<
+    SingleValue<CategoryOption> | undefined
+  >();
+
   const { t } = useTranslation();
   const { common, blogCreate } = useValidators();
 
@@ -65,6 +72,18 @@ export default function BlogCreate() {
     apiUrlsConfig.blogs.upload
   );
 
+  const {
+    post: generateAITextPost,
+    loading: aiTextLoading,
+    response: aiTextRes,
+  } = useFetch<string>(apiUrlsConfig.blogs.generateAIContent);
+
+  const {
+    post: recommendAICategory,
+    loading: aiCategoryLoading,
+    response: aiCategoryRes,
+  } = useFetch<ICategory>(apiUrlsConfig.blogs.recommendAICategory);
+
   const labelText = useMemo(
     () => values.file[0]?.name || t('blogs.create.choose.image'),
     [values.file, t]
@@ -72,6 +91,8 @@ export default function BlogCreate() {
 
   const onCategoryChange = useCallback(
     (numberVal: number) => {
+      setSelectedCategory(undefined);
+
       setValue('category', numberVal, {
         shouldValidate: true,
         shouldDirty: true,
@@ -106,6 +127,48 @@ export default function BlogCreate() {
     }
   };
 
+  const loadingAI = aiTextLoading || aiCategoryLoading;
+
+  const onAskAIForDescription = async () => {
+    if (loadingAI) {
+      return;
+    }
+
+    const body = {
+      content: values.content,
+    };
+
+    const newContent = await generateAITextPost(body);
+
+    if (aiTextRes.ok) {
+      setValue('content', newContent, {
+        shouldValidate: true,
+      });
+    }
+  };
+
+  const onRecommendAICategory = async () => {
+    if (loadingAI) {
+      return;
+    }
+
+    const body = {
+      blogContent: values.content,
+    };
+
+    const category = await recommendAICategory(body);
+    console.log(category);
+
+    if (aiCategoryRes.ok) {
+      setSelectedCategory({
+        value: category.id.toString(),
+        label: category.name,
+      });
+    }
+  };
+
+  const canAskAI = values.content.trim().length >= 10;
+
   return (
     <section className="signup">
       <div className="sign-container">
@@ -135,14 +198,39 @@ export default function BlogCreate() {
               />
 
               <FormErrorWrapper message={errors.content?.message}>
-                <div className="blog-create-textarea-wrapper">
-                  <h5>{t('blogs.create.content')}</h5>
-                  <textarea
-                    className="form-control"
-                    {...register('content', {
-                      ...blogCreate.CONTENT_VALIDATIONS,
-                    })}
-                    rows={3}></textarea>
+                <div className="relative">
+                  <div className="blog-create-textarea-wrapper">
+                    <div className="mb-2">
+                      <h4>{t('blogs.create.content')}</h4>
+                    </div>
+                    <textarea
+                      className="form-control"
+                      {...register('content', {
+                        ...blogCreate.CONTENT_VALIDATIONS,
+                      })}
+                      readOnly={loadingAI}
+                      rows={3}></textarea>
+                  </div>
+                  {canAskAI && (
+                    <button
+                      type="button"
+                      className="improve-with-ai-btn absolute right-0 text-2xl text-center flex flex-column items-center justify-items-center"
+                      style={
+                        !loadingAI
+                          ? {}
+                          : {
+                              opacity: 0.7,
+                              cursor: 'not-allowed',
+                            }
+                      }>
+                      <i
+                        className="zmdi zmdi-brush rounded-lg"
+                        onClick={onAskAIForDescription}></i>
+                      <div className="custom-tooltip absolute bg-gray-500 text-white text-sm px-3 py-1 rounded-lg">
+                        {t('blogs.create.improve.with.ai')}
+                      </div>
+                    </button>
+                  )}
                 </div>
               </FormErrorWrapper>
 
@@ -158,15 +246,39 @@ export default function BlogCreate() {
               </FormErrorWrapper>
 
               <FormErrorWrapper message={errors.category?.message}>
-                <CategorySelect
-                  categories={
-                    categories?.map((x) => ({
-                      value: x.id.toString(),
-                      label: x.name,
-                    })) || []
-                  }
-                  onCategoryChange={onCategoryChange}
-                />
+                <div className="relative my-10 mb-0">
+                  <CategorySelect
+                    value={selectedCategory}
+                    categories={
+                      categories?.map((x) => ({
+                        value: x.id.toString(),
+                        label: x.name,
+                      })) || []
+                    }
+                    onCategoryChange={onCategoryChange}
+                  />
+
+                  {canAskAI && (
+                    <button
+                      type="button"
+                      className="improve-with-ai-btn improve-with-ai-btn--category absolute right-0 text-2xl text-center flex flex-column items-center justify-items-center"
+                      style={
+                        !loadingAI
+                          ? {}
+                          : {
+                              opacity: 0.7,
+                              cursor: 'not-allowed',
+                            }
+                      }>
+                      <i
+                        className="zmdi zmdi-brush rounded-lg"
+                        onClick={onRecommendAICategory}></i>
+                      <div className="custom-tooltip absolute bg-gray-500 text-white text-sm px-3 py-1 rounded-lg">
+                        {t('blogs.create.ask.ai')}
+                      </div>
+                    </button>
+                  )}
+                </div>
               </FormErrorWrapper>
 
               <div className="form-group form-button">
