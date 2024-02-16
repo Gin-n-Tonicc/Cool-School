@@ -158,6 +158,7 @@ export default function QuizSingle(props: QuizSingleProps) {
           <QuizSingleTimer
             onTimerEndEvent={onTimerEnd}
             timeLeft={props.currentAttempt.timeLeft}
+            remainingTimeInSeconds={props.currentAttempt.remainingTimeInSeconds}
           />
         </div>
         <div className="question-container">

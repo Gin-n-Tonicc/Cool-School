@@ -119,6 +119,7 @@ const quizzesPaths = Object.seal({
   submit: (quizId: number | string | undefined, attemptId: number) =>
     `${baseApiUrl}/quizzes/${quizId}/submit/${attemptId}`,
   create: `${baseApiUrl}/quizzes/create`,
+  delete: (quizId: number) => `${baseApiUrl}/quizzes/${quizId}`,
 });
 
 export const apiUrlsConfig = Object.seal({
