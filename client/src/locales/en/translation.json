@@ -1,5 +1,6 @@
 {
   "error": "Error",
+  "headsUpInfo": "Info",
 
   "date.ago": "ago",
   "date.years": "years",
@@ -200,6 +201,7 @@
   "register.already.registered": "Already registered?",
   "register.login": "Login!",
   "register.complete": "Register",
+  "register.info.on.register": "A confirmation email has been sent to the given email address!",
 
   "finish.register.text": "Finish Register",
   "finish.register.first.name": "First Name",

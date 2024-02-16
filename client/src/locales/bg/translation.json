@@ -1,5 +1,6 @@
 {
   "error": "Грешка",
+  "headsUpInfo": "Инфо",
 
   "date.ago": "преди",
   "date.years": "години",
@@ -200,6 +201,7 @@
   "register.already.registered": "Вече си регистриран?",
   "register.login": "Впиши се!",
   "register.complete": "Заврърши Регистрация",
+  "register.info.on.register": "На посочения имейл адрес е изпратен имейл за потвърждение!",
 
   "finish.register.text": "Завърши Регистрация",
   "finish.register.first.name": "Първо име",

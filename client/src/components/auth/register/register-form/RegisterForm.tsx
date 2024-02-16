@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
-import { useAuthContext } from '../../../../contexts/AuthContext';
+import { useErrorContext } from '../../../../contexts/ErrorContext';
 import { useFetch } from '../../../../hooks/useFetch';
 import useValidators from '../../../../hooks/useValidator/useValidators';
+import { ErrorTypeEnum } from '../../../../types/enums/ErrorTypeEnum';
 import { RolesEnum } from '../../../../types/enums/RolesEnum';
 import { IUser } from '../../../../types/interfaces/auth/IUser';
 import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
@@ -30,10 +30,11 @@ type Inputs = {
 export default function RegisterForm({ redirectTo }: RegisterFormProps) {
   const { t } = useTranslation();
   const { auth: validators } = useValidators();
+  const { addError } = useErrorContext();
 
-  const navigate = useNavigate();
-  const { loginUser } = useAuthContext();
-  const { post, response } = useFetch<IUser>(apiUrlsConfig.auth.register);
+  const { post, response, loading } = useFetch<IUser>(
+    apiUrlsConfig.auth.register
+  );
 
   const {
     handleSubmit,
@@ -80,7 +81,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
   }, [errors, formValues, setError, clearErrors]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const user = await post({
+    await post({
       firstname: data['First Name'].trim(),
       lastname: data['Last Name'].trim(),
       email: data.Email.trim(),
@@ -93,13 +94,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
 
     if (response.ok) {
       reset();
-      loginUser(user);
-
-      if (redirectTo) {
-        navigate(redirectTo);
-      } else {
-        navigate('/');
-      }
+      addError(t('register.info.on.register'), ErrorTypeEnum.HEADS_UP);
     }
   };
 
@@ -207,6 +202,15 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
           name="signup"
           id="signup"
           className="btn_1"
+          disabled={loading}
+          style={
+            !loading
+              ? {}
+              : {
+                  opacity: 0.7,
+                  cursor: 'not-allowed',
+                }
+          }
           value={t('finish.register.complete')}
         />
       </div>
