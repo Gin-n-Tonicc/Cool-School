@@ -39,6 +39,8 @@ const blogsPaths = Object.seal({
   likeBlog: (id: number | string | undefined) =>
     `${baseApiUrl}/blogs/like/${id}`,
   mostLiked: `${baseApiUrl}/blogs/sort/likes`,
+  generateAIContent: `${baseApiUrl}/blogs/generate/AI/text`,
+  recommendAICategory: `${baseApiUrl}/blogs/recommend-category/AI`,
 });
 
 const categoriesPaths = Object.seal({

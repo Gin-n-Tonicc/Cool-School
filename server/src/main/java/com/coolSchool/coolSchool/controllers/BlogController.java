@@ -60,6 +60,7 @@ public class BlogController {
         return new ResponseEntity<>(cratedBlog, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @PostMapping("/generate/AI/text")
     public ResponseEntity<String> generateAIBlogContent(@RequestBody Map<String, String> requestBody) {
         String content = requestBody.get("content");
@@ -67,6 +68,8 @@ public class BlogController {
         String extractedContent = aiAssistanceService.extractContent(aiGeneratedContent);
         return ResponseEntity.ok(extractedContent);
     }
+
+    @RateLimited
     @PostMapping("/recommend-category/AI")
     public ResponseEntity<CategoryDTO> recommendCategoryForBlog(@RequestBody Map<String, String> requestBody) throws JsonProcessingException {
         String content = requestBody.get("blogContent");
