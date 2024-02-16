@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useLocaleContext } from '../../../contexts/LocaleContext';
@@ -11,6 +12,7 @@ import QuizSingle from '../quiz-single/QuizSingle';
 import './QuizStart.scss';
 
 export default function QuizStart() {
+  const { t } = useTranslation();
   const [hasStarted, setHasStarted] = useState(false);
   const [currentAttempt, setCurrentAttempt] = useState<IQuizAttempt | null>(
     null
@@ -85,7 +87,7 @@ export default function QuizStart() {
         <h2 className="text-lg font-semibold mb-2">{data?.description}</h2>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <div className="text-sm">Тестът е отворен между:</div>
+            <div className="text-sm">{t('quizzes.start.open.between')}:</div>
             <div className="text-sm">
               {startDate.toLocaleString(locale)} -{' '}
               {endDate.toLocaleString(locale)}
@@ -93,26 +95,33 @@ export default function QuizStart() {
           </div>
           <div>
             <div className="text-sm">
-              Разрешен брой опити: {data?.attemptLimit}
+              {t('quizzes.start.max.attempts')}: {data?.attemptLimit}
             </div>
             <div className="text-sm">
-              Времеви лимит: {data?.quizDurationInMinutes}мин.
+              {t('quizzes.start.time.limit')}: {data?.quizDurationInMinutes}мин.
             </div>
           </div>
         </div>
         <div className="border-t border-gray-300 pt-4">
           <h3 className="text-xl font-semibold mt-10 mb-2 text-center">
-            Обобщение на предишните Ви опити
+            {t('quizzes.start.summary')}
           </h3>
           <div className="attempt-grid grid grid-cols-3 gap-4 mb-4 text-center overflow-y-scroll">
-            <div className="text-base font-semibold">Състояние</div>
             <div className="text-base font-semibold">
-              Оценка / {totalMarks.toFixed(2)}
+              {t('quizzes.start.state')}
             </div>
-            <div className="text-base font-semibold">Процент</div>
+            <div className="text-base font-semibold">
+              {t('quizzes.start.grade')} / {totalMarks.toFixed(2)}
+            </div>
+            <div className="text-base font-semibold">
+              {t('quizzes.start.percentage')}
+            </div>
             {attempts?.map((x) => (
               <Fragment key={x.id}>
-                <div className="text-sm">{!x.completed && 'Не '}Завършен</div>
+                <div className="text-sm">
+                  {!x.completed && `${t('quizzes.start.uncompleted')} `}
+                  {t('quizzes.start.completed')}
+                </div>
                 <div className="text-sm">{x.totalMarks.toFixed(2)}</div>
                 <div className="text-sm">
                   {((x.totalMarks / totalMarks) * 100).toFixed(2)}%
@@ -120,15 +129,20 @@ export default function QuizStart() {
               </Fragment>
             ))}
 
-            {!attempts?.length && <div className="text-sm">Няма опити</div>}
+            {!attempts?.length && (
+              <div className="text-sm">{t('quizzes.start.no.attempts')}</div>
+            )}
           </div>
-          <div className="text-sm font-semibold mb-2 text-center">
-            Финалната Ви оценка за този тест е {highestGrade.toFixed(2)}/
-            {totalMarks.toFixed(2)}.
-          </div>
+
           <div className="my-10 mb-0 border-t border-gray-300 pt-4">
-            <h2 className="text-lg">Цялостна забележка</h2>
-            <div className="text-sm mb-4">Няма все още!</div>
+            <h2 className="text-lg">{t('quizzes.start.feedback')}</h2>
+            <div className="text-sm mb-4">
+              {' '}
+              <div className="text-sm font-semibold mb-2">
+                {t('quizzes.start.grade.final')} {highestGrade.toFixed(2)}/
+                {totalMarks.toFixed(2)}.
+              </div>
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <button
@@ -143,14 +157,16 @@ export default function QuizStart() {
                       cursor: 'not-allowed',
                     }
               }>
-              {canStartQuiz ? 'ЗАПОЧНИ ТЕСТ' : 'ТЕСТЪТ ВМОМЕНТА Е ЗАТВОРЕН'}
+              {canStartQuiz
+                ? t('quizzes.start.button')
+                : t('quizzes.start.button.disabled')}
             </button>
           </div>
         </div>
         <div className="flex justify-between items-center border-t border-gray-300 pt-4 mt-4">
           <Link to={redirectUrl} className="flex gap-2 text-sm text-gray-600">
             <span>&#9664;</span>
-            <span>Обратно към курса</span>
+            <span>{t('quizzes.start.back.to.course.button')}</span>
           </Link>
           <div className="flex gap-2 text-sm text-gray-600">
             <span>{data?.description}</span>

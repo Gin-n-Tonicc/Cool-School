@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../../../../config/apiUrls';
 import { useFetch } from '../../../../../../hooks/useFetch';
@@ -11,13 +12,14 @@ interface CoursesQuizzesProps {
 }
 
 export default function CoursesQuizzes(props: CoursesQuizzesProps) {
+  const { t } = useTranslation();
   const { data: quizzes, get } = useFetch<IQuiz[]>(
     apiUrlsConfig.quizzes.getBySubsection(props.subsectionId),
     []
   );
 
   return (
-    <ul>
+    <ul className="list-group">
       {quizzes?.map((x) => (
         <li
           key={x.id}
@@ -26,9 +28,11 @@ export default function CoursesQuizzes(props: CoursesQuizzesProps) {
             <CoursesQuizzesControl quiz={x} key={x.id} refreshQuizzes={get} />
           )}
           <p>{x.title}</p>
-          <p>Възможни опити: {x.attemptLimit}</p>
+          <p>
+            {t('courses.quizzes.max.attempts')}: {x.attemptLimit}
+          </p>
           <Link to={PagesEnum.QuizStart.replace(':id', `${x.id}`)} state={x}>
-            ОТВАРЯНЕ
+            {t('courses.quizzes.open')}
           </Link>
         </li>
       ))}
