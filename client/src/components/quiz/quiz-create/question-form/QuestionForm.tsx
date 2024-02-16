@@ -1,4 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { v4 as uuidV4 } from 'uuid';
 import useValidators from '../../../../hooks/useValidator/useValidators';
 import { IDefaultObject } from '../../../../types/interfaces/common/IDefaultObject';
@@ -21,6 +22,7 @@ interface QuestionFormProps {
 }
 
 export default function QuestionForm(props: QuestionFormProps) {
+  const { t } = useTranslation();
   const { quizCreate } = useValidators();
 
   const {
@@ -53,14 +55,14 @@ export default function QuestionForm(props: QuestionFormProps) {
         className="accordion quiz-subform-wrapper"
         id="quizQuestionCreateAccordion">
         <div className="quiz-subform-title-wrapper">
-          <h4>Въпроси</h4>
+          <h4>{t('quizzes.create.questions.subheading')}</h4>
           <button
             className="btn_4"
             data-toggle="collapse"
             data-target="#quizQuestionCreateContent"
             aria-expanded="true"
             aria-controls="quizQuestionCreateContent">
-            Създай
+            {t('quizzes.create.subsection.button')}
           </button>
         </div>
         <div
@@ -76,6 +78,7 @@ export default function QuestionForm(props: QuestionFormProps) {
               <FormInput
                 control={control}
                 name="Description"
+                placeholder={t('quizzes.create.description')}
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
                 rules={quizCreate.DESCRIPTION_VALIDATIONS}
@@ -83,6 +86,7 @@ export default function QuestionForm(props: QuestionFormProps) {
               <FormInput
                 control={control}
                 name="Marks"
+                placeholder={t('quizzes.create.marks')}
                 type="number"
                 iconClasses="zmdi zmdi-face material-icons-name"
                 rules={quizCreate.QUESTION_MARKS_VALIDATIONS}
@@ -95,7 +99,7 @@ export default function QuestionForm(props: QuestionFormProps) {
                 name="signup"
                 id="signup"
                 className="btn_4  "
-                value="Създай въпрос"
+                value={t('quizzes.create.subsection.questions.button')}
               />
             </div>
           </form>

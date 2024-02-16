@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import useValidators from '../../../../hooks/useValidator/useValidators';
 import { IDefaultObject } from '../../../../types/interfaces/common/IDefaultObject';
 import { IAnswer } from '../../../../types/interfaces/quizzes/IAnswer';
@@ -23,6 +24,7 @@ interface AnswerFormProps {
 }
 
 export default function AnswerForm(props: AnswerFormProps) {
+  const { t } = useTranslation();
   const { quizCreate } = useValidators();
 
   const {
@@ -75,14 +77,14 @@ export default function AnswerForm(props: AnswerFormProps) {
         className="accordion quiz-subform-wrapper"
         id="quizAnswerCreateAccordion">
         <div className="quiz-subform-title-wrapper">
-          <h4>Отговори</h4>
+          <h4>{t('quizzes.create.answers.subheading')}</h4>
           <button
             className="btn_4"
             data-toggle="collapse"
             data-target="#quizAnswerCreateContent"
             aria-expanded="true"
             aria-controls="quizAnswerCreateContent">
-            Създай
+            {t('quizzes.create.subsection.button')}
           </button>
         </div>
         <div
@@ -101,18 +103,21 @@ export default function AnswerForm(props: AnswerFormProps) {
                     .filter((x) => x.description)
                     .map((x) => ({
                       value: `${x.customId}`,
-                      label: `Въпрос - ${x.description}`,
+                      label: `${t(
+                        'quizzes.create.answer.select.question.text'
+                      )} - ${x.description}`,
                     })) || []
                 }
                 onCategoryChange={() => {}}
                 customOnChange={onQuestionChange}
-                placeholder="Избери въпрос"
+                placeholder={t('quizzes.create.answer.select.question')}
               />
             </FormErrorWrapper>
             <div className="number-controls">
               <FormInput
                 control={control}
                 name="Text"
+                placeholder={t('quizzes.create.answer.text')}
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
                 rules={quizCreate.ANSWER_TEXT_VALIDATIONS}
@@ -126,7 +131,7 @@ export default function AnswerForm(props: AnswerFormProps) {
                       className="form-check-input"
                       value={'true'}
                     />
-                    <p>Вярно</p>
+                    <p>{t('quizzes.create.answer.correct')}</p>
                   </div>
                   <div className="form-check-inline">
                     <input
@@ -135,7 +140,7 @@ export default function AnswerForm(props: AnswerFormProps) {
                       className="form-check-input"
                       value={''}
                     />
-                    <p>Невярно</p>
+                    <p>{t('quizzes.create.answer.incorrect')}</p>
                   </div>
                 </FormErrorWrapper>
               </div>
@@ -147,7 +152,7 @@ export default function AnswerForm(props: AnswerFormProps) {
                 name="signup"
                 id="signup"
                 className="btn_4"
-                value="Създай отговор"
+                value={t('quizzes.create.subsection.answers.button')}
               />
             </div>
           </form>

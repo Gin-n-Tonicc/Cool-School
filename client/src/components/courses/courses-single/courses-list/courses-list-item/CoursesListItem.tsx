@@ -121,7 +121,7 @@ export default function CoursesListItem({
 
             <div>
               <div className="title-wrapper d-flex justify-content-between align-items-center">
-                <h5>Тестове</h5>
+                <h5>{t('courses.quizzes')}</h5>
 
                 {isOwner && (
                   <Link
@@ -135,7 +135,6 @@ export default function CoursesListItem({
                   </Link>
                 )}
               </div>
-              <ul className="list-group"></ul>
               <CoursesQuizzes subsectionId={subsection.id} isOwner={isOwner} />
             </div>
 

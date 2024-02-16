@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useErrorContext } from '../../../contexts/ErrorContext';
 import { useFetch } from '../../../hooks/useFetch';
@@ -21,6 +22,7 @@ interface QuizSingleProps {
 }
 
 export default function QuizSingle(props: QuizSingleProps) {
+  const { t } = useTranslation();
   const { addError } = useErrorContext();
   const { data, loading: loadingQuiz } = useFetch<IQuizQuestionsAndAnswers>(
     apiUrlsConfig.quizzes.getFullById(props.quizId),
@@ -90,19 +92,6 @@ export default function QuizSingle(props: QuizSingleProps) {
 
   const switchQuestion = async (questionIndex: number) => {
     let currentQuestion = questions[currentQuestionIndex];
-
-    // if (selectedAnswer) {
-    //   const userProgress: ISaveUserProgress = {
-    //     quizId: quiz.id,
-    //     questionId: currentQuestion.question.id,
-    //     answerId: selectedAnswer.id,
-    //     userId: 1,
-    //     id: 0,
-    //     attemptId: props.currentAttempt.id,
-    //   };
-
-    //   setProgresses(await postProgress(userProgress));
-    // }
     await getAndPostProgress(currentQuestion);
 
     const newIndex = validateIndex(questions.length, questionIndex);
@@ -152,7 +141,9 @@ export default function QuizSingle(props: QuizSingleProps) {
         <div className="header">
           <div className="number-of-count">
             <span className="number-of-question">
-              Question {currentQuestionIndex + 1} of {questions.length} total
+              {t('quizzes.single.question')} {currentQuestionIndex + 1}{' '}
+              {t('quizzes.single.of')} {questions.length}{' '}
+              {t('quizzes.single.total')}
             </span>
           </div>
           <QuizSingleTimer
@@ -204,7 +195,7 @@ export default function QuizSingle(props: QuizSingleProps) {
                     }
               }
               onClick={onFinish}>
-              Finish
+              {t('quizzes.single.finish')}
             </button>
           )}
         </div>

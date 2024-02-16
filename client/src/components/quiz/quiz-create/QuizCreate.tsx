@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useAuthContext } from '../../../contexts/AuthContext';
@@ -24,6 +25,7 @@ import QuestionForm, {
 import QuizForm from './quiz-form/QuizForm';
 
 export default function QuizCreate() {
+  const { t } = useTranslation();
   const { courseId, subsectionId } = useParams();
   const ref = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
@@ -133,7 +135,7 @@ export default function QuizCreate() {
         <div className="signup-content">
           <div className="signup-form create-blog-form quiz-form-wrapper">
             <div>
-              <h2 className="form-title">Създай тест</h2>
+              <h2 className="form-title">{t('quizzes.create.heading')}</h2>
               <QuizForm
                 onSubmit={onCreateFormSubmit}
                 submitRef={ref}
@@ -147,7 +149,7 @@ export default function QuizCreate() {
             </div>
 
             <button className="btn_1" onClick={() => ref.current?.click()}>
-              Създай тест
+              {t('quizzes.create.button')}
             </button>
           </div>
         </div>
