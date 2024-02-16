@@ -200,6 +200,8 @@
   "blogs.create.content.invalid.min-length": "Content requires minimum one hundred and fifty characters",
   "blogs.create.button": "Create Blog",
   "blogs.create.choose.image": "Choose blog image",
+  "blogs.create.improve.with.ai": "Improve with AI",
+  "blogs.create.ask.ai": "Consult with AI",
 
   "blogs.blog": "Blog",
   "blogs.our.blog": "Our Blog",

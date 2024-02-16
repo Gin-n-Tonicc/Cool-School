@@ -18,3 +18,36 @@
     color: black;
   }
 }
+
+.improve-with-ai-btn {
+  top: -0.5rem;
+
+  > i {
+    border: 1px solid black;
+    padding: 5px 12px;
+  }
+
+  &:hover {
+    .custom-tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  .custom-tooltip {
+    visibility: hidden;
+    top: 125%;
+    background-color: gray;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 0;
+      cursor: default;
+    }
+  }
+}
+
+.improve-with-ai-btn--category {
+  top: calc(-105% + (-0.25rem));
+}
