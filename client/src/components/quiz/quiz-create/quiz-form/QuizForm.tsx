@@ -1,5 +1,6 @@
 import { RefObject } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import useValidators from '../../../../hooks/useValidator/useValidators';
 import { IQuiz } from '../../../../types/interfaces/quizzes/IQuiz';
 import FormInput from '../../../common/form-input/FormInput';
 
@@ -19,6 +20,8 @@ interface QuizFormProps {
 }
 
 export default function QuizForm(props: QuizFormProps) {
+  const { quizCreate } = useValidators();
+
   const {
     handleSubmit,
     control,
@@ -52,8 +55,6 @@ export default function QuizForm(props: QuizFormProps) {
       id: 0,
     };
 
-    console.log(quiz);
-
     props.onSubmit(quiz);
   };
 
@@ -69,12 +70,14 @@ export default function QuizForm(props: QuizFormProps) {
           name="Title"
           type="text"
           iconClasses="zmdi zmdi-face material-icons-name"
+          rules={quizCreate.TITLE_VALIDATIONS}
         />
         <FormInput
           control={control}
           name="Description"
           type="text"
           iconClasses="zmdi zmdi-face material-icons-name"
+          rules={quizCreate.DESCRIPTION_VALIDATIONS}
         />
         <div className="number-controls">
           <FormInput
@@ -82,12 +85,14 @@ export default function QuizForm(props: QuizFormProps) {
             name="Attempt Limit"
             type="number"
             iconClasses="zmdi zmdi-face material-icons-name"
+            rules={quizCreate.ATTEMPT_LIMIT_VALIDATIONS}
           />
           <FormInput
             control={control}
             name="Minute Duration"
             type="number"
             iconClasses="zmdi zmdi-face material-icons-name"
+            rules={quizCreate.QUIZ_DURATION_VALIDATIONS}
           />
         </div>
 
@@ -97,6 +102,7 @@ export default function QuizForm(props: QuizFormProps) {
             name="Start Date"
             type="text"
             iconClasses="zmdi zmdi-face material-icons-name"
+            rules={quizCreate.START_TIME_VALIDATIONS}
             onFocus={(e) => {
               e.currentTarget.type = 'datetime-local';
             }}
@@ -106,6 +112,7 @@ export default function QuizForm(props: QuizFormProps) {
             name="End Date"
             type="text"
             iconClasses="zmdi zmdi-face material-icons-name"
+            rules={quizCreate.END_TIME_VALIDATIONS}
             onFocus={(e) => {
               e.currentTarget.type = 'datetime-local';
             }}

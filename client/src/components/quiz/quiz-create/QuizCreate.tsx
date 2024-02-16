@@ -32,14 +32,11 @@ export default function QuizCreate() {
     apiUrlsConfig.courses.getOne(courseId)
   );
 
-  const {
-    data: subsection,
-    loading,
-    response: subsectionResponse,
-  } = useFetch<ICourseSubsection>(
-    apiUrlsConfig.courseSubsections.getById(subsectionId),
-    []
-  );
+  const { data: subsection, response: subsectionResponse } =
+    useFetch<ICourseSubsection>(
+      apiUrlsConfig.courseSubsections.getById(subsectionId),
+      []
+    );
 
   const { user } = useAuthContext();
 
