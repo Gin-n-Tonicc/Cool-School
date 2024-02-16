@@ -3,6 +3,7 @@ import { apiUrlsConfig } from '../../../../../../config/apiUrls';
 import { useFetch } from '../../../../../../hooks/useFetch';
 import { PagesEnum } from '../../../../../../types/enums/PagesEnum';
 import { IQuiz } from '../../../../../../types/interfaces/quizzes/IQuiz';
+import CoursesQuizzesControl from './courses-quizzes-control/CoursesQuizzesControl';
 
 interface CoursesQuizzesProps {
   subsectionId: number;
@@ -10,7 +11,7 @@ interface CoursesQuizzesProps {
 }
 
 export default function CoursesQuizzes(props: CoursesQuizzesProps) {
-  const { data: quizzes } = useFetch<IQuiz[]>(
+  const { data: quizzes, get } = useFetch<IQuiz[]>(
     apiUrlsConfig.quizzes.getBySubsection(props.subsectionId),
     []
   );
@@ -22,9 +23,7 @@ export default function CoursesQuizzes(props: CoursesQuizzesProps) {
           key={x.id}
           className="list-group-item d-flex justify-content-between align-items-center">
           {props.isOwner && (
-            <div className="resource-control">
-              <i className="fas fa-minus-circle"></i>
-            </div>
+            <CoursesQuizzesControl quiz={x} key={x.id} refreshQuizzes={get} />
           )}
           <p>{x.title}</p>
           <p>Възможни опити: {x.attemptLimit}</p>

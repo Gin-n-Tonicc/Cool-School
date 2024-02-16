@@ -292,7 +292,7 @@ public class QuizServiceImpl implements QuizService {
         quizAttempt.setQuizCompletionTime(LocalDateTime.now());
         QuizAttempt savedQuizAttempt = quizAttemptRepository.save(quizAttempt);
         return new QuizResultDTO(new QuizAttemptDTO(savedQuizAttempt.getId(), modelMapper.map(quiz, QuizDTO.class),
-                userAnswers, savedQuizAttempt.getTotalMarks(), savedQuizAttempt.getAttemptNumber(), 0L, savedQuizAttempt.isCompleted()));
+                userAnswers, savedQuizAttempt.getTotalMarks(), savedQuizAttempt.getAttemptNumber(), 0L, 0L, savedQuizAttempt.isCompleted()));
     }
 
     @Override
