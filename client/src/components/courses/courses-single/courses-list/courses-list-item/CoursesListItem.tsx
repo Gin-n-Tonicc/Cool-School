@@ -1,12 +1,16 @@
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
+import { Link } from 'react-router-dom';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../../../config/apiUrls';
-import { ICourseSubsection } from '../../../../../types/interfaces/ICourseSubsection';
-import { IResource } from '../../../../../types/interfaces/IResource';
+import { useFetch } from '../../../../../hooks/useFetch';
+import { PagesEnum } from '../../../../../types/enums/PagesEnum';
+import { IResource } from '../../../../../types/interfaces/common/IResource';
+import { ICourse } from '../../../../../types/interfaces/courses/ICourse';
+import { ICourseSubsection } from '../../../../../types/interfaces/courses/ICourseSubsection';
 import CoursesResourcesCreate from '../../courses-resources-create/CoursesResourcesCreate';
 import './CoursesListItem.scss';
 import CoursesListItemEdit from './courses-list-item-edit/CoursesListItemEdit';
+import CoursesQuizzes from './courses-quizzes/CoursesQuizzes';
 import CoursesResource from './courses-resource/CoursesResource';
 
 interface CoursesListItemProps {
@@ -15,6 +19,7 @@ interface CoursesListItemProps {
   hasEnrolled: boolean;
   refreshSubsections: Function;
   courseId: number;
+  course: ICourse;
 }
 
 export default function CoursesListItem({
@@ -23,6 +28,7 @@ export default function CoursesListItem({
   hasEnrolled,
   refreshSubsections,
   courseId,
+  course,
 }: CoursesListItemProps) {
   const { t } = useTranslation();
 
@@ -42,7 +48,7 @@ export default function CoursesListItem({
   const handleDelete = async () => {
     if (
       !window.confirm(
-        `Are you sure you want to delete subsection \'${subsection.title}\'`
+        `Are you sure you want to delete subsection '${subsection.title}'`
       )
     ) {
       return;
@@ -108,8 +114,29 @@ export default function CoursesListItem({
           aria-labelledby="headingOne"
           data-parent="#coursesAccordion">
           <div className="card-body">
-            <h5>{t('courses.subsection.description')}</h5>
-            {subsection.description}
+            <div>
+              <h5>{t('courses.subsection.description')}</h5>
+              {subsection.description}
+            </div>
+
+            <div>
+              <div className="title-wrapper d-flex justify-content-between align-items-center">
+                <h5>{t('courses.quizzes')}</h5>
+
+                {isOwner && (
+                  <Link
+                    to={PagesEnum.QuizCreate.replace(
+                      ':courseId',
+                      `${courseId}`
+                    ).replace(':subsectionId', `${subsection.id}`)}
+                    state={course}
+                    className="btn_1 res-create-btn">
+                    {t('courses.resources.add.button')}
+                  </Link>
+                )}
+              </div>
+              <CoursesQuizzes subsectionId={subsection.id} isOwner={isOwner} />
+            </div>
 
             <div>
               <CoursesResourcesCreate

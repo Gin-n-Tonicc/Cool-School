@@ -1,13 +1,13 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, useParams } from 'react-router-dom';
-import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useAuthContext } from '../../../contexts/AuthContext';
+import { useFetch } from '../../../hooks/useFetch';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
-import { IBlog } from '../../../types/interfaces/IBlog';
-import { ICommentsByBlogResponse } from '../../../types/interfaces/ICommentsByBlogResponse';
+import { IBlog } from '../../../types/interfaces/blogs/IBlog';
+import { ICommentsByBlogResponse } from '../../../types/interfaces/blogs/ICommentsByBlogResponse';
 import BlogBreadcrumb from '../blog-breadcrumb/BlogBreadcrumb';
 import './SingleBlog.scss';
 import SingleBlogCommentForm from './single-blog-comment-form/SingleBlogCommentForm';

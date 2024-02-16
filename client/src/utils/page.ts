@@ -9,3 +9,15 @@ export function validatePage(maxPages: number, page: number) {
 
   return page;
 }
+
+export function validateIndex(length: number, index: number) {
+  if (index >= length) {
+    return length - 1;
+  }
+
+  if (index < 0) {
+    return 0;
+  }
+
+  return index;
+}

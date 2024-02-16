@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ICommentsByBlogResponse } from '../../../../types/interfaces/ICommentsByBlogResponse';
+import { ICommentsByBlogResponse } from '../../../../types/interfaces/blogs/ICommentsByBlogResponse';
 import SingleBlogComment from './single-blog-comment/SingleBlogComment';
 
 interface SingleBlogCommentsProps extends ICommentsByBlogResponse {

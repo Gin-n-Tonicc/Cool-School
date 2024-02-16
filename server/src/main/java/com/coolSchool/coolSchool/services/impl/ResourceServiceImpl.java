@@ -14,6 +14,7 @@ import com.coolSchool.coolSchool.services.ResourceService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -26,14 +27,14 @@ public class ResourceServiceImpl implements ResourceService {
     private final ModelMapper modelMapper;
     private final CourseSubsectionRepository courseSubsectionRepository;
     private final FileRepository fileRepository;
-    private final Validator validator;
+    private final MessageSource messageSource;
 
-    public ResourceServiceImpl(ResourceRepository resourceRepository, ModelMapper modelMapper, CourseSubsectionRepository courseSubsectionRepository, FileRepository fileRepository, Validator validator) {
+    public ResourceServiceImpl(ResourceRepository resourceRepository, ModelMapper modelMapper, CourseSubsectionRepository courseSubsectionRepository, FileRepository fileRepository, MessageSource messageSource) {
         this.resourceRepository = resourceRepository;
         this.modelMapper = modelMapper;
         this.courseSubsectionRepository = courseSubsectionRepository;
         this.fileRepository = fileRepository;
-        this.validator = validator;
+        this.messageSource = messageSource;
     }
 
 
@@ -55,15 +56,15 @@ public class ResourceServiceImpl implements ResourceService {
         if (resource.isPresent()) {
             return modelMapper.map(resource.get(), ResourceResponseDTO.class);
         }
-        throw new ResourceNotFoundException();
+        throw new ResourceNotFoundException(messageSource);
     }
 
     @Override
     public ResourceResponseDTO createResource(ResourceRequestDTO resourceDTO) {
         try {
             resourceDTO.setId(null);
-            fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(FileNotFoundException::new);
-            courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(CourseSubsectionNotFoundException::new);
+            fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(() -> new FileNotFoundException(messageSource));
+            courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
             Resource resourceEntity = resourceRepository.save(modelMapper.map(resourceDTO, Resource.class));
             return modelMapper.map(resourceEntity, ResourceResponseDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -76,11 +77,11 @@ public class ResourceServiceImpl implements ResourceService {
         Optional<Resource> existingResourceOptional = resourceRepository.findByIdAndDeletedFalse(id);
 
         if (existingResourceOptional.isEmpty()) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException(messageSource);
         }
 
-        fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(FileNotFoundException::new);
-        courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(CourseSubsectionNotFoundException::new);
+        fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(()-> new FileNotFoundException(messageSource));
+        courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
 
         Resource existingResource = existingResourceOptional.get();
         modelMapper.map(resourceDTO, existingResource);
@@ -104,7 +105,7 @@ public class ResourceServiceImpl implements ResourceService {
             resource.get().setDeleted(true);
             resourceRepository.save(resource.get());
         } else {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException(messageSource);
         }
     }
 }

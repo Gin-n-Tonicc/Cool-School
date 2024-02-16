@@ -15,6 +15,7 @@ import com.coolSchool.coolSchool.services.CourseSubsectionService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -29,14 +30,14 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
     private final ModelMapper modelMapper;
     private final CourseRepository courseRepository;
     private final ResourceRepository resourceRepository;
-    private final Validator validator;
+    private final MessageSource messageSource;
 
-    public CourseSubsectionServiceImpl(CourseSubsectionRepository courseSubsectionRepository, ModelMapper modelMapper, CourseRepository courseRepository, Validator validator, ResourceRepository resourceRepository) {
+    public CourseSubsectionServiceImpl(CourseSubsectionRepository courseSubsectionRepository, ModelMapper modelMapper, CourseRepository courseRepository, ResourceRepository resourceRepository, MessageSource messageSource) {
         this.courseSubsectionRepository = courseSubsectionRepository;
         this.modelMapper = modelMapper;
         this.courseRepository = courseRepository;
         this.resourceRepository = resourceRepository;
-        this.validator = validator;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -57,14 +58,14 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
         if (courseSubsection.isPresent()) {
             return modelMapper.map(courseSubsection.get(), CourseSubsectionResponseDTO.class);
         }
-        throw new CourseSubsectionNotFoundException();
+        throw new CourseSubsectionNotFoundException(messageSource);
     }
 
     @Override
     public CourseSubsectionResponseDTO createCourseSubsection(CourseSubsectionRequestDTO courseSubsectionDTO) {
         try {
             courseSubsectionDTO.setId(null);
-            courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
+            courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(()-> new CourseNotFoundException(messageSource));
             CourseSubsection courseSubsectionEntity = courseSubsectionRepository.save(modelMapper.map(courseSubsectionDTO, CourseSubsection.class));
             return modelMapper.map(courseSubsectionEntity, CourseSubsectionResponseDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -77,14 +78,14 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
         Optional<CourseSubsection> existingCourseSubsectionOptional = courseSubsectionRepository.findByIdAndDeletedFalse(id);
 
         if (existingCourseSubsectionOptional.isEmpty()) {
-            throw new CourseSubsectionNotFoundException();
+            throw new CourseSubsectionNotFoundException(messageSource);
         }
         CourseSubsection subsection = existingCourseSubsectionOptional.get();
         Set<Resource> resources = subsection.getResources();
         if (courseSubsectionDTO.getResources() != null) {
-            resources = courseSubsectionDTO.getResources().stream().map(x -> resourceRepository.findByIdAndDeletedFalse(x).orElseThrow(FileNotFoundException::new)).collect(Collectors.toSet());
+            resources = courseSubsectionDTO.getResources().stream().map(x -> resourceRepository.findByIdAndDeletedFalse(x).orElseThrow(() -> new FileNotFoundException(messageSource))).collect(Collectors.toSet());
         }
-        courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
+        courseRepository.findByIdAndDeletedFalse(courseSubsectionDTO.getCourseId()).orElseThrow(()-> new CourseNotFoundException(messageSource));
         CourseSubsection existingCourseSubsection = existingCourseSubsectionOptional.get();
         modelMapper.map(courseSubsectionDTO, existingCourseSubsection);
 
@@ -108,7 +109,7 @@ public class CourseSubsectionServiceImpl implements CourseSubsectionService {
             courseSubsection.get().setDeleted(true);
             courseSubsectionRepository.save(courseSubsection.get());
         } else {
-            throw new CourseSubsectionNotFoundException();
+            throw new CourseSubsectionNotFoundException(messageSource);
         }
     }
 }

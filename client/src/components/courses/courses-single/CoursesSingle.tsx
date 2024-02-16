@@ -1,13 +1,13 @@
 import { Fragment, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useFetch } from 'use-http';
 import { v4 as uuidV4 } from 'uuid';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useAuthContext } from '../../../contexts/AuthContext';
-import { ICourse } from '../../../types/interfaces/ICourse';
-import { ICourseSubsection } from '../../../types/interfaces/ICourseSubsection';
-import { IReview } from '../../../types/interfaces/IReview';
+import { useFetch } from '../../../hooks/useFetch';
+import { ICourse } from '../../../types/interfaces/courses/ICourse';
+import { ICourseSubsection } from '../../../types/interfaces/courses/ICourseSubsection';
+import { IReview } from '../../../types/interfaces/courses/IReview';
 import Breadcrumb from '../../common/breadcrumb/Breadcrumb';
 import './CoursesSingle.scss';
 import CoursesList from './courses-list/CoursesList';
@@ -119,6 +119,7 @@ export default function CoursesSingle() {
                   isOwner={isOwner}
                 />
                 <CoursesList
+                  course={course}
                   subsections={subsections || []}
                   isOwner={isOwner}
                   hasEnrolled={hasEnrolled}

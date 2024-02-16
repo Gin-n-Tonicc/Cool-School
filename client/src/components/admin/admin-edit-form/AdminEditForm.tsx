@@ -1,6 +1,6 @@
 import { FormEventHandler } from 'react';
-import { IDefaultObject } from '../../../types/interfaces/IDefaultObject';
-import { IObjectWithId } from '../../../types/interfaces/IObjectWithId';
+import { IDefaultObject } from '../../../types/interfaces/common/IDefaultObject';
+import { IObjectWithId } from '../../../types/interfaces/common/IObjectWithId';
 import AdminEditFormRow from './admin-edit-form-row/AdminEditFormRow';
 
 export type OnUpdateFunction = (id: number, body: Object) => Promise<boolean>;

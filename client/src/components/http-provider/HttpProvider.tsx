@@ -1,9 +1,10 @@
 import { PropsWithChildren } from 'react';
-import { CachePolicies, CustomOptions, Provider, useFetch } from 'use-http';
+import { CachePolicies, CustomOptions, Provider } from 'use-http';
 import { apiUrlsConfig } from '../../config/apiUrls';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useErrorContext } from '../../contexts/ErrorContext';
-import { IUser } from '../../types/interfaces/IUser';
+import { useFetch } from '../../hooks/useFetch';
+import { IUser } from '../../types/interfaces/auth/IUser';
 import {
   deleteJwtCookie,
   deleteRefreshCookie,

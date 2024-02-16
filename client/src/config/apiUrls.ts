@@ -83,6 +83,8 @@ const reviewsPaths = Object.seal({
 });
 
 const courseSubsectionsPaths = Object.seal({
+  getById: (id: number | string | undefined) =>
+    `${baseApiUrl}/courseSubsections/${id}`,
   getByCourse: (courseId: number) =>
     `${baseApiUrl}/courseSubsections/course/${courseId}`,
   create: `${baseApiUrl}/courseSubsections/create`,
@@ -101,6 +103,25 @@ const oAuthPaths = Object.seal({
   google: `${baseOAuthUrl}/google`,
 });
 
+const quizzesPaths = Object.seal({
+  getBySubsection: (subsectionId: number) =>
+    `${baseApiUrl}/quizzes/subsection/${subsectionId}`,
+  getInfoById: (id: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/info/${id}`,
+  getFullById: (id: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/${id}`,
+  getAttemptsById: (id: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/all/attempts/${id}`,
+  take: (quizId: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/${quizId}/take`,
+  saveProgress: (quizId: number | string | undefined) =>
+    `${baseApiUrl}/quizzes/${quizId}/save-progress`,
+  submit: (quizId: number | string | undefined, attemptId: number) =>
+    `${baseApiUrl}/quizzes/${quizId}/submit/${attemptId}`,
+  create: `${baseApiUrl}/quizzes/create`,
+  delete: (quizId: number) => `${baseApiUrl}/quizzes/${quizId}`,
+});
+
 export const apiUrlsConfig = Object.seal({
   apiUrl: baseApiUrl,
   admin: adminPaths,
@@ -113,5 +134,6 @@ export const apiUrlsConfig = Object.seal({
   reviews: reviewsPaths,
   courseSubsections: courseSubsectionsPaths,
   resources: resourcesPaths,
+  quizzes: quizzesPaths,
   oAuth: oAuthPaths,
 });

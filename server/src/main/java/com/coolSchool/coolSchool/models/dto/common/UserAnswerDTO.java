@@ -1,6 +1,5 @@
 package com.coolSchool.coolSchool.models.dto.common;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,10 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserAnswerDTO {
-    private Long id;
-    @JsonProperty(value = "user")
-    private Long userId;
-    @JsonProperty(value = "answer")
-    private Long answerId;
-    private Integer attemptNumber;
+    private Long questionId;
+    private Long selectedOptionId;
 }

@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
+import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
@@ -7,19 +8,20 @@ import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.BlogResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Blog;
-import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.BlogRepository;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.repositories.FileRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.impl.BlogServiceImpl;
+import com.coolSchool.coolSchool.slack.SlackNotifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.context.MessageSource;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +48,9 @@ public class BlogServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private CategoryRepository categoryRepository;
-    private LocalValidatorFactoryBean validator;
+    private MessageSource messageSource;
+    private JavaMailSender emailSender;
+    private SlackNotifier slackNotifier;
 
     @BeforeEach
     void setUp() {
@@ -54,9 +58,9 @@ public class BlogServiceImplTest {
         modelMapper = new ModelMapper();
         fileRepository = mock(FileRepository.class);
         userRepository = mock(UserRepository.class);
-        validator = new LocalValidatorFactoryBean();
         categoryRepository = mock(CategoryRepository.class);
-        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, validator);
+        FrontendConfig frontendConfig = mock(FrontendConfig.class);
+        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource, emailSender, slackNotifier, frontendConfig);
     }
 
     @Test

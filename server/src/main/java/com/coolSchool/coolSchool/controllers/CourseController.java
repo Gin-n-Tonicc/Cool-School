@@ -1,6 +1,7 @@
 package com.coolSchool.coolSchool.controllers;
 
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.CourseRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.CourseResponseDTO;
@@ -44,17 +45,20 @@ public class CourseController {
         return ResponseEntity.ok().build();
     }
 
+    @RateLimited
     @PostMapping("/create")
     public ResponseEntity<CourseResponseDTO> createCourse(@Valid @RequestBody CourseRequestDTO courseDTO, HttpServletRequest httpServletRequest) {
         CourseResponseDTO cratedCourse = courseService.createCourse(courseDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         return new ResponseEntity<>(cratedCourse, HttpStatus.CREATED);
     }
 
+    @RateLimited
     @PutMapping("/{id}")
     public ResponseEntity<CourseResponseDTO> updateCourse(@PathVariable("id") Long id, @Valid @RequestBody CourseRequestDTO courseDTO, HttpServletRequest httpServletRequest) {
         return ResponseEntity.ok(courseService.updateCourse(id, courseDTO, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
+    @RateLimited
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCourseById(@PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
         courseService.deleteCourse(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));

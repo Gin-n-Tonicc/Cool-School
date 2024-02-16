@@ -10,6 +10,7 @@ import com.coolSchool.coolSchool.services.CategoryService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
@@ -21,12 +22,12 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
-    private final Validator validator;
+    private final MessageSource messageSource;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper, Validator validator) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, ModelMapper modelMapper, MessageSource messageSource) {
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
-        this.validator = validator;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (category.isPresent()) {
             return modelMapper.map(category.get(), CategoryDTO.class);
         }
-        throw new CategoryNotFoundException();
+        throw new CategoryNotFoundException(messageSource);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
         } catch (ConstraintViolationException exception) {
             throw new ValidationCategoryException(exception.getConstraintViolations());
         } catch (DataIntegrityViolationException exception) {
-            throw new CategoryCreateException(true);
+            throw new CategoryCreateException(messageSource, true);
         }
     }
 
@@ -62,7 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<Category> existingCategoryOptional = categoryRepository.findByIdAndDeletedFalse(id);
 
         if (existingCategoryOptional.isEmpty()) {
-            throw new CategoryNotFoundException();
+            throw new CategoryNotFoundException(messageSource);
         }
 
         Category existingCategory = existingCategoryOptional.get();
@@ -87,7 +88,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.get().setDeleted(true);
             categoryRepository.save(category.get());
         } else {
-            throw new CategoryNotFoundException();
+            throw new CategoryNotFoundException(messageSource);
         }
     }
 }

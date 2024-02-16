@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 
 import java.util.*;
 
@@ -40,17 +41,16 @@ class ResourceServiceImplTest {
     private ResourceServiceImpl resourceService;
 
     private ModelMapper modelMapper;
-    private Validator validator;
     @Mock
     private CourseSubsectionRepository courseSubsectionRepository;
     @Mock
     private FileRepository fileRepository;
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
         modelMapper = new ModelMapper();
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-        resourceService = new ResourceServiceImpl(resourceRepository, modelMapper, courseSubsectionRepository, fileRepository, validator);
+        resourceService = new ResourceServiceImpl(resourceRepository, modelMapper, courseSubsectionRepository, fileRepository, messageSource);
     }
 
     @Test

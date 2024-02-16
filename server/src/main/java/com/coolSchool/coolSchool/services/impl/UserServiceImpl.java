@@ -11,17 +11,21 @@ import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.User;
+import com.coolSchool.coolSchool.models.entity.VerificationToken;
 import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.repositories.VerificationTokenRepository;
 import com.coolSchool.coolSchool.security.CustomOAuth2User;
 import com.coolSchool.coolSchool.services.UserService;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -30,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final MessageSource messageSource;
+    private final VerificationTokenRepository verificationTokenRepository;
 
     @Override
     public User createUser(RegisterRequest request) {
@@ -41,9 +47,10 @@ public class UserServiceImpl implements UserService {
 
         try {
             User user = buildUser(request);
+            user.setCreatedAt(LocalDateTime.now());
             return userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
-            throw new UserCreateException(true);
+            throw new UserCreateException(messageSource, true);
         } catch (ConstraintViolationException exception) {
             throw new UserCreateException(exception.getConstraintViolations());
         }
@@ -52,7 +59,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("email"));
+                .orElseThrow(() -> new UserNotFoundException("email", messageSource));
     }
 
     @Override
@@ -69,7 +76,7 @@ public class UserServiceImpl implements UserService {
         User userToUpdate = findById(id);
 
         if (userToUpdate.getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(messageSource);
         }
 
         modelMapper.map(userDTO, userToUpdate);
@@ -93,7 +100,7 @@ public class UserServiceImpl implements UserService {
         User user = findById(id);
 
         if (user.getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(messageSource);
         }
 
         user.setDeleted(true);
@@ -142,9 +149,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    private User findById(Long id) {
+    public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("id"));
+                .orElseThrow(() -> new UserNotFoundException("id", messageSource));
     }
 
     private User buildUser(RegisterRequest request) {
@@ -168,5 +175,16 @@ public class UserServiceImpl implements UserService {
         }
 
         return userBuilder.build();
+    }
+
+    @Override
+    public VerificationToken getVerificationToken(String VerificationToken) {
+        return verificationTokenRepository.findByToken(VerificationToken);
+    }
+
+    @Override
+    public void createVerificationToken(User user, String token) {
+        VerificationToken myToken = new VerificationToken(token, user);
+        verificationTokenRepository.save(myToken);
     }
 }

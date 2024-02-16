@@ -1,3 +1,4 @@
+import { FocusEventHandler } from 'react';
 import { UseControllerProps, useController } from 'react-hook-form';
 import FormErrorWrapper from '../form-error-wrapper/FormErrorWrapper';
 
@@ -6,6 +7,7 @@ export type FormInputProps = {
   inputClasses?: string;
   iconClasses?: string;
   placeholder?: string;
+  onFocus?: FocusEventHandler<HTMLInputElement>;
 } & UseControllerProps<any>;
 
 export default function FormInput(props: FormInputProps) {
@@ -22,6 +24,7 @@ export default function FormInput(props: FormInputProps) {
         className={props.inputClasses}
         type={props.type}
         placeholder={props.placeholder || props.name}
+        onFocus={props.onFocus}
       />
     </FormErrorWrapper>
   );

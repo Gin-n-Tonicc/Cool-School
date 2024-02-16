@@ -1,9 +1,9 @@
 import { FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
-import { IComment } from '../../../../types/interfaces/IComment';
+import { useFetch } from '../../../../hooks/useFetch';
+import { IComment } from '../../../../types/interfaces/blogs/IComment';
 
 interface SingleBlogCommentFormProps {
   blogId: number;

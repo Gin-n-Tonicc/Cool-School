@@ -10,6 +10,7 @@ import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
+import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.AuthenticationService;
 import com.coolSchool.coolSchool.services.JwtService;
 import com.coolSchool.coolSchool.services.TokenService;
@@ -18,6 +19,7 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -35,6 +37,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final ModelMapper modelMapper;
+    private final MessageSource messageSource;
+    private final UserRepository userRepository;
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
@@ -58,7 +62,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     )
             );
         } catch (AuthenticationException exception) {
-            throw new UserLoginException();
+            throw new UserLoginException(messageSource);
         }
 
         User user = userService.findByEmail(request.getEmail());
@@ -70,7 +74,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse refreshToken(String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         String userEmail;
@@ -78,24 +82,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
             userEmail = jwtService.extractUsername(refreshToken);
         } catch (JwtException exception) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         if (userEmail == null) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         // Make sure token is a refresh token not an access token
         Token token = tokenService.findByToken(refreshToken);
         if (token != null && token.tokenType != TokenType.REFRESH) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         User user = userService.findByEmail(userEmail);
 
         if (!jwtService.isTokenValid(refreshToken, user)) {
             tokenService.revokeToken(token);
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         String accessToken = jwtService.generateToken(user);
@@ -114,13 +118,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse me(String jwtToken) {
         if (jwtToken == null || jwtToken.isEmpty()) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         Token accessToken = tokenService.findByToken(jwtToken);
 
         if (accessToken == null) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         User user = accessToken.getUser();
@@ -135,14 +139,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (!isTokenValid) {
             tokenService.revokeAllUserTokens(user);
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         List<Token> tokens = tokenService.findByUser(user);
         Token refreshToken = tokens.stream().filter(x -> x.getTokenType() == TokenType.REFRESH).toList().get(0);
 
         if (refreshToken == null) {
-            throw new InvalidTokenException();
+            throw new InvalidTokenException(messageSource);
         }
 
         String refreshTokenString;

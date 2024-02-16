@@ -1,0 +1,20 @@
+name: Slack Notifications
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    types: [opened, reopened, closed]
+  issues:
+    types: [opened, closed]
+
+jobs:
+  send-notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        env:
+          SLACK_WEBHOOK_URL: https://hooks.slack.com/services/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
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' https://hooks.slack.com/services/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

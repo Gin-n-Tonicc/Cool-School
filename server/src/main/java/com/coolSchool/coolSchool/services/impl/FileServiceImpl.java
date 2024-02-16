@@ -9,6 +9,7 @@ import com.coolSchool.coolSchool.models.entity.File;
 import com.coolSchool.coolSchool.repositories.FileRepository;
 import com.coolSchool.coolSchool.services.FileService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,11 +24,13 @@ import static org.codehaus.plexus.util.FileUtils.getExtension;
 public class FileServiceImpl implements FileService {
 
     private final FileRepository fileRepository;
+    private final MessageSource messageSource;
     @Value("${upload.directory}")
     public String uploadDirectory;
 
-    public FileServiceImpl(FileRepository fileRepository, @Value("${upload.directory}") String uploadDirectory) {
+    public FileServiceImpl(FileRepository fileRepository, MessageSource messageSource, @Value("${upload.directory}") String uploadDirectory) {
         this.fileRepository = fileRepository;
+        this.messageSource = messageSource;
         this.uploadDirectory = uploadDirectory;
     }
 
@@ -43,7 +46,7 @@ public class FileServiceImpl implements FileService {
             Files.createDirectories(directoryPath);
             return directoryPath.resolve(uniqueFilename);
         } catch (IOException e) {
-            throw new DirectoryCreationException();
+            throw new DirectoryCreationException(messageSource);
         }
     }
 
@@ -55,7 +58,7 @@ public class FileServiceImpl implements FileService {
             String extension = getExtension(originalFilename);
 
             if (!FileType.isSupportedExtension(extension)) {
-                throw new UnsupportedFileTypeException();
+                throw new UnsupportedFileTypeException(messageSource);
             }
 
             String uniqueFilename = saveFileAndGetUniqueFilename(file);
@@ -76,9 +79,9 @@ public class FileServiceImpl implements FileService {
         try {
             return Files.readAllBytes(Paths.get(uploadDirectory, imageName));
         } catch (NoSuchFileException e) {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException(messageSource);
         } catch (IOException e) {
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(messageSource);
         }
     }
 
@@ -89,7 +92,7 @@ public class FileServiceImpl implements FileService {
             Files.copy(file.getInputStream(), createFilePath(uniqueFilename), StandardCopyOption.REPLACE_EXISTING);
             return uniqueFilename;
         } catch (IOException e) {
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(messageSource);
         }
     }
 

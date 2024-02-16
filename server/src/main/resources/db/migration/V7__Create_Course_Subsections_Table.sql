@@ -1,5 +1,5 @@
 CREATE TABLE course_subsections (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     course_id BIGINT,

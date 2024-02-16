@@ -1,4 +1,4 @@
-import { IComment } from '../../../../../types/interfaces/IComment';
+import { IComment } from '../../../../../types/interfaces/blogs/IComment';
 
 interface SingleBlogCommentProps {
   comment: IComment;

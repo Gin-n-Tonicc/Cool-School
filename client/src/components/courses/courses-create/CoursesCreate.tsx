@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
-import { ICategory } from '../../../types/interfaces/ICategory';
-import { IFile } from '../../../types/interfaces/IFile';
+import { ICategory } from '../../../types/interfaces/common/ICategory';
+import { IFile } from '../../../types/interfaces/common/IFile';
 
 import { useTranslation } from 'react-i18next';
+import { useFetch } from '../../../hooks/useFetch';
 import useValidators from '../../../hooks/useValidator/useValidators';
 import CategorySelect from '../../common/category-select/CategorySelect';
 import FormErrorWrapper from '../../common/form-error-wrapper/FormErrorWrapper';

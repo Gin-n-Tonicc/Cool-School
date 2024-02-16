@@ -1,8 +1,8 @@
 import { FormEventHandler, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
+import { useFetch } from '../../../../hooks/useFetch';
 import CoursesSingleRating from './courses-single-rating/CoursesSingleRating';
 
 interface CoursesRatingProps {
@@ -48,7 +48,7 @@ export default function CoursesRating(props: CoursesRatingProps) {
 
   return (
     <>
-      <div className="review-top row pt-40">
+      <div className="review-top row">
         <div className="col-lg-12">
           <h6 className="mb-15">{t('courses.provide.rating')}</h6>
           <CoursesSingleRating

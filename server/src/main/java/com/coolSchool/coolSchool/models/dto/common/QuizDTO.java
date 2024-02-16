@@ -1,9 +1,12 @@
 package com.coolSchool.coolSchool.models.dto.common;
 
+import com.coolSchool.coolSchool.models.entity.Category;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -16,7 +19,11 @@ public class QuizDTO {
     private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private Duration timeLimit;
     private Long subsectionId;
     private Integer attemptLimit;
+    private BigDecimal totalMarks;
+    private Integer quizDurationInMinutes;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long courseId;
 }

@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 import { v4 as uuidV4 } from 'uuid';
-import { IError } from '../types/interfaces/IError';
+import { IError } from '../types/interfaces/common/IError';
 
 const ErrorContext = createContext<null | ErrorContextType>(null);
 const maxErrors = 3;

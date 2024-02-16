@@ -17,6 +17,7 @@ import com.coolSchool.coolSchool.services.UserCourseService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -29,14 +30,14 @@ public class UserCourseServiceImpl implements UserCourseService {
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
     private final ModelMapper modelMapper;
-    private final Validator validator;
+    private final MessageSource messageSource;
 
-    public UserCourseServiceImpl(UserCourseRepository userCourseRepository, UserRepository userRepository, CourseRepository courseRepository, ModelMapper modelMapper, Validator validator) {
+    public UserCourseServiceImpl(UserCourseRepository userCourseRepository, UserRepository userRepository, CourseRepository courseRepository, ModelMapper modelMapper, MessageSource messageSource) {
         this.userCourseRepository = userCourseRepository;
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
         this.modelMapper = modelMapper;
-        this.validator = validator;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -51,19 +52,19 @@ public class UserCourseServiceImpl implements UserCourseService {
         if (userCourse.isPresent()) {
             return modelMapper.map(userCourse.get(), UserCourseResponseDTO.class);
         }
-        throw new UserCourseNotFoundException();
+        throw new UserCourseNotFoundException(messageSource);
     }
 
     @Override
     public UserCourseResponseDTO createUserCourse(UserCourseRequestDTO userCourseDTO) {
         try {
             if (userCourseRepository.existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId())) {
-                throw new UserCourseAlreadyExistsException();
+                throw new UserCourseAlreadyExistsException(messageSource);
             }
             UserCourse userCourse = new UserCourse();
 
-            User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
-            Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
+            User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+            Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(() -> new CourseNotFoundException(messageSource));
 
             userCourse.setUser(user);
             userCourse.setCourse(course);
@@ -80,12 +81,12 @@ public class UserCourseServiceImpl implements UserCourseService {
         Optional<UserCourse> existingUserCourseOptional = userCourseRepository.findByIdAndDeletedFalse(id);
 
         if (existingUserCourseOptional.isEmpty()) {
-            throw new UserCourseNotFoundException();
+            throw new UserCourseNotFoundException(messageSource);
         }
 
         UserCourse existingUserCourse = existingUserCourseOptional.get();
-        User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(UserNotFoundException::new);
-        Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(CourseNotFoundException::new);
+        User user = userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+        Course course = courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId()).orElseThrow(()-> new CourseNotFoundException(messageSource));
 
         existingUserCourse.setUser(user);
         existingUserCourse.setCourse(course);
@@ -109,7 +110,7 @@ public class UserCourseServiceImpl implements UserCourseService {
             userCourse.get().setDeleted(true);
             userCourseRepository.save(userCourse.get());
         } else {
-            throw new UserCourseNotFoundException();
+            throw new UserCourseNotFoundException(messageSource);
         }
     }
 }

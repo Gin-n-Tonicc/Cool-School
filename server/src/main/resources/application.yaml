@@ -3,6 +3,8 @@ server:
     baseUrl: ${FRONTEND_URL}
     loginUrl: ${server.frontend.baseUrl}/login
     finishRegisterUrl: ${server.frontend.baseUrl}/finish-register
+  backend:
+    baseUrl: ${BACKEND_URL}
 
 spring:
   servlet:
@@ -40,7 +42,23 @@ spring:
             scope:
               - https://www.googleapis.com/auth/userinfo.email
               - https://www.googleapis.com/auth/userinfo.profile
-
+    mail:
+      host: smtp.gmail.com
+      port: 465
+      protocol: smtps
+      username: ${GMAIL_USERNAME}
+      password: ${GMAIL_PASSWORD}
+      properties:
+        mail:
+          transport:
+            protocol: smtps
+          smtps:
+            auth: true
+            starttls:
+              enable: true
+            timeout: 8000
 application:
 upload:
   directory: server/src/main/resources/static/uploads/
+webhook:
+  url: ${WEBHOOK_URL}

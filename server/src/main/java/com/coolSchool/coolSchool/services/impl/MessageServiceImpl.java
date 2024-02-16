@@ -9,8 +9,8 @@ import com.coolSchool.coolSchool.repositories.MessageRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.MessageService;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 
@@ -22,13 +22,13 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final Validator validator;
+    private final MessageSource messageSource;
 
-    public MessageServiceImpl(MessageRepository messageRepository, UserRepository userRepository, ModelMapper modelMapper, Validator validator) {
+    public MessageServiceImpl(MessageRepository messageRepository, UserRepository userRepository, ModelMapper modelMapper, MessageSource messageSource) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
-        this.validator = validator;
+        this.messageSource = messageSource;
     }
 
 
@@ -51,8 +51,8 @@ public class MessageServiceImpl implements MessageService {
     public MessageDTO createMessage(MessageDTO messageDTO) {
         try {
             messageDTO.setId(null);
-            userRepository.findByIdAndDeletedFalse(messageDTO.getReceiverId()).orElseThrow(NoSuchElementException::new);
-            userRepository.findByIdAndDeletedFalse(messageDTO.getSenderId()).orElseThrow(NoSuchElementException::new);
+            userRepository.findByIdAndDeletedFalse(messageDTO.getReceiverId()).orElseThrow(()-> new NoSuchElementException(messageSource));
+            userRepository.findByIdAndDeletedFalse(messageDTO.getSenderId()).orElseThrow(()-> new NoSuchElementException(messageSource));
             Message messageEntity = messageRepository.save(modelMapper.map(messageDTO, Message.class));
             return modelMapper.map(messageEntity, MessageDTO.class);
         } catch (ConstraintViolationException exception) {
@@ -67,8 +67,8 @@ public class MessageServiceImpl implements MessageService {
         if (existingMessageOptional.isEmpty()) {
             throw new MessageNotFoundException();
         }
-        userRepository.findByIdAndDeletedFalse(messageDTO.getReceiverId()).orElseThrow(NoSuchElementException::new);
-        userRepository.findByIdAndDeletedFalse(messageDTO.getSenderId()).orElseThrow(NoSuchElementException::new);
+        userRepository.findByIdAndDeletedFalse(messageDTO.getReceiverId()).orElseThrow(()-> new NoSuchElementException(messageSource));
+        userRepository.findByIdAndDeletedFalse(messageDTO.getSenderId()).orElseThrow(()-> new NoSuchElementException(messageSource));
         Message existingMessage = existingMessageOptional.get();
         modelMapper.map(messageDTO, existingMessage);
 

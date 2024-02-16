@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { useFetch } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
+import { useFetch } from '../../../hooks/useFetch';
 import { usePagination } from '../../../hooks/usePagination';
-import { ICourse } from '../../../types/interfaces/ICourse';
+import { ICourse } from '../../../types/interfaces/courses/ICourse';
 import BlogPagination from '../../blog/blog-right-sidebar/blog-pagination/BlogPagination';
 import './SpecialCourses.scss';
 import HomeCourse from './special-course/SpecialCourse';

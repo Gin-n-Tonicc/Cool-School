@@ -1,0 +1,6 @@
+INSERT INTO _users (firstname, lastname, email, password, address, username, description, role, file_id, provider, is_additional_info_required, is_deleted, enabled)
+VALUES
+('Belis', 'Aliosmanova', 'belis@gmail.com', '$2a$12$IoLW02hn0X9wNb.mMH6ZH.gvypdgJcDX9HXIPDm91zhEBc86TEItG', '123 Main Street', 'belisAliosmanova', 'High school student 11grade. Interested in Information Technology and Science.', 'USER', NULL, 'LOCAL', 0, 0, 1),
+('Stefan', 'Petrov', 'stefan@gmail.com', '$2a$12$IoLW02hn0X9wNb.mMH6ZH.gvypdgJcDX9HXIPDm91zhEBc86TEItG', '321 Main Street', 'stefanPetrov', 'Information Technology and Maths teacher in high school Targovishte.', 'TEACHER', NULL, 'LOCAL', 0, 0, 1),
+('Trifon', 'Trifonov', 'trifon@gmail.com', '$2a$12$IoLW02hn0X9wNb.mMH6ZH.gvypdgJcDX9HXIPDm91zhEBc86TEItG', '231 Main Street', 'trifonTrifonov', 'The administrator of the site.', 'ADMIN', NULL, 'LOCAL', 0, 0, 1),
+('Firdes', 'Rushudova', 'firdes@gmail.com', '$2a$12$IoLW02hn0X9wNb.mMH6ZH.gvypdgJcDX9HXIPDm91zhEBc86TEItG', '213 Main Street', 'firdesRushudova', 'Information Technology and Maths teacher in high school Targovishte.', 'TEACHER', NULL, 'LOCAL', 0, 0, 1);
