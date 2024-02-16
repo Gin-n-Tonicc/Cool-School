@@ -1,5 +1,6 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { v4 as uuidV4 } from 'uuid';
+import useValidators from '../../../../hooks/useValidator/useValidators';
 import { IDefaultObject } from '../../../../types/interfaces/common/IDefaultObject';
 import { IQuestion } from '../../../../types/interfaces/quizzes/IQuestion';
 import FormInput from '../../../common/form-input/FormInput';
@@ -20,6 +21,8 @@ interface QuestionFormProps {
 }
 
 export default function QuestionForm(props: QuestionFormProps) {
+  const { quizCreate } = useValidators();
+
   const {
     handleSubmit,
     control,
@@ -75,12 +78,14 @@ export default function QuestionForm(props: QuestionFormProps) {
                 name="Description"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
+                rules={quizCreate.DESCRIPTION_VALIDATIONS}
               />
               <FormInput
                 control={control}
                 name="Marks"
                 type="number"
                 iconClasses="zmdi zmdi-face material-icons-name"
+                rules={quizCreate.QUESTION_MARKS_VALIDATIONS}
               />
             </div>
 

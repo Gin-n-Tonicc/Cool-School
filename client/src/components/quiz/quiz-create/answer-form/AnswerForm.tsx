@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import useValidators from '../../../../hooks/useValidator/useValidators';
 import { IDefaultObject } from '../../../../types/interfaces/common/IDefaultObject';
 import { IAnswer } from '../../../../types/interfaces/quizzes/IAnswer';
 import CategorySelect from '../../../common/category-select/CategorySelect';
@@ -22,6 +23,8 @@ interface AnswerFormProps {
 }
 
 export default function AnswerForm(props: AnswerFormProps) {
+  const { quizCreate } = useValidators();
+
   const {
     handleSubmit,
     control,
@@ -39,7 +42,7 @@ export default function AnswerForm(props: AnswerFormProps) {
   });
 
   useEffect(() => {
-    register('questionId');
+    register('questionId', { ...quizCreate.ANSWER_QUESTION_VALIDATIONS });
   }, []);
 
   const onQuestionChange = useCallback(
@@ -91,7 +94,7 @@ export default function AnswerForm(props: AnswerFormProps) {
             onSubmit={handleSubmit(onSubmit)}
             className="register-form quiz-subform"
             id="register-form">
-            <FormErrorWrapper message="">
+            <FormErrorWrapper message={errors.questionId?.message}>
               <CategorySelect
                 categories={
                   Object.values(props.questions)
@@ -112,6 +115,7 @@ export default function AnswerForm(props: AnswerFormProps) {
                 name="Text"
                 type="text"
                 iconClasses="zmdi zmdi-face material-icons-name"
+                rules={quizCreate.ANSWER_TEXT_VALIDATIONS}
               />
               <div>
                 <FormErrorWrapper message={undefined}>
