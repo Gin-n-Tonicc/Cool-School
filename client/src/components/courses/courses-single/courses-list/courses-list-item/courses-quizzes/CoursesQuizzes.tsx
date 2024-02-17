@@ -1,8 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../../../../config/apiUrls';
 import { useFetch } from '../../../../../../hooks/useFetch';
 import { PagesEnum } from '../../../../../../types/enums/PagesEnum';
 import { IQuiz } from '../../../../../../types/interfaces/quizzes/IQuiz';
+import CoursesQuizzesControl from './courses-quizzes-control/CoursesQuizzesControl';
 
 interface CoursesQuizzesProps {
   subsectionId: number;
@@ -10,26 +12,27 @@ interface CoursesQuizzesProps {
 }
 
 export default function CoursesQuizzes(props: CoursesQuizzesProps) {
-  const { data: quizzes } = useFetch<IQuiz[]>(
+  const { t } = useTranslation();
+  const { data: quizzes, get } = useFetch<IQuiz[]>(
     apiUrlsConfig.quizzes.getBySubsection(props.subsectionId),
     []
   );
 
   return (
-    <ul>
+    <ul className="list-group">
       {quizzes?.map((x) => (
         <li
           key={x.id}
           className="list-group-item d-flex justify-content-between align-items-center">
           {props.isOwner && (
-            <div className="resource-control">
-              <i className="fas fa-minus-circle"></i>
-            </div>
+            <CoursesQuizzesControl quiz={x} key={x.id} refreshQuizzes={get} />
           )}
           <p>{x.title}</p>
-          <p>Възможни опити: {x.attemptLimit}</p>
+          <p>
+            {t('courses.quizzes.max.attempts')}: {x.attemptLimit}
+          </p>
           <Link to={PagesEnum.QuizStart.replace(':id', `${x.id}`)} state={x}>
-            ОТВАРЯНЕ
+            {t('courses.quizzes.open')}
           </Link>
         </li>
       ))}

@@ -10,4 +10,5 @@ export interface IQuizAttempt extends IObjectWithId {
   attemptNumber: number;
   timeLeft: number;
   completed: boolean;
+  remainingTimeInSeconds: number;
 }

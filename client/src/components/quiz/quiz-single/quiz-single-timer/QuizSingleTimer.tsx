@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react';
 interface QuizSingleTimerProps {
   onTimerEndEvent: Function;
   timeLeft: number;
+  remainingTimeInSeconds: number;
 }
 
 export default function QuizSingleTimer(props: QuizSingleTimerProps) {
-  const [counter, setCounter] = useState(Math.round(props.timeLeft * 60) + 1);
+  const [counter, setCounter] = useState(Math.round(props.timeLeft * 60));
 
   const minutes = Math.floor(counter / 60);
   const seconds = counter - minutes * 60;
