@@ -248,6 +248,7 @@ public class QuizServiceImpl implements QuizService {
         quizAttempt = quizAttemptRepository.save(quizAttempt);
         quizAttempt.setTotalMarks(BigDecimal.ZERO);
         quizAttempt.setTimeLeft(quiz.getQuizDurationInMinutes());
+        quizAttempt.setRemainingTimeInSeconds((long) (quizAttempt.getTimeLeft() * 60));
         quizAttemptRepository.save(quizAttempt);
 
         return modelMapper.map(quizAttempt, QuizAttemptDTO.class);
@@ -328,39 +329,20 @@ public class QuizServiceImpl implements QuizService {
         userQuizProgressDTO.setQuizId(quizId);
         userQuizProgressDTO.setAnswerId(answerId);
         userQuizProgressDTO.setQuestionId(questionId);
-        quizAttempt.setTimeLeft(quiz.getQuizDurationInMinutes());
-        quizAttemptTimer.updateQuizAttemptsTimeLeft();
+
+        if(quizAttempt.getTimeLeft() == null) {
+            quizAttempt.setTimeLeft(quiz.getQuizDurationInMinutes());
+        }
 
         if (quizAttempt.getTimeLeft() <= 0) {
             throw new TimeLimitForQuizExceededException(messageSource);
         }
-        calculateRemainingTimeInSeconds(quizAttempt);
+
         UserQuizProgress userQuizProgress = modelMapper.map(userQuizProgressDTO, UserQuizProgress.class);
         userQuizProgressRepository.deleteByUserIdAndQuizIdAndQuestionId(userId, quizId, questionId);
         userQuizProgressRepository.save(userQuizProgress);
 
         return getAllUserProgressForQuiz(quizId);
-    }
-    public void calculateRemainingTimeInSeconds(QuizAttempt quizAttempt) {
-        Quiz quiz = quizAttempt.getQuiz();
-
-        if (quiz != null && quizAttempt.getStartTime() != null && quiz.getQuizDurationInMinutes() != null) {
-            int quizDurationInSeconds = quiz.getQuizDurationInMinutes() * 60;
-            LocalDateTime quizEndTime = quizAttempt.getStartTime().plusSeconds(quizDurationInSeconds);
-
-            Duration timeElapsed = Duration.between(LocalDateTime.now(), quizEndTime);
-
-            if (timeElapsed.isNegative()) {
-                quizAttempt.setRemainingTimeInSeconds(0L);
-            } else {
-                long remainingSeconds = timeElapsed.getSeconds();
-                quizAttempt.setRemainingTimeInSeconds(remainingSeconds);
-            }
-        } else {
-            quizAttempt.setRemainingTimeInSeconds(null);
-        }
-
-        quizAttemptRepository.save(quizAttempt);
     }
     @Override
     @Transactional
