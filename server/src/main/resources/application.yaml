@@ -3,6 +3,7 @@ server:
     baseUrl: ${FRONTEND_URL}
     loginUrl: ${server.frontend.baseUrl}/login
     finishRegisterUrl: ${server.frontend.baseUrl}/finish-register
+    forgottenPasswordUrl: ${server.frontend.baseUrl}/forgotten-password
   backend:
     baseUrl: ${BACKEND_URL}
 

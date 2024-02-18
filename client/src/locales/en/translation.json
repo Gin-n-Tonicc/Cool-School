@@ -1,5 +1,6 @@
 {
   "error": "Error",
+  "headsUpInfo": "Info",
 
   "date.ago": "ago",
   "date.years": "years",
@@ -236,6 +237,14 @@
   "auth.repeat.password.not-match": "Repeat password must match password.",
   "auth.with.google": "Log in using your Google account",
 
+  "forgotten.password.title": "Password Recovery",
+  "forgotten.password.email": "Email",
+  "forgotten.password.new.password": "New Password",
+  "forgotten.password.button.reset.password": "Change Password",
+  "forgotten.password.button.send.email": "Send Email",
+  "forgotten.password.successful.email": "Password reset link has been sent to your email!",
+  "forgotten.password.successful.reset": "Password reset successfully!",
+
   "login.login": "Login",
   "login.email": "Email",
   "login.password": "Password",
@@ -244,6 +253,7 @@
   "login.or.with": "Or login with",
   "login.no.profile.yet": "No profile yet?",
   "login.register": "Register!",
+  "login.forgot.password.text": "Forgot your password",
 
   "register.register": "Register",
   "register.first.name": "First Name",
@@ -260,6 +270,7 @@
   "register.already.registered": "Already registered?",
   "register.login": "Login!",
   "register.complete": "Register",
+  "register.info.on.register": "A confirmation email has been sent to the given email address!",
 
   "finish.register.text": "Finish Register",
   "finish.register.first.name": "First Name",

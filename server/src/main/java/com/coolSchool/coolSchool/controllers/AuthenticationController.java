@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
+import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.exceptions.email.EmailNotVerified;
 import com.coolSchool.coolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
@@ -50,6 +51,7 @@ public class AuthenticationController {
     private final VerificationTokenRepository verificationTokenRepository;
     private final MessageSource messageSource;
     private final PasswordEncoder passwordEncoder;
+    private final FrontendConfig frontendConfig;
 
     @Value("${server.backend.baseUrl}")
     private String appBaseUrl;
@@ -63,7 +65,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/registrationConfirm")
-    public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token) {
+    public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token, HttpServletResponse httpServletResponse) throws IOException {
 
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
         if (verificationToken == null) {
@@ -79,6 +81,7 @@ public class AuthenticationController {
 
         user.setEnabled(true);
         userRepository.save(user);
+        httpServletResponse.sendRedirect(frontendConfig.getLoginUrl());
         return ResponseEntity.ok("User registration confirmed successfully!");
     }
 

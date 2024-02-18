@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { v4 as uuidV4 } from 'uuid';
+import { ErrorTypeEnum } from '../types/enums/ErrorTypeEnum';
 import { IError } from '../types/interfaces/common/IError';
 
 const ErrorContext = createContext<null | ErrorContextType>(null);
@@ -14,7 +15,7 @@ const unmountAfter = 10000;
 
 type ErrorContextType = {
   errors: IError[];
-  addError: (error: string) => void;
+  addError: (error: string, errorType?: ErrorTypeEnum) => void;
   deleteError: (errorId: IError['id']) => void;
   clearErrors: () => void;
 };
@@ -22,24 +23,28 @@ type ErrorContextType = {
 export const ErrorProvider = ({ children }: PropsWithChildren) => {
   const [errors, setErrors] = useState<ErrorContextType['errors']>([]);
 
-  const addError: ErrorContextType['addError'] = useCallback((error) => {
-    const newError: IError = {
-      message: error,
-      unmountAfter: unmountAfter,
-      id: `error-${uuidV4()}`,
-    };
+  const addError: ErrorContextType['addError'] = useCallback(
+    (error, errorType) => {
+      const newError: IError = {
+        message: error,
+        unmountAfter: unmountAfter,
+        id: `error-${uuidV4()}`,
+        errorType: errorType || ErrorTypeEnum.EXCEPTION,
+      };
 
-    setErrors((errors) => {
-      if (errors.length >= maxErrors) {
-        return [
-          ...errors.slice(errors.length - maxErrors + 1, maxErrors),
-          newError,
-        ];
-      }
+      setErrors((errors) => {
+        if (errors.length >= maxErrors) {
+          return [
+            ...errors.slice(errors.length - maxErrors + 1, maxErrors),
+            newError,
+          ];
+        }
 
-      return [...errors, newError];
-    });
-  }, []);
+        return [...errors, newError];
+      });
+    },
+    []
+  );
 
   const deleteError: ErrorContextType['deleteError'] = useCallback(
     (errorId) => {

@@ -45,6 +45,10 @@ public class UserServiceImpl implements UserService {
             request.setRole(Role.USER);
         }
 
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new UserCreateException(messageSource, true);
+        }
+
         try {
             User user = buildUser(request);
             user.setCreatedAt(LocalDateTime.now());

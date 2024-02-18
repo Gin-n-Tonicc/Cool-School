@@ -13,4 +13,5 @@ public class FrontendConfig {
     private String baseUrl;
     private String loginUrl;
     private String finishRegisterUrl;
+    private String forgottenPasswordUrl;
 }

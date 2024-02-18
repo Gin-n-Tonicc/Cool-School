@@ -110,6 +110,7 @@ export default function Header() {
     () =>
       [
         PagesEnum.Home,
+        PagesEnum.ForgottenPassword,
         PagesEnum.Login,
         PagesEnum.Register,
         PagesEnum.FinishRegister,
