@@ -15,6 +15,8 @@ type AuthContextType = {
   updateUser: (v: IUser) => void;
   loginUser: (v: IAuthResponse) => void;
   logoutUser: () => void;
+  removeJwt: () => void;
+  removeRefresh: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -48,6 +50,28 @@ export function AuthProvider({ children }: PropsWithChildren) {
     deleteRefreshCookie();
   };
 
+  const removeJwt: AuthContextType['removeJwt'] = () => {
+    deleteJwtCookie();
+    setAuth((prev) => {
+      const { accessToken, ...rest } = prev;
+      return rest;
+    });
+  };
+
+  const removeRefresh: AuthContextType['removeRefresh'] = () => {
+    deleteJwtCookie();
+    setAuth((prev) => {
+      const { refreshToken, ...rest } = prev;
+      return rest;
+    });
+  };
+
+  console.log({
+    accessToken: auth.accessToken,
+    isExpired: isJwtExpired(auth.accessToken),
+    additionalInfoRequired: auth.additionalInfoRequired,
+  });
+
   const isAuthenticated =
     Boolean(auth.accessToken) && !isJwtExpired(auth.accessToken);
   const hasFinishedOAuth2 =
@@ -65,6 +89,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
         loginUser,
         logoutUser,
         updateUser,
+        removeJwt,
+        removeRefresh,
       }}>
       {children}
     </AuthContext.Provider>

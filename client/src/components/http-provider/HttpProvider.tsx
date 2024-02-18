@@ -5,29 +5,24 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import { useErrorContext } from '../../contexts/ErrorContext';
 import { useFetch } from '../../hooks/useFetch';
 import { IUser } from '../../types/interfaces/auth/IUser';
-import {
-  deleteJwtCookie,
-  deleteRefreshCookie,
-  getJwtCookie,
-  getRefreshCookie,
-} from '../../utils/cookieUtils';
+import { getRefreshCookie } from '../../utils/cookieUtils';
 import { initialAuthUtils } from '../../utils/initialAuthUtils';
 import { isJwtExpired } from '../../utils/jwtUtils';
 
 export default function HttpProvider({ children }: PropsWithChildren) {
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, user, removeJwt, removeRefresh } = useAuthContext();
 
   const { addError } = useErrorContext();
 
   const { get } = useFetch<IUser>(apiUrlsConfig.auth.refreshToken());
 
   const removeTokensIfExpired = () => {
-    if (isJwtExpired(getJwtCookie())) {
-      deleteJwtCookie();
+    if (isJwtExpired(user.accessToken)) {
+      removeJwt();
     }
 
-    if (isJwtExpired(getRefreshCookie())) {
-      deleteRefreshCookie();
+    if (isJwtExpired(user.refreshToken)) {
+      removeRefresh();
     }
   };
 
@@ -46,7 +41,7 @@ export default function HttpProvider({ children }: PropsWithChildren) {
 
         removeTokensIfExpired();
 
-        const isExpired = !Boolean(getJwtCookie()) && !isAuthenticated;
+        const isExpired = !Boolean(user.accessToken) && !isAuthenticated;
         if (!isRefreshRequest && isExpired && getRefreshCookie()) {
           await refreshToken();
         }
