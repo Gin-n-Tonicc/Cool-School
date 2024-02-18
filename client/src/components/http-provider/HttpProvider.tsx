@@ -51,10 +51,7 @@ export default function HttpProvider({ children }: PropsWithChildren) {
           await refreshToken();
         }
 
-        if (url?.includes(apiUrlsConfig.apiUrl)) {
-          options.credentials = 'include';
-        }
-
+        options.credentials = 'include';
         return options;
       },
       response: async ({ response }) => {

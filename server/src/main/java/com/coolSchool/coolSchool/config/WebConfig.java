@@ -1,6 +1,7 @@
 package com.coolSchool.coolSchool.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -44,5 +45,10 @@ public class WebConfig implements WebMvcConfigurer {
         SessionLocaleResolver slr = new SessionLocaleResolver();
         slr.setDefaultLocale(Locale.US);
         return slr;
+    }
+
+    @Bean
+    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
+        return CookieSameSiteSupplier.ofNone();
     }
 }
