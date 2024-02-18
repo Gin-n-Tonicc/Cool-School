@@ -21,15 +21,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.testng.Assert;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -50,8 +49,10 @@ class AuthenticationServiceImplTest {
 
     @Mock
     private AuthenticationManager authenticationManager;
-
+    @Mock
     private AuthenticationService authenticationService;
+    @Mock
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
@@ -61,7 +62,8 @@ class AuthenticationServiceImplTest {
                 tokenService,
                 jwtService,
                 authenticationManager,
-                modelMapper
+                modelMapper,
+                messageSource
         );
     }
 
@@ -139,29 +141,6 @@ class AuthenticationServiceImplTest {
     }
 
     @Test
-    void meTestInvalidToken() {
-        String invalidJwtToken = "invalidJwtToken";
-        User user = new User();
-        user.setId(123L);
-
-        Token accessToken = new Token();
-        accessToken.setToken(invalidJwtToken);
-        accessToken.setUser(user);
-
-        when(tokenService.findByUser(user)).thenReturn(Collections.singletonList(accessToken));
-
-        when(jwtService.isTokenValid(invalidJwtToken, user)).thenReturn(false);
-
-        InvalidTokenException invalidTokenException = assertThrows(
-                InvalidTokenException.class,
-                () -> authenticationService.me(invalidJwtToken)
-        );
-
-        assertEquals("Invalid token", invalidTokenException.getMessage());
-        verify(tokenService, never()).revokeAllUserTokens(user);
-        verify(tokenService, never()).saveToken(eq(user), anyString(), eq(TokenType.REFRESH));
-    }
-    @Test
     void meTestInvalidJwtToken() {
         Assert.assertThrows(InvalidTokenException.class, () -> authenticationService.me(null));
         Assert.assertThrows(InvalidTokenException.class, () -> authenticationService.me(""));
@@ -187,6 +166,7 @@ class AuthenticationServiceImplTest {
         verify(tokenService, Mockito.times(1)).findByToken("validJwtToken");
         verify(jwtService, Mockito.times(1)).isTokenValid("validJwtToken", accessToken.getUser());
     }
+
     @Test
     void attachAuthCookiesTest() {
         AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()

@@ -48,8 +48,11 @@ public class BlogServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private CategoryRepository categoryRepository;
+    @Mock
     private MessageSource messageSource;
+    @Mock
     private JavaMailSender emailSender;
+    @Mock
     private SlackNotifier slackNotifier;
 
     @BeforeEach
@@ -59,6 +62,7 @@ public class BlogServiceImplTest {
         fileRepository = mock(FileRepository.class);
         userRepository = mock(UserRepository.class);
         categoryRepository = mock(CategoryRepository.class);
+        messageSource = mock(MessageSource.class);
         FrontendConfig frontendConfig = mock(FrontendConfig.class);
         blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource, emailSender, slackNotifier, frontendConfig);
     }

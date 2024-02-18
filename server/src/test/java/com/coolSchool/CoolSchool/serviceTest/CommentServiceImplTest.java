@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.ArrayList;
@@ -25,14 +26,15 @@ public class CommentServiceImplTest {
     @InjectMocks
     private CommentServiceImpl commentService;
     @Mock
-
     private CommentRepository commentRepository;
+    @Mock
     private ModelMapper modelMapper;
     @Mock
     private UserRepository userRepository;
     @Mock
     private BlogRepository blogRepository;
-    private LocalValidatorFactoryBean validator;
+    @Mock
+    private MessageSource messageSource;
 
     @BeforeEach
     void setUp() {
@@ -40,9 +42,8 @@ public class CommentServiceImplTest {
         modelMapper = new ModelMapper();
         userRepository = mock(UserRepository.class);
         blogRepository = mock(BlogRepository.class);
-        validator = new LocalValidatorFactoryBean();
 
-        commentService = new CommentServiceImpl(commentRepository, modelMapper, userRepository, blogRepository, validator);
+        commentService = new CommentServiceImpl(commentRepository, modelMapper, userRepository, blogRepository, messageSource);
     }
 
     @Test

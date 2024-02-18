@@ -36,6 +36,7 @@ class FileServiceImplTest {
     private FileServiceImpl fileService;
     @Mock
     private FileRepository fileRepository;
+    @Mock
     private MessageSource messageSource;
 
     @BeforeEach

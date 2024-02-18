@@ -36,6 +36,7 @@ class CategoryServiceImplTest {
     private CategoryServiceImpl categoryService;
 
     private ModelMapper modelMapper;
+    @Mock
     private MessageSource messageSource;
 
     @BeforeEach

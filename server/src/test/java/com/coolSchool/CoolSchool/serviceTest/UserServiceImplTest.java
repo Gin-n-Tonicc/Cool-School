@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Collections;
@@ -36,6 +37,8 @@ class UserServiceImplTest {
 
     @InjectMocks
     private UserServiceImpl userService;
+    @Mock
+    private MessageSource messageSource;
 
     @Test
     void testCreateUser() {

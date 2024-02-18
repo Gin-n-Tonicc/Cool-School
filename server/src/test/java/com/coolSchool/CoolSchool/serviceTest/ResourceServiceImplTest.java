@@ -45,6 +45,7 @@ class ResourceServiceImplTest {
     private CourseSubsectionRepository courseSubsectionRepository;
     @Mock
     private FileRepository fileRepository;
+    @Mock
     private MessageSource messageSource;
 
     @BeforeEach

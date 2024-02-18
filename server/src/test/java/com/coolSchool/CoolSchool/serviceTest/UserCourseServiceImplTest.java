@@ -8,8 +8,6 @@ import com.coolSchool.coolSchool.repositories.CourseRepository;
 import com.coolSchool.coolSchool.repositories.UserCourseRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.impl.UserCourseServiceImpl;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,8 +38,9 @@ class UserCourseServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private CourseRepository courseRepository;
-
+    @Mock
     private ModelMapper modelMapper;
+    @Mock
     private MessageSource messageSource;
 
     @BeforeEach
