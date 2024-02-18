@@ -9,6 +9,7 @@ import AdminTableSubsections from './components/admin/admin-tables/AdminTableSub
 import AdminTableUsers from './components/admin/admin-tables/AdminTableUsers';
 import Authenticate from './components/auth/authenticate/Authenticate';
 import FinishRegister from './components/auth/finish-register/FinishRegister';
+import ForgottenPassword from './components/auth/forgotten-password/ForgottenPassword';
 import Login from './components/auth/login/Login';
 import Logout from './components/auth/logout/Logout';
 import Register from './components/auth/register/Register';
@@ -71,6 +72,10 @@ function App() {
                         <Route
                           path={PagesEnum.Register}
                           element={<Register />}
+                        />
+                        <Route
+                          path={PagesEnum.ForgottenPassword}
+                          element={<ForgottenPassword />}
                         />
                       </Route>
 

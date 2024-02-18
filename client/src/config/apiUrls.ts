@@ -17,6 +17,12 @@ const authPaths = Object.seal({
     return `${baseApiUrl}${this.refreshTokenPath}`;
   },
   me: `${baseApiUrl}/auth/me`,
+  forgotPassword: (email: string) =>
+    `${baseApiUrl}/auth/forgot-password?email=${encodeURIComponent(email)}`,
+  resetPassword: (token: string, newPassword: string) =>
+    `${baseApiUrl}/auth/password-reset?token=${encodeURIComponent(
+      token
+    )}&newPassword=${encodeURIComponent(newPassword)}`,
 });
 
 const blogsPaths = Object.seal({

@@ -237,6 +237,14 @@
   "auth.repeat.password.not-match": "Повторната парола трябва да съвпада с паролата.",
   "auth.with.google": "Влезте с вашия Google акаунт",
 
+  "forgotten.password.title": "Възстановяне На Парола",
+  "forgotten.password.email": "Имейл",
+  "forgotten.password.new.password": "Нова Парола",
+  "forgotten.password.button.reset.password": "Промени парола",
+  "forgotten.password.button.send.email": "Изпрати имейл",
+  "forgotten.password.successful.email": "Връзката за промяна на паролата е изпратена до вашия имейл!",
+  "forgotten.password.successful.reset": "Паролата е променена успешно!",
+
   "login.login": "Впиши се",
   "login.email": "Имейл",
   "login.password": "Парола",
@@ -245,6 +253,7 @@
   "login.or.with": "Или се впиши със",
   "login.no.profile.yet": "Още нямаш профил?",
   "login.register": "Регистрирай се!",
+  "login.forgot.password.text": "Забравена парола",
 
   "register.register": "Регистрация",
   "register.first.name": "Първо име",

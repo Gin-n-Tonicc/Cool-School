@@ -1,6 +1,6 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { apiUrlsConfig } from '../../../../config/apiUrls';
 import { useAuthContext } from '../../../../contexts/AuthContext';
 import { useFetch } from '../../../../hooks/useFetch';
@@ -76,14 +76,22 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
         rules={validators.PASSWORD_VALIDATIONS}
       />
 
-      <div className="form-group form-button">
-        <input
-          type="submit"
-          name="signin"
-          id="signin"
-          className="btn_1"
-          value={t('login.button')}
-        />
+      <div className="flex flex-column justify-center items-end gap-1">
+        <div className="form-group form-button login-form-button">
+          <input
+            type="submit"
+            name="signin"
+            id="signin"
+            className="btn_1"
+            value={t('login.button')}
+          />
+        </div>
+        <Link
+          to={`${PagesEnum.ForgottenPassword}${
+            redirectTo ? `?redirect=${redirectTo}` : ''
+          }`}>
+          <h6 className="auth-link">{t('login.forgot.password.text')}?</h6>
+        </Link>
       </div>
     </form>
   );

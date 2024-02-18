@@ -2,6 +2,7 @@ export enum PagesEnum {
   Home = '/',
   Contact = '/contact',
   Login = '/login',
+  ForgottenPassword = '/forgotten-password',
   Register = '/register',
   Logout = '/logout',
   FinishRegister = '/finish-register',

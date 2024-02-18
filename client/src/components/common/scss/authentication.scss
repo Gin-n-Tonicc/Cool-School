@@ -231,6 +231,25 @@ label.valid {
   // padding: 67px 0;
 }
 
+.auth-link {
+  display: inline;
+  text-align: center;
+  width: fit-content;
+  margin: 0 auto;
+  color: $btn_hover;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  padding-right: 0.5rem;
+}
+
+.login-form-button {
+  margin: 0;
+  width: 100%;
+}
+
 .external-login {
   display: flex;
   flex-direction: column;
