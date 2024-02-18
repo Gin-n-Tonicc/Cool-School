@@ -46,9 +46,4 @@ public class WebConfig implements WebMvcConfigurer {
         slr.setDefaultLocale(Locale.US);
         return slr;
     }
-
-    @Bean
-    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
-        return CookieSameSiteSupplier.ofNone();
-    }
 }
