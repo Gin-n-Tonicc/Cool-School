@@ -6,7 +6,7 @@ import { useAuthContext } from '../../../../contexts/AuthContext';
 import { useFetch } from '../../../../hooks/useFetch';
 import useValidators from '../../../../hooks/useValidator/useValidators';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
-import { IUser } from '../../../../types/interfaces/auth/IUser';
+import { IAuthResponse } from '../../../../types/interfaces/auth/IAuthResponse';
 import FormInput from '../../../common/form-input/FormInput';
 
 type LoginFormProps = {
@@ -25,7 +25,7 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
   const navigate = useNavigate();
 
   const { loginUser } = useAuthContext();
-  const { post, response } = useFetch<IUser>(apiUrlsConfig.auth.login);
+  const { post, response } = useFetch<IAuthResponse>(apiUrlsConfig.auth.login);
 
   const { handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: {

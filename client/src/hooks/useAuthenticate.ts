@@ -2,16 +2,19 @@ import { useEffect } from 'react';
 import { CachePolicies } from 'use-http';
 import { apiUrlsConfig } from '../config/apiUrls';
 import { useAuthContext } from '../contexts/AuthContext';
-import { IUser } from '../types/interfaces/auth/IUser';
+import { IAuthResponse } from '../types/interfaces/auth/IAuthResponse';
 import { initialAuthUtils } from '../utils/initialAuthUtils';
 import { useFetch } from './useFetch';
 
 export default function useAuthenticate(shouldLogoutUser: boolean = true) {
   const { user, loginUser, logoutUser } = useAuthContext();
 
-  const { get, response, loading } = useFetch<IUser>(apiUrlsConfig.auth.me, {
-    cachePolicy: CachePolicies.NO_CACHE,
-  });
+  const { get, response, loading } = useFetch<IAuthResponse>(
+    apiUrlsConfig.auth.me,
+    {
+      cachePolicy: CachePolicies.NO_CACHE,
+    }
+  );
 
   useEffect(() => {
     async function fetchApi() {

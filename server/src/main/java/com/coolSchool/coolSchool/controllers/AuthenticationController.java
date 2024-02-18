@@ -58,10 +58,10 @@ public class AuthenticationController {
 
     @RateLimited
     @PostMapping("/register")
-    public ResponseEntity<PublicUserDTO> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
         AuthenticationResponse authenticationResponse = authenticationService.register(request);
         sendVerificationEmail(modelMapper.map(authenticationResponse.getUser(), User.class));
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @GetMapping("/registrationConfirm")
@@ -87,7 +87,7 @@ public class AuthenticationController {
 
     @RateLimited
     @PostMapping("/authenticate")
-    public ResponseEntity<PublicUserDTO> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(messageSource));
 
@@ -98,38 +98,38 @@ public class AuthenticationController {
         AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
         authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
 
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @RateLimited
     @PutMapping("/complete-oauth")
-    public ResponseEntity<PublicUserDTO> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+    public ResponseEntity<AuthenticationResponse> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         PublicUserDTO currentLoggedUser = (PublicUserDTO) servletRequest.getAttribute(JwtAuthenticationFilter.userKey);
 
         AuthenticationResponse authenticationResponse = authenticationService.completeOAuth2(request, currentLoggedUser);
         authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
 
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @GetMapping("/refresh-token")
-    public ResponseEntity<PublicUserDTO> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ResponseEntity<AuthenticationResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String refreshToken = CookieHelper.readCookie(AUTH_COOKIE_KEY_REFRESH, request.getCookies()).orElse(null);
 
         AuthenticationResponse authenticationResponse = authenticationService.refreshToken(refreshToken);
         authenticationService.attachAuthCookies(authenticationResponse, response::addCookie);
 
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<PublicUserDTO> getMe(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<AuthenticationResponse> getMe(HttpServletRequest request, HttpServletResponse response) {
         String jwtToken = CookieHelper.readCookie(AUTH_COOKIE_KEY_JWT, request.getCookies()).orElse(null);
 
         AuthenticationResponse authenticationResponse = authenticationService.me(jwtToken);
         authenticationService.attachAuthCookies(authenticationResponse, response::addCookie);
 
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     private void sendVerificationEmail(User user) {
