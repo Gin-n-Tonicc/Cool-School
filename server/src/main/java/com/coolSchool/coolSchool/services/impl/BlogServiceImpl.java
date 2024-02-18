@@ -128,7 +128,7 @@ public class BlogServiceImpl implements BlogService {
             blogDTO.setCreated_at(LocalDateTime.now());
             blogDTO.setOwnerId(loggedUser.getId());
             blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
-            blogDTO.setPictureId(1L);
+            blogDTO.setPictureId(blogDTO.getPictureId());
             userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
             categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
             fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(() -> new FileNotFoundException(messageSource));
