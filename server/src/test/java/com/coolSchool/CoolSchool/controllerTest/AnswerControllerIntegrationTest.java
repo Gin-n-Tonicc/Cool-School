@@ -20,7 +20,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(value = AnswerController.class,
@@ -35,7 +37,7 @@ import static org.mockito.Mockito.when;
                 )
         }
 )
-class AnswerControllerTest {
+class AnswerControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -101,4 +103,38 @@ class AnswerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(mockAnswer.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.text").value(mockAnswer.getText()));
     }
+
+    @Test
+    void testUpdateAnswer() throws Exception {
+        Long answerId = 1L;
+        AnswerDTO requestAnswer = new AnswerDTO();
+        requestAnswer.setId(answerId);
+        requestAnswer.setText("Updated answer");
+
+        AnswerDTO mockUpdatedAnswer = new AnswerDTO();
+        mockUpdatedAnswer.setId(answerId);
+        mockUpdatedAnswer.setText("Updated answer");
+
+        when(answerService.updateAnswer(answerId, requestAnswer)).thenReturn(mockUpdatedAnswer);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/answers/{id}", answerId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestAnswer)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(answerId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.text").value("Updated answer"));
+    }
+
+    @Test
+    void testDeleteAnswerById() throws Exception {
+        Long answerId = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/answers/{id}", answerId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("Answer with id: " + answerId + " has been deleted successfully!"));
+
+        verify(answerService, times(1)).deleteAnswer(answerId);
+    }
+
 }
