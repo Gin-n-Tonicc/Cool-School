@@ -3,14 +3,15 @@ package com.coolSchool.CoolSchool.controllerTest;
 import com.coolSchool.coolSchool.controllers.MessageController;
 import com.coolSchool.coolSchool.models.dto.common.MessageDTO;
 import com.coolSchool.coolSchool.services.MessageService;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -67,7 +68,7 @@ class MessageControllerIntegrationTest {
     void testCreateMessage() {
         MessageDTO message = new MessageDTO();
         message.setId(1L);
-        message.setContent("Message 1");;
+        message.setContent("Message 1");
 
         when(messageService.createMessage(message)).thenReturn(message);
 

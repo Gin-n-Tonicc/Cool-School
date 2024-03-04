@@ -38,13 +38,11 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 )
 class CategoryControllerIntegrationTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private CategoryService categoryService;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void testGetAllCategories() throws Exception {

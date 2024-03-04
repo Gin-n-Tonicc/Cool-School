@@ -41,13 +41,11 @@ import static org.mockito.Mockito.when;
 )
 class CommentControllerIntegrationTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private CommentService commentService;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void testGetAllComments() throws Exception {

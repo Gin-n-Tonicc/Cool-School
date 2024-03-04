@@ -39,14 +39,11 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 )
 class AnswerControllerIntegrationTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private AnswerService answerService;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     private List<AnswerDTO> mockAnswerList;
 
     @BeforeEach

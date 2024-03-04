@@ -9,6 +9,7 @@ import com.coolSchool.coolSchool.services.BlogService;
 import com.coolSchool.coolSchool.services.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,6 +27,9 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(value = BlogController.class,
@@ -42,19 +46,17 @@ import static org.mockito.Mockito.when;
 )
 class BlogControllerIntegrationTest {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private BlogService blogService;
-
     @MockBean
     private CategoryService categoryService;
-
     @MockBean
     private AIAssistanceService aiAssistanceService;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @InjectMocks
+    private BlogController blogController;
 
     @Test
     void testGetAllBlogs() throws Exception {
@@ -64,9 +66,9 @@ class BlogControllerIntegrationTest {
 
         when(blogService.getAllBlogs(any())).thenReturn(mockBlogs);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/blogs/all"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/blogs/all"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(mockBlogs.size()));
     }
 
@@ -81,8 +83,8 @@ class BlogControllerIntegrationTest {
         when(blogService.addLike(eq(blogId), any())).thenReturn(mockBlogResponseDTO);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/blogs/like/{blogId}", blogId))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(blogId))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(mockBlogResponseDTO.getTitle()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content").value(mockBlogResponseDTO.getContent()));
@@ -104,7 +106,7 @@ class BlogControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/blogs/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(status().isCreated());
     }
 
 
@@ -125,7 +127,7 @@ class BlogControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/blogs/{id}", blogId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk());
     }
 
 
@@ -134,7 +136,7 @@ class BlogControllerIntegrationTest {
         Long blogId = 1L;
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/blogs/{id}", blogId))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Blog with id: " + blogId + " has been deleted successfully!"));
+                .andExpect(status().isOk())
+                .andExpect(content().string("Blog with id: " + blogId + " has been deleted successfully!"));
     }
 }
