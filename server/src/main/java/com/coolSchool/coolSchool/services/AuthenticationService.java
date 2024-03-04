@@ -23,4 +23,5 @@ public interface AuthenticationService {
     );
 
     void attachAuthCookies(AuthenticationResponse authenticationResponse, Consumer<Cookie> cookieConsumer);
+    void resetPassword(String token, String newPassword);
 }
