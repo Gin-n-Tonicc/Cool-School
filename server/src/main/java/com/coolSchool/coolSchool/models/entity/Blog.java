@@ -49,5 +49,6 @@ public class Blog {
     private Category categoryId;
     private boolean isEnabled;
     private Integer commentCount;
+    @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }
