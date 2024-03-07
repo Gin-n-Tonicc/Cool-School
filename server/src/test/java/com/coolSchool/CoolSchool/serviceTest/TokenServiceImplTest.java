@@ -1,8 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.enums.TokenType;
-import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
-import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.TokenRepository;
@@ -24,7 +22,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.testng.AssertJUnit.assertEquals;
@@ -127,6 +124,7 @@ class TokenServiceImplTest {
         verify(tokenRepository, never()).findAllByUser(any(User.class));
         verify(tokenRepository, never()).deleteAll(anyList());
     }
+
     @Test
     void createJwtCookieTest() {
         String jwtToken = "sampleJwtToken";

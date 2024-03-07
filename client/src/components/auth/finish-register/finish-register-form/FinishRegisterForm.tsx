@@ -7,7 +7,7 @@ import { useFetch } from '../../../../hooks/useFetch';
 import useValidators from '../../../../hooks/useValidator/useValidators';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import { RolesEnum } from '../../../../types/enums/RolesEnum';
-import { IUser } from '../../../../types/interfaces/auth/IUser';
+import { IAuthResponse } from '../../../../types/interfaces/auth/IAuthResponse';
 import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../../common/form-input/FormInput';
 
@@ -25,7 +25,9 @@ export default function FinishRegisterForm() {
   const navigate = useNavigate();
 
   const { loginUser } = useAuthContext();
-  const { put, response } = useFetch<IUser>(apiUrlsConfig.auth.completeOAuth);
+  const { put, response } = useFetch<IAuthResponse>(
+    apiUrlsConfig.auth.completeOAuth
+  );
 
   const { handleSubmit, register, control, reset } = useForm<Inputs>({
     defaultValues: {

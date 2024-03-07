@@ -10,6 +10,9 @@ import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
+import com.coolSchool.coolSchool.models.entity.VerificationToken;
+import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.repositories.VerificationTokenRepository;
 import com.coolSchool.coolSchool.services.AuthenticationService;
 import com.coolSchool.coolSchool.services.JwtService;
 import com.coolSchool.coolSchool.services.TokenService;
@@ -22,8 +25,11 @@ import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -37,6 +43,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final ModelMapper modelMapper;
     private final MessageSource messageSource;
+    private final VerificationTokenRepository verificationTokenRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
@@ -169,5 +178,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public void attachAuthCookies(AuthenticationResponse authenticationResponse, Consumer<Cookie> cookieConsumer) {
         tokenService.attachAuthCookies(authenticationResponse, cookieConsumer);
+    }
+    public void resetPassword(String token, String newPassword){
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
+        User user = verificationToken.getUser();
+        if (user == null) {
+            throw new InvalidTokenException(messageSource);
+        }
+        verificationToken.setCreatedAt(LocalDateTime.now());
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

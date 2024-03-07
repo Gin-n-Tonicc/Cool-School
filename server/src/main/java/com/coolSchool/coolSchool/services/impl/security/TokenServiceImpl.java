@@ -88,6 +88,9 @@ public class TokenServiceImpl implements TokenService {
 
         // milliseconds to seconds
         jwtCookie.setMaxAge((int) jwtExpiration / 1000);
+        jwtCookie.setSecure(true);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setAttribute("SameSite", "None");
 
         return jwtCookie;
     }
@@ -99,6 +102,9 @@ public class TokenServiceImpl implements TokenService {
 
         // milliseconds to seconds
         refreshCookie.setMaxAge((int) refreshExpiration / 1000);
+        refreshCookie.setSecure(true);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setAttribute("SameSite", "None");
 
         return refreshCookie;
     }

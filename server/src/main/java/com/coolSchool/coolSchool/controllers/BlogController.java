@@ -1,13 +1,11 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.exceptions.AI.ErrorProcessingAIResponseException;
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.coolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.BlogResponseDTO;
-import com.coolSchool.coolSchool.models.entity.Category;
 import com.coolSchool.coolSchool.services.AIAssistanceService;
 import com.coolSchool.coolSchool.services.BlogService;
 import com.coolSchool.coolSchool.services.CategoryService;

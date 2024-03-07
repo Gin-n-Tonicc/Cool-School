@@ -2,7 +2,6 @@ package com.coolSchool.coolSchool.controllers;
 
 import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.exceptions.email.EmailNotVerified;
-import com.coolSchool.coolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
@@ -28,7 +27,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -50,7 +48,6 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MessageSource messageSource;
-    private final PasswordEncoder passwordEncoder;
     private final FrontendConfig frontendConfig;
 
     @Value("${server.backend.baseUrl}")
@@ -58,10 +55,10 @@ public class AuthenticationController {
 
     @RateLimited
     @PostMapping("/register")
-    public ResponseEntity<PublicUserDTO> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
         AuthenticationResponse authenticationResponse = authenticationService.register(request);
         sendVerificationEmail(modelMapper.map(authenticationResponse.getUser(), User.class));
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @GetMapping("/registrationConfirm")
@@ -87,7 +84,7 @@ public class AuthenticationController {
 
     @RateLimited
     @PostMapping("/authenticate")
-    public ResponseEntity<PublicUserDTO> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(messageSource));
 
@@ -98,38 +95,38 @@ public class AuthenticationController {
         AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
         authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
 
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @RateLimited
     @PutMapping("/complete-oauth")
-    public ResponseEntity<PublicUserDTO> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+    public ResponseEntity<AuthenticationResponse> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         PublicUserDTO currentLoggedUser = (PublicUserDTO) servletRequest.getAttribute(JwtAuthenticationFilter.userKey);
 
         AuthenticationResponse authenticationResponse = authenticationService.completeOAuth2(request, currentLoggedUser);
         authenticationService.attachAuthCookies(authenticationResponse, servletResponse::addCookie);
 
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @GetMapping("/refresh-token")
-    public ResponseEntity<PublicUserDTO> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public ResponseEntity<AuthenticationResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String refreshToken = CookieHelper.readCookie(AUTH_COOKIE_KEY_REFRESH, request.getCookies()).orElse(null);
 
         AuthenticationResponse authenticationResponse = authenticationService.refreshToken(refreshToken);
         authenticationService.attachAuthCookies(authenticationResponse, response::addCookie);
 
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<PublicUserDTO> getMe(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<AuthenticationResponse> getMe(HttpServletRequest request, HttpServletResponse response) {
         String jwtToken = CookieHelper.readCookie(AUTH_COOKIE_KEY_JWT, request.getCookies()).orElse(null);
 
         AuthenticationResponse authenticationResponse = authenticationService.me(jwtToken);
         authenticationService.attachAuthCookies(authenticationResponse, response::addCookie);
 
-        return ResponseEntity.ok(authenticationResponse.getUser());
+        return ResponseEntity.ok(authenticationResponse);
     }
 
     private void sendVerificationEmail(User user) {
@@ -143,18 +140,11 @@ public class AuthenticationController {
         eventPublisher.publishEvent(new OnPasswordResetRequestEvent(user, appBaseUrl));
         return ResponseEntity.ok("Password reset link sent to your email!");
     }
+
     @RateLimited
     @PostMapping("/password-reset")
     public ResponseEntity<String> resetPassword(@RequestParam("token") String token, @RequestParam("newPassword") String newPassword) {
-        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
-        User user = verificationToken.getUser();
-        if (user == null) {
-            throw new InvalidTokenException(messageSource);
-        }
-        verificationToken.setCreatedAt(LocalDateTime.now());
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+        authenticationService.resetPassword(token, newPassword);
         return ResponseEntity.ok("Password reset successfully");
     }
 }
