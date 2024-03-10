@@ -9,6 +9,8 @@ import com.coolSchool.coolSchool.models.dto.auth.RegisterRequest;
 import com.coolSchool.coolSchool.models.dto.request.CompleteOAuthRequest;
 import com.coolSchool.coolSchool.models.entity.Token;
 import com.coolSchool.coolSchool.models.entity.User;
+import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.repositories.VerificationTokenRepository;
 import com.coolSchool.coolSchool.services.AuthenticationService;
 import com.coolSchool.coolSchool.services.JwtService;
 import com.coolSchool.coolSchool.services.TokenService;
@@ -17,12 +19,14 @@ import com.coolSchool.coolSchool.services.impl.security.AuthenticationServiceImp
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.testng.Assert;
 
@@ -53,6 +57,12 @@ class AuthenticationServiceImplTest {
     private AuthenticationService authenticationService;
     @Mock
     private MessageSource messageSource;
+    @Mock
+    private VerificationTokenRepository verificationTokenRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
@@ -63,7 +73,10 @@ class AuthenticationServiceImplTest {
                 jwtService,
                 authenticationManager,
                 modelMapper,
-                messageSource
+                messageSource,
+                verificationTokenRepository,
+                userRepository,
+                passwordEncoder
         );
     }
 

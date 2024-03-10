@@ -2,7 +2,6 @@ package com.coolSchool.coolSchool.controllers;
 
 import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.exceptions.email.EmailNotVerified;
-import com.coolSchool.coolSchool.exceptions.token.InvalidTokenException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
@@ -28,7 +27,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -50,7 +48,6 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MessageSource messageSource;
-    private final PasswordEncoder passwordEncoder;
     private final FrontendConfig frontendConfig;
 
     @Value("${server.backend.baseUrl}")
@@ -143,18 +140,11 @@ public class AuthenticationController {
         eventPublisher.publishEvent(new OnPasswordResetRequestEvent(user, appBaseUrl));
         return ResponseEntity.ok("Password reset link sent to your email!");
     }
+
     @RateLimited
     @PostMapping("/password-reset")
     public ResponseEntity<String> resetPassword(@RequestParam("token") String token, @RequestParam("newPassword") String newPassword) {
-        VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
-        User user = verificationToken.getUser();
-        if (user == null) {
-            throw new InvalidTokenException(messageSource);
-        }
-        verificationToken.setCreatedAt(LocalDateTime.now());
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
+        authenticationService.resetPassword(token, newPassword);
         return ResponseEntity.ok("Password reset successfully");
     }
 }

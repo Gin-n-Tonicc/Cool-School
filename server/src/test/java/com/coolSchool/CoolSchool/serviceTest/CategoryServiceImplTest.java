@@ -8,8 +8,6 @@ import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.services.impl.CategoryServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

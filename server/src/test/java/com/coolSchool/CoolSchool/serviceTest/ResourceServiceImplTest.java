@@ -13,8 +13,6 @@ import com.coolSchool.coolSchool.repositories.ResourceRepository;
 import com.coolSchool.coolSchool.services.impl.ResourceServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
