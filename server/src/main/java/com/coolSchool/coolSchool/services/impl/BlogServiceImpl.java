@@ -5,7 +5,6 @@ import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogAlreadyLikedException;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotEnabledException;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
-import com.coolSchool.coolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.coolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.common.BadRequestException;
@@ -27,15 +26,12 @@ import com.coolSchool.coolSchool.services.BlogService;
 import com.coolSchool.coolSchool.slack.SlackNotifier;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,7 +51,6 @@ public class BlogServiceImpl implements BlogService {
     private final JavaMailSender emailSender;
     private final SlackNotifier slackNotifier;
     private final FrontendConfig frontendConfig;
-
 
 
     public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource, JavaMailSender emailSender, SlackNotifier slackNotifier, FrontendConfig frontendConfig) {
@@ -123,23 +118,20 @@ public class BlogServiceImpl implements BlogService {
         if (loggedUser == null) {
             throw new AccessDeniedException(messageSource);
         }
-        try {
-            blogDTO.setId(null);
-            blogDTO.setCreated_at(LocalDateTime.now());
-            blogDTO.setOwnerId(loggedUser.getId());
-            blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
-            blogDTO.setPictureId(blogDTO.getPictureId());
-            blogDTO.setDeleted(false);
-            userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
-            categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
-            fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(() -> new FileNotFoundException(messageSource));
-            blogDTO.setCommentCount(0);
-            Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
 
-            return modelMapper.map(blogEntity, BlogResponseDTO.class);
-        } catch (ConstraintViolationException exception) {
-            throw new ValidationBlogException(exception.getConstraintViolations());
-        }
+        blogDTO.setId(null);
+        blogDTO.setCreated_at(LocalDateTime.now());
+        blogDTO.setOwnerId(loggedUser.getId());
+        blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
+        blogDTO.setPictureId(blogDTO.getPictureId());
+        blogDTO.setDeleted(false);
+        userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
+        fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(() -> new FileNotFoundException(messageSource));
+        blogDTO.setCommentCount(0);
+        Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
+
+        return modelMapper.map(blogEntity, BlogResponseDTO.class);
     }
 
     @Override
@@ -171,24 +163,18 @@ public class BlogServiceImpl implements BlogService {
         blogDTO.setCommentCount(existingBlog.getCommentCount());
         modelMapper.map(blogDTO, existingBlog);
 
-        try {
-            existingBlog.setId(id);
-            existingBlog.setCreated_at(existingBlog.getCreated_at());
+        existingBlog.setId(id);
+        existingBlog.setCreated_at(existingBlog.getCreated_at());
 
-            existingBlog.setPicture(file);
-            existingBlog.setCategoryId(category);
-            existingBlog.setOwnerId(user);
-            existingBlog.setLiked_users(userSet);
+        existingBlog.setPicture(file);
+        existingBlog.setCategoryId(category);
+        existingBlog.setOwnerId(user);
+        existingBlog.setLiked_users(userSet);
 
-            Blog updatedBlog = blogRepository.save(existingBlog);
-            return modelMapper.map(updatedBlog, BlogResponseDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationBlogException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        Blog updatedBlog = blogRepository.save(existingBlog);
+        return modelMapper.map(updatedBlog, BlogResponseDTO.class);
     }
+
     public void sendEnabledBlogEmailNotification(Long ownerId, Long blogId) {
         User user = userRepository.findById(ownerId)
                 .orElseThrow(() -> new UserNotFoundException(messageSource));

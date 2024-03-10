@@ -1,7 +1,6 @@
 package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.enums.Role;
-import com.coolSchool.coolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.coolSchool.exceptions.review.ReviewNotFoundException;
@@ -17,11 +16,9 @@ import com.coolSchool.coolSchool.repositories.ReviewRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.CourseService;
 import com.coolSchool.coolSchool.services.ReviewService;
-import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.util.List;
 import java.util.Objects;
@@ -67,20 +64,13 @@ public class ReviewServiceImpl implements ReviewService {
         if (loggedUser == null) {
             throw new AccessDeniedException(messageSource);
         }
-        try {
-            reviewDTO.setId(null);
-            userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
-            Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(() -> new CourseNotFoundException(messageSource));
-            Review reviewRequestDTO = modelMapper.map(reviewDTO, Review.class);
-            Review review = reviewRepository.save(reviewRequestDTO);
-            updateCourseStars(course);
-            return modelMapper.map(review, ReviewResponseDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationBlogException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        reviewDTO.setId(null);
+        userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(() -> new CourseNotFoundException(messageSource));
+        Review reviewRequestDTO = modelMapper.map(reviewDTO, Review.class);
+        Review review = reviewRepository.save(reviewRequestDTO);
+        updateCourseStars(course);
+        return modelMapper.map(review, ReviewResponseDTO.class);
     }
 
     @Override

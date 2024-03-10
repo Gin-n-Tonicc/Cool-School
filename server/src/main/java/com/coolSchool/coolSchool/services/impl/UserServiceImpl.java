@@ -2,7 +2,6 @@ package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.enums.Provider;
 import com.coolSchool.coolSchool.enums.Role;
-import com.coolSchool.coolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.user.UserCreateException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
@@ -23,7 +22,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -86,16 +84,8 @@ public class UserServiceImpl implements UserService {
         modelMapper.map(userDTO, userToUpdate);
         userToUpdate.setId(id);
 
-        try {
-            User updatedUser = userRepository.save(userToUpdate);
-            return modelMapper.map(updatedUser, AdminUserDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationBlogException(validationException.getConstraintViolations());
-            }
-
-            throw exception;
-        }
+        User updatedUser = userRepository.save(userToUpdate);
+        return modelMapper.map(updatedUser, AdminUserDTO.class);
     }
 
 

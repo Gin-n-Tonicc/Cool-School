@@ -3,7 +3,6 @@ package com.coolSchool.coolSchool.services.impl;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.coolSchool.exceptions.comment.CommentNotFoundException;
-import com.coolSchool.coolSchool.exceptions.comment.ValidationCommentException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
@@ -17,12 +16,9 @@ import com.coolSchool.coolSchool.repositories.BlogRepository;
 import com.coolSchool.coolSchool.repositories.CommentRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.CommentService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -89,25 +85,16 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDTO createComment(CommentRequestDTO commentDTO, PublicUserDTO loggedUser) {
         Blog blog = null;
 
-        try {
-            commentDTO.setId(null);
-            commentDTO.setCreated_at(LocalDateTime.now());
-            commentDTO.setOwnerId(loggedUser.getId());
-            userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        commentDTO.setId(null);
+        commentDTO.setCreated_at(LocalDateTime.now());
+        commentDTO.setOwnerId(loggedUser.getId());
+        userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
 
-            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
-            blog.setCommentCount(blog.getCommentCount() + 1);
-            blogRepository.save(blog);
-            Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
-            return modelMapper.map(commentEntity, CommentResponseDTO.class);
-        } catch (ConstraintViolationException exception) {
-            if (blog != null) {
-                blog.setCommentCount(blog.getCommentCount() - 1);
-                blogRepository.save(blog);
-            }
-
-            throw new ValidationCommentException(exception.getConstraintViolations());
-        }
+        blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
+        blog.setCommentCount(blog.getCommentCount() + 1);
+        blogRepository.save(blog);
+        Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
+        return modelMapper.map(commentEntity, CommentResponseDTO.class);
     }
 
     @Override
@@ -116,7 +103,7 @@ public class CommentServiceImpl implements CommentService {
         if (existingCommentOptional.isEmpty()) {
             throw new CommentNotFoundException(messageSource);
         }
-        User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(()-> new UserNotFoundException(messageSource));
+        User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
         blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), user.getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException(messageSource);
@@ -124,16 +111,9 @@ public class CommentServiceImpl implements CommentService {
         Comment existingComment = existingCommentOptional.get();
         modelMapper.map(commentDTO, existingComment);
 
-        try {
-            existingComment.setId(id);
-            Comment updatedComment = commentRepository.save(existingComment);
-            return modelMapper.map(updatedComment, CommentResponseDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationCommentException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        existingComment.setId(id);
+        Comment updatedComment = commentRepository.save(existingComment);
+        return modelMapper.map(updatedComment, CommentResponseDTO.class);
     }
 
     @Override

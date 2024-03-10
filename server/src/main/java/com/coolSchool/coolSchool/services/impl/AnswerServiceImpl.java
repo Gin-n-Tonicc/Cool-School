@@ -1,19 +1,16 @@
 package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.exceptions.answer.AnswerNotFoundException;
-import com.coolSchool.coolSchool.exceptions.answer.ValidationAnswerException;
 import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.coolSchool.models.dto.common.AnswerDTO;
 import com.coolSchool.coolSchool.models.entity.Answer;
 import com.coolSchool.coolSchool.repositories.AnswerRepository;
 import com.coolSchool.coolSchool.repositories.QuestionRepository;
 import com.coolSchool.coolSchool.services.AnswerService;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,14 +48,11 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerDTO createAnswer(AnswerDTO answerDTO) {
-        try {
-            answerDTO.setId(null);
-            questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(()-> new NoSuchElementException(messageSource));
-            Answer answerEntity = answerRepository.save(modelMapper.map(answerDTO, Answer.class));
-            return modelMapper.map(answerEntity, AnswerDTO.class);
-        } catch (ConstraintViolationException exception) {
-            throw new ValidationAnswerException(exception.getConstraintViolations());
-        }
+        answerDTO.setId(null);
+        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(() -> new NoSuchElementException(messageSource));
+
+        Answer answerEntity = answerRepository.save(modelMapper.map(answerDTO, Answer.class));
+        return modelMapper.map(answerEntity, AnswerDTO.class);
     }
 
     @Override
@@ -68,21 +62,14 @@ public class AnswerServiceImpl implements AnswerService {
         if (existingAnswerOptional.isEmpty()) {
             throw new AnswerNotFoundException(messageSource);
         }
-        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(()-> new NoSuchElementException(messageSource));
+        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(() -> new NoSuchElementException(messageSource));
 
         Answer existingAnswer = existingAnswerOptional.get();
         modelMapper.map(answerDTO, existingAnswer);
 
-        try {
-            existingAnswer.setId(id);
-            Answer updatedAnswer = answerRepository.save(existingAnswer);
-            return modelMapper.map(updatedAnswer, AnswerDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationAnswerException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        existingAnswer.setId(id);
+        Answer updatedAnswer = answerRepository.save(existingAnswer);
+        return modelMapper.map(updatedAnswer, AnswerDTO.class);
     }
 
     @Override
@@ -95,10 +82,12 @@ public class AnswerServiceImpl implements AnswerService {
             throw new AnswerNotFoundException(messageSource);
         }
     }
+
     public List<AnswerDTO> getCorrectAnswersByQuestionId(Long questionId) {
         List<Answer> correctAnswers = answerRepository.findCorrectAnswersByQuestionId(questionId);
         return correctAnswers.stream().map(answer -> modelMapper.map(answer, AnswerDTO.class)).toList();
     }
+
     public List<AnswerDTO> getAnswersByQuestionId(Long questionId) {
         List<Answer> answers = answerRepository.findAnswersByQuestionId(questionId);
         return answers.stream().map(answer -> modelMapper.map(answer, AnswerDTO.class)).toList();
