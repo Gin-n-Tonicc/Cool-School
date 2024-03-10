@@ -1,20 +1,12 @@
 package com.coolSchool.coolSchool.exceptions.blog;
 
-import com.coolSchool.coolSchool.exceptions.common.ApiException;
+import com.coolSchool.coolSchool.exceptions.common.ValidationException;
 import jakarta.validation.ConstraintViolation;
-import org.springframework.http.HttpStatus;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class ValidationBlogException extends ApiException {
+public class ValidationBlogException extends ValidationException {
     public ValidationBlogException(Set<ConstraintViolation<?>> validationErrors) {
-        super(
-                validationErrors
-                        .stream()
-                        .map(ConstraintViolation::getMessage)
-                        .collect(Collectors.joining("\n")),
-                HttpStatus.BAD_REQUEST
-        );
+        super(validationErrors);
     }
 }

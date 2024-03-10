@@ -1,20 +1,12 @@
 package com.coolSchool.coolSchool.exceptions.userCourse;
 
-import com.coolSchool.coolSchool.exceptions.common.ApiException;
+import com.coolSchool.coolSchool.exceptions.common.ValidationException;
 import jakarta.validation.ConstraintViolation;
-import org.springframework.http.HttpStatus;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public class ValidationUserCourseException extends ApiException {
+public class ValidationUserCourseException extends ValidationException {
     public ValidationUserCourseException(Set<ConstraintViolation<?>> validationErrors) {
-        super(
-                validationErrors
-                        .stream()
-                        .map(ConstraintViolation::getMessage)
-                        .collect(Collectors.joining("\n")),
-                HttpStatus.BAD_REQUEST
-        );
+        super(validationErrors);
     }
 }
