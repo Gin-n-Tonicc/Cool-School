@@ -1,12 +1,11 @@
 package com.coolSchool.coolSchool.exceptions.files;
 
-import com.coolSchool.coolSchool.exceptions.common.ApiException;
+import com.coolSchool.coolSchool.exceptions.common.UnsupportedMediaTypeException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 
-public class UnsupportedFileTypeException extends ApiException {
+public class UnsupportedFileTypeException extends UnsupportedMediaTypeException {
     public UnsupportedFileTypeException(MessageSource messageSource) {
-        super(messageSource.getMessage("unsupported.file.type", null, LocaleContextHolder.getLocale()), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        super(messageSource.getMessage("unsupported.file.type", null, LocaleContextHolder.getLocale()));
     }
 }

@@ -8,4 +8,8 @@ public class NoSuchElementException extends ApiException {
     public NoSuchElementException(MessageSource messageSource) {
         super(messageSource.getMessage("no.such.element", null, LocaleContextHolder.getLocale()), HttpStatus.NOT_FOUND);
     }
+
+    public NoSuchElementException(String message) {
+        super(message, HttpStatus.NOT_FOUND);
+    }
 }

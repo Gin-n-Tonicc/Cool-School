@@ -100,7 +100,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
 
     public BlogResponseDTO getBlogById(Long id, PublicUserDTO loggedUser) {
-        Optional<Blog> optionalBlog = blogRepository.findById(id);
+        Optional<Blog> optionalBlog = Optional.ofNullable(blogRepository.findById(id).orElseThrow(() -> new BlogNotFoundException(messageSource)));
 
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
