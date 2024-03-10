@@ -14,9 +14,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class RateLimitAspect {
 
-    private ConcurrentHashMap<String, AtomicInteger> requestCounters = new ConcurrentHashMap<>();
     private final int MAX_REQUESTS_PER_MINUTE = 10; // 10 requests per minute - /60000
     private final MessageSource messageSource;
+    private final ConcurrentHashMap<String, AtomicInteger> requestCounters = new ConcurrentHashMap<>();
 
     public RateLimitAspect(MessageSource messageSource) {
         this.messageSource = messageSource;

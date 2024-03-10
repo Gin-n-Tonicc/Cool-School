@@ -27,7 +27,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -179,7 +178,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void attachAuthCookies(AuthenticationResponse authenticationResponse, Consumer<Cookie> cookieConsumer) {
         tokenService.attachAuthCookies(authenticationResponse, cookieConsumer);
     }
-    public void resetPassword(String token, String newPassword){
+
+    public void resetPassword(String token, String newPassword) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
         User user = verificationToken.getUser();
         if (user == null) {

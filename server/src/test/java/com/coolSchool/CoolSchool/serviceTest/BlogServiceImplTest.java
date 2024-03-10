@@ -2,6 +2,7 @@ package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.enums.Role;
+import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.coolSchool.exceptions.common.BadRequestException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
@@ -130,7 +131,7 @@ public class BlogServiceImplTest {
     void testGetBlogByIdNotFound() {
         when(blogRepository.findById(anyLong())).thenReturn(Optional.empty());
         when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(anyLong())).thenReturn(Optional.empty());
-        assertThrows(NoSuchElementException.class, () -> blogService.getBlogById(1L, null));
+        assertThrows(BlogNotFoundException.class, () -> blogService.getBlogById(1L, null));
     }
 
     @Test

@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 
 public interface AuthenticationService {
     AuthenticationResponse register(RegisterRequest request);
+
     AuthenticationResponse completeOAuth2(CompleteOAuthRequest request, PublicUserDTO currentUser);
 
     AuthenticationResponse authenticate(AuthenticationRequest request);
@@ -23,5 +24,6 @@ public interface AuthenticationService {
     );
 
     void attachAuthCookies(AuthenticationResponse authenticationResponse, Consumer<Cookie> cookieConsumer);
+
     void resetPassword(String token, String newPassword);
 }

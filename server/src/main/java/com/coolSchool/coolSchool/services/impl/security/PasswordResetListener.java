@@ -6,7 +6,6 @@ import com.coolSchool.coolSchool.services.UserService;
 import com.coolSchool.coolSchool.services.impl.security.events.OnPasswordResetRequestEvent;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

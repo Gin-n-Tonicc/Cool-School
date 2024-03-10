@@ -1,7 +1,6 @@
 package com.coolSchool.coolSchool.slack;
 
 import com.slack.api.Slack;
-import com.slack.api.model.Attachment;
 import com.slack.api.webhook.Payload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +13,9 @@ import java.time.format.DateTimeFormatter;
 @Component
 @Slf4j
 public class SlackNotifier {
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     @Value("${webhook.url}")
     private String webhookUrl;
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
     public void sendNotification(String message) {
         Payload payload = Payload.builder()

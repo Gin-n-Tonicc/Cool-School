@@ -7,8 +7,6 @@ import com.coolSchool.coolSchool.exceptions.common.ValidationException;
 import com.coolSchool.coolSchool.exceptions.user.UserLoginException;
 import com.coolSchool.coolSchool.models.dto.response.ExceptionResponse;
 import com.coolSchool.coolSchool.utils.ApiExceptionParser;
-import jakarta.validation.ConstraintValidatorFactory;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

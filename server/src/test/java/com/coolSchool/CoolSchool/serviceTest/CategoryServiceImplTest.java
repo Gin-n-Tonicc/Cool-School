@@ -138,7 +138,7 @@ class CategoryServiceImplTest {
 
         when(categoryRepository.save(any(Category.class))).thenThrow(constraintViolationException);
 
-        assertThrows(ValidationCategoryException.class, () -> categoryService.createCategory(categoryDTO));
+        assertThrows(ConstraintViolationException.class, () -> categoryService.createCategory(categoryDTO));
     }
 
     @Test

@@ -29,7 +29,10 @@ public interface QuizService {
     void deleteAutoSavedProgress(Long userId, Long quizId);
 
     QuizAttemptDTO getQuizAttemptDetails(Long quizAttemptId);
+
     List<QuizAttemptDTO> getAllUserAttemptsInAQuiz(Long quizId, PublicUserDTO publicUserDTO);
+
     List<QuizAttemptDTO> getAllUserHighestScoresInQuizzes(Long userId);
+
     List<UserCourseDTO> calculateQuizSuccessPercentageForCurrentUser(PublicUserDTO publicUserDTO);
 }
