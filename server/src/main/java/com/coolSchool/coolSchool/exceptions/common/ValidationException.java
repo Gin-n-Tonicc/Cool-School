@@ -8,12 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ValidationException extends ApiException {
-    public ValidationException(String message) {
-        super(message, HttpStatus.BAD_REQUEST);
-    }
-
     public ValidationException(Set<ConstraintViolation<?>> validationErrors) {
         super(
                 validationErrors
