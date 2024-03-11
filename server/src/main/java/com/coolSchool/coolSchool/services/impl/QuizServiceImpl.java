@@ -307,6 +307,7 @@ public class QuizServiceImpl implements QuizService {
 
         return quizAttemptDTO;
     }
+
     @Override
     public List<QuizAttemptDTO> getAllUserAttemptsInAQuiz(Long quizId, PublicUserDTO publicUserDTO) {
         List<QuizAttempt> quizAttempts = quizAttemptRepository.findByQuizIdAndUserId(quizId, publicUserDTO.getId());
@@ -341,6 +342,7 @@ public class QuizServiceImpl implements QuizService {
 
         return getAllUserProgressForQuiz(quizId);
     }
+
     public void calculateRemainingTimeInSeconds(QuizAttempt quizAttempt) {
         Quiz quiz = quizAttempt.getQuiz();
 
@@ -362,11 +364,13 @@ public class QuizServiceImpl implements QuizService {
 
         quizAttemptRepository.save(quizAttempt);
     }
+
     @Override
     @Transactional
     public void deleteAutoSavedProgress(Long userId, Long quizId) {
         userQuizProgressRepository.deleteByUserIdAndQuizId(userId, quizId);
     }
+
     @Override
     public List<QuizAttemptDTO> getAllUserHighestScoresInQuizzes(Long userId) {
         List<QuizAttempt> quizAttempts = quizAttemptRepository.findByUserId(userId);
@@ -402,6 +406,7 @@ public class QuizServiceImpl implements QuizService {
         long timeLeft = quizDurationInMinutes - elapsedTimeInMinutes;
         return Math.max(timeLeft, 0);
     }
+
     @Override
     public List<UserCourseDTO> calculateQuizSuccessPercentageForCurrentUser(PublicUserDTO publicUserDTO) {
         List<QuizAttempt> quizAttempts = quizAttemptRepository.findByUserId(publicUserDTO.getId());
@@ -427,7 +432,7 @@ public class QuizServiceImpl implements QuizService {
         List<UserCourseDTO> userCourseDTOs = new ArrayList<>();
         for (Map.Entry<Long, List<Quiz>> entry : quizzesByCourseId.entrySet()) {
             Long courseId = entry.getKey();
-            Course course = courseRepository.findByIdAndDeletedFalse(courseId).orElseThrow(()-> new CourseNotFoundException(messageSource));
+            Course course = courseRepository.findByIdAndDeletedFalse(courseId).orElseThrow(() -> new CourseNotFoundException(messageSource));
             CourseResponseDTO courseResponseDTO = modelMapper.map(course, CourseResponseDTO.class);
             List<Quiz> quizzesInCourse = entry.getValue();
 
@@ -452,6 +457,7 @@ public class QuizServiceImpl implements QuizService {
 
         return userCourseDTOs;
     }
+
     private List<UserQuizProgressDTO> getAllUserProgressForQuiz(Long quizId) {
         List<UserQuizProgress> userQuizProgressList = userQuizProgressRepository.findByQuizId(quizId);
         return userQuizProgressList.stream()

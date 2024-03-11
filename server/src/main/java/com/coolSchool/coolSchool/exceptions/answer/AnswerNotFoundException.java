@@ -1,13 +1,12 @@
 package com.coolSchool.coolSchool.exceptions.answer;
 
-import com.coolSchool.coolSchool.exceptions.common.ApiException;
+import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 
-public class AnswerNotFoundException extends ApiException {
+public class AnswerNotFoundException extends NoSuchElementException {
     public AnswerNotFoundException(MessageSource messageSource) {
 
-        super(messageSource.getMessage("answer.not.found", null, LocaleContextHolder.getLocale()), HttpStatus.NOT_FOUND);
+        super(messageSource.getMessage("answer.not.found", null, LocaleContextHolder.getLocale()));
     }
 }

@@ -1,14 +1,15 @@
-package com.coolSchool.coolSchool.exceptions.courseSubsection;
+package com.coolSchool.coolSchool.exceptions.common;
 
-import com.coolSchool.coolSchool.exceptions.common.ApiException;
+
 import jakarta.validation.ConstraintViolation;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ValidationCourseSubsectionException extends ApiException {
-    public ValidationCourseSubsectionException(Set<ConstraintViolation<?>> validationErrors) {
+public class ValidationException extends ApiException {
+    public ValidationException(Set<ConstraintViolation<?>> validationErrors) {
         super(
                 validationErrors
                         .stream()

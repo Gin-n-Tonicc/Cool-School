@@ -2,18 +2,14 @@ package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.exceptions.category.CategoryCreateException;
 import com.coolSchool.coolSchool.exceptions.category.CategoryNotFoundException;
-import com.coolSchool.coolSchool.exceptions.category.ValidationCategoryException;
 import com.coolSchool.coolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.coolSchool.models.entity.Category;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.services.CategoryService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +47,6 @@ public class CategoryServiceImpl implements CategoryService {
             categoryDTO.setId(null);
             Category categoryEntity = categoryRepository.save(modelMapper.map(categoryDTO, Category.class));
             return modelMapper.map(categoryEntity, CategoryDTO.class);
-        } catch (ConstraintViolationException exception) {
-            throw new ValidationCategoryException(exception.getConstraintViolations());
         } catch (DataIntegrityViolationException exception) {
             throw new CategoryCreateException(messageSource, true);
         }
@@ -69,16 +63,9 @@ public class CategoryServiceImpl implements CategoryService {
         Category existingCategory = existingCategoryOptional.get();
         modelMapper.map(categoryDTO, existingCategory);
 
-        try {
-            existingCategory.setId(id);
-            Category updatedCategory = categoryRepository.save(existingCategory);
-            return modelMapper.map(updatedCategory, CategoryDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationCategoryException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        existingCategory.setId(id);
+        Category updatedCategory = categoryRepository.save(existingCategory);
+        return modelMapper.map(updatedCategory, CategoryDTO.class);
     }
 
     @Override

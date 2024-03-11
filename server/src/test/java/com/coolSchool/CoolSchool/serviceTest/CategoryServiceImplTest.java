@@ -1,7 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.exceptions.category.CategoryNotFoundException;
-import com.coolSchool.coolSchool.exceptions.category.ValidationCategoryException;
 import com.coolSchool.coolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.coolSchool.models.entity.Category;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
@@ -138,7 +137,7 @@ class CategoryServiceImplTest {
 
         when(categoryRepository.save(any(Category.class))).thenThrow(constraintViolationException);
 
-        assertThrows(ValidationCategoryException.class, () -> categoryService.createCategory(categoryDTO));
+        assertThrows(ConstraintViolationException.class, () -> categoryService.createCategory(categoryDTO));
     }
 
     @Test

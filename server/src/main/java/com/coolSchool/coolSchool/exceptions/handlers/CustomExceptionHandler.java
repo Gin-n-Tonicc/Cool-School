@@ -3,12 +3,15 @@ package com.coolSchool.coolSchool.exceptions.handlers;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.common.ApiException;
 import com.coolSchool.coolSchool.exceptions.common.InternalServerErrorException;
+import com.coolSchool.coolSchool.exceptions.common.ValidationException;
 import com.coolSchool.coolSchool.exceptions.user.UserLoginException;
 import com.coolSchool.coolSchool.models.dto.response.ExceptionResponse;
 import com.coolSchool.coolSchool.utils.ApiExceptionParser;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.transaction.TransactionException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -52,5 +55,19 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity
                 .status(apiException.getStatus())
                 .body(apiException);
+    }
+
+    @ExceptionHandler(TransactionException.class)
+    public ResponseEntity<ExceptionResponse> handleTransactionExceptions(org.springframework.transaction.TransactionException exception) {
+        if (exception.getRootCause() instanceof ConstraintViolationException) {
+            return handleConstraintValidationExceptions((ConstraintViolationException) exception.getRootCause());
+        }
+
+        return handleRuntimeExceptions(exception);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ExceptionResponse> handleConstraintValidationExceptions(ConstraintViolationException exception) {
+        return handleApiExceptions(new ValidationException(exception.getConstraintViolations()));
     }
 }

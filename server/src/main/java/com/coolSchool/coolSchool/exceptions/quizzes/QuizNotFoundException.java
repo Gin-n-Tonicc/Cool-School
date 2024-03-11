@@ -1,12 +1,11 @@
 package com.coolSchool.coolSchool.exceptions.quizzes;
 
-import com.coolSchool.coolSchool.exceptions.common.ApiException;
+import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 
-public class QuizNotFoundException extends ApiException {
+public class QuizNotFoundException extends NoSuchElementException {
     public QuizNotFoundException(MessageSource messageSource) {
-        super(messageSource.getMessage("quiz.not.found", null, LocaleContextHolder.getLocale()), HttpStatus.NOT_FOUND);
+        super(messageSource.getMessage("quiz.not.found", null, LocaleContextHolder.getLocale()));
     }
 }
