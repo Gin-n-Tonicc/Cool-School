@@ -37,10 +37,10 @@ export default function CategorySelect(props: CategorySelectProps) {
           ...theme,
           colors: {
             ...theme.colors,
-            primary: 'rgba(249, 183, 0, 1)',
-            primary25: 'rgba(249, 183, 0, 0.25)',
-            primary50: 'rgba(249, 183, 0, 0.50)',
-            primary75: 'rgba(249, 183, 0, 0.75)',
+            primary: 'rgba(244, 122, 7, 1)',
+            primary25: 'rgba(244, 122, 7, 0.25)',
+            primary50: 'rgba(244, 122, 7, 0.50)',
+            primary75: 'rgba(244, 122, 7, 0.75)',
           },
         })}
       />
