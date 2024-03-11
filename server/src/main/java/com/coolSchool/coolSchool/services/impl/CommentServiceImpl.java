@@ -3,6 +3,7 @@ package com.coolSchool.coolSchool.services.impl;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.coolSchool.exceptions.comment.CommentNotFoundException;
+import com.coolSchool.coolSchool.exceptions.comment.ValidationCommentException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
@@ -16,6 +17,7 @@ import com.coolSchool.coolSchool.repositories.BlogRepository;
 import com.coolSchool.coolSchool.repositories.CommentRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.CommentService;
+import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -85,16 +87,24 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponseDTO createComment(CommentRequestDTO commentDTO, PublicUserDTO loggedUser) {
         Blog blog = null;
 
-        commentDTO.setId(null);
-        commentDTO.setCreated_at(LocalDateTime.now());
-        commentDTO.setOwnerId(loggedUser.getId());
-        userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        try {
+            commentDTO.setId(null);
+            commentDTO.setCreated_at(LocalDateTime.now());
+            commentDTO.setOwnerId(loggedUser.getId());
+            userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
 
-        blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
-        blog.setCommentCount(blog.getCommentCount() + 1);
-        blogRepository.save(blog);
-        Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
-        return modelMapper.map(commentEntity, CommentResponseDTO.class);
+            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
+            blog.setCommentCount(blog.getCommentCount() + 1);
+            blogRepository.save(blog);
+            Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
+            return modelMapper.map(commentEntity, CommentResponseDTO.class);
+        } catch (ConstraintViolationException exception) {
+            if (blog != null) {
+                blog.setCommentCount(blog.getCommentCount() - 1);
+                blogRepository.save(blog);
+            }
+            throw new ValidationCommentException(exception.getConstraintViolations());
+        }
     }
 
     @Override
