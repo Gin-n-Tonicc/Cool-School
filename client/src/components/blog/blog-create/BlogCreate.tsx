@@ -157,9 +157,10 @@ export default function BlogCreate() {
     };
 
     const category = await recommendAICategory(body);
-    console.log(category);
 
     if (aiCategoryRes.ok) {
+      onCategoryChange(category.id);
+
       setSelectedCategory({
         value: category.id.toString(),
         label: category.name,
@@ -211,26 +212,25 @@ export default function BlogCreate() {
                       readOnly={loadingAI}
                       rows={3}></textarea>
                   </div>
-                  {canAskAI && (
-                    <button
-                      type="button"
-                      className="improve-with-ai-btn absolute right-0 text-2xl text-center flex flex-column items-center justify-items-center"
-                      style={
-                        !loadingAI
-                          ? {}
-                          : {
-                              opacity: 0.7,
-                              cursor: 'not-allowed',
-                            }
-                      }>
-                      <i
-                        className="zmdi zmdi-brush rounded-lg"
-                        onClick={onAskAIForDescription}></i>
-                      <div className="custom-tooltip absolute bg-gray-500 text-white text-sm px-3 py-1 rounded-lg">
-                        {t('blogs.create.improve.with.ai')}
-                      </div>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="improve-with-ai-btn absolute right-0 text-2xl text-center flex flex-column items-center justify-items-center"
+                    style={
+                      canAskAI && !loadingAI
+                        ? {}
+                        : {
+                            opacity: 0.7,
+                            cursor: 'not-allowed',
+                          }
+                    }
+                    disabled={!canAskAI}>
+                    <i
+                      className="zmdi zmdi-brush rounded-lg"
+                      onClick={onAskAIForDescription}></i>
+                    <div className="custom-tooltip absolute bg-gray-500 text-white text-sm px-3 py-1 rounded-lg">
+                      {t('blogs.create.improve.with.ai')}
+                    </div>
+                  </button>
                 </div>
               </FormErrorWrapper>
 
@@ -258,26 +258,25 @@ export default function BlogCreate() {
                     onCategoryChange={onCategoryChange}
                   />
 
-                  {canAskAI && (
-                    <button
-                      type="button"
-                      className="improve-with-ai-btn improve-with-ai-btn--category absolute right-0 text-2xl text-center flex flex-column items-center justify-items-center"
-                      style={
-                        !loadingAI
-                          ? {}
-                          : {
-                              opacity: 0.7,
-                              cursor: 'not-allowed',
-                            }
-                      }>
-                      <i
-                        className="zmdi zmdi-brush rounded-lg"
-                        onClick={onRecommendAICategory}></i>
-                      <div className="custom-tooltip absolute bg-gray-500 text-white text-sm px-3 py-1 rounded-lg">
-                        {t('blogs.create.ask.ai')}
-                      </div>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className="improve-with-ai-btn improve-with-ai-btn--category absolute right-0 text-2xl text-center flex flex-column items-center justify-items-center"
+                    style={
+                      canAskAI && !loadingAI
+                        ? {}
+                        : {
+                            opacity: 0.7,
+                            cursor: 'not-allowed',
+                          }
+                    }
+                    disabled={!canAskAI}>
+                    <i
+                      className="zmdi zmdi-brush rounded-lg"
+                      onClick={onRecommendAICategory}></i>
+                    <div className="custom-tooltip absolute bg-gray-500 text-white text-sm px-3 py-1 rounded-lg">
+                      {t('blogs.create.ask.ai')}
+                    </div>
+                  </button>
                 </div>
               </FormErrorWrapper>
 
@@ -287,6 +286,14 @@ export default function BlogCreate() {
                   name="signup"
                   id="signup"
                   className="btn_1"
+                  style={
+                    !loadingAI
+                      ? {}
+                      : {
+                          opacity: 0.7,
+                          cursor: 'not-allowed',
+                        }
+                  }
                   value={t('blogs.create.button')}
                 />
               </div>
