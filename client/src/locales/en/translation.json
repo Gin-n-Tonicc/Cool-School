@@ -80,7 +80,7 @@
   "footer.contact.us.address": "Address:",
   "footer.contact.us.address.text": "7700 Targovishte town, Targovishte municipality, Targovishte region, ”Cap. Danajiev” 22",
   "footer.contact.us.phone": "Phone:",
-  "footer.contact.us.phone.text": "00359 601 6-30-70",
+  "footer.contact.us.phone.text": "00 (359) 601 6-30-70",
   "footer.contact.us.email": "Email:",
   "footer.contact.us.email.text": "stefanbelis932@gmail.com",
 
@@ -91,8 +91,8 @@
   "contact.message.email": "Enter email address",
   "contact.message.subject": "Enter Subject",
   "contact.button": "SEND MESSAGE",
-  "contact.address": "Buttonwood, California.",
-  "contact.address.description": "Rosemead, CA 91770",
+  "contact.address": "Bulgaria, Targovishte municipality, Targovishte region",
+  "contact.address.description": "7700 Targovishte town, \"Cap. Danajiev\" 22",
   "contact.phone.description": "Mon to Fri 9am to 6pm",
   "contact.email.description": "Send us your query anytime!",
 
