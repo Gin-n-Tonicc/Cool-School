@@ -3,7 +3,6 @@ package com.coolSchool.coolSchool.services.impl;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.coolSchool.exceptions.comment.CommentNotFoundException;
-import com.coolSchool.coolSchool.exceptions.comment.ValidationCommentException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
@@ -103,7 +102,7 @@ public class CommentServiceImpl implements CommentService {
                 blog.setCommentCount(blog.getCommentCount() - 1);
                 blogRepository.save(blog);
             }
-            throw new ValidationCommentException(exception.getConstraintViolations());
+            throw exception;
         }
     }
 

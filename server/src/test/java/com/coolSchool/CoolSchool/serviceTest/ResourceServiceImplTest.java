@@ -1,7 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.exceptions.resource.ResourceNotFoundException;
-import com.coolSchool.coolSchool.exceptions.resource.ValidationResourceException;
 import com.coolSchool.coolSchool.models.dto.request.ResourceRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.ResourceResponseDTO;
 import com.coolSchool.coolSchool.models.entity.CourseSubsection;
