@@ -50,7 +50,11 @@ export default function CoursesResource({
 
   const handleDelete = async () => {
     if (
-      !window.confirm(`Are you sure you want to delete resource \'${name}\'`)
+      !window.confirm(
+        t('courses.resources.delete.confirm', {
+          resourceTitle: name,
+        })
+      )
     ) {
       return;
     }

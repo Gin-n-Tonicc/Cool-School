@@ -48,7 +48,9 @@ export default function CoursesListItem({
   const handleDelete = async () => {
     if (
       !window.confirm(
-        `Are you sure you want to delete subsection '${subsection.title}'`
+        t('courses.subsection.delete.confirm', {
+          subsectionTitle: subsection.title,
+        })
       )
     ) {
       return;
