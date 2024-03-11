@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CachePolicies, Res } from 'use-http';
+import { Res } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useFetch } from '../../../hooks/useFetch';
 import { IObjectWithId } from '../../../types/interfaces/common/IObjectWithId';
@@ -17,8 +17,6 @@ interface AdminTableApiProps {
   delete: boolean;
 }
 
-const baseUrl = process.env.REACT_APP_API_URL;
-
 export default function AdminTableApi(props: AdminTableApiProps) {
   const [rows, setRows] = useState<IObjectWithId[]>([]);
 
@@ -26,29 +24,18 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     response: getResponse,
     loading,
     get,
-  } = useFetch<IObjectWithId[]>(apiUrlsConfig.admin.get(props.apiPathname), {
-    cachePolicy: CachePolicies.NO_CACHE,
-  });
+  } = useFetch<IObjectWithId[]>(apiUrlsConfig.admin.get(props.apiPathname));
 
   const { response: postResponse, post } = useFetch<IObjectWithId>(
-    apiUrlsConfig.admin.post(props.apiPathname),
-    {
-      cachePolicy: CachePolicies.NO_CACHE,
-    }
+    apiUrlsConfig.admin.post(props.apiPathname)
   );
 
   const { response: putResponse, put } = useFetch<IObjectWithId>(
-    apiUrlsConfig.admin.updateDelete(props.apiPathname),
-    {
-      cachePolicy: CachePolicies.NO_CACHE,
-    }
+    apiUrlsConfig.admin.updateDelete(props.apiPathname)
   );
 
   const { response: delResponse, del } = useFetch<void>(
-    apiUrlsConfig.admin.updateDelete(props.apiPathname),
-    {
-      cachePolicy: CachePolicies.NO_CACHE,
-    }
+    apiUrlsConfig.admin.updateDelete(props.apiPathname)
   );
 
   const loadRows = useCallback(async () => {

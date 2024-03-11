@@ -10,6 +10,11 @@
   .table-admin-row {
     position: relative;
 
+    td div.table-data-content-wrapper {
+      max-height: 250px;
+      overflow-x: auto;
+    }
+
     .control-buttons {
       position: absolute;
       display: flex;

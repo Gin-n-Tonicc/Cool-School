@@ -214,7 +214,13 @@ export default function AdminTable(props: AdminTableProps) {
                     content = `[${content}]`;
                   }
 
-                  return <td key={uuidV4()}>{content}</td>;
+                  return (
+                    <td key={uuidV4()}>
+                      <div className="table-data-content-wrapper">
+                        {content}
+                      </div>
+                    </td>
+                  );
                 })}
                 <td className="control-buttons">
                   {props.update && (
