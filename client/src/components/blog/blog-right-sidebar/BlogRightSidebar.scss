@@ -1,4 +1,14 @@
 .blog_right_sidebar {
+  div.media.post_item {
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100px;
+      height: 50px;
+    }
+  }
+
   .widget_title {
     font-size: 20px;
     margin-bottom: 40px;

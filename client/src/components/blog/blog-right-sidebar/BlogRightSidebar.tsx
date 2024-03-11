@@ -10,8 +10,6 @@ export default function BlogRightSidebar() {
         <BlogSearchWidget />
         <BlogPostCategoryWidget />
         <BlogPopularPostWidget />
-        {/* <BlogTagCloudWidget /> */}
-        {/* <BlogNewsletterWidget /> */}
       </div>
     </div>
   );

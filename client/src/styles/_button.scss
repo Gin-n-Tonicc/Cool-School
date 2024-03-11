@@ -30,7 +30,6 @@
   -o-transition: all 0.4s ease-in-out;
   -webkit-transition: all 0.4s ease-in-out;
   transition: all 0.4s ease-in-out;
-  text-transform: capitalize;
   background-size: 200% auto;
   border: 1px solid transparent;
   box-shadow: 0px 12px 20px 0px rgba(255, 126, 95, 0.15);
@@ -65,7 +64,6 @@
   -o-transition: all 0.4s ease-in-out;
   -webkit-transition: all 0.4s ease-in-out;
   transition: all 0.4s ease-in-out;
-  text-transform: capitalize;
   background-size: 200% auto;
   font-size: 15px;
   font-weight: 500;
@@ -95,7 +93,6 @@
   padding: 3.5px 21px;
   border-radius: 5px;
   background: rgba(255, 102, 59, 1);
-  text-transform: capitalize;
   display: inline-block;
   border: 2px solid transparent;
   @include transform_time(0.5s);
@@ -116,7 +113,6 @@
   border-radius: 4px;
   color: $white_color;
   border: 1px solid $border_color;
-  text-transform: uppercase;
   background-color: $btn_bg;
   cursor: pointer;
   @include transform_time(0.5s);

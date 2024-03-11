@@ -255,6 +255,7 @@ export default function BlogCreate() {
                         label: x.name,
                       })) || []
                     }
+                    placeholder={t('common.category.select.placeholder')}
                     onCategoryChange={onCategoryChange}
                   />
 
