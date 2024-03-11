@@ -72,30 +72,32 @@ function UserNav(props: {
 }
 
 function AdminNav() {
+  const { t } = useTranslation();
+
   return (
     <ul className="navbar-nav align-items-center">
       <HeaderNavItem
-        text="Users"
+        text={t('admin.users')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.USERS}`}
       />
       <HeaderNavItem
-        text="Categories"
+        text={t('admin.categories')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`}
       />
       <HeaderNavItem
-        text="Blogs"
+        text={t('admin.blogs')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`}
       />
       <HeaderNavItem
-        text="Courses"
+        text={t('admin.courses')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.COURSES}`}
       />
       <HeaderNavItem
-        text="Subsections"
+        text={t('admin.subsections')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.SUBSECTIONS}`}
       />
       <HeaderNavItem
-        text="Resources"
+        text={t('admin.resources')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.RESOURCES}`}
       />
     </ul>

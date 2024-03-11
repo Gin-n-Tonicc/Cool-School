@@ -1,4 +1,5 @@
 import { FormEventHandler } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IDefaultObject } from '../../../types/interfaces/common/IDefaultObject';
 import { IObjectWithId } from '../../../types/interfaces/common/IObjectWithId';
 import AdminEditFormRow from './admin-edit-form-row/AdminEditFormRow';
@@ -22,16 +23,20 @@ interface AdminFormTitleProps {
 }
 
 function AdminFormTitle(props: AdminFormTitleProps) {
+  const { t } = useTranslation();
+
   return (
     <h1 className="text-center">
       {props.editing
-        ? `Editing record with ID=${props.currentObj?.id || '?'}`
-        : 'Create record'}
+        ? `${t('admin.edit.title.editing')}${props.currentObj?.id || '?'}`
+        : t('admin.edit.title.create')}
     </h1>
   );
 }
 
 export default function AdminEditForm(props: AdminEditFormProps) {
+  const { t } = useTranslation();
+
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
@@ -101,7 +106,7 @@ export default function AdminEditForm(props: AdminEditFormProps) {
           className="admin-btn btn_1 mt-4"
           style={{ cursor: 'pointer' }}
           type="submit">
-          <i className="fa fa-plus"></i> SAVE
+          <i className="fa fa-plus"></i> {t('admin.edit.save')}
         </button>
       </form>
     </div>

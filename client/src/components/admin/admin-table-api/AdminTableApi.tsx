@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Res } from 'use-http';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useFetch } from '../../../hooks/useFetch';
@@ -19,6 +20,7 @@ interface AdminTableApiProps {
 
 export default function AdminTableApi(props: AdminTableApiProps) {
   const [rows, setRows] = useState<IObjectWithId[]>([]);
+  const { t } = useTranslation();
 
   const {
     response: getResponse,
@@ -72,7 +74,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
       const obj = await post(data);
       return onCrud(
         postResponse,
-        `Successfully created record with ID=${obj.id}`
+        `${t('admin.api.successful.create')}${obj.id}`
       );
     },
     [postResponse, onCrud, post]
@@ -81,7 +83,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
   const onUpdate: OnUpdateFunction = useCallback(
     async (id: number, data: Object) => {
       await put(`/${id}`, data);
-      return onCrud(putResponse, `Successfully updated record with ID=${id}`);
+      return onCrud(putResponse, `${t('admin.api.successful.update')}${id}`);
     },
     [putResponse, onCrud, put]
   );
@@ -89,7 +91,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
   const onDelete: OnDeleteFunction = useCallback(
     async (id: number) => {
       await del(`/${id}`);
-      onCrud(delResponse, `Successfully deleted record with ID=${id}`);
+      onCrud(delResponse, `${t('admin.api.successful.delete')}${id}`);
     },
     [delResponse, onCrud, del]
   );

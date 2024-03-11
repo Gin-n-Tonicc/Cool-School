@@ -1,4 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { IDefaultObject } from '../../../../types/interfaces/common/IDefaultObject';
 
 export type AdminSearchValues = IDefaultObject<number | string>;
@@ -16,6 +17,7 @@ const SEPARATOR_SEARCH = '//';
 const SEPARATOR_VALUES = '=';
 
 export default function AdminTableSearch(props: AdminTableSearchProps) {
+  const { t } = useTranslation();
   const { register, handleSubmit } = useForm<AdminSearchFormValues>({
     defaultValues: {
       search: '',
@@ -65,7 +67,7 @@ export default function AdminTableSearch(props: AdminTableSearchProps) {
         {...register('search')}
         type="text"
         className="form-control"
-        placeholder="Search (col=val//)"
+        placeholder={t('admin.table.search')}
       />
     </form>
   );
