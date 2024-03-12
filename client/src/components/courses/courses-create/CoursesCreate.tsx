@@ -171,6 +171,7 @@ export default function CoursesCreate() {
                       label: x.name,
                     })) || []
                   }
+                  placeholder={t('common.category.select.placeholder')}
                   onCategoryChange={onCategoryChange}
                 />
               </FormErrorWrapper>

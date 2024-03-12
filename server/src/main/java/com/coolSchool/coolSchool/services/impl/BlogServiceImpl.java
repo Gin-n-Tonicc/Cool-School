@@ -152,7 +152,7 @@ public class BlogServiceImpl implements BlogService {
         if (loggedUser.getRole().equals(Role.ADMIN)) {
             blogDTO.setEnabled(blogDTO.isEnabled());
             if (blogDTO.isEnabled()) {
-                sendEnabledBlogEmailNotification(blogDTO.getOwnerId(), id);
+//                sendEnabledBlogEmailNotification(blogDTO.getOwnerId(), id);
                 sendSlackNotification(blogDTO, category, user, id);
             }
         } else {

@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { v4 as uuidV4 } from 'uuid';
 import { usePagination } from '../../../hooks/usePagination';
 import { IObjectWithId } from '../../../types/interfaces/common/IObjectWithId';
@@ -37,21 +38,26 @@ interface CreateButtonProps {
 }
 
 function TableTitle(props: AdminTableTitleProps) {
+  const { t } = useTranslation();
+
   return (
     <h4 className="text-blue h4">
-      {props.tableName} Table{props.isEmpty && ' - No current records'}
+      {t('admin.table.name', { tableName: props.tableName })}
+      {props.isEmpty && ` - ${t('admin.no.records')}`}
     </h4>
   );
 }
 
 function CreateButton(props: CreateButtonProps) {
+  const { t } = useTranslation();
+
   return (
     <span
       className="admin-btn btn_1"
       rel="content-y"
       role="button"
       onClick={() => props.onCreate()}>
-      <i className="fa fa-plus"></i> CREATE
+      <i className="fa fa-plus"></i> {t('admin.create.button')}
     </span>
   );
 }
@@ -89,6 +95,7 @@ function validateList(list: AdminTableProps['list']) {
 
 const PAGE_SIZE = 5;
 export default function AdminTable(props: AdminTableProps) {
+  const { t } = useTranslation();
   const validatedList = useMemo(() => validateList(props.list), [props.list]);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -178,7 +185,7 @@ export default function AdminTable(props: AdminTableProps) {
 
   const onDelete = useCallback((id: number) => {
     const confirmation = window.confirm(
-      `Are you sure you want to delete row with ID=${id}?`
+      `${t('admin.api.confirm.delete')}${id}?`
     );
 
     if (confirmation) {
@@ -214,7 +221,13 @@ export default function AdminTable(props: AdminTableProps) {
                     content = `[${content}]`;
                   }
 
-                  return <td key={uuidV4()}>{content}</td>;
+                  return (
+                    <td key={uuidV4()}>
+                      <div className="table-data-content-wrapper">
+                        {content}
+                      </div>
+                    </td>
+                  );
                 })}
                 <td className="control-buttons">
                   {props.update && (

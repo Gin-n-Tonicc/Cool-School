@@ -66,12 +66,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
     });
   };
 
-  console.log({
-    accessToken: auth.accessToken,
-    isExpired: isJwtExpired(auth.accessToken),
-    additionalInfoRequired: auth.additionalInfoRequired,
-  });
-
   const isAuthenticated =
     Boolean(auth.accessToken) && !isJwtExpired(auth.accessToken);
   const hasFinishedOAuth2 =

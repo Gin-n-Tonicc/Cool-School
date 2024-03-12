@@ -73,6 +73,11 @@
 .blog_item_img {
   position: relative;
 
+  img {
+    width: 750px;
+    height: 380px;
+  }
+
   .blog_item_date {
     position: absolute;
     bottom: -10px;

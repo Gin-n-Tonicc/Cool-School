@@ -33,6 +33,16 @@ export default function CategorySelect(props: CategorySelectProps) {
           const numberVal = isNaN(Number(value)) ? -1 : Number(value);
           props.onCategoryChange(numberVal);
         }}
+        theme={(theme) => ({
+          ...theme,
+          colors: {
+            ...theme.colors,
+            primary: 'rgba(244, 122, 7, 1)',
+            primary25: 'rgba(244, 122, 7, 0.25)',
+            primary50: 'rgba(244, 122, 7, 0.50)',
+            primary75: 'rgba(244, 122, 7, 0.75)',
+          },
+        })}
       />
     </>
   );

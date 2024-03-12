@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useErrorContext } from '../../../contexts/ErrorContext';
 import { useFetch } from '../../../hooks/useFetch';
+import { ErrorTypeEnum } from '../../../types/enums/ErrorTypeEnum';
 import { IAnswer } from '../../../types/interfaces/quizzes/IAnswer';
 import { IQuestionAndAnswers } from '../../../types/interfaces/quizzes/IQuestionAndAnswers';
 import { IQuizAttempt } from '../../../types/interfaces/quizzes/IQuizAttempt';
@@ -123,13 +124,13 @@ export default function QuizSingle(props: QuizSingleProps) {
   };
 
   const onFinish = async () => {
-    if (window.confirm('Are you sure you want to submit?')) {
+    if (window.confirm(t('quizzes.submit.confirm'))) {
       await onSubmitQuiz();
     }
   };
 
   const onTimerEnd = async () => {
-    addError('Time expired. Submitted automatically!');
+    addError(t('quizzes.submit.auto'), ErrorTypeEnum.HEADS_UP);
     await onSubmitQuiz();
   };
 

@@ -81,7 +81,7 @@ export default function ContactUs() {
                   <i className="ti-tablet"></i>
                 </span>
                 <div className="media-body">
-                  <h3>00 (440) 9865 562</h3>
+                  <h3>{t('footer.contact.us.phone.text')}</h3>
                   <p>{t('contact.phone.description')}</p>
                 </div>
               </div>
