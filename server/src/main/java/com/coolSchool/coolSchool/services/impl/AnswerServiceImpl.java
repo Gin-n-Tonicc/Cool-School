@@ -1,7 +1,7 @@
 package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.exceptions.answer.AnswerNotFoundException;
-import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
+import com.coolSchool.coolSchool.exceptions.questions.QuestionNotFoundException;
 import com.coolSchool.coolSchool.models.dto.common.AnswerDTO;
 import com.coolSchool.coolSchool.models.entity.Answer;
 import com.coolSchool.coolSchool.repositories.AnswerRepository;
@@ -46,7 +46,7 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public AnswerDTO createAnswer(AnswerDTO answerDTO) {
         answerDTO.setId(null);
-        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(() -> new NoSuchElementException(messageSource));
+        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(() -> new QuestionNotFoundException(messageSource));
 
         Answer answerEntity = answerRepository.save(modelMapper.map(answerDTO, Answer.class));
         return modelMapper.map(answerEntity, AnswerDTO.class);
@@ -59,7 +59,7 @@ public class AnswerServiceImpl implements AnswerService {
         if (existingAnswerOptional.isEmpty()) {
             throw new AnswerNotFoundException(messageSource);
         }
-        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(() -> new NoSuchElementException(messageSource));
+        questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(() -> new QuestionNotFoundException(messageSource));
 
         Answer existingAnswer = existingAnswerOptional.get();
         modelMapper.map(answerDTO, existingAnswer);

@@ -1,69 +1,252 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
+import com.coolSchool.coolSchool.enums.Role;
+import com.coolSchool.coolSchool.exceptions.comment.CommentNotFoundException;
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.common.CommentDTO;
+import com.coolSchool.coolSchool.models.dto.request.CommentRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.CommentResponseDTO;
+import com.coolSchool.coolSchool.models.entity.Blog;
 import com.coolSchool.coolSchool.models.entity.Comment;
-import com.coolSchool.coolSchool.repositories.BlogRepository;
-import com.coolSchool.coolSchool.repositories.CommentRepository;
-import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.models.entity.User;
+import com.coolSchool.coolSchool.repositories.*;
 import com.coolSchool.coolSchool.services.impl.CommentServiceImpl;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-public class CommentServiceImplTest {
-    @InjectMocks
-    private CommentServiceImpl commentService;
+@ExtendWith(MockitoExtension.class)
+class CommentServiceImplTest {
+
     @Mock
     private CommentRepository commentRepository;
     @Mock
-    private ModelMapper modelMapper;
+    private CourseRepository courseRepository;
     @Mock
     private UserRepository userRepository;
+
     @Mock
     private BlogRepository blogRepository;
     @Mock
+    private ResourceRepository resourceRepository;
+    @InjectMocks
+    private CommentServiceImpl commentService;
+
+    private ModelMapper modelMapper;
+    @Mock
     private MessageSource messageSource;
+    PublicUserDTO publicUserDTO;
 
     @BeforeEach
     void setUp() {
-        commentRepository = mock(CommentRepository.class);
+        publicUserDTO = new PublicUserDTO(1L, "user", "user", "user@gmail.com", Role.USER, "description", false);
         modelMapper = new ModelMapper();
-        userRepository = mock(UserRepository.class);
-        blogRepository = mock(BlogRepository.class);
-
         commentService = new CommentServiceImpl(commentRepository, modelMapper, userRepository, blogRepository, messageSource);
     }
 
     @Test
+    public void testDeleteComment_CommentPresent() {
+        Long commentId = 1L;
+
+        User user = new User();
+        user.setId(1L);
+        Blog blog = new Blog();
+        blog.setId(1L);
+        blog.setCommentCount(0);
+
+        Comment comment = new Comment();
+        comment.setBlogId(blog);
+        comment.setDeleted(false);
+        comment.setOwnerId(user);
+
+        Optional<Comment> commentOptional = Optional.of(comment);
+
+        when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(commentOptional);
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+
+        assertDoesNotThrow(() -> commentService.deleteComment(commentId, publicUserDTO));
+        assertTrue(comment.isDeleted());
+        verify(commentRepository, times(1)).save(comment);
+    }
+
+    @Test
     void testGetAllComments() {
-        List<Comment> comments = new ArrayList<>();
-        comments.add(new Comment());
-        comments.add(new Comment());
-        when(commentRepository.findByDeletedFalse()).thenReturn(comments);
-        List<CommentResponseDTO> commentDTOs = commentService.getAllComments();
-        Assertions.assertNotNull(commentDTOs);
-        Assertions.assertEquals(2, commentDTOs.size());
+        List<Comment> commentList = new ArrayList<>();
+        commentList.add(new Comment());
+        Mockito.when(commentRepository.findByDeletedFalse()).thenReturn(commentList);
+        List<CommentResponseDTO> result = commentService.getAllComments();
+        assertNotNull(result);
+        assertEquals(commentList.size(), result.size());
     }
 
     @Test
     void testGetCommentById() {
+        Long commentId = 1L;
         Comment comment = new Comment();
-        comment.setId(1L);
-        when(commentRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(comment));
-        CommentResponseDTO commentDTO = commentService.getCommentById(1L);
-        Assertions.assertNotNull(commentDTO);
+        Optional<Comment> commentOptional = Optional.of(comment);
+        when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(commentOptional);
+        CommentDTO result = commentService.getCommentById(commentId);
+        assertNotNull(result);
+    }
 
+    @Test
+    void testGetCommentByIdNotFound() {
+        Long commentId = 1L;
+        Optional<Comment> commentOptional = Optional.empty();
+        when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(commentOptional);
+        assertThrows(CommentNotFoundException.class, () -> commentService.getCommentById(commentId));
+    }
+
+    @Test
+    void testCreateComment() {
+        CommentRequestDTO commentDTO = new CommentRequestDTO();
+        Comment comment = modelMapper.map(commentDTO, Comment.class);
+
+        User user = new User();
+        user.setId(1L);
+        Blog blog = new Blog();
+        blog.setId(1L);
+        blog.setCommentCount(0);
+
+        comment.setBlogId(blog);
+        comment.setDeleted(false);
+        comment.setOwnerId(user);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+
+        CommentResponseDTO result = commentService.createComment(commentDTO, publicUserDTO);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testUpdateComment() {
+        Long commentId = 1L;
+        CommentRequestDTO updatedCommentDTO = new CommentRequestDTO();
+        Comment existingComment = new Comment();
+        Optional<Comment> existingCommentOptional = Optional.of(existingComment);
+
+        User user = new User();
+        user.setId(1L);
+        Blog blog = new Blog();
+        blog.setId(1L);
+        blog.setCommentCount(0);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(existingCommentOptional);
+        when(commentRepository.save(any(Comment.class))).thenReturn(existingComment);
+
+        CommentDTO result = commentService.updateComment(commentId, updatedCommentDTO, publicUserDTO);
+        assertNotNull(result);
+    }
+
+    @Test
+    void testUpdateCommentNotFound() {
+        Long nonExistentCommentId = 99L;
+        CommentRequestDTO updatedCommentDTO = new CommentRequestDTO();
+        when(commentRepository.findByIdAndDeletedFalse(nonExistentCommentId)).thenReturn(Optional.empty());
+        assertThrows(CommentNotFoundException.class, () -> commentService.updateComment(nonExistentCommentId, updatedCommentDTO, new PublicUserDTO()));
+    }
+
+    @Test
+    void testDeleteCommentNotFound() {
+        Long nonExistentCommentId = 99L;
+
+        when(commentRepository.findByIdAndDeletedFalse(nonExistentCommentId)).thenReturn(Optional.empty());
+
+        assertThrows(CommentNotFoundException.class, () -> commentService.deleteComment(nonExistentCommentId, new PublicUserDTO()));
+    }
+
+    @Test
+    void testCreateComment_ValidationException() {
+        CommentRequestDTO commentDTO = new CommentRequestDTO();
+        commentDTO.setOwnerId(null);
+        commentDTO.setComment(null);
+
+        User user = new User();
+        user.setId(1L);
+        Blog blog = new Blog();
+        blog.setId(1L);
+        blog.setCommentCount(0);
+
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
+
+        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(commentRepository.save(any(Comment.class))).thenThrow(constraintViolationException);
+
+        assertThrows(ConstraintViolationException.class, () -> commentService.createComment(commentDTO, publicUserDTO));
+    }
+
+    @Test
+    void testUpdateComment_ValidationException() {
+        Long commentId = 1L;
+        CommentRequestDTO commentDTO = new CommentRequestDTO();
+        commentDTO.setComment(null);
+        Comment existingComment = new Comment();
+        Optional<Comment> existingCommentOptional = Optional.of(existingComment);
+
+        User user = new User();
+        user.setId(2L);
+
+        Blog blog = new Blog();
+        blog.setId(2L);
+        blog.setCommentCount(0);
+
+        publicUserDTO.setRole(Role.ADMIN);
+
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
+
+        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(existingCommentOptional);
+        when(commentRepository.save(any(Comment.class))).thenThrow(constraintViolationException);
+
+        assertThrows(ConstraintViolationException.class, () -> commentService.updateComment(commentId, commentDTO, publicUserDTO));
+    }
+
+    @Test
+    void testCreateComment_DataIntegrityViolationException() {
+        CommentRequestDTO commentDTO = new CommentRequestDTO();
+        commentDTO.setId(1L);
+        commentDTO.setComment("Test Comment");
+
+        User user = new User();
+        user.setId(2L);
+
+        Blog blog = new Blog();
+        blog.setId(2L);
+        blog.setCommentCount(0);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(commentRepository.save(any(Comment.class))).thenThrow(CommentNotFoundException.class);
+
+        assertThrows(CommentNotFoundException.class, () -> commentService.createComment(commentDTO, publicUserDTO));
     }
 
     @Test

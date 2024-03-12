@@ -2,6 +2,7 @@ package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.coolSchool.exceptions.questions.QuestionNotFoundException;
+import com.coolSchool.coolSchool.exceptions.quizzes.QuizNotFoundException;
 import com.coolSchool.coolSchool.models.dto.common.QuestionDTO;
 import com.coolSchool.coolSchool.models.entity.Question;
 import com.coolSchool.coolSchool.repositories.QuestionRepository;
@@ -46,7 +47,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public QuestionDTO createQuestion(QuestionDTO questionDTO) {
         questionDTO.setId(null);
-        quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(() -> new NoSuchElementException(messageSource));
+        quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(() -> new QuizNotFoundException(messageSource));
         Question questionEntity = questionRepository.save(modelMapper.map(questionDTO, Question.class));
         return modelMapper.map(questionEntity, QuestionDTO.class);
     }
@@ -58,7 +59,7 @@ public class QuestionServiceImpl implements QuestionService {
         if (existingQuestionOptional.isEmpty()) {
             throw new QuestionNotFoundException(messageSource);
         }
-        quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(() -> new NoSuchElementException(messageSource));
+        quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(() -> new QuizNotFoundException(messageSource));
         Question existingQuestion = existingQuestionOptional.get();
         modelMapper.map(questionDTO, existingQuestion);
 

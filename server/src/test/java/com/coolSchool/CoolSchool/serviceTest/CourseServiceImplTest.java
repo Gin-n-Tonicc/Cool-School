@@ -1,5 +1,7 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
+import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.request.UserCourseRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.CourseResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Course;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
@@ -9,6 +11,7 @@ import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.UserCourseService;
 import com.coolSchool.coolSchool.services.impl.CourseServiceImpl;
 import com.coolSchool.coolSchool.slack.SlackNotifier;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,9 +21,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class CourseServiceImplTest {
 
@@ -28,23 +36,10 @@ class CourseServiceImplTest {
     private CourseRepository courseRepository;
 
     @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private CategoryRepository categoryRepository;
-
-    @Mock
     private UserCourseService userCourseService;
 
     @Mock
     private MessageSource messageSource;
-
-    @Mock
-    private SlackNotifier slackNotifier;
-
-    @Mock
-    private FileRepository fileRepository;
-
     @InjectMocks
     private CourseServiceImpl courseService;
     @Mock
@@ -63,5 +58,31 @@ class CourseServiceImplTest {
         List<CourseResponseDTO> courses = courseService.getAllCourses();
 
         assertFalse(courses.isEmpty());
+    }
+
+    @Test
+    void canEnrollCourse_UserNotEnrolled_ReturnsTrue() {
+        Long courseId = 1L;
+        PublicUserDTO loggedUser = new PublicUserDTO();
+        loggedUser.setId(1L);
+        when(userCourseService.getAllUserCourses()).thenReturn(List.of());
+
+        boolean canEnroll = courseService.canEnrollCourse(courseId, loggedUser);
+
+        Assertions.assertTrue(canEnroll);
+    }
+
+    @Test
+    void enrollCourse_ValidInput_EnrollsUser() {
+        Long courseId = 1L;
+        PublicUserDTO loggedUser = new PublicUserDTO();
+        loggedUser.setId(1L);
+        UserCourseRequestDTO userCourseRequestDTO = new UserCourseRequestDTO();
+        userCourseRequestDTO.setCourseId(courseId);
+        userCourseRequestDTO.setUserId(loggedUser.getId());
+
+        courseService.enrollCourse(courseId, loggedUser);
+
+        verify(userCourseService, times(1)).createUserCourse(userCourseRequestDTO);
     }
 }
