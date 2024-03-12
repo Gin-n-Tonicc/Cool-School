@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
+import com.coolSchool.coolSchool.exceptions.category.CategoryCreateException;
 import com.coolSchool.coolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.coolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.coolSchool.models.entity.Category;
@@ -16,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.*;
 
@@ -158,5 +160,17 @@ class CategoryServiceImplTest {
 
         assertThrows(ConstraintViolationException.class, () -> categoryService.updateCategory(categoryId, categoryDTO));
     }
+
+    @Test
+    void testCreateCategory_DataIntegrityViolationException() {
+        CategoryDTO categoryDTO = new CategoryDTO();
+        categoryDTO.setId(1L);
+        categoryDTO.setName("Test Category");
+
+        when(categoryRepository.save(any(Category.class))).thenThrow(DataIntegrityViolationException.class);
+
+        assertThrows(CategoryCreateException.class, () -> categoryService.createCategory(categoryDTO));
+    }
+
 }
 

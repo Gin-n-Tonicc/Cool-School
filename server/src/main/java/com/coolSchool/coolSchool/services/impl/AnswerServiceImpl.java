@@ -7,7 +7,6 @@ import com.coolSchool.coolSchool.models.entity.Answer;
 import com.coolSchool.coolSchool.repositories.AnswerRepository;
 import com.coolSchool.coolSchool.repositories.QuestionRepository;
 import com.coolSchool.coolSchool.services.AnswerService;
-import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -20,14 +19,12 @@ public class AnswerServiceImpl implements AnswerService {
     private final AnswerRepository answerRepository;
     private final ModelMapper modelMapper;
     private final QuestionRepository questionRepository;
-    private final Validator validator;
     private final MessageSource messageSource;
 
-    public AnswerServiceImpl(AnswerRepository answerRepository, ModelMapper modelMapper, QuestionRepository questionRepository, Validator validator, MessageSource messageSource) {
+    public AnswerServiceImpl(AnswerRepository answerRepository, ModelMapper modelMapper, QuestionRepository questionRepository, MessageSource messageSource) {
         this.answerRepository = answerRepository;
         this.modelMapper = modelMapper;
         this.questionRepository = questionRepository;
-        this.validator = validator;
         this.messageSource = messageSource;
     }
 
