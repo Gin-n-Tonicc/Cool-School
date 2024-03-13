@@ -1,10 +1,11 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.enums.Role;
+import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.review.ReviewNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
-import com.coolSchool.coolSchool.models.dto.response.CourseResponseDTO;
-import com.coolSchool.coolSchool.models.dto.response.ReviewResponseDTO;
+import com.coolSchool.coolSchool.models.dto.common.ReviewDTO;
+import com.coolSchool.coolSchool.models.dto.request.ReviewRequestDTO;
 import com.coolSchool.coolSchool.models.entity.Course;
 import com.coolSchool.coolSchool.models.entity.Review;
 import com.coolSchool.coolSchool.models.entity.User;
@@ -13,6 +14,8 @@ import com.coolSchool.coolSchool.repositories.ReviewRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.CourseService;
 import com.coolSchool.coolSchool.services.impl.ReviewServiceImpl;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,102 +25,187 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceImplTest {
 
+    PublicUserDTO publicUserDTO;
     @Mock
     private ReviewRepository reviewRepository;
-
-    @Mock
-    private CourseService courseService;
-
-    @Mock
-    private UserRepository userRepository;
-
     @Mock
     private CourseRepository courseRepository;
-
     @Mock
+    private UserRepository userRepository;
+    @InjectMocks
+    private ReviewServiceImpl reviewService;
+    @Mock
+    private CourseService courseService;
     private ModelMapper modelMapper;
     @Mock
     private MessageSource messageSource;
 
-    @InjectMocks
-    private ReviewServiceImpl reviewService;
-
     @BeforeEach
     void setUp() {
+        publicUserDTO = new PublicUserDTO(1L, "user", "user", "user@gmail.com", Role.USER, "description", false);
         modelMapper = new ModelMapper();
-        userRepository = mock(UserRepository.class);
-        courseRepository = mock(CourseRepository.class);
-        messageSource = mock(MessageSource.class);
-
         reviewService = new ReviewServiceImpl(reviewRepository, courseService, userRepository, courseRepository, modelMapper, messageSource);
     }
 
     @Test
-    void testGetAllReviews() {
-        Long courseId = 1L;
-        CourseResponseDTO courseDTO = new CourseResponseDTO();
-        when(courseService.getCourseById(courseId)).thenReturn(courseDTO);
+    public void testDeleteReview_ReviewPresent() {
+        Long reviewId = 1L;
 
-        List<Review> reviews = List.of(new Review(), new Review());
-        when(reviewRepository.findAllByCourse(any())).thenReturn(reviews);
+        User user = new User();
+        user.setId(1L);
 
-        List<ReviewResponseDTO> result = reviewService.getAllReviews(courseId);
+        Course course = new Course();
+        course.setId(1L);
 
-        assertNotNull(result);
-        assertEquals(2, result.size());
+        Review review = new Review();
+        review.setDeleted(false);
+        review.setUser(user);
+        review.setCourse(course);
+
+        Optional<Review> reviewOptional = Optional.of(review);
+        when(reviewRepository.findByIdAndDeletedFalse(reviewId)).thenReturn(reviewOptional);
+        when(reviewRepository.save(any(Review.class))).thenReturn(review);
+
+        assertDoesNotThrow(() -> reviewService.deleteReview(reviewId, publicUserDTO));
+        assertTrue(review.isDeleted());
+        verify(reviewRepository, times(1)).save(review);
     }
 
     @Test
     void testGetReviewById() {
         Long reviewId = 1L;
         Review review = new Review();
-        when(reviewRepository.findByIdAndDeletedFalse(reviewId)).thenReturn(Optional.of(review));
+        Optional<Review> reviewOptional = Optional.of(review);
+        when(reviewRepository.findByIdAndDeletedFalse(reviewId)).thenReturn(reviewOptional);
+        ReviewDTO result = reviewService.getReviewById(reviewId);
+        assertNotNull(result);
+    }
 
-        ReviewResponseDTO result = reviewService.getReviewById(reviewId);
+    @Test
+    void testGetReviewByIdNotFound() {
+        Long reviewId = 1L;
+        Optional<Review> reviewOptional = Optional.empty();
+        when(reviewRepository.findByIdAndDeletedFalse(reviewId)).thenReturn(reviewOptional);
+        assertThrows(ReviewNotFoundException.class, () -> reviewService.getReviewById(reviewId));
+    }
+
+    @Test
+    void testCreateReview() {
+        ReviewRequestDTO reviewDTO = new ReviewRequestDTO();
+
+        User user = new User();
+        user.setId(1L);
+
+        Course course = new Course();
+        course.setId(1L);
+
+        Review review = new Review();
+        review.setDeleted(false);
+        review.setUser(user);
+        review.setText("text");
+        review.setCourse(course);
+        review = modelMapper.map(reviewDTO, Review.class);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
+        when(courseRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(course));
+        when(reviewRepository.save(any(Review.class))).thenReturn(review);
+
+        ReviewDTO result = reviewService.createReview(reviewDTO, publicUserDTO);
 
         assertNotNull(result);
     }
 
     @Test
-    void testDeleteReview() {
-        Review review = new Review();
-        review.setId(1L);
-        review.setDeleted(false);
-        review.setCourse(new Course());
+    void testDeleteReviewNotFound() {
+        Long nonExistentReviewId = 99L;
+
+        when(reviewRepository.findByIdAndDeletedFalse(nonExistentReviewId)).thenReturn(Optional.empty());
+
+        assertThrows(ReviewNotFoundException.class, () -> reviewService.deleteReview(nonExistentReviewId, publicUserDTO));
+    }
+
+    @Test
+    void testCreateReview_ValidationException() {
+        ReviewRequestDTO reviewDTO = new ReviewRequestDTO();
+        reviewDTO.setText(null);
+
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        Set<ConstraintViolation<?>> violations = Collections.singleton(violation);
+
+        ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
+        when(courseRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Course()));
+        when(reviewRepository.save(any(Review.class))).thenThrow(constraintViolationException);
+
+        assertThrows(ConstraintViolationException.class, () -> reviewService.createReview(reviewDTO, publicUserDTO));
+    }
+
+    @Test
+    void testCreateReview_ReviewNotFoundException() {
+        ReviewRequestDTO reviewDTO = new ReviewRequestDTO();
+        reviewDTO.setId(1L);
+        reviewDTO.setText("Test Review");
+
+        publicUserDTO.setRole(Role.ADMIN);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
+        when(courseRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Course()));
+        when(reviewRepository.save(any(Review.class))).thenThrow(ReviewNotFoundException.class);
+
+        assertThrows(ReviewNotFoundException.class, () -> reviewService.createReview(reviewDTO, publicUserDTO));
+    }
+
+    @Test
+    void testCreateReview_AccessDeniedException() {
+        ReviewRequestDTO reviewDTO = new ReviewRequestDTO();
+        reviewDTO.setId(1L);
+        reviewDTO.setUserId(2L);
+        reviewDTO.setText("Test Review");
+
+        publicUserDTO.setRole(Role.TEACHER);
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
+        when(courseRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Course()));
+        when(reviewRepository.save(any(Review.class))).thenThrow(AccessDeniedException.class);
+
+        assertThrows(AccessDeniedException.class, () -> reviewService.createReview(reviewDTO, publicUserDTO));
+    }
+
+    @Test
+    void testDeleteReview_AccessDeniedException() {
+        ReviewRequestDTO reviewDTO = new ReviewRequestDTO();
+        reviewDTO.setId(1L);
+        reviewDTO.setUserId(2L);
+        reviewDTO.setText("Test Review");
+
+        publicUserDTO.setRole(Role.TEACHER);
 
         User user = new User();
         user.setId(1L);
 
+        Course course = new Course();
+        course.setId(1L);
+
+        Review review = new Review();
+        review.setDeleted(false);
         review.setUser(user);
+        review.setCourse(course);
 
-        PublicUserDTO loggedUser = new PublicUserDTO();
-        loggedUser.setId(1L);
-        loggedUser.setRole(Role.USER);
+        when(reviewRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(review));
+        when(reviewRepository.save(any(Review.class))).thenThrow(AccessDeniedException.class);
 
-        when(reviewRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(review));
-
-        reviewService.deleteReview(1L, loggedUser);
-
-        verify(reviewRepository, times(1)).save(review);
-        assert (review.isDeleted());
-    }
-
-    @Test
-    void testDeleteReview_WhenReviewNotFound() {
-        PublicUserDTO loggedUser = new PublicUserDTO();
-        loggedUser.setId(1L);
-
-        when(reviewRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.empty());
-
-        assertThrows(ReviewNotFoundException.class, () -> reviewService.deleteReview(1L, loggedUser));
+        assertThrows(AccessDeniedException.class, () -> reviewService.deleteReview(1L, publicUserDTO));
     }
 }

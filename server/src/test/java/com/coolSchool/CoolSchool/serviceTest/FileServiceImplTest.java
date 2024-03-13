@@ -1,7 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.exceptions.common.InternalServerErrorException;
-import com.coolSchool.coolSchool.exceptions.files.DirectoryCreationException;
 import com.coolSchool.coolSchool.exceptions.files.FileNotFoundException;
 import com.coolSchool.coolSchool.exceptions.files.UnsupportedFileTypeException;
 import com.coolSchool.coolSchool.models.entity.File;

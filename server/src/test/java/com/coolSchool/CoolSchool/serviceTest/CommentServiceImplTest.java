@@ -9,7 +9,9 @@ import com.coolSchool.coolSchool.models.dto.response.CommentResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Blog;
 import com.coolSchool.coolSchool.models.entity.Comment;
 import com.coolSchool.coolSchool.models.entity.User;
-import com.coolSchool.coolSchool.repositories.*;
+import com.coolSchool.coolSchool.repositories.BlogRepository;
+import com.coolSchool.coolSchool.repositories.CommentRepository;
+import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.impl.CommentServiceImpl;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -33,24 +35,18 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CommentServiceImplTest {
 
+    PublicUserDTO publicUserDTO;
     @Mock
     private CommentRepository commentRepository;
     @Mock
-    private CourseRepository courseRepository;
-    @Mock
     private UserRepository userRepository;
-
     @Mock
     private BlogRepository blogRepository;
-    @Mock
-    private ResourceRepository resourceRepository;
     @InjectMocks
     private CommentServiceImpl commentService;
-
     private ModelMapper modelMapper;
     @Mock
     private MessageSource messageSource;
-    PublicUserDTO publicUserDTO;
 
     @BeforeEach
     void setUp() {

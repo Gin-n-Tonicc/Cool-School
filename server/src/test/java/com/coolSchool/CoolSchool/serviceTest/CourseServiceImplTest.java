@@ -4,13 +4,9 @@ import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.UserCourseRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.CourseResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Course;
-import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.repositories.CourseRepository;
-import com.coolSchool.coolSchool.repositories.FileRepository;
-import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.UserCourseService;
 import com.coolSchool.coolSchool.services.impl.CourseServiceImpl;
-import com.coolSchool.coolSchool.slack.SlackNotifier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,10 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
