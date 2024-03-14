@@ -187,6 +187,7 @@ class CourseSubsectionServiceImplTest {
 
         assertThrows(CourseSubsectionNotFoundException.class, () -> courseSubsectionService.createCourseSubsection(courseSubsectionDTO));
     }
+
     @Test
     void testGetAllByCourse() {
         Long courseId = 1L;

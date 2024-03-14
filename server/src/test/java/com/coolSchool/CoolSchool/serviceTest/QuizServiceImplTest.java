@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -41,6 +41,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class QuizServiceImplTest {
+    ModelMapper modelMapper;
     @InjectMocks
     private QuizServiceImpl quizService;
     @Mock
@@ -65,13 +66,10 @@ class QuizServiceImplTest {
     private UserQuizProgressRepository userQuizProgressRepository;
     @Mock
     private MessageSource messageSource;
-
     @InjectMocks
     private QuizAttemptTimer quizAttemptTimer;
-
     @Mock
     private UserCourseRepository userCourseRepository;
-    ModelMapper modelMapper;
 
     @BeforeEach
     void setUp() {
@@ -455,6 +453,7 @@ class QuizServiceImplTest {
         verify(userAnswerRepository, never()).save(any());
         verify(quizAttemptRepository, never()).save(any());
     }
+
     @Test
     void testGetAllUserAttemptsInAQuiz_Success() {
         PublicUserDTO publicUserDTO = new PublicUserDTO();
@@ -473,6 +472,7 @@ class QuizServiceImplTest {
 
         assertEquals(2, quizAttemptDTOs.size());
     }
+
     @Test
     @Transactional
     void testAutoSaveUserProgress_Success() {
@@ -502,6 +502,7 @@ class QuizServiceImplTest {
 
         assertEquals(0, userQuizProgressDTOs.size());
     }
+
     @Test
     @Transactional
     void testDeleteAutoSavedProgress_Success() {
@@ -550,6 +551,7 @@ class QuizServiceImplTest {
         Assertions.assertEquals(3L, result.get(1).getId());
         Assertions.assertEquals(BigDecimal.valueOf(85), result.get(1).getTotalMarks());
     }
+
     @Test
     void testCalculateTimeLeftForQuizAttempt() {
         long quizAttemptId = 1L;
@@ -567,6 +569,7 @@ class QuizServiceImplTest {
 
         assertEquals(expectedTimeLeft, timeLeft);
     }
+
     @Test
     void testCalculateQuizSuccessPercentageForCurrentUser() {
         long userId = 1L;

@@ -6,6 +6,8 @@ import com.coolSchool.coolSchool.exceptions.review.ReviewNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.ReviewDTO;
 import com.coolSchool.coolSchool.models.dto.request.ReviewRequestDTO;
+import com.coolSchool.coolSchool.models.dto.response.CourseResponseDTO;
+import com.coolSchool.coolSchool.models.dto.response.ReviewResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Course;
 import com.coolSchool.coolSchool.models.entity.Review;
 import com.coolSchool.coolSchool.models.entity.User;
@@ -25,9 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -207,5 +207,40 @@ class ReviewServiceImplTest {
         when(reviewRepository.save(any(Review.class))).thenThrow(AccessDeniedException.class);
 
         assertThrows(AccessDeniedException.class, () -> reviewService.deleteReview(1L, publicUserDTO));
+    }
+
+    @Test
+    void testGetAllReviews() {
+        Long courseId = 123L;
+
+        CourseResponseDTO courseDTO = new CourseResponseDTO();
+        List<Review> reviews = new ArrayList<>();
+
+        when(courseService.getCourseById(courseId)).thenReturn(courseDTO);
+        when(reviewRepository.findAllByCourse(any(Course.class))).thenReturn(reviews);
+
+        List<ReviewResponseDTO> responseDTOs = reviewService.getAllReviews(courseId);
+
+        assertNotNull(responseDTOs);
+    }
+
+    @Test
+    void testCreateReview_WithNullLoggedUser_ThrowsAccessDeniedException() {
+        ReviewRequestDTO reviewDTO = new ReviewRequestDTO();
+
+        publicUserDTO = null;
+
+        assertThrows(AccessDeniedException.class, () -> reviewService.createReview(reviewDTO, publicUserDTO));
+    }
+
+    @Test
+    void testDeleteReview_WithNullLoggedUser_ThrowsAccessDeniedException() {
+        Long id = 123L;
+
+        publicUserDTO = null;
+
+        when(reviewRepository.findByIdAndDeletedFalse(id)).thenReturn(Optional.of(new Review()));
+
+        assertThrows(AccessDeniedException.class, () -> reviewService.deleteReview(id, publicUserDTO));
     }
 }

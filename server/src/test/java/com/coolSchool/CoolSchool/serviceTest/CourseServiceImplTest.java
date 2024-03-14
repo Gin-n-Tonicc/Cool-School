@@ -4,8 +4,10 @@ import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
+import com.coolSchool.coolSchool.models.dto.request.CourseRequestDTO;
 import com.coolSchool.coolSchool.models.dto.request.UserCourseRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.CourseResponseDTO;
+import com.coolSchool.coolSchool.models.entity.Category;
 import com.coolSchool.coolSchool.models.entity.Course;
 import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
@@ -24,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 
 import java.util.List;
@@ -59,6 +62,8 @@ class CourseServiceImplTest {
     @Mock
     private FileRepository fileRepository;
     private PublicUserDTO publicUserDTO;
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
 
     @BeforeEach
@@ -103,6 +108,7 @@ class CourseServiceImplTest {
 
         verify(userCourseService, times(1)).createUserCourse(userCourseRequestDTO);
     }
+
     @Test
     public void testDeleteCourse_AccessDenied() {
         Course course = new Course();
@@ -126,5 +132,96 @@ class CourseServiceImplTest {
             courseService.deleteCourse(1L, publicUserDTO);
         });
         verify(courseRepository, never()).save(any());
+    }
+
+    @Test
+    public void testGetCourseById_Success() {
+        Course course = new Course();
+        course.setId(1L);
+        when(courseRepository.findByIdAndDeletedFalse(1L)).thenReturn(Optional.of(course));
+
+        CourseResponseDTO responseDTO = courseService.getCourseById(1L);
+
+        Assertions.assertEquals(course.getId(), responseDTO.getId());
+    }
+
+    @Test
+    public void testGetCourseById_CourseNotFound() {
+        when(courseRepository.findByIdAndDeletedFalse(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(CourseNotFoundException.class, () -> {
+            courseService.getCourseById(1L);
+        });
+    }
+
+    @Test
+    public void testCreateCourse_AccessDenied() {
+        CourseRequestDTO courseDTO = new CourseRequestDTO();
+
+        assertThrows(AccessDeniedException.class, () -> {
+            courseService.createCourse(courseDTO, publicUserDTO);
+        });
+    }
+
+    @Test
+    void testUpdateCourse_Success() {
+        PublicUserDTO publicUserDTO = new PublicUserDTO();
+        publicUserDTO.setId(1L);
+
+        CourseRequestDTO courseRequestDTO = new CourseRequestDTO();
+        courseRequestDTO.setId(1L);
+        courseRequestDTO.setUserId(publicUserDTO.getId());
+        courseRequestDTO.setCategoryId(1L);
+
+        Course existingCourse = new Course();
+        existingCourse.setId(courseRequestDTO.getId());
+
+        when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new User()));
+        when(categoryRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(new Category()));
+        when(courseRepository.findByIdAndDeletedFalse(anyLong())).thenReturn(Optional.of(existingCourse));
+        when(courseRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        CourseResponseDTO responseDTO = courseService.updateCourse(courseRequestDTO.getId(), courseRequestDTO, publicUserDTO);
+
+        Assertions.assertNotNull(responseDTO);
+        Assertions.assertEquals(courseRequestDTO.getId(), responseDTO.getId());
+    }
+
+    @Test
+    void testSendSlackNotification() {
+        Long userId = 1L;
+        Long categoryId = 1L;
+        Long courseId = 1L;
+        String courseName = "Course 1";
+        String authorFirstname = "John";
+        String authorLastname = "Doe";
+        String categoryName = "Category 1";
+        String expectedMessage = "New course created in Cool School:\n" +
+                "Name: " + courseName + "\n" +
+                "Author: " + authorFirstname + " " + authorLastname + "\n" +
+                "Category: " + categoryName + "\n" +
+                "Read more: " + frontendUrl + "/courses/" + courseId;
+
+        User author = new User();
+        author.setId(userId);
+        author.setFirstname(authorFirstname);
+        author.setLastname(authorLastname);
+
+        Category category = new Category();
+        category.setId(categoryId);
+        category.setName(categoryName);
+
+        Course course = new Course();
+        course.setId(courseId);
+        course.setName(courseName);
+        course.setUser(author);
+        course.setCategory(category);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(author));
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+
+        courseService.sendSlackNotification(course);
+
+        verify(slackNotifier, times(1)).sendNotification(expectedMessage);
     }
 }

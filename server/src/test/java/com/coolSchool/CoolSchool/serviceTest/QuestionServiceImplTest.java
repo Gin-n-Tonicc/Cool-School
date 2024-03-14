@@ -181,6 +181,7 @@ class QuestionServiceImplTest {
 
         assertThrows(QuestionNotFoundException.class, () -> questionService.createQuestion(questionDTO));
     }
+
     @Test
     void testGetQuestionsByQuizId() {
         Long quizId = 1L;

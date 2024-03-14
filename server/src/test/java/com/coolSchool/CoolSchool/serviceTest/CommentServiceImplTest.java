@@ -5,6 +5,7 @@ import com.coolSchool.coolSchool.exceptions.comment.CommentNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.CommentDTO;
 import com.coolSchool.coolSchool.models.dto.request.CommentRequestDTO;
+import com.coolSchool.coolSchool.models.dto.response.CommentGetByBlogResponseDTO;
 import com.coolSchool.coolSchool.models.dto.response.CommentResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Blog;
 import com.coolSchool.coolSchool.models.entity.Comment;
@@ -256,4 +257,28 @@ class CommentServiceImplTest {
         Assertions.assertEquals(2, commentDTOs.size());
     }
 
+    @Test
+    void testGetCommentByBlogId() {
+        Long blogId = 1L;
+        int n = 5;
+        List<Comment> comments = new ArrayList<>();
+
+        when(commentRepository.findCommentsByBlogAndNotDeleted(anyLong())).thenReturn(comments);
+
+        CommentGetByBlogResponseDTO responseDTO = commentService.getCommentByBlogId(blogId, n);
+
+        assertNotNull(responseDTO);
+        assertEquals(comments.size(), responseDTO.getTotalComments());
+        assertTrue(responseDTO.getComments().size() <= n);
+    }
+
+    @Test
+    void testGetCommentsByMostLiked() {
+        List<Comment> comments = new ArrayList<>();
+        when(commentRepository.findAllByMostLiked()).thenReturn(comments);
+
+        List<CommentResponseDTO> responseDTOs = commentService.getCommentsByMostLiked();
+
+        assertNotNull(responseDTOs);
+    }
 }
