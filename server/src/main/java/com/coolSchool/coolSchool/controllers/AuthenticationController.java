@@ -36,6 +36,13 @@ import java.util.Calendar;
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_REFRESH;
 
+/**
+ * Controller class for handling authentication-related operations.
+ * JWT (access and refresh token);
+ * OAuth2;
+ * Email confirmation;
+ * Forgotten password.
+ */
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -61,6 +68,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationResponse);
     }
 
+    //Endpoint for email confirmation during registration
     @GetMapping("/registrationConfirm")
     public ResponseEntity<String> confirmRegistration(@RequestParam("token") String token, HttpServletResponse httpServletResponse) throws IOException {
 
@@ -83,7 +91,7 @@ public class AuthenticationController {
     }
 
     @RateLimited
-    @PostMapping("/authenticate")
+    @PostMapping("/authenticate") // login
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse servletResponse) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException(messageSource));
@@ -99,7 +107,7 @@ public class AuthenticationController {
     }
 
     @RateLimited
-    @PutMapping("/complete-oauth")
+    @PutMapping("/complete-oauth") // After registering with Google we need more information about the user, described in CompleteOAuthRequest
     public ResponseEntity<AuthenticationResponse> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         PublicUserDTO currentLoggedUser = (PublicUserDTO) servletRequest.getAttribute(JwtAuthenticationFilter.userKey);
 
@@ -119,7 +127,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationResponse);
     }
 
-    @GetMapping("/me")
+    @GetMapping("/me") // Retrieves current user information.
     public ResponseEntity<AuthenticationResponse> getMe(HttpServletRequest request, HttpServletResponse response) {
         String jwtToken = CookieHelper.readCookie(AUTH_COOKIE_KEY_JWT, request.getCookies()).orElse(null);
 
@@ -134,7 +142,7 @@ public class AuthenticationController {
     }
 
     @RateLimited
-    @PostMapping("/forgot-password")
+    @PostMapping("/forgot-password") // Sends link to email so the user can change their password
     public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(messageSource));
         eventPublisher.publishEvent(new OnPasswordResetRequestEvent(user, appBaseUrl));

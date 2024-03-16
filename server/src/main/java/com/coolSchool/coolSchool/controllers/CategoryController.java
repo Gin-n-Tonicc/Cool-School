@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+/**
+ * A controller class for handling category-related operations.
+ * CRUD
+ */
 @RestController
 @RequestMapping("/api/v1/categories")
 public class CategoryController {

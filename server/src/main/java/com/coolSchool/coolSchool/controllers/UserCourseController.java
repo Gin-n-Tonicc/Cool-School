@@ -10,7 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+/**
+ * A controller class for handling user-course-related operations.
+ * Many-to-many relation between the users and courses.
+ */
 @RestController
 @RequestMapping("/api/v1/userCourses")
 public class UserCourseController {

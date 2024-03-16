@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+// Controller class for handling operations related to course subsections.
 @RestController
 @RequestMapping("/api/v1/courseSubsections")
 public class CourseSubsectionController {
@@ -26,7 +26,7 @@ public class CourseSubsectionController {
         return ResponseEntity.ok(courseSubsectionService.getAllCourseSubsections());
     }
 
-    @GetMapping("/course/{id}")
+    @GetMapping("/course/{id}") // Retrieves all course subsections by course ID.
     public ResponseEntity<List<CourseSubsectionResponseDTO>> getAllCategoriesByCourseId(@PathVariable(name = "id") Long id) {
         return ResponseEntity.ok(courseSubsectionService.getAllByCourse(id));
     }

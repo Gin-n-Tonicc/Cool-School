@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/** Controller class for handling operations related to questions.
+ * CRUD
+ */
 @RestController
 @RequestMapping("/api/v1/questions")
 public class QuestionController {
