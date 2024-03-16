@@ -6,6 +6,7 @@ export interface HomeFeatureProps {
   featureDescription: string;
 }
 
+// The component that displays one single learning features
 export default function HomeFeature(props: HomeFeatureProps) {
   return (
     <div className="col-sm-6 col-xl-3">

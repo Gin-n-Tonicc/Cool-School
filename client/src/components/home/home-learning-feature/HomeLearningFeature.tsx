@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import '../styles/common_learning.scss';
 import advanceFeatureImg from './images/advance_feature_img.png';
 
+// The component that displays information about our learning features
 export default function HomeLearningFeature() {
   const { t } = useTranslation();
 

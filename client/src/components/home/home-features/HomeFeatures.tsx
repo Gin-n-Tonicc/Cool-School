@@ -4,6 +4,7 @@ import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './HomeFeatures.scss';
 import HomeFeature from './home-feature/HomeFeature';
 
+// The component that displays information about our learning features
 export default function HomeFeatures() {
   const { t } = useTranslation();
 
