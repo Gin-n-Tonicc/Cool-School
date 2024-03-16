@@ -42,6 +42,8 @@ export default function AdminEditForm(props: AdminEditFormProps) {
 
     type K = string | number | boolean | (string | number | boolean)[] | null;
     const formData = Object.fromEntries(new FormData(e.currentTarget));
+
+    // Map the string values to the appropriate types (ex: number, string, arr, etc.)
     const submitData: IDefaultObject<K> = Object.entries(formData).reduce(
       (acc, [key, value]) => {
         let newValue: K = value.toString();
@@ -73,11 +75,13 @@ export default function AdminEditForm(props: AdminEditFormProps) {
 
     let passed: Promise<boolean>;
 
+    // Decide which handler to use
     if (props.editing) {
       passed = props.onUpdate(props.currentObj.id, submitData);
     } else if (props.creating) {
       passed = props.onCreate(submitData);
     } else {
+      // Empty promise so we comply with the required type
       passed = Promise.resolve(true);
     }
 

@@ -10,8 +10,12 @@ interface AdminEditFormRowProps {
 
 export default function AdminEditFormRow(props: AdminEditFormRowProps) {
   let value = props.value;
+
+  // Make so if a value is an array or an ID cell to be disabled;
   const shouldDisable = Array.isArray(value) || props.columnName.includes('Id');
+
   if (Array.isArray(value)) {
+    // Make array more readable
     value = `[${value}]`;
   }
 

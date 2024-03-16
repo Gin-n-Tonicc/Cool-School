@@ -24,6 +24,7 @@ export default function AdminTableSearch(props: AdminTableSearchProps) {
     },
   });
 
+  // How the separators work:
   // id{separator1}1{separator2}firstName{separator1}Mike{separator2}lastName{separator1}Ehrmantraut
   // id=1//firstName=Mike//lastName=Ehrmantraut
   const onSubmit: SubmitHandler<AdminSearchFormValues> = (

@@ -106,6 +106,7 @@ export default function AdminTable(props: AdminTableProps) {
   const { list, currentPage, pages, togglePage, nextPage, previousPage } =
     usePagination<IObjectWithId>(filteredList, PAGE_SIZE);
 
+  // Grab the columns from the list
   const [columns, columnsLowercased] = useMemo(() => {
     let columns: string[];
 
@@ -120,20 +121,26 @@ export default function AdminTable(props: AdminTableProps) {
 
   const onSearch: SubmitHandler<AdminSearchValues> = useCallback((v) => {
     const filteredList = props.list.filter((x) => {
+      // Check if some search value mismatches an object from the list
+      // after which if mismatches remove the object from possible results
       for (const key in x) {
         if (v[key]) {
+          // String search
           if (isNaN(x[key])) {
             const baseString = (x[key] as string).trim().toLowerCase();
 
             if (!baseString.includes(`${v[key]}`)) {
               return false;
             }
+
+            // Number search
           } else if (v[key] !== x[key]) {
             return false;
           }
         }
       }
 
+      // Matched the criteria, keep it!
       return true;
     });
 
@@ -188,6 +195,7 @@ export default function AdminTable(props: AdminTableProps) {
       `${t('admin.api.confirm.delete')}${id}?`
     );
 
+    // Delete API Call
     if (confirmation) {
       props.onDelete(id);
     }

@@ -14,6 +14,8 @@ export default function AdminTablePagination(props: AdminTablePaginationProps) {
           <span className="sr-only">Previous</span>
         </a>
       </li>
+
+      {/* Add the page number buttons */}
       {[...Array(props.pages)].map((_, i) => {
         const page = i + 1;
         let classNames = 'page-link';

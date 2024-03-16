@@ -40,6 +40,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     apiUrlsConfig.admin.updateDelete(props.apiPathname)
   );
 
+  // Seed data from the get request
   const loadRows = useCallback(async () => {
     const data = await get();
 
@@ -56,15 +57,16 @@ export default function AdminTableApi(props: AdminTableApiProps) {
 
   const onCrud = useCallback(
     async (response: Res<any>, message: string) => {
+      // Start loading, alert the message and then wait the request to finish
       if (response.ok) {
         const promise = loadRows();
         window.alert(message);
 
         await promise;
-        return true;
       }
 
-      return false;
+      // Return whether the request has passed successfully
+      return response.ok;
     },
     [loadRows]
   );
@@ -72,6 +74,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
   const onCreate: OnCreateFunction = useCallback(
     async (data: Object) => {
       const obj = await post(data);
+
       return onCrud(
         postResponse,
         `${t('admin.api.successful.create')}${obj.id}`
