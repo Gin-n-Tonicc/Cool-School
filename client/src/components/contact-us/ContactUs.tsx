@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next';
 import './ContactUs.scss';
 import ContactUsBreadcrumb from './contact-us-breadcrumb/ContactUsBreadcrumb';
 
+// The component that displays the contact us page
+// which contains some info about us and a form that sends an email to us
 export default function ContactUs() {
   const { t } = useTranslation();
 

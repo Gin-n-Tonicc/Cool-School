@@ -9,11 +9,10 @@ import { getRefreshCookie } from '../../utils/cookieUtils';
 import { initialAuthUtils } from '../../utils/initialAuthUtils';
 import { isJwtExpired } from '../../utils/jwtUtils';
 
+// The component that is responsible for the useFetch hook options
 export default function HttpProvider({ children }: PropsWithChildren) {
   const { isAuthenticated, user, removeJwt, removeRefresh } = useAuthContext();
-
   const { addError } = useErrorContext();
-
   const { get } = useFetch<IUser>(apiUrlsConfig.auth.refreshToken());
 
   const removeTokensIfExpired = () => {
@@ -32,6 +31,7 @@ export default function HttpProvider({ children }: PropsWithChildren) {
 
   const options: Partial<CustomOptions> = {
     interceptors: {
+      // Request interceptor (before sending the request)
       request: async ({ options, url }) => {
         const pathname = new URL(url || '').pathname;
 
@@ -46,9 +46,11 @@ export default function HttpProvider({ children }: PropsWithChildren) {
           await refreshToken();
         }
 
+        // Include cookies
         options.credentials = 'include';
         return options;
       },
+      // Response interceptor (After receiving the response, before sending it to the user)
       response: async ({ response }) => {
         if (!response.ok) {
           if (

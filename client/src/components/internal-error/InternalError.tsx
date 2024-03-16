@@ -1,5 +1,6 @@
 import './InternalError.scss';
 
+// The component that displays the internal error page
 export default function InternalError() {
   return (
     <section className="error-container">

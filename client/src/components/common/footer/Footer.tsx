@@ -4,6 +4,8 @@ import logo from '../../../images/logo.png';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './Footer.scss';
 
+// The component that displays a information
+// about us and the web app positioned at the bottom of the page
 export default function Footer() {
   const { t } = useTranslation();
 

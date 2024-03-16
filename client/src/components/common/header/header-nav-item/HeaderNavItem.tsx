@@ -5,6 +5,8 @@ export interface HeaderNavItemProps {
   pathName: string;
 }
 
+// The component that displays a single navbar link
+// which change styles based on the location the client is on
 export default function HeaderNavItem(props: HeaderNavItemProps) {
   const location = useLocation();
   let classNames = 'nav-item ';

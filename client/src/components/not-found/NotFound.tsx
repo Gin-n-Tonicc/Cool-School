@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { PagesEnum } from '../../types/enums/PagesEnum';
 import './NotFound.scss';
 
+// The component that displays the notfound page which links to home
 export default function NotFound() {
   return (
     <div id="notfound">

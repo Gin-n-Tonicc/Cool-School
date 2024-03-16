@@ -13,6 +13,7 @@ interface CategorySelectProps {
   customOnChange?: (v: string | undefined) => void;
 }
 
+// The component that displays a dropdown with values based on the props
 export default function CategorySelect(props: CategorySelectProps) {
   return (
     <>
