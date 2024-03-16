@@ -4,7 +4,12 @@ import org.springframework.http.MediaType;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * Enumeration representing supported file types along with their corresponding extensions and media types.
+ * This class is necessary to provide a centralized way to manage and identify file types in the application.
+ * It helps in mapping file extensions to their corresponding media types, which is useful for handling file uploads,
+ * downloads, and processing based on their types.
+ */
 public enum FileType {
     PDF("pdf", MediaType.APPLICATION_PDF),
     JPEG("jpg", MediaType.IMAGE_JPEG),
@@ -35,7 +40,6 @@ public enum FileType {
     public static MediaType getMediaTypeForExtension(String extension) {
         return FILE_TYPE_MEDIA_TYPE_MAP.getOrDefault(extension.toLowerCase(), MediaType.APPLICATION_OCTET_STREAM);
     }
-
     public static boolean isSupportedExtension(String extension) {
         return FILE_TYPE_MEDIA_TYPE_MAP.containsKey(extension.toLowerCase());
     }

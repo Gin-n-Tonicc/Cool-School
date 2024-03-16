@@ -10,7 +10,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.coolSchool.coolSchool.enums.Permission.*;
-
+/**
+ * Enumeration representing different roles in the application.
+ * Each role has a set of associated permissions.
+ * Roles in out application: ADMIN, TEACHER AND STUDENT
+ */
 @Getter
 @RequiredArgsConstructor
 public enum Role {
