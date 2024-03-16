@@ -10,6 +10,8 @@ import signUpImg from './signup-image.jpg';
 
 export default function Register() {
   const { t } = useTranslation();
+
+  // Keep the redirectTo searchParam (might get passed to login)
   const redirectTo = useUrlSearchParam('redirect');
 
   return (
@@ -18,7 +20,7 @@ export default function Register() {
         <div className="signup-content">
           <div className="signup-form">
             <h2 className="form-title">{t('register.register')}</h2>
-            <RegisterForm redirectTo={redirectTo} />
+            <RegisterForm />
           </div>
           <div className="signup-image">
             <figure>

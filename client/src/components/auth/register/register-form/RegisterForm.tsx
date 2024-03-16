@@ -11,10 +11,6 @@ import { IUser } from '../../../../types/interfaces/auth/IUser';
 import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../../common/form-input/FormInput';
 
-type RegisterFormProps = {
-  redirectTo: string | null;
-};
-
 type Inputs = {
   'First Name': string;
   'Last Name': string;
@@ -27,7 +23,7 @@ type Inputs = {
   role: RolesEnum;
 };
 
-export default function RegisterForm({ redirectTo }: RegisterFormProps) {
+export default function RegisterForm() {
   const { t } = useTranslation();
   const { auth: validators } = useValidators();
   const { addError } = useErrorContext();
@@ -62,6 +58,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
 
   const formValues = watch();
 
+  // Ensure that both passwords are equal
   useEffect(() => {
     const areEqual = formValues.Password === formValues['Repeat your password'];
     const hasError = Boolean(errors['Repeat your password']);
@@ -80,6 +77,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
     }
   }, [errors, formValues, setError, clearErrors]);
 
+  // Register user and, on success, show a message that an email is sent
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     await post({
       firstname: data['First Name'].trim(),

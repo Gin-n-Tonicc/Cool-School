@@ -62,6 +62,8 @@ function CreateButton(props: CreateButtonProps) {
   );
 }
 
+// Extract ID from objects and array of objects
+// For better visualization
 function validateList(list: AdminTableProps['list']) {
   for (let i = 0; i < list.length; i++) {
     const obj = list[i];
@@ -210,6 +212,7 @@ export default function AdminTable(props: AdminTableProps) {
       <div className="table-responsive">
         <table className="table table-striped">
           <thead>
+            {/* Display the columns */}
             <tr>
               {columns.map((x) => (
                 <th scope="col" key={x}>
@@ -219,6 +222,7 @@ export default function AdminTable(props: AdminTableProps) {
             </tr>
           </thead>
           <tbody>
+            {/* Display paginated list */}
             {list.map((x) => (
               <tr className="table-admin-row" key={x.id}>
                 {Object.values(x).map((x) => {
@@ -238,12 +242,14 @@ export default function AdminTable(props: AdminTableProps) {
                   );
                 })}
                 <td className="control-buttons">
+                  {/* On update button */}
                   {props.update && (
                     <a onClick={onUpdate.bind(null, x.id)}>
                       <i className="fas fa-pen"></i>
                     </a>
                   )}
 
+                  {/* On delete button */}
                   {props.delete && (
                     <a onClick={onDelete.bind(null, x.id)}>
                       <i className="fas fa-minus-circle"></i>
@@ -257,6 +263,7 @@ export default function AdminTable(props: AdminTableProps) {
       </div>
       <div>
         <div className="d-flex flex-row justify-content-between">
+          {/* Pagination buttons (back, 1, 2, ..., next) */}
           <AdminTablePagination
             currentPage={currentPage}
             pages={pages}
@@ -264,6 +271,8 @@ export default function AdminTable(props: AdminTableProps) {
             previousPage={previousPage}
             nextPage={nextPage}
           />
+
+          {/* Search Form */}
           <AdminTableSearch
             onSubmit={onSearch}
             columnsLowercased={columnsLowercased}

@@ -97,6 +97,7 @@ export default function FinishRegisterForm() {
         rules={validators.ADDRESS_VALIDATIONS}
       />
 
+      {/* No error message for role selection (there will always be a selected role) */}
       <FormErrorWrapper message={undefined}>
         <div className="form-check-inline">
           <input

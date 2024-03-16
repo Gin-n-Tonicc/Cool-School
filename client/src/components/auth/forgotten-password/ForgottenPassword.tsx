@@ -59,6 +59,7 @@ export default function ForgottenPassword() {
     }
   };
 
+  // Send reset password email
   const onEmailSend = async () => {
     await forgotPasswordPost();
 
@@ -71,6 +72,7 @@ export default function ForgottenPassword() {
     }
   };
 
+  // Reset password
   const onPasswordChange = async () => {
     await resetPasswordPost();
 

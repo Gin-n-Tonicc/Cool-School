@@ -98,6 +98,7 @@ export default function AdminEditForm(props: AdminEditFormProps) {
         onSubmit={onSubmit}
         className="d-flex flex-column align-items-center mt-4">
         <div className="w-100">
+          {/* Add an input field for each column */}
           {props.columns.map((x) => (
             <AdminEditFormRow
               key={x}

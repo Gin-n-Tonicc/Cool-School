@@ -5,6 +5,7 @@ interface AdminTablePaginationProps extends PaginationProps {}
 export default function AdminTablePagination(props: AdminTablePaginationProps) {
   return (
     <ul className="pagination admin-pagination">
+      {/* Previous page button */}
       <li className="page-item">
         <a
           className="page-link"
@@ -15,7 +16,7 @@ export default function AdminTablePagination(props: AdminTablePaginationProps) {
         </a>
       </li>
 
-      {/* Add the page number buttons */}
+      {/* Page number buttons */}
       {[...Array(props.pages)].map((_, i) => {
         const page = i + 1;
         let classNames = 'page-link';
@@ -33,6 +34,8 @@ export default function AdminTablePagination(props: AdminTablePaginationProps) {
           </li>
         );
       })}
+
+      {/* Next Page Button */}
       <li className="page-item">
         <a
           className="page-link"

@@ -35,6 +35,7 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
     mode: 'onChange',
   });
 
+  // Login user, reset form and redirect
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const user = await post({
       email: data.Email.trim(),

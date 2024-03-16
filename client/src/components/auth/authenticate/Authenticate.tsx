@@ -3,6 +3,7 @@ import useAuthenticate from '../../../hooks/useAuthenticate';
 import Spinner from '../../common/spinner/Spinner';
 
 export default function Authenticate({ children }: PropsWithChildren) {
+  // Authenticate user
   const { loading } = useAuthenticate();
 
   return <>{loading ? <Spinner /> : children}</>;

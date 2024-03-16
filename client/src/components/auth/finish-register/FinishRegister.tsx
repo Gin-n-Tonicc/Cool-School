@@ -12,6 +12,7 @@ export default function FinishRegister() {
   const { hasFinishedOAuth2, user } = useAuthContext();
   const navigate = useNavigate();
 
+  // Allow only not fully registered oauth2 users to finish their registration
   useEffect(() => {
     if (initialAuthUtils.hasFinishedInitialAuth() && hasFinishedOAuth2) {
       navigate(PagesEnum.Home);
