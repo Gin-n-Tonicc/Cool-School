@@ -1,10 +1,7 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.config.schedulers.QuizAttemptTimer;
-import com.coolSchool.coolSchool.exceptions.quizzes.MultipleCorrectAnswersException;
-import com.coolSchool.coolSchool.exceptions.quizzes.NoMoreAttemptsQuizException;
-import com.coolSchool.coolSchool.exceptions.quizzes.QuizNotFoundException;
-import com.coolSchool.coolSchool.exceptions.quizzes.QuizTimeNotValidException;
+import com.coolSchool.coolSchool.exceptions.quizzes.*;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
 import com.coolSchool.coolSchool.models.entity.*;
@@ -33,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -582,5 +580,13 @@ class QuizServiceImplTest {
 
         List<UserCourseDTO> userCourseDTOs = quizService.calculateQuizSuccessPercentageForCurrentUser(publicUserDTO);
         assertEquals(0, userCourseDTOs.size());
+    }
+    @Test
+    void testGetQuizAttemptDetails_NotFound() {
+        Long quizAttemptId = 1L;
+
+        when(quizAttemptRepository.findById(quizAttemptId)).thenReturn(Optional.empty());
+
+        assertThrows(QuizAttemptNotFoundException.class, () -> quizService.getQuizAttemptDetails(quizAttemptId));
     }
 }
