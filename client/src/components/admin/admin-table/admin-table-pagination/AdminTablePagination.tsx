@@ -35,7 +35,7 @@ export default function AdminTablePagination(props: AdminTablePaginationProps) {
         );
       })}
 
-      {/* Next Page Button */}
+      {/* Next page button */}
       <li className="page-item">
         <a
           className="page-link"

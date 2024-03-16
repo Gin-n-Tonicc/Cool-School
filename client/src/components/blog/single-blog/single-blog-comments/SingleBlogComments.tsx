@@ -6,6 +6,7 @@ interface SingleBlogCommentsProps extends ICommentsByBlogResponse {
   loadMoreComments: Function;
 }
 
+// The component that displays the most recent comments
 export default function SingleBlogComments(props: SingleBlogCommentsProps) {
   const { t } = useTranslation();
   const areAllCommentsLoaded = props.comments.length === props.totalComments;

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { apiUrlsConfig } from '../../../config/apiUrls';
-import { PagesEnum } from '../../../types/enums/PagesEnum';
+import { apiUrlsConfig } from '../../../../config/apiUrls';
+import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import './BlogItem.scss';
 
 export interface BlogItemProps {
@@ -14,9 +14,11 @@ export interface BlogItemProps {
   id: number;
 }
 
+// Single blog component
 export default function BlogItem(props: BlogItemProps) {
   const { t } = useTranslation();
 
+  // Get month and day from date
   const month = props.date.toLocaleString('en-US', { month: 'short' });
   const day = props.date.getDate();
 
@@ -34,7 +36,9 @@ export default function BlogItem(props: BlogItemProps) {
         </span>
       </div>
 
+      {/* Show blog data */}
       <div className="blog_details">
+        {/* Link to single blog page */}
         <Link
           className="d-inline-block"
           to={PagesEnum.SingleBlog.replace(':id', props.id.toString())}>

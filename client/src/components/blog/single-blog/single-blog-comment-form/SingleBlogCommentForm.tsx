@@ -10,13 +10,16 @@ interface SingleBlogCommentFormProps {
   refreshComments: Function;
 }
 
+// The component that displays the comment creation form
+// and handles it using a submit handler
 export default function SingleBlogCommentForm(
   props: SingleBlogCommentFormProps
 ) {
   const { t } = useTranslation();
   const { user } = useAuthContext();
-  const { post } = useFetch<IComment>(apiUrlsConfig.comments.post);
+  const { response, post } = useFetch<IComment>(apiUrlsConfig.comments.post);
 
+  // Post the new comment after if successful refresh the comments and reset the form
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
@@ -30,8 +33,10 @@ export default function SingleBlogCommentForm(
       liked_users: [],
     });
 
-    props.refreshComments();
-    form.reset();
+    if (response.ok) {
+      props.refreshComments();
+      form.reset();
+    }
   };
 
   return (

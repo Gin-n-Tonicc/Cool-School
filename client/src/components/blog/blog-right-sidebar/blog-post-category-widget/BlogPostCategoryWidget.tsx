@@ -5,14 +5,17 @@ import { ICategory } from '../../../../types/interfaces/common/ICategory';
 import './BlogPostCategoryWidget.scss';
 import BlogPostCategory from './blog-post-category/BlogPostCategory';
 
+// The widget that contains all of the possible categories of blogs
 export default function BlogPostCategoryWidget() {
   const { t } = useTranslation();
 
+  // Fetch the categories
   const { data: categories } = useFetch<ICategory[]>(
     apiUrlsConfig.categories.get,
     []
   );
 
+  // Display the categories
   return (
     <aside className="single_sidebar_widget post_category_widget">
       <h4 className="widget_title">{t('blogs.categories')}</h4>
