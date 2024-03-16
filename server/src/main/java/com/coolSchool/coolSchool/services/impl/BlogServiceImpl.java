@@ -190,7 +190,6 @@ public class BlogServiceImpl implements BlogService {
                 + "Take a look at: " + blogLink + "\n\n"
                 + "Best regards,\n"
                 + "Cool School Team!";
-
         sendEmail(recipientAddress, subject, content);
     }
 
@@ -248,7 +247,7 @@ public class BlogServiceImpl implements BlogService {
         throw new BadRequestException(messageSource);
     }
 
-    private void sendEmail(String to, String subject, String text) {
+    public void sendEmail(String to, String subject, String text) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {

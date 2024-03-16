@@ -144,7 +144,7 @@ public class CourseServiceImpl implements CourseService {
         throw new CourseNotFoundException(messageSource);
     }
 
-    private void sendSlackNotification(Course course) {
+    public void sendSlackNotification(Course course) {
         User author = userRepository.findById(course.getUser().getId()).orElseThrow(() -> new UserNotFoundException(messageSource));
         Category category = categoryRepository.findById(course.getCategory().getId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
 
