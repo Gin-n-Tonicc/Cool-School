@@ -30,12 +30,14 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public List<AnswerDTO> getAllAnswers() {
+        // Retrieve all non-deleted answers from the repository and map them to DTOs
         List<Answer> answers = answerRepository.findByDeletedFalse();
         return answers.stream().map(answer -> modelMapper.map(answer, AnswerDTO.class)).toList();
     }
 
     @Override
     public AnswerDTO getAnswerById(Long id) {
+        // Retrieve the answer by ID if it exists and is not deleted, otherwise throw exception
         Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(id);
         if (answer.isPresent()) {
             return modelMapper.map(answer.get(), AnswerDTO.class);
@@ -45,6 +47,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerDTO createAnswer(AnswerDTO answerDTO) {
+        // Create a new answer after validating the associated question ID
         answerDTO.setId(null);
         questionRepository.findByIdAndDeletedFalse(answerDTO.getQuestionId()).orElseThrow(() -> new QuestionNotFoundException(messageSource));
 
@@ -54,6 +57,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerDTO updateAnswer(Long id, AnswerDTO answerDTO) {
+        // Update an existing answer after ensuring it exists and the associated question ID is valid
         Optional<Answer> existingAnswerOptional = answerRepository.findByIdAndDeletedFalse(id);
 
         if (existingAnswerOptional.isEmpty()) {
@@ -71,6 +75,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public void deleteAnswer(Long id) {
+        // Soft delete an answer by setting its 'deleted' flag to true
         Optional<Answer> answer = answerRepository.findByIdAndDeletedFalse(id);
         if (answer.isPresent()) {
             answer.get().setDeleted(true);
@@ -81,11 +86,13 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     public List<AnswerDTO> getCorrectAnswersByQuestionId(Long questionId) {
+        // Retrieve all correct answers for a given question and map them to DTOs
         List<Answer> correctAnswers = answerRepository.findCorrectAnswersByQuestionId(questionId);
         return correctAnswers.stream().map(answer -> modelMapper.map(answer, AnswerDTO.class)).toList();
     }
 
     public List<AnswerDTO> getAnswersByQuestionId(Long questionId) {
+        // Retrieve all answers for a given question and map them to DTOs
         List<Answer> answers = answerRepository.findAnswersByQuestionId(questionId);
         return answers.stream().map(answer -> modelMapper.map(answer, AnswerDTO.class)).toList();
     }

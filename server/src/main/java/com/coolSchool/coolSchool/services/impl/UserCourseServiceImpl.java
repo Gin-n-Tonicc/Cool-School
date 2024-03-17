@@ -53,6 +53,7 @@ public class UserCourseServiceImpl implements UserCourseService {
 
     @Override
     public UserCourseResponseDTO createUserCourse(UserCourseRequestDTO userCourseDTO) {
+        // Check if the relation user-course already exists
         if (userCourseRepository.existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId())) {
             throw new UserCourseAlreadyExistsException(messageSource);
         }
@@ -92,6 +93,7 @@ public class UserCourseServiceImpl implements UserCourseService {
     public void deleteUserCourse(Long id) {
         Optional<UserCourse> userCourse = userCourseRepository.findByIdAndDeletedFalse(id);
         if (userCourse.isPresent()) {
+            // Soft delete
             userCourse.get().setDeleted(true);
             userCourseRepository.save(userCourse.get());
         } else {

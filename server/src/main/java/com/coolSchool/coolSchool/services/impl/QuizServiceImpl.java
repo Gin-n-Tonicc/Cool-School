@@ -74,6 +74,14 @@ public class QuizServiceImpl implements QuizService {
         return quizDTO;
     }
 
+    /**
+     * Retrieves a quiz with questions and answers by its ID.
+     *
+     * @param id     The ID of the quiz.
+     * @param userId The ID of the user.
+     * @return The DTO containing quiz details, questions, and answers.
+     * @throws QuizNotFoundException If the quiz is not found.
+     */
     @Override
     public QuizQuestionsAnswersDTO getQuizById(Long id, Long userId) {
         Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new QuizNotFoundException(messageSource));
@@ -111,6 +119,12 @@ public class QuizServiceImpl implements QuizService {
         return new QuizQuestionsAnswersDTO(quizDTO, questionAndAnswersList, userQuizProgressDTOS);
     }
 
+    /**
+     * Retrieves a list of quizzes by subsection ID.
+     *
+     * @param subsectionId The ID of the subsection.
+     * @return A list of DTOs containing quiz details.
+     */
     @Override
     public List<QuizDTO> getQuizzesBySubsectionId(Long subsectionId) {
         List<Quiz> quizzes = quizRepository.findBySubsectionIdAndDeletedFalse(subsectionId);
@@ -124,6 +138,13 @@ public class QuizServiceImpl implements QuizService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Creates a new quiz with the provided quiz data.
+     *
+     * @param quizData The DTO containing quiz details and associated questions with answers.
+     * @return The DTO representing the created quiz.
+     * @throws MultipleCorrectAnswersException if multiple correct answers are found for a single question.
+     */
     @Override
     public QuizDTO createQuiz(QuizDataDTO quizData) {
         QuizDTO quizDTO = quizData.getQuizDTO();
@@ -159,6 +180,15 @@ public class QuizServiceImpl implements QuizService {
         return modelMapper.map(savedQuiz, QuizDTO.class);
     }
 
+    /**
+     * Updates an existing quiz with the provided quiz data.
+     *
+     * @param quizId           The ID of the quiz to be updated.
+     * @param updatedQuizData  The DTO containing updated quiz details and associated questions with answers.
+     * @return The DTO representing the updated quiz.
+     * @throws QuizNotFoundException              if the quiz with the specified ID is not found.
+     * @throws CourseSubsectionNotFoundException if the associated course subsection is not found.
+     */
     @Override
     public QuizDTO updateQuiz(Long quizId, QuizDataDTO updatedQuizData) {
         QuizDTO updatedQuizDTO = updatedQuizData.getQuizDTO();
@@ -195,7 +225,12 @@ public class QuizServiceImpl implements QuizService {
         return modelMapper.map(savedQuiz, QuizDTO.class);
     }
 
-
+    /**
+     * Deletes a quiz along with its associated questions, answers, and attempts.
+     *
+     * @param id The ID of the quiz to delete.
+     * @throws QuizNotFoundException if the quiz with the specified ID is not found.
+     */
     @Override
     public void deleteQuiz(Long id) {
         Quiz quiz = quizRepository.findByIdAndDeletedFalse(id).orElseThrow(() -> new QuizNotFoundException(messageSource));
@@ -215,6 +250,17 @@ public class QuizServiceImpl implements QuizService {
         quizRepository.save(quiz);
     }
 
+    /**
+     * Initiates a quiz attempt for a user, validates quiz availability, time, and attempt limit.
+     *
+     * @param quizId The ID of the quiz to be attempted.
+     * @param userId The ID of the user attempting the quiz.
+     * @return The DTO representing the quiz attempt.
+     * @throws QuizNotFoundException            if the quiz with the specified ID is not found.
+     * @throws NoMoreAttemptsQuizException      if the user has exceeded the attempt limit for the quiz.
+     * @throws QuizTimeNotValidException        if the current time is outside the quiz availability window.
+     * @throws TimeLimitForQuizExceededException if the time limit for the quiz has exceeded.
+     */
     @Override
     public QuizAttemptDTO takeQuiz(Long quizId, Long userId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(messageSource));
@@ -253,6 +299,18 @@ public class QuizServiceImpl implements QuizService {
         return modelMapper.map(quizAttempt, QuizAttemptDTO.class);
     }
 
+    /**
+     * Submits a quiz attempt with user answers, calculates total marks, and marks the attempt as completed.
+     *
+     * @param quizId      The ID of the quiz being attempted.
+     * @param userAnswers The list of user answers submitted for the quiz.
+     * @param userId      The ID of the user submitting the quiz.
+     * @param attemptId   The ID of the quiz attempt.
+     * @return The DTO representing the result of the quiz attempt.
+     * @throws QuizNotFoundException             if the quiz with the specified ID is not found.
+     * @throws QuizTimeNotValidException         if the current time is outside the quiz availability window.
+     * @throws QuizAttemptNotFoundException      if the quiz attempt with the specified ID is not found.
+     */
     @Override
     public QuizResultDTO submitQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId, Long attemptId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new QuizNotFoundException(messageSource));
@@ -295,6 +353,13 @@ public class QuizServiceImpl implements QuizService {
                 userAnswers, savedQuizAttempt.getTotalMarks(), savedQuizAttempt.getAttemptNumber(), 0L, 0L, savedQuizAttempt.isCompleted()));
     }
 
+    /**
+     * Retrieves details of a quiz attempt including the time left.
+     *
+     * @param quizAttemptId The ID of the quiz attempt.
+     * @return The DTO representing the details of the quiz attempt.
+     * @throws QuizAttemptNotFoundException if the quiz attempt with the specified ID is not found.
+     */
     @Override
     public QuizAttemptDTO getQuizAttemptDetails(Long quizAttemptId) {
         QuizAttempt quizAttempt = quizAttemptRepository.findById(quizAttemptId)
@@ -308,6 +373,13 @@ public class QuizServiceImpl implements QuizService {
         return quizAttemptDTO;
     }
 
+    /**
+     * Retrieves all quiz attempts made by a user for a particular quiz.
+     *
+     * @param quizId         The ID of the quiz.
+     * @param publicUserDTO  The DTO representing the public user.
+     * @return The list of DTOs representing the quiz attempts.
+     */
     @Override
     public List<QuizAttemptDTO> getAllUserAttemptsInAQuiz(Long quizId, PublicUserDTO publicUserDTO) {
         List<QuizAttempt> quizAttempts = quizAttemptRepository.findByQuizIdAndUserId(quizId, publicUserDTO.getId());
@@ -317,6 +389,18 @@ public class QuizServiceImpl implements QuizService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Automatically saves the user's progress during a quiz attempt.
+     *
+     * @param quizId        The ID of the quiz.
+     * @param questionId    The ID of the question.
+     * @param answerId      The ID of the selected answer.
+     * @param userId        The ID of the user.
+     * @param quizAttemptId The ID of the quiz attempt.
+     * @return The list of DTOs representing the user's quiz progress.
+     * @throws QuizAttemptNotFoundException if the quiz attempt with the specified ID is not found.
+     * @throws TimeLimitForQuizExceededException if the time limit for the quiz has been exceeded.
+     */
     @Override
     @Transactional
     public List<UserQuizProgressDTO> autoSaveUserProgress(Long quizId, Long questionId, Long answerId, Long userId, Long quizAttemptId) {
@@ -343,6 +427,11 @@ public class QuizServiceImpl implements QuizService {
         return getAllUserProgressForQuiz(quizId);
     }
 
+    /**
+     * Calculates the remaining time in seconds for a quiz attempt.
+     *
+     * @param quizAttempt The quiz attempt for which to calculate the remaining time.
+     */
     public void calculateRemainingTimeInSeconds(QuizAttempt quizAttempt) {
         Quiz quiz = quizAttempt.getQuiz();
 
@@ -365,12 +454,25 @@ public class QuizServiceImpl implements QuizService {
         quizAttemptRepository.save(quizAttempt);
     }
 
+    /**
+     * Deletes the auto-saved progress of a user in a quiz
+     * (when the user finished their quiz, so we don't keep necessary information in out database).
+     *
+     * @param userId The ID of the user.
+     * @param quizId The ID of the quiz.
+     */
     @Override
     @Transactional
     public void deleteAutoSavedProgress(Long userId, Long quizId) {
         userQuizProgressRepository.deleteByUserIdAndQuizId(userId, quizId);
     }
 
+    /**
+     * Retrieves the highest scores of a user in all quizzes.
+     *
+     * @param userId The ID of the user.
+     * @return The list of DTOs representing the highest scores in quizzes.
+     */
     @Override
     public List<QuizAttemptDTO> getAllUserHighestScoresInQuizzes(Long userId) {
         List<QuizAttempt> quizAttempts = quizAttemptRepository.findByUserId(userId);
@@ -397,6 +499,13 @@ public class QuizServiceImpl implements QuizService {
         return highestScores;
     }
 
+    /**
+     * Calculates the time left in minutes for a quiz attempt.
+     *
+     * @param quizAttemptId       The ID of the quiz attempt.
+     * @param quizDurationInMinutes The duration of the quiz in minutes.
+     * @return The time left in minutes for the quiz attempt.
+     */
     public long calculateTimeLeftForQuizAttempt(Long quizAttemptId, int quizDurationInMinutes) {
         QuizAttempt quizAttempt = quizAttemptRepository.findById(quizAttemptId)
                 .orElseThrow(() -> new QuizAttemptNotFoundException(messageSource));
@@ -407,6 +516,12 @@ public class QuizServiceImpl implements QuizService {
         return Math.max(timeLeft, 0);
     }
 
+    /**
+     * Calculates the quiz success percentage for the current user.
+     *
+     * @param publicUserDTO The DTO representing the public user.
+     * @return The list of DTOs representing user course details with quiz success percentage.
+     */
     @Override
     public List<UserCourseDTO> calculateQuizSuccessPercentageForCurrentUser(PublicUserDTO publicUserDTO) {
         List<QuizAttempt> quizAttempts = quizAttemptRepository.findByUserId(publicUserDTO.getId());
@@ -458,6 +573,12 @@ public class QuizServiceImpl implements QuizService {
         return userCourseDTOs;
     }
 
+    /**
+     * Retrieves all user progress for a quiz.
+     *
+     * @param quizId The ID of the quiz.
+     * @return The list of DTOs representing user quiz progress.
+     */
     private List<UserQuizProgressDTO> getAllUserProgressForQuiz(Long quizId) {
         List<UserQuizProgress> userQuizProgressList = userQuizProgressRepository.findByQuizId(quizId);
         return userQuizProgressList.stream()
@@ -465,6 +586,13 @@ public class QuizServiceImpl implements QuizService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks if the user's answer is correct.
+     *
+     * @param userAnswer     The DTO representing the user's answer.
+     * @param correctAnswers The list of DTOs representing correct answers.
+     * @return True if the user's answer is correct, false otherwise.
+     */
     private boolean isUserAnswerCorrect(UserAnswerDTO userAnswer, List<AnswerDTO> correctAnswers) {
         if (userAnswer == null) {
             return false;
@@ -480,6 +608,13 @@ public class QuizServiceImpl implements QuizService {
                 .anyMatch(correctAnswer -> correctAnswer.getId().equals(userSelectedOptionId));
     }
 
+    /**
+     * Checks if the user is the creator of the quiz.
+     *
+     * @param userId The ID of the user.
+     * @param quiz   The quiz entity.
+     * @return True if the user is the creator of the quiz, false otherwise.
+     */
     private boolean isTheUserQuizCreator(Long userId, Quiz quiz) {
         CourseSubsection courseSubsection = courseSubsectionRepository.findByIdAndDeletedFalse(quiz.getSubsection().getId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
         Course course = courseRepository.findByIdAndDeletedFalse(courseSubsection.getCourse().getId()).orElseThrow(() -> new CourseNotFoundException(messageSource));

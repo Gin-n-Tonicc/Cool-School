@@ -67,6 +67,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogResponseDTO addLike(Long blogId, PublicUserDTO loggedUser) {
+        // Method to add a like to a blog post
         if (loggedUser != null) {
             Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new BlogNotFoundException(messageSource));
             User user = userRepository.findByIdAndDeletedFalse(loggedUser.getId()).orElseThrow(() -> new UserNotFoundException(messageSource));
@@ -82,12 +83,15 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<BlogResponseDTO> getAllBlogs(PublicUserDTO loggedUser) {
+        // Method to retrieve all blogs
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
+                // The ADMIN can see all the blogs
                 List<Blog> blogs = blogRepository.findAll();
                 return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
             }
         }
+        // The STUDENTS and TEACHERS can see only enables blogs
         List<Blog> blogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
@@ -107,6 +111,7 @@ public class BlogServiceImpl implements BlogService {
         }
         if (optionalBlog.isPresent()) {
             if (!(optionalBlog.get().isEnabled())) {
+                //The blog is not enables by the ADMIN
                 throw new BlogNotEnabledException(messageSource);
             }
         }
@@ -125,12 +130,14 @@ public class BlogServiceImpl implements BlogService {
         blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
         blogDTO.setPictureId(blogDTO.getPictureId());
         blogDTO.setDeleted(false);
-        userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
-        categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
+        User owner = userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        Category category = categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
         fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(() -> new FileNotFoundException(messageSource));
         blogDTO.setCommentCount(0);
         Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
 
+        // Sends a Slack notification to the  ADMIN when a new blog is created
+        sendSlackNotification(blogDTO, category, owner, blogEntity.getId());
         return modelMapper.map(blogEntity, BlogResponseDTO.class);
     }
 
@@ -152,8 +159,8 @@ public class BlogServiceImpl implements BlogService {
         if (loggedUser.getRole().equals(Role.ADMIN)) {
             blogDTO.setEnabled(blogDTO.isEnabled());
             if (blogDTO.isEnabled()) {
-//                sendEnabledBlogEmailNotification(blogDTO.getOwnerId(), id);
-                sendSlackNotification(blogDTO, category, user, id);
+                // Send email to the owner of the blog when their blog is enabled, so they can see it
+                sendEnabledBlogEmailNotification(blogDTO.getOwnerId(), id);
             }
         } else {
             blogDTO.setEnabled(existingBlogOptional.get().isEnabled());
@@ -176,6 +183,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     public void sendEnabledBlogEmailNotification(Long ownerId, Long blogId) {
+        // Method to send an email notification when a blog is enabled
         User user = userRepository.findById(ownerId)
                 .orElseThrow(() -> new UserNotFoundException(messageSource));
 
@@ -198,6 +206,7 @@ public class BlogServiceImpl implements BlogService {
     public void deleteBlog(Long id, PublicUserDTO loggedUser) {
         Blog blog = blogRepository.findById(id).orElseThrow(() -> new BlogNotFoundException(messageSource));
 
+        //The blog can be deleted only from the ADMIN or from the owner of the blog
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), blog.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException(messageSource);
         }
@@ -261,6 +270,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     private void sendSlackNotification(BlogDTO blogDTO, Category category, User user, Long id) {
+        // Sends a Slack notification to the  ADMIN when a new blog is created
         String message = "New blog created in Cool School:\n" +
                 "Title: " + blogDTO.getTitle() + "\n" +
                 "Author: " + user.getFirstname() + " " + user.getLastname() + "\n" +

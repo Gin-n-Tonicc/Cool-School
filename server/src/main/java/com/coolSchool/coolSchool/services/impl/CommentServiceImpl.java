@@ -54,14 +54,16 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> comments = commentRepository.findCommentsByBlogAndNotDeleted(id);
         int length = comments.size();
 
+        // Limit the number of comments if specified
         if (n >= 1) {
             comments = comments.subList(0, Math.min(length, n));
         }
 
         List<CommentResponseDTO> commentGetDTOs = comments.stream().map(comment -> {
-            comment.setBlogId(null);
+            comment.setBlogId(null);  // Remove redundant blog ID from comment entity
 
             CommentResponseDTO commentResponseDTO = modelMapper.map(comment, CommentResponseDTO.class);
+            // Map owner ID to PublicUserDTO
             commentResponseDTO.setOwnerId(modelMapper.map(comment.getOwnerId(), PublicUserDTO.class));
             return commentResponseDTO;
         }).toList();
@@ -92,12 +94,14 @@ public class CommentServiceImpl implements CommentService {
             commentDTO.setOwnerId(loggedUser.getId());
             userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
 
+            // Retrieve the blog for the comment and increment the comment count
             blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
             blog.setCommentCount(blog.getCommentCount() + 1);
             blogRepository.save(blog);
             Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
             return modelMapper.map(commentEntity, CommentResponseDTO.class);
         } catch (ConstraintViolationException exception) {
+            // Rollback the increment of comment count if an exception occurs during comment creation
             if (blog != null) {
                 blog.setCommentCount(blog.getCommentCount() - 1);
                 blogRepository.save(blog);
@@ -115,6 +119,7 @@ public class CommentServiceImpl implements CommentService {
         User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
         blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), user.getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
+            // The comment can be updated only form its owner or the ADMIN
             throw new AccessDeniedException(messageSource);
         }
         Comment existingComment = existingCommentOptional.get();
@@ -132,6 +137,7 @@ public class CommentServiceImpl implements CommentService {
         if (commentOptional.isPresent()) {
             Comment comment = commentOptional.get();
             if (loggedUser == null || (!Objects.equals(loggedUser.getId(), comment.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN) && !Objects.equals(loggedUser.getId(), comment.getBlogId().getOwnerId())))) {
+                // The comment can be deleted only form its owner or the ADMIN
                 throw new AccessDeniedException(messageSource);
             }
             Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(comment.getBlogId().getId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
