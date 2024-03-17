@@ -303,5 +303,12 @@
   "finish.register.address": "Address",
   "finish.register.role.student": "Student",
   "finish.register.role.teacher": "Teacher",
-  "finish.register.complete": "Finish register"
+  "finish.register.complete": "Finish register",
+
+  "internal.error.title": "Oops!",
+  "internal.error.text": "Try refreshing the page or feel free to contact us if the problem persists",
+
+  "not.found.title": "Oops!",
+  "not.found.subtitle": "The page can't be found",
+  "not.found.text": "Go to homepage"
 }
