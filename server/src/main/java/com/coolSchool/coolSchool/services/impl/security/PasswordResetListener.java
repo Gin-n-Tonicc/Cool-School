@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+/**
+ * Component responsible for listening to password reset request events and sending password reset emails.
+ */
 @Component
 @RequiredArgsConstructor
 public class PasswordResetListener implements ApplicationListener<OnPasswordResetRequestEvent> {
@@ -21,6 +24,9 @@ public class PasswordResetListener implements ApplicationListener<OnPasswordRese
     private final FrontendConfig frontendConfig;
     private final UserService service;
 
+    /**
+     * Sends a password reset email upon receiving the password reset request event.
+     */
     @Override
     public void onApplicationEvent(OnPasswordResetRequestEvent event) {
         sendPasswordResetEmail(event);
@@ -28,6 +34,8 @@ public class PasswordResetListener implements ApplicationListener<OnPasswordRese
 
     private void sendPasswordResetEmail(OnPasswordResetRequestEvent event) {
         User user = event.getUser();
+
+        // Generate a password reset token and create a verification token for the user
         String token = generateResetToken(user);
         service.createVerificationToken(user, token);
         String recipientAddress = user.getEmail();
@@ -44,6 +52,7 @@ public class PasswordResetListener implements ApplicationListener<OnPasswordRese
 
     @NotNull
     private String getEmailMessage(String token, User user) {
+        //Constructs the email message for the password reset request.
         String confirmationUrl = frontendConfig.getForgottenPasswordUrl() + "?token=" + token;
 
         return "Dear " + user.getFirstname() + ",\n\n"

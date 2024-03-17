@@ -16,15 +16,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Implementation of the JwtService interface responsible for JWT token generation, validation, and extraction.
+ */
 @Service
 public class JwtServiceImpl implements JwtService {
 
+    // Secret key used for signing JWT tokens
     @Value("${spring.security.jwt.secret-key}")
     private String secretKey;
 
+    // JWT token expiration time in milliseconds
     @Value("${spring.security.jwt.expiration}")
     private long jwtExpiration;
 
+    // JWT token expiration time in milliseconds
     @Value("${spring.security.jwt.refresh-token.expiration}")
     private long refreshExpiration;
 

@@ -1,4 +1,4 @@
-package com.coolSchool.coolSchool.filters;
+package com.coolSchool.coolSchool.exceptions.answer.filters;
 
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.repositories.TokenRepository;
@@ -23,10 +23,16 @@ import java.io.IOException;
 
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
 
+/**
+ * Filter responsible for JWT-based authentication.
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    /**
+     * Key to retrieve user information from request attribute.
+     */
     public static final String userKey = "user";
     private final JwtService jwtService;
     private final UserService userService;
@@ -40,6 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         String path = request.getServletPath();
+
+        // Skip authentication for specific paths related to authentication process
         if (path.contains("/api/v1/auth") && !path.contains("/api/v1/auth/complete-oauth")) {
             filterChain.doFilter(request, response);
             return;
@@ -59,11 +67,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.findByEmail(userEmail);
 
+            // Check if token is valid and not revoked or expired
             boolean isTokenValid = tokenRepository.findByToken(jwt)
                     .map(t -> !t.isExpired() && !t.isRevoked())
                     .orElse(false);
 
             if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
+
+                // Set user authentication in security context
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -77,6 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
 
+            // Set user details in request attribute
             request.setAttribute(userKey, modelMapper.map(userDetails, PublicUserDTO.class));
         }
 

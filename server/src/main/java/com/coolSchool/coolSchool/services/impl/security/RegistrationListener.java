@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+/**
+ * Component responsible for handling registration confirmation emails.
+ */
 @Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
 
@@ -39,6 +42,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
         String subject = "Cool School Registration Confirmation";
         String confirmationUrl = event.getAppUrl() + "auth/registrationConfirm?token=" + token;
 
+        // Construct the email message
         String message = "Dear, " + user.getFirstname() + "\n\n"
                 + "Thank you for registering with Cool School!\n\n"
                 + "To complete your registration, please click the following link to verify your email:\n"

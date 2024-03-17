@@ -1,7 +1,7 @@
 package com.coolSchool.coolSchool.config;
 
 import com.coolSchool.coolSchool.exceptions.handlers.JwtAuthenticationEntryPoint;
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.security.OAuth2LoginSuccessHandler;
 import com.coolSchool.coolSchool.services.impl.security.CustomOAuth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

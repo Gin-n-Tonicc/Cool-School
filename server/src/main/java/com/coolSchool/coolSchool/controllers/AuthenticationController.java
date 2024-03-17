@@ -3,7 +3,7 @@ package com.coolSchool.coolSchool.controllers;
 import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.exceptions.email.EmailNotVerified;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;

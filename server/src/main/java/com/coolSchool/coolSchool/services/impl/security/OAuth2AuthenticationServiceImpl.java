@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
 
+/**
+ * Implementation of the OAuth2AuthenticationService interface responsible for processing OAuth2 user authentication.
+ * This service handles the post-login process, including token generation and cookie attachment.
+ */
 @Service
 @AllArgsConstructor
 public class OAuth2AuthenticationServiceImpl implements OAuth2AuthenticationService {
@@ -20,12 +24,16 @@ public class OAuth2AuthenticationServiceImpl implements OAuth2AuthenticationServ
 
     @Override
     public boolean processOAuthPostLogin(CustomOAuth2User oAuth2User, Consumer<Cookie> addCookieFunc) {
+        // Process OAuth2 user and retrieve associated user entity
         User user = userService.processOAuthUser(oAuth2User);
 
         tokenService.revokeAllUserTokens(user);
+
+        // Generate authentication response and attach cookies to the response
         AuthenticationResponse authResponse = tokenService.generateAuthResponse(user);
         tokenService.attachAuthCookies(authResponse, addCookieFunc);
 
+        // Check if additional user info is required
         return user.isAdditionalInfoRequired();
     }
 }

@@ -32,7 +32,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 
-
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -46,18 +45,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Registers a new user based on the provided registration request.
+     */
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
         User user = userService.createUser(request);
         return tokenService.generateAuthResponse(user);
     }
 
+    /**
+     * Completes the OAuth2 authentication process for the provided user and generates an authentication response.
+     * It updates the user's information with the data obtained from the OAuth2 provider.
+     */
     @Override
     public AuthenticationResponse completeOAuth2(CompleteOAuthRequest request, PublicUserDTO currentLoggedUser) {
         User updatedUser = userService.updateOAuth2UserWithFullData(request, currentLoggedUser.getId());
         return tokenService.generateAuthResponse(updatedUser);
     }
 
+    // Login with correct email and password
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         try {
@@ -77,6 +84,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return tokenService.generateAuthResponse(user);
     }
 
+    /**
+     * Generates a new access token and updates the refresh token based on the provided refresh token.
+     * If the refresh token is missing or invalid, it throws an InvalidTokenException.
+     * If the refresh token is valid, it generates a new access token, revokes all existing user tokens,
+     * and updates the refresh token to the provided one.
+     */
     @Override
     public AuthenticationResponse refreshToken(String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
@@ -95,7 +108,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new InvalidTokenException(messageSource);
         }
 
-        // Make sure token is a refresh token not an access token
+        // Make sure token is a refresh token not access token
         Token token = tokenService.findByToken(refreshToken);
         if (token != null && token.tokenType != TokenType.REFRESH) {
             throw new InvalidTokenException(messageSource);
@@ -121,6 +134,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
+    /**
+     * Retrieves user information based on the provided JWT token.
+     * If the token is invalid or missing, it throws an InvalidTokenException.
+     * If the token is valid, it retrieves the user's access and refresh tokens, updates the refresh token if necessary,
+     * and returns an authentication response containing the user's information and tokens.
+     */
     @Override
     public AuthenticationResponse me(String jwtToken) {
         if (jwtToken == null || jwtToken.isEmpty()) {
@@ -179,6 +198,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tokenService.attachAuthCookies(authenticationResponse, cookieConsumer);
     }
 
+    /**
+     * Resets the password for a user based on the provided token and new password.
+     */
     public void resetPassword(String token, String newPassword) {
         VerificationToken verificationToken = verificationTokenRepository.findByToken(token);
         User user = verificationToken.getUser();
