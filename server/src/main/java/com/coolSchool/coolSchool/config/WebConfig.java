@@ -12,18 +12,20 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.Locale;
 
+// Configuration class for web-related configurations
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
     private final FrontendConfig frontendConfig;
 
+    // Method to configure CORS mappings
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry
-                .addMapping("/**")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedOrigins(frontendConfig.getBaseUrl())
-                .allowCredentials(true);
+                .addMapping("/**") // Allow CORS for all endpoints
+                .allowedMethods("GET", "POST", "PUT", "DELETE") // Allowed HTTP methods
+                .allowedOrigins(frontendConfig.getBaseUrl()) // Allowed origins (frontend URL)
+                .allowCredentials(true); // Allow credentials (cookies, authorization headers)
     }
 
     @Override

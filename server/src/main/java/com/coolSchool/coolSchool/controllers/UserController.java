@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// Controller class responsible for handling user-related endpoints
 @RestController
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor
