@@ -23,10 +23,13 @@ interface AnswerFormProps {
   questions: QuestionState;
 }
 
+// The component that displays
+// and handles the answer form
 export default function AnswerForm(props: AnswerFormProps) {
   const { t } = useTranslation();
   const { quizCreate } = useValidators();
 
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -43,6 +46,7 @@ export default function AnswerForm(props: AnswerFormProps) {
     mode: 'onChange',
   });
 
+  // Register question dropdown
   useEffect(() => {
     register('questionId', { ...quizCreate.ANSWER_QUESTION_VALIDATIONS });
   }, []);
@@ -58,6 +62,8 @@ export default function AnswerForm(props: AnswerFormProps) {
     [setValue]
   );
 
+  // On form submit
+  // Pass data to the parent component and reset form except the question dropdown
   const onSubmit: SubmitHandler<AnswerInputs> = (data) => {
     const isCorrect = Boolean(data.correct.length);
 

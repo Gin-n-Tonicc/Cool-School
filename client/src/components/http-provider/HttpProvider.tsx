@@ -5,7 +5,6 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import { useErrorContext } from '../../contexts/ErrorContext';
 import { useFetch } from '../../hooks/useFetch';
 import { IUser } from '../../types/interfaces/auth/IUser';
-import { getRefreshCookie } from '../../utils/cookieUtils';
 import { initialAuthUtils } from '../../utils/initialAuthUtils';
 import { isJwtExpired } from '../../utils/jwtUtils';
 
@@ -42,7 +41,8 @@ export default function HttpProvider({ children }: PropsWithChildren) {
         removeTokensIfExpired();
 
         const isExpired = !Boolean(user.accessToken) && !isAuthenticated;
-        if (!isRefreshRequest && isExpired && getRefreshCookie()) {
+
+        if (!isRefreshRequest && isExpired) {
           await refreshToken();
         }
 
