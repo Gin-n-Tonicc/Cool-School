@@ -8,6 +8,8 @@ interface CoursesSubsectionCreateProps {
   isOwner: boolean;
 }
 
+// The component that displays the courses
+// subsection create form using an accordion
 export default function CoursesSubsectionCreate({
   isOwner,
   ...props

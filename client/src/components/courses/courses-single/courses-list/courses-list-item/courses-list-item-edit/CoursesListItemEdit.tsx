@@ -20,6 +20,8 @@ type Inputs = {
   description: string;
 };
 
+// The component that displays and handles
+// a form for subsection editing
 export default function CoursesListItemEdit({
   subsection,
   refreshSubsections,
@@ -28,6 +30,7 @@ export default function CoursesListItemEdit({
   const { courseSubsection: validators } = useValidators();
   const { t } = useTranslation();
 
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -42,10 +45,12 @@ export default function CoursesListItemEdit({
     mode: 'onChange',
   });
 
+  // Prepare fetch
   const { put, response } = useFetch<ICourseSubsection>(
     apiUrlsConfig.courseSubsections.put(subsection.id)
   );
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const { resources, ...restSubsection } = subsection;
 
@@ -58,6 +63,8 @@ export default function CoursesListItemEdit({
 
     await put(body);
 
+    // After successful response
+    // update subsections and set form values to the updated ones
     if (response.ok) {
       await refreshSubsections();
       reset({ Title: body.title, description: body.description });

@@ -8,6 +8,8 @@ import './SpecialCourses.scss';
 import HomeCourse from './special-course/SpecialCourse';
 
 const PAGE_SIZE = 2;
+
+// The component that displays {n} amount of courses
 export default function SpecialCourses() {
   const { t } = useTranslation();
   const { data } = useFetch<ICourse[]>(apiUrlsConfig.courses.getAll, []);

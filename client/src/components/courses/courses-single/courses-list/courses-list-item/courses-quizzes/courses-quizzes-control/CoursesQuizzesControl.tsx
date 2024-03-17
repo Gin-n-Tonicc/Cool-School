@@ -8,16 +8,20 @@ interface CoursesQuizzesControlProps {
   refreshQuizzes: Function;
 }
 
+// The component that displays and handles
+// a single uploaded course quiz
 export default function CoursesQuizzesControl({
   quiz,
   refreshQuizzes,
 }: CoursesQuizzesControlProps) {
   const { t } = useTranslation();
 
+  // Prepare fetch
   const { del, response } = useFetch<string>(
     apiUrlsConfig.quizzes.delete(quiz.id)
   );
 
+  // Handle delete
   const onDelete = async () => {
     if (
       !window.confirm(
@@ -28,6 +32,8 @@ export default function CoursesQuizzesControl({
     }
 
     await del();
+
+    // After which update quizzes
     if (response.ok) {
       refreshQuizzes();
     }

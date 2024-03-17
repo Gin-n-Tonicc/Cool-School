@@ -25,6 +25,8 @@ type Inputs = {
   file: File[];
 };
 
+// The component that displays
+// a form for blog creation
 export default function BlogCreate() {
   const [selectedCategory, setSelectedCategory] = useState<
     SingleValue<CategoryOption> | undefined

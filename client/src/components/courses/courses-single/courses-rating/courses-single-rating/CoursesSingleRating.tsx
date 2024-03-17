@@ -11,6 +11,7 @@ interface CoursesSingleRatingProps {
   MAX_STARS: number;
 }
 
+// The component that displays a single rating option
 export default function CoursesSingleRating({
   stars,
   setStars,
@@ -19,6 +20,8 @@ export default function CoursesSingleRating({
 }: CoursesSingleRatingProps) {
   const { t } = useTranslation();
 
+  // Make sure that the stars do not go over the max stars
+  // and that they do not go under 0 after which change state
   const onStarChange = (newStars: number) => {
     if (newStars > MAX_STARS) {
       return setStars(MAX_STARS);
@@ -39,6 +42,7 @@ export default function CoursesSingleRating({
 
   let counter = 0;
   const starsArr = [...new Array(MAX_STARS)].map((_, i) => {
+    // Return colored stars (current rating)
     if (counter < stars) {
       counter++;
       return (
@@ -52,6 +56,7 @@ export default function CoursesSingleRating({
       );
     }
 
+    // Return uncolored stars (remaining rating)
     return (
       <a key={uuidV4()}>
         <img src={star} alt="" onClick={onStarChange.bind(null, i + 1)} />

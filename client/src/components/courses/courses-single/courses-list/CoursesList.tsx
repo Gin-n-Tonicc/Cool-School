@@ -11,6 +11,8 @@ interface CoursesListProps {
   course: ICourse;
 }
 
+// The component that displays all of the
+// course's subsections using an accordion
 export default function CoursesList(props: CoursesListProps) {
   return (
     <>
