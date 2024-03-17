@@ -3,6 +3,11 @@ package com.coolSchool.coolSchool.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Enumeration representing permissions available in the application.
+ * Each permission has a corresponding string representation.
+ * This class is used to define and access different permissions required for authorization purposes.
+ */
 @Getter
 @RequiredArgsConstructor
 public enum Permission {

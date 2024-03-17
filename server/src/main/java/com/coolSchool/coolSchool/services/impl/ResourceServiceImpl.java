@@ -71,7 +71,7 @@ public class ResourceServiceImpl implements ResourceService {
         if (existingResourceOptional.isEmpty()) {
             throw new ResourceNotFoundException(messageSource);
         }
-
+        // Check if this file and course actually exist
         fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(() -> new FileNotFoundException(messageSource));
         courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
 
@@ -87,6 +87,7 @@ public class ResourceServiceImpl implements ResourceService {
     public void deleteResource(Long id) {
         Optional<Resource> resource = resourceRepository.findByIdAndDeletedFalse(id);
         if (resource.isPresent()) {
+            // Soft delete
             resource.get().setDeleted(true);
             resourceRepository.save(resource.get());
         } else {

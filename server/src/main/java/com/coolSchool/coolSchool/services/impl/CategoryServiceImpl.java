@@ -48,6 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
             Category categoryEntity = categoryRepository.save(modelMapper.map(categoryDTO, Category.class));
             return modelMapper.map(categoryEntity, CategoryDTO.class);
         } catch (DataIntegrityViolationException exception) {
+            // If a category with the same name already exists
             throw new CategoryCreateException(messageSource, true);
         }
     }
@@ -72,6 +73,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Long id) {
         Optional<Category> category = categoryRepository.findByIdAndDeletedFalse(id);
         if (category.isPresent()) {
+            // Soft delete
             category.get().setDeleted(true);
             categoryRepository.save(category.get());
         } else {

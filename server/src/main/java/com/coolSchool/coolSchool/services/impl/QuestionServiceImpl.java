@@ -1,6 +1,5 @@
 package com.coolSchool.coolSchool.services.impl;
 
-import com.coolSchool.coolSchool.exceptions.common.NoSuchElementException;
 import com.coolSchool.coolSchool.exceptions.questions.QuestionNotFoundException;
 import com.coolSchool.coolSchool.exceptions.quizzes.QuizNotFoundException;
 import com.coolSchool.coolSchool.models.dto.common.QuestionDTO;
@@ -46,6 +45,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionDTO createQuestion(QuestionDTO questionDTO) {
+        // Create question to a certain existing quiz
         questionDTO.setId(null);
         quizRepository.findByIdAndDeletedFalse(questionDTO.getQuizId()).orElseThrow(() -> new QuizNotFoundException(messageSource));
         Question questionEntity = questionRepository.save(modelMapper.map(questionDTO, Question.class));
@@ -54,6 +54,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionDTO updateQuestion(Long id, QuestionDTO questionDTO) {
+        // Update question to a certain existing quiz
         Optional<Question> existingQuestionOptional = questionRepository.findByIdAndDeletedFalse(id);
 
         if (existingQuestionOptional.isEmpty()) {
@@ -80,6 +81,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     public List<Question> getQuestionsByQuizId(Long quizId) {
+        // Get all questions in a quiz
         return questionRepository.findByQuizId(quizId);
     }
 }

@@ -1,7 +1,7 @@
 package com.coolSchool.coolSchool.config;
 
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.exceptions.handlers.JwtAuthenticationEntryPoint;
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.security.OAuth2LoginSuccessHandler;
 import com.coolSchool.coolSchool.services.impl.security.CustomOAuth2UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +22,10 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import static com.coolSchool.coolSchool.enums.Role.*;
 import static org.springframework.http.HttpMethod.*;
 
+/**
+ * Configuration class for setting up security configurations, including authentication,
+ * authorization, and OAuth2 integration.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -48,6 +52,7 @@ public class SecurityConfiguration {
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> {
                     httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(new JwtAuthenticationEntryPoint(objectMapper, messageSource));
                 })
+                // Configure authorization rules for various endpoints
                 .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/files/upload",
@@ -103,6 +108,7 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
+                // Configure OAuth2 login
                 .oauth2Login(oauth2 -> {
                     oauth2.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(oauthUserService));
                     oauth2.loginPage(frontendConfig.getLoginUrl()).permitAll();

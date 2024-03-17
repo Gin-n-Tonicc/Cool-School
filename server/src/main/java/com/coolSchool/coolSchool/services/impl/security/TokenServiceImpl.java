@@ -21,9 +21,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Service implementation responsible for handling authentication tokens.
+ */
 @RequiredArgsConstructor
 @Service
 public class TokenServiceImpl implements TokenService {
+
+    // Constants for authentication cookie keys
     public final static String AUTH_COOKIE_KEY_JWT = "COOL_SCHOOL_SESSION_JWT";
     public final static String AUTH_COOKIE_KEY_REFRESH = "COOL_SCHOOL_SESSION_REFRESH";
     private final TokenRepository tokenRepository;
@@ -130,6 +135,7 @@ public class TokenServiceImpl implements TokenService {
         Cookie jwtCookie = createJwtCookie(authenticationResponse.getAccessToken());
         Cookie refreshCookie = createRefreshCookie(authenticationResponse.getRefreshToken());
 
+        // Accept cookies using the consumer
         cookieConsumer.accept(jwtCookie);
         cookieConsumer.accept(refreshCookie);
     }
@@ -142,6 +148,7 @@ public class TokenServiceImpl implements TokenService {
         jwtCookie.setMaxAge(0);
         refreshCookie.setMaxAge(0);
 
+        // Accept cookies using the consumer to clear existing cookies
         cookieConsumer.accept(jwtCookie);
         cookieConsumer.accept(refreshCookie);
     }

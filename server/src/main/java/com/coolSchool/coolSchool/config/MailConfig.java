@@ -8,6 +8,10 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
+/**
+ * Configuration class for setting up email properties and creating
+ * a JavaMailSender bean for sending emails.
+ */
 @Configuration
 public class MailConfig {
 

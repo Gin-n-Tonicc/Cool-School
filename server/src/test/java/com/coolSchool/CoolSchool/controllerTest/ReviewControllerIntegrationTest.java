@@ -1,7 +1,7 @@
 package com.coolSchool.CoolSchool.controllerTest;
 
 import com.coolSchool.coolSchool.controllers.ReviewController;
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.ReviewRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.ReviewResponseDTO;

@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * OAuth2LoginSuccessHandler handles successful OAuth2 login authentication.
+ * It redirects users to different URLs based on whether additional information is required after login.
+ */
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -20,10 +24,13 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
+        // Retrieve the OAuth2 user details from the authentication object
         CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
 
+        // Check if additional information is required after login
         boolean isAdditionalInfoRequired = oAuth2AuthenticationService.processOAuthPostLogin(oauthUser, response::addCookie);
 
+        // Redirect users to appropriate URLs based on whether additional information is required
         if (isAdditionalInfoRequired) {
             response.sendRedirect(frontendConfig.getFinishRegisterUrl());
         } else {

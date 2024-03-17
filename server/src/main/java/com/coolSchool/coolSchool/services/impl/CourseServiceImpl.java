@@ -88,7 +88,7 @@ public class CourseServiceImpl implements CourseService {
         if (loggedUser == null) {
             return;
         }
-
+        // Create a relation between user and course
         UserCourseRequestDTO dto = new UserCourseRequestDTO();
         dto.setCourseId(id);
         dto.setUserId(loggedUser.getId());
@@ -98,6 +98,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseResponseDTO createCourse(CourseRequestDTO courseDTO, PublicUserDTO loggedUser) {
+        // Checks if the user is logged in and has the necessary role to access this operation
         if (loggedUser == null || !(loggedUser.getRole().equals(Role.ADMIN) || loggedUser.getRole().equals(Role.TEACHER))) {
             throw new AccessDeniedException(messageSource);
         }
@@ -107,6 +108,8 @@ public class CourseServiceImpl implements CourseService {
         userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(() -> new UserNotFoundException(messageSource));
         categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
         Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
+
+        // Send a Slack notification to the ADMIN when a new course is created
         sendSlackNotification(courseEntity);
         return modelMapper.map(courseEntity, CourseResponseDTO.class);
     }
@@ -118,6 +121,7 @@ public class CourseServiceImpl implements CourseService {
         if (existingCourseOptional.isEmpty()) {
             throw new CourseNotFoundException(messageSource);
         }
+        // Checks if the user is logged in and has the necessary role to access this operation
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), courseDTO.getUserId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException(messageSource);
         }
@@ -135,6 +139,7 @@ public class CourseServiceImpl implements CourseService {
     public void deleteCourse(Long id, PublicUserDTO loggedUser) {
         Optional<Course> course = courseRepository.findByIdAndDeletedFalse(id);
         if (course.isPresent()) {
+            // Checks if the user is logged in and has the necessary role to access this operation
             if (loggedUser == null || (!Objects.equals(loggedUser.getId(), course.get().getUser().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
                 throw new AccessDeniedException(messageSource);
             }
@@ -145,6 +150,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     public void sendSlackNotification(Course course) {
+        // Send a Slack notification to the ADMIN when a new course is created
         User author = userRepository.findById(course.getUser().getId()).orElseThrow(() -> new UserNotFoundException(messageSource));
         Category category = categoryRepository.findById(course.getCategory().getId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
 

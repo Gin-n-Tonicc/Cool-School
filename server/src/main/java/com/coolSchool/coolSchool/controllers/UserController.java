@@ -1,6 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.AdminUserDTO;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// Controller class responsible for handling user-related endpoints
 @RestController
 @RequestMapping("/api/v1/users")
 @AllArgsConstructor

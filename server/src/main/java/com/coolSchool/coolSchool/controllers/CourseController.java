@@ -1,6 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.CourseRequestDTO;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// A controller class for handling course-related operations.
 @RestController
 @RequestMapping("/api/v1/courses")
 public class CourseController {
@@ -39,7 +40,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.canEnrollCourse(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey)));
     }
 
-    @GetMapping("/enroll/{id}")
+    @GetMapping("/enroll/{id}") // Checks if the current user can enroll the course
     public ResponseEntity<Void> enrollCourse(@PathVariable(name = "id") Long id, HttpServletRequest httpServletRequest) {
         courseService.enrollCourse(id, (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey));
         return ResponseEntity.ok().build();

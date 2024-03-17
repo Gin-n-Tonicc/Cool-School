@@ -4,6 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
+/**
+ * Configuration class providing access to localized messages for internationalization
+ * in English and Bulgarian languages.
+ */
 @Configuration
 public class MessageSourceConfig {
 
