@@ -19,14 +19,17 @@ type Inputs = {
   rememberMe: boolean;
 };
 
+// The component used to display and handle the login form
 export default function LoginForm({ redirectTo }: LoginFormProps) {
   const { t } = useTranslation();
   const { auth: validators } = useValidators();
   const navigate = useNavigate();
-
   const { loginUser } = useAuthContext();
+
+  // Prepare fetches
   const { post, response } = useFetch<IAuthResponse>(apiUrlsConfig.auth.login);
 
+  // Handle form
   const { handleSubmit, control, reset } = useForm<Inputs>({
     defaultValues: {
       Email: '',
@@ -35,12 +38,14 @@ export default function LoginForm({ redirectTo }: LoginFormProps) {
     mode: 'onChange',
   });
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const user = await post({
       email: data.Email.trim(),
       password: data.Password.trim(),
     });
 
+    // Reset form, update auth state (login user) and navigate
     if (response.ok) {
       reset();
       loginUser(user);

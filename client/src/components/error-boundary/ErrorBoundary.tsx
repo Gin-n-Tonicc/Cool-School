@@ -10,6 +10,9 @@ interface State {
   hasError: boolean;
 }
 
+// The component which prevents the app from completely crashing, when
+// an error in the code occurs, by rendering a specified component.
+// Has to be a class component
 class ErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,

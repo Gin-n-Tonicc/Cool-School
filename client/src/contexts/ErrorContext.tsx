@@ -20,11 +20,14 @@ type ErrorContextType = {
   clearErrors: () => void;
 };
 
+// The component that provides all of the children
+// with the necessary alert properties and functions
 export const ErrorProvider = ({ children }: PropsWithChildren) => {
   const [errors, setErrors] = useState<ErrorContextType['errors']>([]);
 
   const addError: ErrorContextType['addError'] = useCallback(
     (error, errorType) => {
+      // construct error
       const newError: IError = {
         message: error,
         unmountAfter: unmountAfter,
@@ -32,6 +35,8 @@ export const ErrorProvider = ({ children }: PropsWithChildren) => {
         errorType: errorType || ErrorTypeEnum.EXCEPTION,
       };
 
+      // If current alerts' length >= {n} (max length) remove the oldest alert
+      // Add alert to the end of the list of alerts
       setErrors((errors) => {
         if (errors.length >= maxErrors) {
           return [
@@ -46,6 +51,7 @@ export const ErrorProvider = ({ children }: PropsWithChildren) => {
     []
   );
 
+  // Delete alert
   const deleteError: ErrorContextType['deleteError'] = useCallback(
     (errorId) => {
       setErrors((errors) => errors.filter((x) => x.id !== errorId));
@@ -53,6 +59,7 @@ export const ErrorProvider = ({ children }: PropsWithChildren) => {
     []
   );
 
+  // Clear all alerts
   const clearErrors: ErrorContextType['clearErrors'] = useCallback(() => {
     setErrors([]);
   }, []);

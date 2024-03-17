@@ -11,10 +11,6 @@ import { IUser } from '../../../../types/interfaces/auth/IUser';
 import FormErrorWrapper from '../../../common/form-error-wrapper/FormErrorWrapper';
 import FormInput from '../../../common/form-input/FormInput';
 
-type RegisterFormProps = {
-  redirectTo: string | null;
-};
-
 type Inputs = {
   'First Name': string;
   'Last Name': string;
@@ -27,15 +23,18 @@ type Inputs = {
   role: RolesEnum;
 };
 
-export default function RegisterForm({ redirectTo }: RegisterFormProps) {
+// The component used to display and handle the register form
+export default function RegisterForm() {
   const { t } = useTranslation();
   const { auth: validators } = useValidators();
   const { addError } = useErrorContext();
 
+  // Prepare fetch
   const { post, response, loading } = useFetch<IUser>(
     apiUrlsConfig.auth.register
   );
 
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -62,6 +61,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
 
   const formValues = watch();
 
+  // Ensure that both passwords are equal
   useEffect(() => {
     const areEqual = formValues.Password === formValues['Repeat your password'];
     const hasError = Boolean(errors['Repeat your password']);
@@ -80,7 +80,9 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
     }
   }, [errors, formValues, setError, clearErrors]);
 
+  // Handle form submission
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // Register user
     await post({
       firstname: data['First Name'].trim(),
       lastname: data['Last Name'].trim(),
@@ -92,6 +94,7 @@ export default function RegisterForm({ redirectTo }: RegisterFormProps) {
       role: data['role'].trim(),
     });
 
+    // Reset form, show a message that an email is sent
     if (response.ok) {
       reset();
       addError(t('register.info.on.register'), ErrorTypeEnum.HEADS_UP);

@@ -3,10 +3,12 @@ import './BlogPagination.scss';
 
 interface BlogPaginationProps extends PaginationProps {}
 
+// The component that displays the blog pagination buttons
 export default function BlogPagination(props: BlogPaginationProps) {
   return (
     <nav className="blog-pagination justify-content-center d-flex">
       <ul className="pagination">
+        {/* Previous page button */}
         <li className="page-item">
           <a
             className="page-link"
@@ -15,6 +17,8 @@ export default function BlogPagination(props: BlogPaginationProps) {
             <i className="ti-angle-left"></i>
           </a>
         </li>
+
+        {/* Page number buttons */}
         {[...new Array(props.pages)].map((x, i) => {
           const page = i + 1;
           let classNames = 'page-item';
@@ -32,6 +36,8 @@ export default function BlogPagination(props: BlogPaginationProps) {
             </li>
           );
         })}
+
+        {/* Next page button */}
         <li className="page-item">
           <a
             className="page-link"

@@ -11,6 +11,8 @@ type ProtectedRouteProps = {
   onlyTeacher?: boolean;
 };
 
+// The component that protects a route based on the user data
+// whether he is logged or not, whether he is a teacher or not, etc.
 export default function ProtectedRoute({
   onlyUser,
   onlyTeacher,
@@ -18,6 +20,7 @@ export default function ProtectedRoute({
   const { isTeacher, isAuthenticated } = useAuthContext();
   const { pathname } = useLocation();
 
+  // Attach redirectTo search param
   const generateNavPath = useCallback(
     (path: string) => {
       const navPath: To = {
@@ -29,13 +32,16 @@ export default function ProtectedRoute({
     [pathname]
   );
 
-  const passThrew = isAuthenticated === onlyUser;
+  const passThrough = isAuthenticated === onlyUser;
 
-  if (!onlyTeacher && onlyUser && !passThrew && pathname !== logoutPath) {
+  if (!onlyTeacher && onlyUser && !passThrough && pathname !== logoutPath) {
     return <Navigate to={generateNavPath(loginPath)} />;
   }
 
-  if (!passThrew || (onlyTeacher !== undefined && onlyTeacher !== isTeacher)) {
+  if (
+    !passThrough ||
+    (onlyTeacher !== undefined && onlyTeacher !== isTeacher)
+  ) {
     return <Navigate to={PagesEnum.Home} />;
   }
 

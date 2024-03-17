@@ -3,6 +3,8 @@ import { UseFetch, UseFetchArgs, useFetch as useHttpFetch } from 'use-http';
 import { useLocaleContext } from '../contexts/LocaleContext';
 import { PagesEnum } from '../types/enums/PagesEnum';
 
+// The hook that modifies an already existing hook for http requests
+// in order to attach the 'lang' search param to the request's URL
 export function useFetch<TData = any>(...args: UseFetchArgs): UseFetch<TData> {
   const { locale } = useLocaleContext();
   const { pathname } = useLocation();

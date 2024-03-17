@@ -38,6 +38,8 @@ import './styles/style.scss';
 import { AdminPagesEnum } from './types/enums/AdminPagesEnum';
 import { PagesEnum } from './types/enums/PagesEnum';
 
+// The component that groups all of our other components
+// and makes the whole application work as one
 function App() {
   return (
     <>

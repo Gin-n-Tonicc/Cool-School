@@ -1,3 +1,5 @@
+// Util file that helps us handle json web tokens
+
 const parseJwt = (token: string): { exp: number } | null => {
   try {
     return JSON.parse(atob(token.split('.')[1]));

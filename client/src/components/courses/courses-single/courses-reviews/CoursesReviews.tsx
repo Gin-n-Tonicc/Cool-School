@@ -5,6 +5,7 @@ interface CoursesReviewsProps {
   reviews: IReview[];
 }
 
+// The component that displays the course reviews
 export default function CoursesReviews(props: CoursesReviewsProps) {
   return (
     <div className="comments-area mb-30">

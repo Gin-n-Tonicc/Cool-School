@@ -18,10 +18,14 @@ interface AdminTableApiProps {
   delete: boolean;
 }
 
+// The component that handles all of the API calls for admin requests to the server
 export default function AdminTableApi(props: AdminTableApiProps) {
-  const [rows, setRows] = useState<IObjectWithId[]>([]);
   const { t } = useTranslation();
 
+  // Prepare state
+  const [rows, setRows] = useState<IObjectWithId[]>([]);
+
+  // Prepare fetches
   const {
     response: getResponse,
     loading,
@@ -40,6 +44,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     apiUrlsConfig.admin.updateDelete(props.apiPathname)
   );
 
+  // Seed data from the get request
   const loadRows = useCallback(async () => {
     const data = await get();
 
@@ -50,28 +55,32 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     }
   }, [get, getResponse]);
 
+  // On mount load rows
   useEffect(() => {
     loadRows();
   }, []);
 
   const onCrud = useCallback(
     async (response: Res<any>, message: string) => {
+      // Start loading, alert the message and then wait the request to finish
       if (response.ok) {
         const promise = loadRows();
         window.alert(message);
 
         await promise;
-        return true;
       }
 
-      return false;
+      // Return whether the request has passed successfully
+      return response.ok;
     },
     [loadRows]
   );
 
+  // Handle record creation
   const onCreate: OnCreateFunction = useCallback(
     async (data: Object) => {
       const obj = await post(data);
+
       return onCrud(
         postResponse,
         `${t('admin.api.successful.create')}${obj.id}`
@@ -80,6 +89,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     [postResponse, onCrud, post]
   );
 
+  // Handle record update
   const onUpdate: OnUpdateFunction = useCallback(
     async (id: number, data: Object) => {
       await put(`/${id}`, data);
@@ -88,6 +98,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     [putResponse, onCrud, put]
   );
 
+  // Handle record deletion
   const onDelete: OnDeleteFunction = useCallback(
     async (id: number) => {
       await del(`/${id}`);

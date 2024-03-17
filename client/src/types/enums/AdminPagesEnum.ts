@@ -1,3 +1,4 @@
+// Enumeration representing possible admin pages
 export enum AdminPagesEnum {
   USERS = 'users',
   CATEGORIES = 'categories',

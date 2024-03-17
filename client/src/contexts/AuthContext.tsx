@@ -21,14 +21,19 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// The component that provides all of the children
+// with the necessary auth properties and functions
 export function AuthProvider({ children }: PropsWithChildren) {
+  // Persist auth in local storage
   const { value: auth, setStorageData: setAuth } =
     useLocalStorage<IAuthStorage>('auth', {});
 
+  // Handle user update
   const updateUser: AuthContextType['updateUser'] = (object) => {
     setAuth((oldUser) => ({ ...oldUser, ...object }));
   };
 
+  // Update state to the new user
   const loginUser: AuthContextType['loginUser'] = (authResponse) => {
     const user = authResponse.user;
 
@@ -44,12 +49,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     });
   };
 
+  // Clear state and delete auth cookies
   const logoutUser: AuthContextType['logoutUser'] = () => {
     setAuth({});
     deleteJwtCookie();
     deleteRefreshCookie();
   };
 
+  // Remove jwt (accessToken) from state and delete jwt cookie
   const removeJwt: AuthContextType['removeJwt'] = () => {
     deleteJwtCookie();
     setAuth((prev) => {
@@ -58,14 +65,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
     });
   };
 
+  // Remove refresh (refreshToken) from state and delete refresh cookie
   const removeRefresh: AuthContextType['removeRefresh'] = () => {
-    deleteJwtCookie();
+    deleteRefreshCookie();
     setAuth((prev) => {
       const { refreshToken, ...rest } = prev;
       return rest;
     });
   };
 
+  // Prepare variables
   const isAuthenticated =
     Boolean(auth.accessToken) && !isJwtExpired(auth.accessToken);
   const hasFinishedOAuth2 =

@@ -16,33 +16,40 @@ import SingleBlogComments from './single-blog-comments/SingleBlogComments';
 const DEFAULT_COMMENT_COUNT = 2;
 const COMMENT_INCREMENT = 5;
 
+// The component that displays information about a single blog
 export default function SingleBlog() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuthContext();
 
+  // Prepare state
+  const [hasLiked, setHasLiked] = useState(false);
+  const [commentCount, setCommentCount] = useState(DEFAULT_COMMENT_COUNT);
+
+  // Fetch blog on mount
   const {
     data: blog,
     response,
     loading,
   } = useFetch<IBlog>(apiUrlsConfig.blogs.getOne(id), []);
 
-  const [hasLiked, setHasLiked] = useState(false);
-  const { response: likedBlogRes, post } = useFetch<IBlog>(
-    apiUrlsConfig.blogs.likeBlog(id)
-  );
-
-  const [commentCount, setCommentCount] = useState(DEFAULT_COMMENT_COUNT);
-
+  // Fetch comments on mount and on comment count change
   const { data: commentsRes, get } = useFetch<ICommentsByBlogResponse>(
     apiUrlsConfig.comments.getByBlogId(Number(id || -1), commentCount),
     [commentCount]
   );
 
+  // Prepare fetch
+  const { response: likedBlogRes, post } = useFetch<IBlog>(
+    apiUrlsConfig.blogs.likeBlog(id)
+  );
+
+  // Refresh comments handler
   const refreshComments = useCallback(async () => {
     await get();
   }, [get]);
 
+  // Load more comments handler
   const loadMoreComments = useCallback(() => {
     setCommentCount((prev) => {
       const result = prev + COMMENT_INCREMENT;
@@ -56,6 +63,7 @@ export default function SingleBlog() {
     });
   }, [commentsRes, setCommentCount]);
 
+  // Like blog handler
   const likeBlog = useCallback(async () => {
     await post();
 
@@ -94,7 +102,7 @@ export default function SingleBlog() {
                   <img
                     className="img-fluid"
                     src={apiUrlsConfig.files.getByUrl(blog.picture.url)}
-                    alt=""
+                    alt="blog picture"
                   />
                 </div>
                 <div className="blog_details">
@@ -108,6 +116,7 @@ export default function SingleBlog() {
                       {commentsRes?.totalComments} {t('blogs.comments')}
                     </li>
                   </ul>
+                  {/* For each new line create a different paragraph */}
                   {blog.content
                     .split('\n')
                     .filter((x) => x)
@@ -119,6 +128,7 @@ export default function SingleBlog() {
               <div className="navigation-top">
                 <div className="d-sm-flex justify-content-between text-center">
                   <p className="like-info">
+                    {/* Like Button */}
                     <span
                       className={
                         'align-middle blog-like-btn' +
@@ -141,7 +151,6 @@ export default function SingleBlog() {
               </div>
               <div className="blog-author">
                 <div className="media align-items-center">
-                  {/* <img src={apiUrlsConfig.files.get(blog.owner.)} alt="" /> */}
                   <div className="media-body">
                     <h4>
                       {blog.owner.firstname} ({blog.owner.username})

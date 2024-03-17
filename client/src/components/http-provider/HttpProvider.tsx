@@ -5,15 +5,15 @@ import { useAuthContext } from '../../contexts/AuthContext';
 import { useErrorContext } from '../../contexts/ErrorContext';
 import { useFetch } from '../../hooks/useFetch';
 import { IUser } from '../../types/interfaces/auth/IUser';
-import { getRefreshCookie } from '../../utils/cookieUtils';
 import { initialAuthUtils } from '../../utils/initialAuthUtils';
 import { isJwtExpired } from '../../utils/jwtUtils';
 
+// The component that is responsible for the useFetch hook options
 export default function HttpProvider({ children }: PropsWithChildren) {
   const { isAuthenticated, user, removeJwt, removeRefresh } = useAuthContext();
-
   const { addError } = useErrorContext();
 
+  // Prepare refresh token fetch
   const { get } = useFetch<IUser>(apiUrlsConfig.auth.refreshToken());
 
   const removeTokensIfExpired = () => {
@@ -32,6 +32,7 @@ export default function HttpProvider({ children }: PropsWithChildren) {
 
   const options: Partial<CustomOptions> = {
     interceptors: {
+      // Request interceptor (before sending the request)
       request: async ({ options, url }) => {
         const pathname = new URL(url || '').pathname;
 
@@ -42,13 +43,16 @@ export default function HttpProvider({ children }: PropsWithChildren) {
         removeTokensIfExpired();
 
         const isExpired = !Boolean(user.accessToken) && !isAuthenticated;
-        if (!isRefreshRequest && isExpired && getRefreshCookie()) {
+
+        if (!isRefreshRequest && isExpired) {
           await refreshToken();
         }
 
+        // Include cookies
         options.credentials = 'include';
         return options;
       },
+      // Response interceptor (After receiving the response, before sending it to the user)
       response: async ({ response }) => {
         if (!response.ok) {
           if (

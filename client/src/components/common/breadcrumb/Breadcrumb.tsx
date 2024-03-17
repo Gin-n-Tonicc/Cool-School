@@ -5,6 +5,7 @@ export interface BreadcrumbProps {
   pageName: string;
 }
 
+// An abstract breadcrumb component
 export default function Breadcrumb(props: BreadcrumbProps) {
   return (
     <section className="breadcrumb breadcrumb_bg">

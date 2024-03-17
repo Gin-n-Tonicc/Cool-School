@@ -10,9 +10,12 @@ import BlogPopularPost from './blog-popular-post/BlogPopularPost';
 
 const RECENT_BLOGS_COUNT = 3;
 
+// The widget that contains the {n} recent blogs
 export default function BlogPopularPostWidget() {
   const { t, i18n } = useTranslation();
 
+  // Map that contains -----------------
+  // Time (in seconds): Appropriate text
   const divisors = useMemo(
     () => ({
       31536000: t('date.years'),
@@ -24,6 +27,7 @@ export default function BlogPopularPostWidget() {
     [t]
   );
 
+  // Fetch blogs on mount
   const { data: blogs } = useFetch<IBlog[]>(
     apiUrlsConfig.blogs.recent(RECENT_BLOGS_COUNT),
     []
@@ -34,6 +38,7 @@ export default function BlogPopularPostWidget() {
       <h3 className="widget_title">{t('blogs.recent')}</h3>
 
       {blogs?.map((x) => {
+        // Calculate how much time has passed since the blog creation
         const date = timeSince(
           new Date(
             Date.now() - (Date.now() - new Date(x.created_at).getTime())
@@ -49,6 +54,7 @@ export default function BlogPopularPostWidget() {
             ? `${date} ${ago}`
             : `${ago} ${date}`;
 
+        // Display each recent blog
         return (
           <BlogPopularPost
             key={x.id}

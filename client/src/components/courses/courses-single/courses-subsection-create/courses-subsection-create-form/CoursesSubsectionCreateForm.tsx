@@ -20,12 +20,15 @@ type Inputs = {
   description: string;
 };
 
+// The component that displays and handles
+// the courses subsection create form
 export default function CoursesSubsectionCreateForm(
   props: CoursesSubsectionCreateFormProps
 ) {
   const { courseSubsection: validators } = useValidators();
   const { t } = useTranslation();
 
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -40,10 +43,12 @@ export default function CoursesSubsectionCreateForm(
     mode: 'onChange',
   });
 
+  // Prepare fetch
   const { post, response } = useFetch<ICourseSubsection>(
     apiUrlsConfig.courseSubsections.create
   );
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const body = {
       title: data.Title.trim(),
@@ -54,6 +59,8 @@ export default function CoursesSubsectionCreateForm(
 
     await post(body);
 
+    // Update the subsections (so no F5 is needed to update)
+    // and reset the form
     if (response.ok) {
       props.refreshSubsections();
       reset();

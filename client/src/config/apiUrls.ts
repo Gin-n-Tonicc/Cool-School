@@ -1,3 +1,5 @@
+// FILE TO STORE ALL OF THE USED API URLS
+
 const baseApiUrl = process.env.REACT_APP_API_URL || '';
 const baseOAuthUrl = process.env.REACT_APP_OAUTH_URL || '';
 

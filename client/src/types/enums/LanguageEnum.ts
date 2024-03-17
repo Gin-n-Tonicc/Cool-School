@@ -1,3 +1,5 @@
+// Enumeration representing possible languages
+// Each language has a corresponding string representation
 export enum LanguageEnum {
   BULGARIAN = 'Български',
   ENGLISH = 'English',

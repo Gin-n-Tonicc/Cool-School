@@ -12,14 +12,17 @@ export interface PaginationProps {
   nextPage: SwitchPageFunction;
 }
 
+// The hook that paginates a list to our likings
 export function usePagination<T>(
   filteredList: T[] | undefined,
   pageSize: number
 ) {
+  // Prepare state
   const [list, setList] = useState<T[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pages, setPages] = useState(1);
 
+  // Update list
   useEffect(() => {
     if (!filteredList) {
       return;
@@ -30,6 +33,7 @@ export function usePagination<T>(
     );
   }, [filteredList, currentPage, pageSize]);
 
+  // Update pages
   useEffect(() => {
     if (!filteredList) {
       return;
@@ -39,11 +43,13 @@ export function usePagination<T>(
     setPages(pages);
   }, [filteredList, pageSize]);
 
+  // Keep pages value in bounds (v >= 1 && v <= max)
   const validatePage = useMemo(
     () => paginationUtils.validatePage.bind(null, pages),
     [pages]
   );
 
+  // Toggle page by specific number
   const togglePage = useCallback(
     (page: number) => {
       setCurrentPage(validatePage(page));
@@ -51,10 +57,12 @@ export function usePagination<T>(
     [setCurrentPage, validatePage]
   );
 
+  // Go to previous page
   const previousPage = useCallback(() => {
     setCurrentPage((currentPage) => validatePage(currentPage - 1));
   }, [setCurrentPage, validatePage]);
 
+  // Go to next page
   const nextPage = useCallback(() => {
     setCurrentPage((currentPage) => validatePage(currentPage + 1));
   }, [setCurrentPage, validatePage]);

@@ -6,7 +6,9 @@ interface QuizSingleTimerProps {
   remainingTimeInSeconds: number;
 }
 
+// The component that displays a the timer of a single quiz
 export default function QuizSingleTimer(props: QuizSingleTimerProps) {
+  // Counter in seconds
   const [counter, setCounter] = useState(Math.round(props.timeLeft * 60));
 
   const minutes = Math.floor(counter / 60);
@@ -16,12 +18,14 @@ export default function QuizSingleTimer(props: QuizSingleTimerProps) {
     let timeout: NodeJS.Timeout;
 
     if (counter > 0) {
+      // Every second deduct 1 from the counter
       timeout = setTimeout(() => setCounter(counter - 1), 1000);
     } else {
+      // Signalize to parent component that the time has ran out
       props.onTimerEndEvent();
-      setCounter(10);
     }
 
+    // Clear setTimeout on component unmount
     return () => {
       clearTimeout(timeout);
     };

@@ -21,16 +21,14 @@ interface QuestionFormProps {
   onSubmit: (data: QuestionFormQuestion) => void;
 }
 
+// The component that displays
+// and handles the question form
 export default function QuestionForm(props: QuestionFormProps) {
   const { t } = useTranslation();
   const { quizCreate } = useValidators();
 
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm<QuestionInputs>({
+  // Handle form
+  const { handleSubmit, control, reset } = useForm<QuestionInputs>({
     defaultValues: {
       Description: '',
       Marks: '',
@@ -38,6 +36,7 @@ export default function QuestionForm(props: QuestionFormProps) {
     mode: 'onChange',
   });
 
+  // Handle form submit
   const onSubmit: SubmitHandler<QuestionInputs> = (data) => {
     const question: QuestionFormQuestion = {
       description: data.Description,
@@ -45,6 +44,7 @@ export default function QuestionForm(props: QuestionFormProps) {
       customId: uuidV4(),
     };
 
+    // Reset form and Pass data to the parent component
     reset();
     props.onSubmit(question);
   };

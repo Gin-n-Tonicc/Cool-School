@@ -7,11 +7,13 @@ import { initialAuthUtils } from '../../../utils/initialAuthUtils';
 import signUpImg from '../register/signup-image.jpg';
 import FinishRegisterForm from './finish-register-form/FinishRegisterForm';
 
+// The component used to display the finish register page
 export default function FinishRegister() {
   const { t } = useTranslation();
   const { hasFinishedOAuth2, user } = useAuthContext();
   const navigate = useNavigate();
 
+  // Allow only not fully registered oauth2 users to finish their registration
   useEffect(() => {
     if (initialAuthUtils.hasFinishedInitialAuth() && hasFinishedOAuth2) {
       navigate(PagesEnum.Home);

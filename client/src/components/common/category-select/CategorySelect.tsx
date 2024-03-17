@@ -13,6 +13,7 @@ interface CategorySelectProps {
   customOnChange?: (v: string | undefined) => void;
 }
 
+// The component that displays a dropdown with values based on the props
 export default function CategorySelect(props: CategorySelectProps) {
   return (
     <>
@@ -25,11 +26,13 @@ export default function CategorySelect(props: CategorySelectProps) {
         onChange={(newValue) => {
           const value = newValue?.value;
 
+          // Use OnChangeHandler with no value processing
           if (props.customOnChange) {
             props.customOnChange(value);
             return;
           }
 
+          // Cast value to number and pass it to OnChangeHandler
           const numberVal = isNaN(Number(value)) ? -1 : Number(value);
           props.onCategoryChange(numberVal);
         }}

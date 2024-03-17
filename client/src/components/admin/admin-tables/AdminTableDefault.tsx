@@ -1,5 +1,6 @@
 import AdminTable from '../admin-table/AdminTable';
 
+// The component that displays the admin default table
 export default function AdminTableDefault() {
   return (
     <AdminTable

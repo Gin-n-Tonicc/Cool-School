@@ -1,6 +1,8 @@
 import { RegisterOptions } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
+// The hook that construct validation for auth form fields
+// with a message based on the user's selected language
 export default function useAuthValidations() {
   const { t } = useTranslation();
 

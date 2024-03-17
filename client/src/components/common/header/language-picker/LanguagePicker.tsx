@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { LanguageEnum } from '../../../../types/enums/LanguageEnum';
 import LanguageChoice from './language-choice/LanguageChoice';
 
+// The component that groups and displays
+// all of the possible languages
 export default function LanguagePicker() {
   const { i18n } = useTranslation();
 

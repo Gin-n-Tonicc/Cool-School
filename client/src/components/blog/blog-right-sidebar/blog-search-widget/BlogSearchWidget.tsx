@@ -5,10 +5,13 @@ import './BlogSearchWidget.scss';
 
 export const TITLE_PARAM_KEY = 'title';
 
+// The component that displays a search form
+// and handles the search action by changing the search params
 export default function BlogSearchWidget() {
   const { t } = useTranslation();
   const [_, setSearchParams] = useSearchParams();
 
+  // Handler which triggers whenever search happens
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
 
@@ -16,6 +19,7 @@ export default function BlogSearchWidget() {
       .get(TITLE_PARAM_KEY)
       ?.toString();
 
+    // Add the 'title' search param to the previous ones
     if (value) {
       return setSearchParams((prev) => ({
         ...Object.fromEntries(prev),
@@ -23,6 +27,7 @@ export default function BlogSearchWidget() {
       }));
     }
 
+    // Extract the 'title' param from the search params
     setSearchParams((prev) => {
       const { [TITLE_PARAM_KEY]: _, ...remainingParams } =
         Object.fromEntries(prev);

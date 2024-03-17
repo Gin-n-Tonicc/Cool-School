@@ -1,3 +1,4 @@
+// Enumeration representing possible different pages
 export enum PagesEnum {
   Home = '/',
   Contact = '/contact',

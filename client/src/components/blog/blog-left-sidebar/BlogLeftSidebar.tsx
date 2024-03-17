@@ -5,13 +5,14 @@ import { apiUrlsConfig } from '../../../config/apiUrls';
 import { useFetch } from '../../../hooks/useFetch';
 import { usePagination } from '../../../hooks/usePagination';
 import { IBlog } from '../../../types/interfaces/blogs/IBlog';
-import BlogItem from '../blog-item/BlogItem';
-import BlogPagination from '../blog-right-sidebar/blog-pagination/BlogPagination';
 import { CATEGORY_PARAM_KEY } from '../blog-right-sidebar/blog-post-category-widget/blog-post-category/BlogPostCategory';
 import { TITLE_PARAM_KEY } from '../blog-right-sidebar/blog-search-widget/BlogSearchWidget';
+import BlogItem from './blog-item/BlogItem';
+import BlogPagination from './blog-pagination/BlogPagination';
 
 const PAGE_SIZE = 5;
 
+// Display paginated blogs
 export default function BlogLeftSidebar() {
   const { t } = useTranslation();
 
@@ -28,8 +29,11 @@ export default function BlogLeftSidebar() {
   }, [searchParams]);
 
   const [url, setUrl] = useState(getUrl());
+
+  // Fetch on mount and on url change
   const { data: blogs } = useFetch<IBlog[]>(url, [url]);
 
+  // Paginate blogs
   const {
     list: paginatedBlogs,
     pages,
@@ -39,6 +43,7 @@ export default function BlogLeftSidebar() {
     previousPage,
   } = usePagination<IBlog>(blogs, PAGE_SIZE);
 
+  // Whenever url changes set the state to the changed url
   useEffect(() => {
     setUrl(getUrl());
   }, [getUrl]);

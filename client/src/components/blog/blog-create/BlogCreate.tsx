@@ -25,14 +25,16 @@ type Inputs = {
   file: File[];
 };
 
+// The component that displays and handles the form for blog creation
 export default function BlogCreate() {
+  const { t } = useTranslation();
+  const { common, blogCreate } = useValidators();
+
   const [selectedCategory, setSelectedCategory] = useState<
     SingleValue<CategoryOption> | undefined
   >();
 
-  const { t } = useTranslation();
-  const { common, blogCreate } = useValidators();
-
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -55,10 +57,12 @@ export default function BlogCreate() {
   const values = watch();
   const navigate = useNavigate();
 
+  // Register the category dropdown
   useEffect(() => {
     register('category', { ...common.CATEGORY_VALIDATIONS });
   }, []);
 
+  // Prepare fetches
   const { data: categories } = useFetch<ICategory[]>(
     apiUrlsConfig.categories.get,
     []
@@ -84,11 +88,13 @@ export default function BlogCreate() {
     response: aiCategoryRes,
   } = useFetch<ICategory>(apiUrlsConfig.blogs.recommendAICategory);
 
+  // Figure out the choose image label text
   const labelText = useMemo(
     () => values.file[0]?.name || t('blogs.create.choose.image'),
     [values.file, t]
   );
 
+  // Clear previous category and then set the new one
   const onCategoryChange = useCallback(
     (numberVal: number) => {
       setSelectedCategory(undefined);
@@ -102,7 +108,9 @@ export default function BlogCreate() {
     [setValue]
   );
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // Post the blog image first
     const fileFormData = new FormData();
     fileFormData.append('file', data.file[0]);
     const file = await filePost(fileFormData);
@@ -111,6 +119,8 @@ export default function BlogCreate() {
       return;
     }
 
+    // If successful image post
+    // Create the blog with the just created image
     const body = {
       title: data.Title.trim(),
       content: data.content.trim(),
@@ -120,6 +130,7 @@ export default function BlogCreate() {
       categoryId: data.category,
     };
 
+    // After which redirect to the blog page
     const blog = await blogPost(body);
     if (postBlogRes.ok) {
       reset();
@@ -129,6 +140,7 @@ export default function BlogCreate() {
 
   const loadingAI = aiTextLoading || aiCategoryLoading;
 
+  // Ask AI for description based on the blog content
   const onAskAIForDescription = async () => {
     if (loadingAI) {
       return;
@@ -147,6 +159,7 @@ export default function BlogCreate() {
     }
   };
 
+  // Recommend category with AI based on the blog content
   const onRecommendAICategory = async () => {
     if (loadingAI) {
       return;
@@ -212,6 +225,8 @@ export default function BlogCreate() {
                       readOnly={loadingAI}
                       rows={3}></textarea>
                   </div>
+
+                  {/* Improve description with AI button */}
                   <button
                     type="button"
                     className="improve-with-ai-btn absolute right-0 text-2xl text-center flex flex-column items-center justify-items-center"
@@ -259,6 +274,7 @@ export default function BlogCreate() {
                     onCategoryChange={onCategoryChange}
                   />
 
+                  {/* Select category with AI button */}
                   <button
                     type="button"
                     className="improve-with-ai-btn improve-with-ai-btn--category absolute right-0 text-2xl text-center flex flex-column items-center justify-items-center"

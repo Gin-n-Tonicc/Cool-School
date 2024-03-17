@@ -4,6 +4,7 @@ interface FormErrorWrapperProps extends PropsWithChildren {
   message: string | undefined;
 }
 
+// The component that displays an error below the given children
 export default function FormErrorWrapper(props: FormErrorWrapperProps) {
   return (
     <div className="form-group">

@@ -16,20 +16,25 @@ interface AdminTableSearchProps {
 const SEPARATOR_SEARCH = '//';
 const SEPARATOR_VALUES = '=';
 
+// The component that displays and handles the table search form
 export default function AdminTableSearch(props: AdminTableSearchProps) {
   const { t } = useTranslation();
+
+  // Handle form
   const { register, handleSubmit } = useForm<AdminSearchFormValues>({
     defaultValues: {
       search: '',
     },
   });
 
+  // How the separators work:
   // id{separator1}1{separator2}firstName{separator1}Mike{separator2}lastName{separator1}Ehrmantraut
   // id=1//firstName=Mike//lastName=Ehrmantraut
+  // Handle form submit
   const onSubmit: SubmitHandler<AdminSearchFormValues> = (
     v: AdminSearchFormValues
   ) => {
-    const searchResult: AdminSearchValues = v.search
+    const searchMapResult: AdminSearchValues = v.search
       .split(SEPARATOR_SEARCH)
       .filter((x) => x)
       .map((x) => x.split(SEPARATOR_VALUES).filter((x) => x))
@@ -38,11 +43,13 @@ export default function AdminTableSearch(props: AdminTableSearchProps) {
           return acc;
         }
 
+        // Remove search based on non-existing columns
         const newKey = key.toLowerCase().trim();
         if (!props.columnsLowercased.includes(newKey)) {
           return acc;
         }
 
+        // Parse search value
         let newValue: number | string = value;
 
         if (!isNaN(newValue as any)) {
@@ -51,13 +58,14 @@ export default function AdminTableSearch(props: AdminTableSearchProps) {
           newValue = newValue.toLowerCase().trim();
         }
 
+        // Map search value to the acc
         const objToMerge: AdminSearchValues = {};
         objToMerge[newKey] = newValue;
 
         return Object.assign(acc, objToMerge);
       }, {});
 
-    props.onSubmit(searchResult);
+    props.onSubmit(searchMapResult);
   };
 
   return (

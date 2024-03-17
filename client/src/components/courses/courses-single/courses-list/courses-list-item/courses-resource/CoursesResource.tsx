@@ -10,6 +10,8 @@ interface CoursesResourceProps {
   isOwner: boolean;
 }
 
+// The component that displays and handles
+// a single uploaded course resource
 export default function CoursesResource({
   resource,
   refreshResources,
@@ -17,6 +19,7 @@ export default function CoursesResource({
 }: CoursesResourceProps) {
   const { t } = useTranslation();
 
+  // Prepare fetch
   const { del, response } = useFetch<string>(
     apiUrlsConfig.resources.delete(resource.id)
   );
@@ -25,6 +28,7 @@ export default function CoursesResource({
   const uploadedFileLink = apiUrlsConfig.files.getByUrl(file.url);
   const name = `${resource.name} (.${file.name.split('.').pop()})`;
 
+  // Show download popup
   const handleDownload = () => {
     fetch(uploadedFileLink, {
       method: 'GET',
@@ -48,6 +52,7 @@ export default function CoursesResource({
       });
   };
 
+  // Handle resource deletion
   const handleDelete = async () => {
     if (
       !window.confirm(
@@ -60,6 +65,8 @@ export default function CoursesResource({
     }
 
     await del();
+
+    // Update the resources
     if (response.ok) {
       refreshResources();
     }

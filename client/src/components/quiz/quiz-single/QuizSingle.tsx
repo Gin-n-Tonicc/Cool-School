@@ -22,18 +22,23 @@ interface QuizSingleProps {
   onQuizFinishEvent: Function;
 }
 
+// The component that displays a single quiz
 export default function QuizSingle(props: QuizSingleProps) {
   const { t } = useTranslation();
   const { addError } = useErrorContext();
+
+  // Fetch quiz data on mount
   const { data, loading: loadingQuiz } = useFetch<IQuizQuestionsAndAnswers>(
     apiUrlsConfig.quizzes.getFullById(props.quizId),
     []
   );
 
+  // Prepare question answer state
   const [selectedAnswer, setSelectedAnswer] = useState<IAnswer | null>(null);
   const [progresses, setProgresses] = useState<IUserQuizProgress[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
+  // Prepare fetches
   const { post: postProgress, loading: loadingProgress } = useFetch<
     IUserQuizProgress[]
   >(apiUrlsConfig.quizzes.saveProgress(data?.quiz.id));
@@ -42,6 +47,7 @@ export default function QuizSingle(props: QuizSingleProps) {
     apiUrlsConfig.quizzes.submit(data?.quiz.id, props.currentAttempt.id)
   );
 
+  // Find answer based on the progress of the questions
   const findAndSetAnswer = useCallback(
     (question: IQuestionAndAnswers, progresses: IUserQuizProgress[]) => {
       const progress = progresses.find(
@@ -55,6 +61,8 @@ export default function QuizSingle(props: QuizSingleProps) {
     []
   );
 
+  // On quiz load
+  // save all progress, update current question and set the current progress on that question
   useEffect(() => {
     if (data?.userQuizProgresses) {
       const progresses = data.userQuizProgresses;
@@ -68,10 +76,11 @@ export default function QuizSingle(props: QuizSingleProps) {
     return <Spinner />;
   }
 
-  const isLoading = loadingProgress;
+  const isLoading = loadingProgress && loadingFinish;
   const quiz = data.quiz;
   const questions = data.questions;
 
+  // Save user progress and return updated progresses
   const getAndPostProgress = async (currentQuestion: IQuestionAndAnswers) => {
     if (selectedAnswer) {
       const userProgress: ISaveUserProgress = {
@@ -91,24 +100,32 @@ export default function QuizSingle(props: QuizSingleProps) {
     return progresses;
   };
 
+  // Save user progress and switch the question and find progress (if exists)
   const switchQuestion = async (questionIndex: number) => {
+    // Save user progress
     let currentQuestion = questions[currentQuestionIndex];
     await getAndPostProgress(currentQuestion);
 
+    // Find and switch question
     const newIndex = validateIndex(questions.length, questionIndex);
     setCurrentQuestionIndex(newIndex);
 
     currentQuestion = questions[newIndex];
+
+    // Find progress based on question
     const progress = progresses.find(
       (x) => x.questionId === currentQuestion.question.id
     );
 
+    // Find and set answer based on the progress
     const answer =
       currentQuestion.answers.find((x) => x.id === progress?.answerId) || null;
 
     setSelectedAnswer(answer);
   };
 
+  // Save quiz progress, submit it with the new progresses
+  // and signalize the parent component that the quiz has been submitted
   const onSubmitQuiz = async () => {
     const newProgresses = await getAndPostProgress(
       questions[currentQuestionIndex]
@@ -123,12 +140,15 @@ export default function QuizSingle(props: QuizSingleProps) {
     await props.onQuizFinishEvent();
   };
 
+  // Submit quiz on finish
   const onFinish = async () => {
     if (window.confirm(t('quizzes.submit.confirm'))) {
       await onSubmitQuiz();
     }
   };
 
+  // Alert the user that his time has ran out
+  // and then submit the quiz
   const onTimerEnd = async () => {
     addError(t('quizzes.submit.auto'), ErrorTypeEnum.HEADS_UP);
     await onSubmitQuiz();

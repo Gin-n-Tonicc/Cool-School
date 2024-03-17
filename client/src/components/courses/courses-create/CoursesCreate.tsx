@@ -22,10 +22,13 @@ type Inputs = {
   file: File[];
 };
 
+// The component that displays
+// a form for blog creation
 export default function CoursesCreate() {
   const { t } = useTranslation();
   const { common, courseCreate } = useValidators();
 
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -49,20 +52,24 @@ export default function CoursesCreate() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
 
+  // Register the category dropdown
   useEffect(() => {
     register('category', { ...common.CATEGORY_VALIDATIONS });
   }, []);
 
+  // Figure out the name of the file
   const fileLabelText = useMemo(
     () => values.file[0]?.name || t('courses.create.choose.image'),
     [values.file, t]
   );
 
+  // Fetch categories on load
   const { data: categories } = useFetch<ICategory[]>(
     apiUrlsConfig.categories.get,
     []
   );
 
+  // Prepare fetches
   const { post: filePost, response: postFileRes } = useFetch<IFile>(
     apiUrlsConfig.files.upload()
   );
@@ -82,7 +89,9 @@ export default function CoursesCreate() {
     [setValue]
   );
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // Post the course image first
     const fileFormData = new FormData();
     fileFormData.append('file', data.file[0]);
     const file = await filePost(fileFormData);
@@ -91,6 +100,8 @@ export default function CoursesCreate() {
       return;
     }
 
+    // If successful image post
+    // Create the course with the just created image
     const body = {
       name: data.Name.trim(),
       objectives: data.objectives.trim(),
@@ -103,6 +114,7 @@ export default function CoursesCreate() {
 
     const course = await coursePost(body);
 
+    // After which redirect to the course page
     if (postCourseRes.ok) {
       reset();
       navigate(PagesEnum.SingleCourse.replace(':id', course.id.toString()));

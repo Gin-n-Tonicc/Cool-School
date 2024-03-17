@@ -1,6 +1,7 @@
 import { SpinnerRoundFilled } from 'spinners-react';
 import './Spinner.scss';
 
+// The component that displays a spinner
 export default function Spinner() {
   return (
     <div className="spinner-wrapper">

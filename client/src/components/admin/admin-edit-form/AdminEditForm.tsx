@@ -22,6 +22,7 @@ interface AdminFormTitleProps {
   currentObj?: IObjectWithId;
 }
 
+// The component that displays the form title
 function AdminFormTitle(props: AdminFormTitleProps) {
   const { t } = useTranslation();
 
@@ -34,14 +35,18 @@ function AdminFormTitle(props: AdminFormTitleProps) {
   );
 }
 
+// The component that displays and handles the edit form
 export default function AdminEditForm(props: AdminEditFormProps) {
   const { t } = useTranslation();
 
+  // Handle form
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     type K = string | number | boolean | (string | number | boolean)[] | null;
     const formData = Object.fromEntries(new FormData(e.currentTarget));
+
+    // Map the string values to the appropriate types (ex: number, string, arr, etc.)
     const submitData: IDefaultObject<K> = Object.entries(formData).reduce(
       (acc, [key, value]) => {
         let newValue: K = value.toString();
@@ -73,11 +78,13 @@ export default function AdminEditForm(props: AdminEditFormProps) {
 
     let passed: Promise<boolean>;
 
+    // Decide which handler to use
     if (props.editing) {
       passed = props.onUpdate(props.currentObj.id, submitData);
     } else if (props.creating) {
       passed = props.onCreate(submitData);
     } else {
+      // Empty promise so we comply with the required type
       passed = Promise.resolve(true);
     }
 
@@ -94,6 +101,7 @@ export default function AdminEditForm(props: AdminEditFormProps) {
         onSubmit={onSubmit}
         className="d-flex flex-column align-items-center mt-4">
         <div className="w-100">
+          {/* Add an input field for each column */}
           {props.columns.map((x) => (
             <AdminEditFormRow
               key={x}

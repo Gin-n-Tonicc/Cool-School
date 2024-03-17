@@ -5,8 +5,11 @@ import { IBlog } from '../../../types/interfaces/blogs/IBlog';
 import './HomeBlog.scss';
 import HomeBlogCard from './home-blog-card/HomeBlogCard';
 
+// The component that displays the 3 most popular blogs on our website
 export default function HomeBlog() {
   const { t } = useTranslation();
+
+  // Fetch the most liked blogs on mount
   const { data, response, loading } = useFetch<IBlog[]>(
     apiUrlsConfig.blogs.mostLiked,
     []

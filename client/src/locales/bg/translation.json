@@ -303,5 +303,12 @@
   "finish.register.address": "Адрес",
   "finish.register.role.student": "Ученик",
   "finish.register.role.teacher": "Учител",
-  "finish.register.complete": "Завърши регистрация"
+  "finish.register.complete": "Завърши регистрация",
+
+  "internal.error.title": "Упс!",
+  "internal.error.text": "Опитайте да презаредите страницата или се свържете с нас, ако проблемът продължава",
+
+  "not.found.title": "Упс!",
+  "not.found.subtitle": "Страницата не може да бъде намерена",
+  "not.found.text": "Отиди на началната страница"
 }

@@ -19,6 +19,7 @@ export interface SpecialCourseProps {
   rating: number;
 }
 
+// The component that displays a brief summary of a single course
 export default function SpecialCourse(props: SpecialCourseProps) {
   const { t } = useTranslation();
   const stars = Math.round(props.rating);
@@ -29,7 +30,7 @@ export default function SpecialCourse(props: SpecialCourseProps) {
         <img src={props.courseImage} className="special_img" alt="" />
         <div className="special_cource_text">
           <Link
-            to={PagesEnum.SingleCourse.replace(':id', props.id?.toString())}
+            to={PagesEnum.SingleCourse.replace(':id', props.id.toString())}
             className="btn_4">
             {props.titleSummary}
           </Link>
@@ -47,12 +48,14 @@ export default function SpecialCourse(props: SpecialCourseProps) {
             </div>
             <div className="author_rating">
               <div className="rating">
+                {/* Given stars */}
                 {[...new Array(stars)].map((_) => (
                   <a key={uuidV4()}>
                     <img src={colorStar} alt="" />
                   </a>
                 ))}
 
+                {/* Remaining stars */}
                 {[...new Array(MAX_STARS - stars)].map((_) => (
                   <a key={uuidV4()}>
                     <img src={star} alt="" />

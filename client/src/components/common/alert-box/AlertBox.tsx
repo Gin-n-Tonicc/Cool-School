@@ -2,6 +2,7 @@ import { useErrorContext } from '../../../contexts/ErrorContext';
 import ErrorAlert from '../alerts/error-alert/ErrorAlert';
 import './AlertBox.scss';
 
+// The component that groups and displays all of the alerts
 export default function AlertBox() {
   const { errors } = useErrorContext();
 
