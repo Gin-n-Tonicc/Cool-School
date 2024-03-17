@@ -1,6 +1,7 @@
 package com.coolSchool.coolSchool.exceptions.common;
 
 import org.springframework.http.HttpStatus;
+
 /**
  * Exception thrown to indicate that the server refuses to accept the request because the payload format is
  * in an unsupported format.

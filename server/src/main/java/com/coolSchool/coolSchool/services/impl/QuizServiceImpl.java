@@ -183,10 +183,10 @@ public class QuizServiceImpl implements QuizService {
     /**
      * Updates an existing quiz with the provided quiz data.
      *
-     * @param quizId           The ID of the quiz to be updated.
-     * @param updatedQuizData  The DTO containing updated quiz details and associated questions with answers.
+     * @param quizId          The ID of the quiz to be updated.
+     * @param updatedQuizData The DTO containing updated quiz details and associated questions with answers.
      * @return The DTO representing the updated quiz.
-     * @throws QuizNotFoundException              if the quiz with the specified ID is not found.
+     * @throws QuizNotFoundException             if the quiz with the specified ID is not found.
      * @throws CourseSubsectionNotFoundException if the associated course subsection is not found.
      */
     @Override
@@ -256,9 +256,9 @@ public class QuizServiceImpl implements QuizService {
      * @param quizId The ID of the quiz to be attempted.
      * @param userId The ID of the user attempting the quiz.
      * @return The DTO representing the quiz attempt.
-     * @throws QuizNotFoundException            if the quiz with the specified ID is not found.
-     * @throws NoMoreAttemptsQuizException      if the user has exceeded the attempt limit for the quiz.
-     * @throws QuizTimeNotValidException        if the current time is outside the quiz availability window.
+     * @throws QuizNotFoundException             if the quiz with the specified ID is not found.
+     * @throws NoMoreAttemptsQuizException       if the user has exceeded the attempt limit for the quiz.
+     * @throws QuizTimeNotValidException         if the current time is outside the quiz availability window.
      * @throws TimeLimitForQuizExceededException if the time limit for the quiz has exceeded.
      */
     @Override
@@ -307,9 +307,9 @@ public class QuizServiceImpl implements QuizService {
      * @param userId      The ID of the user submitting the quiz.
      * @param attemptId   The ID of the quiz attempt.
      * @return The DTO representing the result of the quiz attempt.
-     * @throws QuizNotFoundException             if the quiz with the specified ID is not found.
-     * @throws QuizTimeNotValidException         if the current time is outside the quiz availability window.
-     * @throws QuizAttemptNotFoundException      if the quiz attempt with the specified ID is not found.
+     * @throws QuizNotFoundException        if the quiz with the specified ID is not found.
+     * @throws QuizTimeNotValidException    if the current time is outside the quiz availability window.
+     * @throws QuizAttemptNotFoundException if the quiz attempt with the specified ID is not found.
      */
     @Override
     public QuizResultDTO submitQuiz(Long quizId, List<UserAnswerDTO> userAnswers, Long userId, Long attemptId) {
@@ -376,8 +376,8 @@ public class QuizServiceImpl implements QuizService {
     /**
      * Retrieves all quiz attempts made by a user for a particular quiz.
      *
-     * @param quizId         The ID of the quiz.
-     * @param publicUserDTO  The DTO representing the public user.
+     * @param quizId        The ID of the quiz.
+     * @param publicUserDTO The DTO representing the public user.
      * @return The list of DTOs representing the quiz attempts.
      */
     @Override
@@ -398,7 +398,7 @@ public class QuizServiceImpl implements QuizService {
      * @param userId        The ID of the user.
      * @param quizAttemptId The ID of the quiz attempt.
      * @return The list of DTOs representing the user's quiz progress.
-     * @throws QuizAttemptNotFoundException if the quiz attempt with the specified ID is not found.
+     * @throws QuizAttemptNotFoundException      if the quiz attempt with the specified ID is not found.
      * @throws TimeLimitForQuizExceededException if the time limit for the quiz has been exceeded.
      */
     @Override
@@ -502,7 +502,7 @@ public class QuizServiceImpl implements QuizService {
     /**
      * Calculates the time left in minutes for a quiz attempt.
      *
-     * @param quizAttemptId       The ID of the quiz attempt.
+     * @param quizAttemptId         The ID of the quiz attempt.
      * @param quizDurationInMinutes The duration of the quiz in minutes.
      * @return The time left in minutes for the quiz attempt.
      */

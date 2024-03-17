@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
+
 /**
  * Enumeration representing OAuth2 providers available in the application.
  * This class is used to define and access different OAuth2 providers supported for authentication.

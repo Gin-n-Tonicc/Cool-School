@@ -5,6 +5,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
+
 /**
  * Interceptor class responsible for setting the locale based on the incoming request's locale.
  */

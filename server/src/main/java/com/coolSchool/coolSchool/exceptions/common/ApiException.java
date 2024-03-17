@@ -2,6 +2,7 @@ package com.coolSchool.coolSchool.exceptions.common;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
 /**
  * Abstract base class for API exceptions.
  * Extends RuntimeException to indicate unchecked exceptions that can occur during API operations.

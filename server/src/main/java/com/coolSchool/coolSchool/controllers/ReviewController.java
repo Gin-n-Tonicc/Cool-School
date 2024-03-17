@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 /**
  * A controller class for handling resource-related operations.
  * All users enrolled in a course can review it with starts and a message.

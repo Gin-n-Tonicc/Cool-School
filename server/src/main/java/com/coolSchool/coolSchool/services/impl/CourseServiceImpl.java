@@ -108,7 +108,7 @@ public class CourseServiceImpl implements CourseService {
         userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(() -> new UserNotFoundException(messageSource));
         categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
         Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
-        
+
         // Send a Slack notification to the ADMIN when a new course is created
         sendSlackNotification(courseEntity);
         return modelMapper.map(courseEntity, CourseResponseDTO.class);

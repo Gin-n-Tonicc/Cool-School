@@ -99,7 +99,7 @@ public class FileServiceImpl implements FileService {
      *
      * @param imageName The name of the image file.
      * @return The byte array of the file.
-     * @throws FileNotFoundException      If the file is not found.
+     * @throws FileNotFoundException        If the file is not found.
      * @throws InternalServerErrorException If an internal server error occurs.
      */
     @Override
@@ -130,6 +130,7 @@ public class FileServiceImpl implements FileService {
             throw new InternalServerErrorException(messageSource);
         }
     }
+
     /**
      * Retrieves the media type of a file based on its filename.
      *

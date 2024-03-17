@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 import static com.coolSchool.coolSchool.services.impl.security.TokenServiceImpl.AUTH_COOKIE_KEY_JWT;
+
 /**
  * LogoutHandler is responsible for handling user logout by invalidating the JWT token and removing associated cookies.
  */

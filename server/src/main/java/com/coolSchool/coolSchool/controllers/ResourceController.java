@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 /**
  * A controller class for handling resource-related operations.
  * (Resource are the materials given by the teacher in course)

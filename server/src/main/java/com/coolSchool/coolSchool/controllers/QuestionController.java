@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/** Controller class for handling operations related to questions.
+/**
+ * Controller class for handling operations related to questions.
  * CRUD
  */
 @RestController

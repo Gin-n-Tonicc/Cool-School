@@ -11,6 +11,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+
 /**
  * JwtAuthenticationEntryPoint class is responsible for handling authentication errors
  * that occur when attempting to access secured endpoints without proper authentication credentials.

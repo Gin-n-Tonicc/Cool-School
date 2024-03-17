@@ -7,6 +7,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+
 /**
  * Exception thrown when there is an issue creating a user, either due to invalid data or duplicate user details.
  * Sets the appropriate message using MessageSource (the messages are in src/main/resources/messages).

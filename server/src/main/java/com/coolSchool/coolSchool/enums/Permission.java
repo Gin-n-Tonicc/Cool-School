@@ -2,6 +2,7 @@ package com.coolSchool.coolSchool.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 /**
  * Enumeration representing permissions available in the application.
  * Each permission has a corresponding string representation.

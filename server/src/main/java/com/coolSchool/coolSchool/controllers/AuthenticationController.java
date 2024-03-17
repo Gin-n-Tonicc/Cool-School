@@ -1,9 +1,9 @@
 package com.coolSchool.coolSchool.controllers;
 
 import com.coolSchool.coolSchool.config.FrontendConfig;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.exceptions.email.EmailNotVerified;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
-import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationRequest;
 import com.coolSchool.coolSchool.models.dto.auth.AuthenticationResponse;
@@ -107,7 +107,8 @@ public class AuthenticationController {
     }
 
     @RateLimited
-    @PutMapping("/complete-oauth") // After registering with Google we need more information about the user, described in CompleteOAuthRequest
+    @PutMapping("/complete-oauth")
+    // After registering with Google we need more information about the user, described in CompleteOAuthRequest
     public ResponseEntity<AuthenticationResponse> completeOAuth(@RequestBody CompleteOAuthRequest request, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         PublicUserDTO currentLoggedUser = (PublicUserDTO) servletRequest.getAttribute(JwtAuthenticationFilter.userKey);
 

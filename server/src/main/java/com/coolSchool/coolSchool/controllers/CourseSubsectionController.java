@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 // Controller class for handling operations related to course subsections.
 @RestController
 @RequestMapping("/api/v1/courseSubsections")

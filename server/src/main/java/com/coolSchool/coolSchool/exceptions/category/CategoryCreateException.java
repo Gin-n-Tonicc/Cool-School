@@ -3,6 +3,7 @@ package com.coolSchool.coolSchool.exceptions.category;
 import com.coolSchool.coolSchool.exceptions.common.BadRequestException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+
 /**
  * Exception thrown when a category with the same name already exists.
  * Sets the appropriate message using MessageSource (the messages are in src/main/resources/messages).

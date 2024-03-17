@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param request The registration request containing user details.
      * @return The created user.
-     * @throws UserCreateException      If there is an issue creating the user.
+     * @throws UserCreateException             If there is an issue creating the user.
      * @throws DataIntegrityViolationException If there is a data integrity violation while creating the user.
      * @throws ConstraintViolationException    If there is a constraint violation while creating the user.
      */
