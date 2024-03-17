@@ -19,7 +19,7 @@ export interface SpecialCourseProps {
   rating: number;
 }
 
-// The component that brief summary of a single course
+// The component that displays a brief summary of a single course
 export default function SpecialCourse(props: SpecialCourseProps) {
   const { t } = useTranslation();
   const stars = Math.round(props.rating);

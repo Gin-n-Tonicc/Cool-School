@@ -28,6 +28,7 @@ export default function CoursesCreate() {
   const { t } = useTranslation();
   const { common, courseCreate } = useValidators();
 
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -68,7 +69,7 @@ export default function CoursesCreate() {
     []
   );
 
-  // Prepare fetches for later
+  // Prepare fetches
   const { post: filePost, response: postFileRes } = useFetch<IFile>(
     apiUrlsConfig.files.upload()
   );
@@ -88,6 +89,7 @@ export default function CoursesCreate() {
     [setValue]
   );
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     // Post the course image first
     const fileFormData = new FormData();

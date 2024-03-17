@@ -8,6 +8,7 @@ import googleSvg from '../images/google.svg';
 import RegisterForm from './register-form/RegisterForm';
 import signUpImg from './signup-image.jpg';
 
+// The component used to display the Register page
 export default function Register() {
   const { t } = useTranslation();
 

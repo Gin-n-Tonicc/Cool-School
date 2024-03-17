@@ -28,8 +28,10 @@ export default function CoursesRating(props: CoursesRatingProps) {
     [qualityStars, punctualityStars]
   );
 
+  // Prepare fetch
   const { post, response } = useFetch<any>(apiUrlsConfig.reviews.create);
 
+  // Handle form submit
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 

@@ -30,8 +30,10 @@ import QuizForm from './quiz-form/QuizForm';
 export default function QuizCreate() {
   const { t } = useTranslation();
   const { courseId, subsectionId } = useParams();
-  const ref = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+
+  const ref = useRef<HTMLButtonElement>(null);
 
   // Fetch subsection on mount
   const { data: subsection, response: subsectionResponse } =
@@ -48,8 +50,6 @@ export default function QuizCreate() {
   const { post, response: postQuizResponse } = useFetch<IQuiz>(
     apiUrlsConfig.quizzes.create
   );
-
-  const { user } = useAuthContext();
 
   // Prepare state to store all of the quiz data
   const [questionsAnswers, setQuestionsAnswers] = useState<

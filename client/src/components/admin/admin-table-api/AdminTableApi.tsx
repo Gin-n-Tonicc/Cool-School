@@ -18,10 +18,14 @@ interface AdminTableApiProps {
   delete: boolean;
 }
 
+// The component that handles all of the API calls for admin requests to the server
 export default function AdminTableApi(props: AdminTableApiProps) {
-  const [rows, setRows] = useState<IObjectWithId[]>([]);
   const { t } = useTranslation();
 
+  // Prepare state
+  const [rows, setRows] = useState<IObjectWithId[]>([]);
+
+  // Prepare fetches
   const {
     response: getResponse,
     loading,
@@ -51,6 +55,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     }
   }, [get, getResponse]);
 
+  // On mount load rows
   useEffect(() => {
     loadRows();
   }, []);
@@ -71,6 +76,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     [loadRows]
   );
 
+  // Handle record creation
   const onCreate: OnCreateFunction = useCallback(
     async (data: Object) => {
       const obj = await post(data);
@@ -83,6 +89,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     [postResponse, onCrud, post]
   );
 
+  // Handle record update
   const onUpdate: OnUpdateFunction = useCallback(
     async (id: number, data: Object) => {
       await put(`/${id}`, data);
@@ -91,6 +98,7 @@ export default function AdminTableApi(props: AdminTableApiProps) {
     [putResponse, onCrud, put]
   );
 
+  // Handle record deletion
   const onDelete: OnDeleteFunction = useCallback(
     async (id: number) => {
       await del(`/${id}`);

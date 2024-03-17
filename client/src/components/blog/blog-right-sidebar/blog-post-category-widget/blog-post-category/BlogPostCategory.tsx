@@ -13,6 +13,7 @@ export default function BlogPostCategory(props: BlogPostCategoryProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const isSelected = searchParams.get(CATEGORY_PARAM_KEY) === props.name;
 
+  // Handle category change
   const onClick: MouseEventHandler = (e) => {
     // Add the 'category' search param to the previous ones
     if (!isSelected) {

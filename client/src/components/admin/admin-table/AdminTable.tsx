@@ -37,6 +37,7 @@ interface CreateButtonProps {
   onCreate: () => void;
 }
 
+// The component that displays the table title
 function TableTitle(props: AdminTableTitleProps) {
   const { t } = useTranslation();
 
@@ -48,6 +49,7 @@ function TableTitle(props: AdminTableTitleProps) {
   );
 }
 
+// The component that displays the create button
 function CreateButton(props: CreateButtonProps) {
   const { t } = useTranslation();
 
@@ -96,10 +98,13 @@ function validateList(list: AdminTableProps['list']) {
 }
 
 const PAGE_SIZE = 5;
+
+// The component that displays the admin title
 export default function AdminTable(props: AdminTableProps) {
   const { t } = useTranslation();
-  const validatedList = useMemo(() => validateList(props.list), [props.list]);
 
+  // Prepare state
+  const validatedList = useMemo(() => validateList(props.list), [props.list]);
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [currentObj, setCurrentObj] = useState<IObjectWithId>({ id: -1 });
@@ -121,6 +126,7 @@ export default function AdminTable(props: AdminTableProps) {
     return [columns, columns.map((x) => x.toLowerCase())];
   }, [validatedList, props.list]);
 
+  // Handle search
   const onSearch: SubmitHandler<AdminSearchValues> = useCallback((v) => {
     const filteredList = props.list.filter((x) => {
       // Check if some search value mismatches an object from the list
@@ -149,23 +155,27 @@ export default function AdminTable(props: AdminTableProps) {
     setFilteredList(filteredList);
   }, []);
 
+  // Handle opening create form
   const openCreate = () => {
     setCurrentObj({ id: -1 });
     setIsEditing(false);
     setIsCreating(true);
   };
 
+  // Handle opening edit form
   const openEdit = () => {
     setIsCreating(false);
     setIsEditing(true);
   };
 
+  // Handle closing form
   const closeForm = () => {
     setCurrentObj({ id: -1 });
     setIsCreating(false);
     setIsEditing(false);
   };
 
+  // Handle opening create form
   const onCreate = useCallback(() => {
     if (isCreating) {
       return closeForm();
@@ -174,6 +184,7 @@ export default function AdminTable(props: AdminTableProps) {
     openCreate();
   }, [isCreating]);
 
+  // Handle opening edit form
   const onUpdate = useCallback(
     (id: number) => {
       if (isEditing && currentObj.id === id) {
@@ -192,6 +203,7 @@ export default function AdminTable(props: AdminTableProps) {
     [isEditing, currentObj]
   );
 
+  // Handle record deletion
   const onDelete = useCallback((id: number) => {
     const confirmation = window.confirm(
       `${t('admin.api.confirm.delete')}${id}?`

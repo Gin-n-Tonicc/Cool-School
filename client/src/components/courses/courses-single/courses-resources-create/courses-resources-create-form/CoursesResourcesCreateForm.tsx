@@ -65,7 +65,6 @@ export default function CoursesResourcesCreateForm(
   // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     // Post the resource file first
-
     const fileFormData = new FormData();
     fileFormData.append('file', data.file[0]);
     const file = await filePost(fileFormData);

@@ -27,6 +27,7 @@ export default function BlogPopularPostWidget() {
     [t]
   );
 
+  // Fetch blogs on mount
   const { data: blogs } = useFetch<IBlog[]>(
     apiUrlsConfig.blogs.recent(RECENT_BLOGS_COUNT),
     []

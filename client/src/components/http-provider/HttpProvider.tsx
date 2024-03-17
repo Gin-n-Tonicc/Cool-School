@@ -12,6 +12,8 @@ import { isJwtExpired } from '../../utils/jwtUtils';
 export default function HttpProvider({ children }: PropsWithChildren) {
   const { isAuthenticated, user, removeJwt, removeRefresh } = useAuthContext();
   const { addError } = useErrorContext();
+
+  // Prepare refresh token fetch
   const { get } = useFetch<IUser>(apiUrlsConfig.auth.refreshToken());
 
   const removeTokensIfExpired = () => {

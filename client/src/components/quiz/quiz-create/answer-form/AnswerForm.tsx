@@ -62,8 +62,7 @@ export default function AnswerForm(props: AnswerFormProps) {
     [setValue]
   );
 
-  // On form submit
-  // Pass data to the parent component and reset form except the question dropdown
+  // Handle form submit
   const onSubmit: SubmitHandler<AnswerInputs> = (data) => {
     const isCorrect = Boolean(data.correct.length);
 
@@ -73,6 +72,7 @@ export default function AnswerForm(props: AnswerFormProps) {
       customQuestionId: data.questionId,
     };
 
+    // Pass data to the parent component and reset form except the question dropdown
     reset({ questionId: data.questionId, Text: '', correct: '' });
     props.onSubmit(answer);
   };

@@ -36,7 +36,7 @@ export default function QuestionForm(props: QuestionFormProps) {
     mode: 'onChange',
   });
 
-  // On form submit pass data to the parent component
+  // Handle form submit
   const onSubmit: SubmitHandler<QuestionInputs> = (data) => {
     const question: QuestionFormQuestion = {
       description: data.Description,
@@ -44,6 +44,7 @@ export default function QuestionForm(props: QuestionFormProps) {
       customId: uuidV4(),
     };
 
+    // Reset form and Pass data to the parent component
     reset();
     props.onSubmit(question);
   };

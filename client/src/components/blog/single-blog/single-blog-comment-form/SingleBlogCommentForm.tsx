@@ -17,15 +17,18 @@ export default function SingleBlogCommentForm(
 ) {
   const { t } = useTranslation();
   const { user } = useAuthContext();
+
+  // Prepare fetch
   const { response, post } = useFetch<IComment>(apiUrlsConfig.comments.post);
 
-  // Post the new comment after if successful refresh the comments and reset the form
+  // Handle form submit
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     const form = e.currentTarget;
     const { comment } = Object.fromEntries(new FormData(form));
 
+    // Post the new comment
     await post({
       comment: ((comment as string) || '').trim(),
       ownerId: user.id,
@@ -33,6 +36,7 @@ export default function SingleBlogCommentForm(
       liked_users: [],
     });
 
+    // Update the comments and reset the form
     if (response.ok) {
       props.refreshComments();
       form.reset();

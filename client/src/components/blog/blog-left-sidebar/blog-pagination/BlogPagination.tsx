@@ -3,6 +3,7 @@ import './BlogPagination.scss';
 
 interface BlogPaginationProps extends PaginationProps {}
 
+// The component that displays the blog pagination buttons
 export default function BlogPagination(props: BlogPaginationProps) {
   return (
     <nav className="blog-pagination justify-content-center d-flex">

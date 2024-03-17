@@ -39,7 +39,7 @@ export default function QuizForm(props: QuizFormProps) {
     mode: 'onChange',
   });
 
-  // On form submit pass data to the parent component
+  // Handle form submit
   const onSubmit: SubmitHandler<QuizFormInputs> = (data) => {
     const quiz: IQuiz = {
       title: data.Title,
@@ -53,6 +53,7 @@ export default function QuizForm(props: QuizFormProps) {
       id: 0,
     };
 
+    // Pass data to the parent component
     props.onSubmit(quiz);
   };
 

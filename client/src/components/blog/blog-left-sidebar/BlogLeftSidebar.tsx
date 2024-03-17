@@ -29,6 +29,8 @@ export default function BlogLeftSidebar() {
   }, [searchParams]);
 
   const [url, setUrl] = useState(getUrl());
+
+  // Fetch on mount and on url change
   const { data: blogs } = useFetch<IBlog[]>(url, [url]);
 
   // Paginate blogs

@@ -16,8 +16,11 @@ interface AdminTableSearchProps {
 const SEPARATOR_SEARCH = '//';
 const SEPARATOR_VALUES = '=';
 
+// The component that displays and handles the table search form
 export default function AdminTableSearch(props: AdminTableSearchProps) {
   const { t } = useTranslation();
+
+  // Handle form
   const { register, handleSubmit } = useForm<AdminSearchFormValues>({
     defaultValues: {
       search: '',
@@ -27,6 +30,7 @@ export default function AdminTableSearch(props: AdminTableSearchProps) {
   // How the separators work:
   // id{separator1}1{separator2}firstName{separator1}Mike{separator2}lastName{separator1}Ehrmantraut
   // id=1//firstName=Mike//lastName=Ehrmantraut
+  // Handle form submit
   const onSubmit: SubmitHandler<AdminSearchFormValues> = (
     v: AdminSearchFormValues
   ) => {

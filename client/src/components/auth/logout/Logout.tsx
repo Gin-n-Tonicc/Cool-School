@@ -6,13 +6,15 @@ import { useFetch } from '../../../hooks/useFetch';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import Spinner from '../../common/spinner/Spinner';
 
+// The component used to handle logout
 export default function Logout() {
   const { logoutUser } = useAuthContext();
   const navigate = useNavigate();
 
+  // Logout on mount
   const { loading } = useFetch(apiUrlsConfig.auth.logout, []);
 
-  // Logout and redirect to home
+  // Clear user from state and redirect to home
   useEffect(() => {
     if (!loading) {
       logoutUser();

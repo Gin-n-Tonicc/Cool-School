@@ -22,6 +22,7 @@ interface AdminFormTitleProps {
   currentObj?: IObjectWithId;
 }
 
+// The component that displays the form title
 function AdminFormTitle(props: AdminFormTitleProps) {
   const { t } = useTranslation();
 
@@ -34,9 +35,11 @@ function AdminFormTitle(props: AdminFormTitleProps) {
   );
 }
 
+// The component that displays and handles the edit form
 export default function AdminEditForm(props: AdminEditFormProps) {
   const { t } = useTranslation();
 
+  // Handle form
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 

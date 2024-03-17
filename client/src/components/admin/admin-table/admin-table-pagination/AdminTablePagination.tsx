@@ -2,6 +2,7 @@ import { PaginationProps } from '../../../../hooks/usePagination';
 
 interface AdminTablePaginationProps extends PaginationProps {}
 
+// The component that displays the table pagination buttons
 export default function AdminTablePagination(props: AdminTablePaginationProps) {
   return (
     <ul className="pagination admin-pagination">

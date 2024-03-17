@@ -9,9 +9,11 @@ import HomeCourse from './special-course/SpecialCourse';
 
 const PAGE_SIZE = 2;
 
-// The component that displays {n} amount of courses
+// The component that displays {n} (paginated) amount of courses
 export default function SpecialCourses() {
   const { t } = useTranslation();
+
+  // Fetch all courses on mount
   const { data } = useFetch<ICourse[]>(apiUrlsConfig.courses.getAll, []);
 
   const {

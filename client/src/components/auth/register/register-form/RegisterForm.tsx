@@ -23,15 +23,18 @@ type Inputs = {
   role: RolesEnum;
 };
 
+// The component used to display and handle the register form
 export default function RegisterForm() {
   const { t } = useTranslation();
   const { auth: validators } = useValidators();
   const { addError } = useErrorContext();
 
+  // Prepare fetch
   const { post, response, loading } = useFetch<IUser>(
     apiUrlsConfig.auth.register
   );
 
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -77,8 +80,9 @@ export default function RegisterForm() {
     }
   }, [errors, formValues, setError, clearErrors]);
 
-  // Register user and, on success, show a message that an email is sent
+  // Handle form submission
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // Register user
     await post({
       firstname: data['First Name'].trim(),
       lastname: data['Last Name'].trim(),
@@ -90,6 +94,7 @@ export default function RegisterForm() {
       role: data['role'].trim(),
     });
 
+    // Reset form, show a message that an email is sent
     if (response.ok) {
       reset();
       addError(t('register.info.on.register'), ErrorTypeEnum.HEADS_UP);

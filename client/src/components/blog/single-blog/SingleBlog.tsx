@@ -16,27 +16,30 @@ import SingleBlogComments from './single-blog-comments/SingleBlogComments';
 const DEFAULT_COMMENT_COUNT = 2;
 const COMMENT_INCREMENT = 5;
 
-// A component that displays the information about a single blog
+// The component that displays information about a single blog
 export default function SingleBlog() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { user } = useAuthContext();
 
+  // Prepare state
   const [hasLiked, setHasLiked] = useState(false);
   const [commentCount, setCommentCount] = useState(DEFAULT_COMMENT_COUNT);
 
-  // Fetch blog on load
+  // Fetch blog on mount
   const {
     data: blog,
     response,
     loading,
   } = useFetch<IBlog>(apiUrlsConfig.blogs.getOne(id), []);
 
+  // Fetch comments on mount and on comment count change
   const { data: commentsRes, get } = useFetch<ICommentsByBlogResponse>(
     apiUrlsConfig.comments.getByBlogId(Number(id || -1), commentCount),
     [commentCount]
   );
 
+  // Prepare fetch
   const { response: likedBlogRes, post } = useFetch<IBlog>(
     apiUrlsConfig.blogs.likeBlog(id)
   );

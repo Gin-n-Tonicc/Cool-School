@@ -19,16 +19,19 @@ type Inputs = {
   role: RolesEnum;
 };
 
+// The component used to display and handle the finish register form
 export default function FinishRegisterForm() {
   const { t } = useTranslation();
   const { auth: validators } = useValidators();
   const navigate = useNavigate();
-
   const { loginUser } = useAuthContext();
+
+  // Prepare fetches
   const { put, response } = useFetch<IAuthResponse>(
     apiUrlsConfig.auth.completeOAuth
   );
 
+  // Handle form
   const { handleSubmit, register, control, reset } = useForm<Inputs>({
     defaultValues: {
       'First Name': '',
@@ -40,6 +43,7 @@ export default function FinishRegisterForm() {
     mode: 'onChange',
   });
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const user = await put({
       firstname: data['First Name'].trim(),
@@ -49,6 +53,7 @@ export default function FinishRegisterForm() {
       role: data['role'].trim(),
     });
 
+    // Reset form, update auth state (login user) and navigate to home
     if (response.ok) {
       reset();
       loginUser(user);

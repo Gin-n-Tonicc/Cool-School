@@ -66,7 +66,7 @@ export default function CoursesResource({
 
     await del();
 
-    // After which update the resources
+    // Update the resources
     if (response.ok) {
       refreshResources();
     }

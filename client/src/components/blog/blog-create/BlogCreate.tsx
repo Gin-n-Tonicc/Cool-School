@@ -25,16 +25,16 @@ type Inputs = {
   file: File[];
 };
 
-// The component that displays
-// a form for blog creation
+// The component that displays and handles the form for blog creation
 export default function BlogCreate() {
+  const { t } = useTranslation();
+  const { common, blogCreate } = useValidators();
+
   const [selectedCategory, setSelectedCategory] = useState<
     SingleValue<CategoryOption> | undefined
   >();
 
-  const { t } = useTranslation();
-  const { common, blogCreate } = useValidators();
-
+  // Handle form
   const {
     handleSubmit,
     control,
@@ -62,6 +62,7 @@ export default function BlogCreate() {
     register('category', { ...common.CATEGORY_VALIDATIONS });
   }, []);
 
+  // Prepare fetches
   const { data: categories } = useFetch<ICategory[]>(
     apiUrlsConfig.categories.get,
     []
@@ -107,6 +108,7 @@ export default function BlogCreate() {
     [setValue]
   );
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     // Post the blog image first
     const fileFormData = new FormData();

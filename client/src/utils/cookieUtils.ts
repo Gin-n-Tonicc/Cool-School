@@ -1,3 +1,5 @@
+// Util file that helps us handle cookies
+
 import Cookies from 'js-cookie';
 
 const AUTH_COOKIE_KEY_JWT = 'COOL_SCHOOL_SESSION_JWT';

@@ -110,6 +110,7 @@ function AdminNav() {
     </ul>
   );
 }
+
 // The component that decides which links to display (user, guest or admin)
 export default function Header() {
   const { user, isAuthenticated, hasFinishedOAuth2 } = useAuthContext();

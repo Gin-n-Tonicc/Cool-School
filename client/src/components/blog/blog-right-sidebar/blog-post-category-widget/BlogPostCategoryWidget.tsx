@@ -9,7 +9,7 @@ import BlogPostCategory from './blog-post-category/BlogPostCategory';
 export default function BlogPostCategoryWidget() {
   const { t } = useTranslation();
 
-  // Fetch the categories
+  // Fetch categories on mount
   const { data: categories } = useFetch<ICategory[]>(
     apiUrlsConfig.categories.get,
     []
