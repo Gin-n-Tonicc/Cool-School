@@ -21,8 +21,8 @@ export default function BlogPopularPostWidget() {
       31536000: t('date.years'),
       2592000: t('date.months'),
       86400: t('date.days'),
-      3600: t('date.minutes'),
-      60: t('date.seconds'),
+      3600: t('date.hours'),
+      60: t('date.minutes'),
     }),
     [t]
   );
