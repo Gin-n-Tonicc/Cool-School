@@ -13,11 +13,11 @@ export default function HomeFeatures() {
       <div className="container">
         <div className="row">
           <div className="col-sm-6 col-xl-3 align-self-center">
-            <div className="single_feature_text ">
-              <h3>
+            <div className="single_feature_text">
+              <h2>
                 {t('home.what.makes.it.cool')}
                 <br />
-              </h3>
+              </h2>
               <p>{t('home.what.makes.it.cool.description')}</p>
               <Link to={PagesEnum.Courses} className="btn_1">
                 {t('home.read.more.button')}

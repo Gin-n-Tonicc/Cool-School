@@ -15,7 +15,7 @@ export interface HomeBlogCardProps {
 // The component that displays a single most popular blog
 export default function HomeBlogCard(props: HomeBlogCardProps) {
   return (
-    <div className="col-sm-6 col-lg-4 col-xl-4">
+    <div className="col-sm-6 col-lg-4 col-xl-4 single-home-blog-wrapper">
       <div className="single-home-blog">
         <div className="card">
           <img src={props.image} className="card-img-top" alt="blog" />

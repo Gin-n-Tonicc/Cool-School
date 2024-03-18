@@ -1,5 +1,13 @@
 @import 'src/styles/style.scss';
 
+.blog-cards-wrapper {
+  justify-content: center;
+
+  @media #{$small_mobile} {
+    gap: 20px;
+  }
+}
+
 .blog_part {
   padding-top: 0 !important;
 

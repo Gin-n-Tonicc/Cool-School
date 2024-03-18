@@ -8,8 +8,23 @@
   margin-bottom: 40px;
   font-style: inherit !important;
 }
+.single-home-blog-wrapper {
+  width: fit-content;
+  @media #{$small_mobile} {
+    margin-bottom: 20px;
+  }
+  @media #{$large_mobile} {
+    margin-bottom: 20px;
+  }
+  @media #{$tab_device} {
+    margin-bottom: 20px;
+  }
+  @media #{$medium_device} {
+  }
+}
 .single-home-blog {
   @media #{$small_mobile} {
+    width: 90vw;
     margin-bottom: 20px;
   }
   @media #{$large_mobile} {
@@ -23,6 +38,9 @@
 
   height: 100%;
   .card-img-top {
+    @media #{$small_mobile} {
+      width: 100%;
+    }
     border-radius: 0px;
     width: 360px;
     height: 313px;
@@ -32,6 +50,7 @@
     border-radius: 0px;
     background-color: transparent;
     position: relative;
+
     .card-body {
       display: flex;
       flex-direction: column;

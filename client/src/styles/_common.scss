@@ -28,10 +28,10 @@ input:focus {
     max-width: 20vw;
   }
   @media #{$small_mobile} {
-    max-width: 40vw;
+    max-width: 30vw;
   }
   @media #{$large_mobile} {
-    max-width: 40vw;
+    max-width: 25vw;
   }
 }
 
