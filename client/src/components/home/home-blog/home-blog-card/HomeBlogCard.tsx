@@ -15,16 +15,19 @@ export interface HomeBlogCardProps {
 // The component that displays a single most popular blog
 export default function HomeBlogCard(props: HomeBlogCardProps) {
   return (
-    <div className="col-sm-6 col-lg-4 col-xl-4">
+    <div className="col-sm-6 col-lg-4 col-xl-4 single-home-blog-wrapper">
       <div className="single-home-blog">
         <div className="card">
           <img src={props.image} className="card-img-top" alt="blog" />
           <div className="card-body">
-            <a className="btn_4">{props.category}</a>
-            <Link to={PagesEnum.SingleBlog.replace(':id', props.id.toString())}>
-              <h5 className="card-title">{props.title}</h5>
-            </Link>
-            <p>{props.summary}</p>
+            <div className="home-blog-summary">
+              <a className="btn_4">{props.category}</a>
+              <Link
+                to={PagesEnum.SingleBlog.replace(':id', props.id.toString())}>
+                <h5 className="card-title">{props.title}</h5>
+              </Link>
+              <p>{props.summary}</p>
+            </div>
             <ul>
               <li>
                 <span className="ti-comments"></span>

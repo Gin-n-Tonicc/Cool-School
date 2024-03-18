@@ -186,7 +186,7 @@
 
   &:after {
     position: absolute;
-    top: 143px;
+    top: 23%;
     width: 35%;
     height: 59%;
     content: '';
@@ -196,7 +196,7 @@
 
     @media #{$small_mobile} {
       position: absolute;
-      top: 90px;
+      top: 110px;
       max-width: 100%;
       max-height: 100%;
       content: '';
@@ -247,7 +247,7 @@
       background-size: contain;
       right: 5%;
       bottom: 0;
-      top: auto;
+      top: 14rem;
       background-repeat: no-repeat;
     }
   }
