@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
+import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
@@ -26,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 
 import java.util.List;
@@ -62,8 +62,8 @@ class CourseServiceImplTest {
     @Mock
     private FileRepository fileRepository;
     private PublicUserDTO publicUserDTO;
-    @Value("${frontend.url}")
-    private String frontendUrl;
+    @Mock
+    private FrontendConfig frontendConfig;
 
 
     @BeforeEach
@@ -71,7 +71,7 @@ class CourseServiceImplTest {
         MockitoAnnotations.openMocks(this);
         modelMapper = new ModelMapper();
         publicUserDTO = new PublicUserDTO(1L, "user", "user", "user@gmail.com", Role.USER, "description", false);
-        courseService = new CourseServiceImpl(courseRepository, modelMapper, userRepository, categoryRepository, userCourseService, messageSource, slackNotifier, fileRepository);
+        courseService = new CourseServiceImpl(courseRepository, modelMapper, userRepository, categoryRepository, userCourseService, messageSource, slackNotifier, fileRepository, frontendConfig);
     }
 
     @Test
@@ -200,7 +200,7 @@ class CourseServiceImplTest {
                 "Name: " + courseName + "\n" +
                 "Author: " + authorFirstname + " " + authorLastname + "\n" +
                 "Category: " + categoryName + "\n" +
-                "Read more: " + frontendUrl + "/courses/" + courseId;
+                "Read more: " + frontendConfig.getBaseUrl() + "/courses/" + courseId;
 
         User author = new User();
         author.setId(userId);

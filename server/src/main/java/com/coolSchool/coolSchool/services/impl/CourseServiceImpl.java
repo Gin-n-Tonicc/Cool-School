@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.services.impl;
 
+import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
@@ -21,7 +22,6 @@ import com.coolSchool.coolSchool.services.CourseService;
 import com.coolSchool.coolSchool.services.UserCourseService;
 import com.coolSchool.coolSchool.slack.SlackNotifier;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
@@ -40,10 +40,9 @@ public class CourseServiceImpl implements CourseService {
     private final MessageSource messageSource;
     private final SlackNotifier slackNotifier;
     private final FileRepository fileRepository;
-    @Value("${server.frontend.baseUrl}")
-    private String frontendUrl;
+    private final FrontendConfig frontendConfig;
 
-    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, UserCourseService userCourseService, MessageSource messageSource, SlackNotifier slackNotifier, FileRepository fileRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, UserCourseService userCourseService, MessageSource messageSource, SlackNotifier slackNotifier, FileRepository fileRepository, FrontendConfig frontendConfig) {
         this.courseRepository = courseRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
@@ -52,6 +51,7 @@ public class CourseServiceImpl implements CourseService {
         this.messageSource = messageSource;
         this.slackNotifier = slackNotifier;
         this.fileRepository = fileRepository;
+        this.frontendConfig = frontendConfig;
     }
 
     @Override
@@ -158,7 +158,7 @@ public class CourseServiceImpl implements CourseService {
                 "Name: " + course.getName() + "\n" +
                 "Author: " + author.getFirstname() + " " + author.getLastname() + "\n" +
                 "Category: " + category.getName() + "\n" +
-                "Read more: " + frontendUrl + "/courses/" + course.getId();
+                "Read more: " + frontendConfig.getBaseUrl() + "/courses/" + course.getId();
         slackNotifier.sendNotification(message);
     }
 }
