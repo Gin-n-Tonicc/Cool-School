@@ -45,7 +45,7 @@
       left: -80px;
     }
     img {
-      padding: 0px 53px 64px 50px;
+      padding-left: 8vw;
       @media #{$small_mobile} {
         padding: 0;
       }
@@ -247,6 +247,8 @@
 
 .advance_feature {
   padding: 169px 0px 171px;
+  padding-top: 0;
+
   @media #{$small_mobile} {
     padding: 0px 0px 70px;
   }
@@ -259,11 +261,12 @@
   @media #{$medium_device} {
     padding: 70px 0px;
   }
+
   .learning_img {
     @include background('../images/advance_feature_bg.png');
     background-size: 84% 100%;
     background-position: right top;
-    left: 0;
+    left: auto;
     bottom: -31px;
     right: -82px;
     top: 0;
@@ -294,7 +297,6 @@
       margin-bottom: 20px;
     }
     img {
-      padding: 0px 117px 0px 0px;
       @media #{$small_mobile} {
         padding: 0px;
       }
