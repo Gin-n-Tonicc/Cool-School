@@ -16,12 +16,16 @@ type Inputs = {
   NewPassword: string;
 };
 
+// The component used to display the forgotten password page
 export default function ForgottenPassword() {
   const { t } = useTranslation();
   const { auth } = useValidators();
-  const token = useUrlSearchParam('token') || '';
   const { addError } = useErrorContext();
 
+  // Grab token from search params
+  const token = useUrlSearchParam('token') || '';
+
+  // Handle form
   const { handleSubmit, control, reset, watch } = useForm<Inputs>({
     defaultValues: {
       Email: '',
@@ -34,6 +38,7 @@ export default function ForgottenPassword() {
   const values = watch();
   const navigate = useNavigate();
 
+  // Prepare fetches
   const {
     post: forgotPasswordPost,
     response: forgotPasswordRes,
@@ -51,6 +56,7 @@ export default function ForgottenPassword() {
   const hasToken = Boolean(token);
   const loading = forgotPasswordLoading || resetPasswordLoading;
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async () => {
     if (!hasToken) {
       onEmailSend();
@@ -59,6 +65,7 @@ export default function ForgottenPassword() {
     }
   };
 
+  // Send reset password email
   const onEmailSend = async () => {
     await forgotPasswordPost();
 
@@ -71,6 +78,7 @@ export default function ForgottenPassword() {
     }
   };
 
+  // Reset password
   const onPasswordChange = async () => {
     await resetPasswordPost();
 

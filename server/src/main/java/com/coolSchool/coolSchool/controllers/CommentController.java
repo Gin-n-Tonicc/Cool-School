@@ -1,6 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.CommentRequestDTO;
@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+
+// A controller class for handling category-related operations.
 @RestController
 @RequestMapping("/api/v1/comments")
 public class CommentController {
@@ -59,12 +61,12 @@ public class CommentController {
         return ResponseEntity.ok("Comment with id: " + id + " has been deleted successfully!");
     }
 
-    @GetMapping("/sort/newest")
+    @GetMapping("/sort/newest") // Retrieve comments by newest first
     public ResponseEntity<List<CommentResponseDTO>> getCommentsByNewest() {
         return ResponseEntity.ok(commentService.getCommentsByNewestFirst());
     }
 
-    @GetMapping("/sort/default")
+    @GetMapping("/sort/default") // Retrieve comments by default (most liked is first)
     public ResponseEntity<List<CommentResponseDTO>> getCommentsByNumberOfLikes() {
         return ResponseEntity.ok(commentService.getCommentsByMostLiked());
     }

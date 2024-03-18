@@ -15,11 +15,13 @@ import CoursesRating from './courses-rating/CoursesRating';
 import CoursesReviews from './courses-reviews/CoursesReviews';
 import CoursesSubsectionCreate from './courses-subsection-create/CoursesSubsectionCreate';
 
+// A component that displays the information about a single course
 export default function CoursesSingle() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { user, isAuthenticated } = useAuthContext();
 
+  // Fetch course data on load
   const { data: course, loading: courseLoading } = useFetch<ICourse>(
     apiUrlsConfig.courses.getOne(id),
     []
@@ -27,6 +29,7 @@ export default function CoursesSingle() {
 
   const numId = Number(id || -1);
 
+  // Prepare enroll fetches
   const { get: getCanEnroll, data: canEnrollReq } = useFetch<boolean>(
     apiUrlsConfig.courses.canEnroll(numId)
   );
@@ -35,15 +38,18 @@ export default function CoursesSingle() {
     apiUrlsConfig.courses.enroll(numId)
   );
 
+  // Fetch reviews on mount and course change
   const { get: getReviews, data: reviews } = useFetch<IReview[]>(
     apiUrlsConfig.reviews.getByCourse(numId),
     [course]
   );
 
+  // Fetch subsections on mount and course change
   const { get: getSubsections, data: subsections } = useFetch<
     ICourseSubsection[]
   >(apiUrlsConfig.courseSubsections.getByCourse(numId), [course]);
 
+  // On course load check if user has enrolled
   useEffect(() => {
     (async () => {
       if (!courseLoading) {
@@ -52,6 +58,11 @@ export default function CoursesSingle() {
     })();
   }, [courseLoading]);
 
+  if (!course) {
+    return <></>;
+  }
+
+  // Prepare methods to be passed as props
   const onEnroll = async () => {
     await enrollCourse();
     await getCanEnroll();
@@ -59,10 +70,6 @@ export default function CoursesSingle() {
 
   const refreshReviews = () => getReviews();
   const refreshSubsections = () => getSubsections();
-
-  if (!course) {
-    return <></>;
-  }
 
   const isOwner = isAuthenticated && user.id === course.user.id;
   const canEnroll = isAuthenticated && !isOwner && canEnrollReq;

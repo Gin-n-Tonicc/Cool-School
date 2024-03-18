@@ -11,6 +11,8 @@ public interface AIAssistanceService {
     String extractContent(String aiGeneratedContent);
 
     String analyzeContent(String prompt) throws JsonProcessingException;
+
     String buildPrompt(String blogContent, List<CategoryDTO> categories);
+
     CategoryDTO matchCategory(String aiResponse, List<CategoryDTO> categories);
 }

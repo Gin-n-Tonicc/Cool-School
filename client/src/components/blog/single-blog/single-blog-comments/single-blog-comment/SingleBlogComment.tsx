@@ -4,7 +4,9 @@ interface SingleBlogCommentProps {
   comment: IComment;
 }
 
+// This component displays a single comment based on the passed props
 export default function SingleBlogComment(props: SingleBlogCommentProps) {
+  // Extract date data
   const date = new Date(props.comment.created_at);
   const month = date.toLocaleString('default', { month: 'long' });
   const day = date.getDate();

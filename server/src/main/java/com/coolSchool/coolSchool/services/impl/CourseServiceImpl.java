@@ -1,10 +1,10 @@
 package com.coolSchool.coolSchool.services.impl;
 
+import com.coolSchool.coolSchool.config.FrontendConfig;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
-import com.coolSchool.coolSchool.exceptions.course.ValidationCourseException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.request.CourseRequestDTO;
@@ -21,12 +21,9 @@ import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.CourseService;
 import com.coolSchool.coolSchool.services.UserCourseService;
 import com.coolSchool.coolSchool.slack.SlackNotifier;
-import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,10 +40,9 @@ public class CourseServiceImpl implements CourseService {
     private final MessageSource messageSource;
     private final SlackNotifier slackNotifier;
     private final FileRepository fileRepository;
-    @Value("${server.frontend.baseUrl}")
-    private String frontendUrl;
+    private final FrontendConfig frontendConfig;
 
-    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, UserCourseService userCourseService, MessageSource messageSource, SlackNotifier slackNotifier, FileRepository fileRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, ModelMapper modelMapper, UserRepository userRepository, CategoryRepository categoryRepository, UserCourseService userCourseService, MessageSource messageSource, SlackNotifier slackNotifier, FileRepository fileRepository, FrontendConfig frontendConfig) {
         this.courseRepository = courseRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
@@ -55,6 +51,7 @@ public class CourseServiceImpl implements CourseService {
         this.messageSource = messageSource;
         this.slackNotifier = slackNotifier;
         this.fileRepository = fileRepository;
+        this.frontendConfig = frontendConfig;
     }
 
     @Override
@@ -91,7 +88,7 @@ public class CourseServiceImpl implements CourseService {
         if (loggedUser == null) {
             return;
         }
-
+        // Create a relation between user and course
         UserCourseRequestDTO dto = new UserCourseRequestDTO();
         dto.setCourseId(id);
         dto.setUserId(loggedUser.getId());
@@ -101,20 +98,20 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseResponseDTO createCourse(CourseRequestDTO courseDTO, PublicUserDTO loggedUser) {
+        // Checks if the user is logged in and has the necessary role to access this operation
         if (loggedUser == null || !(loggedUser.getRole().equals(Role.ADMIN) || loggedUser.getRole().equals(Role.TEACHER))) {
             throw new AccessDeniedException(messageSource);
         }
-        try {
-            courseDTO.setId(null);
-            courseDTO.setStars(0);
-            userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(() -> new UserNotFoundException(messageSource));
-            categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
-            Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
-            sendSlackNotification(courseEntity);
-            return modelMapper.map(courseEntity, CourseResponseDTO.class);
-        } catch (ConstraintViolationException exception) {
-            throw new ValidationCourseException(exception.getConstraintViolations());
-        }
+
+        courseDTO.setId(null);
+        courseDTO.setStars(0);
+        userRepository.findByIdAndDeletedFalse(courseDTO.getUserId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        categoryRepository.findByIdAndDeletedFalse(courseDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
+        Course courseEntity = courseRepository.save(modelMapper.map(courseDTO, Course.class));
+
+        // Send a Slack notification to the ADMIN when a new course is created
+        sendSlackNotification(courseEntity);
+        return modelMapper.map(courseEntity, CourseResponseDTO.class);
     }
 
     @Override
@@ -124,6 +121,7 @@ public class CourseServiceImpl implements CourseService {
         if (existingCourseOptional.isEmpty()) {
             throw new CourseNotFoundException(messageSource);
         }
+        // Checks if the user is logged in and has the necessary role to access this operation
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), courseDTO.getUserId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException(messageSource);
         }
@@ -132,22 +130,16 @@ public class CourseServiceImpl implements CourseService {
         Course existingCourse = existingCourseOptional.get();
         modelMapper.map(courseDTO, existingCourse);
 
-        try {
-            existingCourse.setId(id);
-            Course updatedCourse = courseRepository.save(existingCourse);
-            return modelMapper.map(updatedCourse, CourseResponseDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationCourseException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        existingCourse.setId(id);
+        Course updatedCourse = courseRepository.save(existingCourse);
+        return modelMapper.map(updatedCourse, CourseResponseDTO.class);
     }
 
     @Override
     public void deleteCourse(Long id, PublicUserDTO loggedUser) {
         Optional<Course> course = courseRepository.findByIdAndDeletedFalse(id);
         if (course.isPresent()) {
+            // Checks if the user is logged in and has the necessary role to access this operation
             if (loggedUser == null || (!Objects.equals(loggedUser.getId(), course.get().getUser().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
                 throw new AccessDeniedException(messageSource);
             }
@@ -157,7 +149,8 @@ public class CourseServiceImpl implements CourseService {
         throw new CourseNotFoundException(messageSource);
     }
 
-    private void sendSlackNotification(Course course) {
+    public void sendSlackNotification(Course course) {
+        // Send a Slack notification to the ADMIN when a new course is created
         User author = userRepository.findById(course.getUser().getId()).orElseThrow(() -> new UserNotFoundException(messageSource));
         Category category = categoryRepository.findById(course.getCategory().getId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
 
@@ -165,7 +158,7 @@ public class CourseServiceImpl implements CourseService {
                 "Name: " + course.getName() + "\n" +
                 "Author: " + author.getFirstname() + " " + author.getLastname() + "\n" +
                 "Category: " + category.getName() + "\n" +
-                "Read more: " + frontendUrl + "/courses/" + course.getId();
+                "Read more: " + frontendConfig.getBaseUrl() + "/courses/" + course.getId();
         slackNotifier.sendNotification(message);
     }
 }

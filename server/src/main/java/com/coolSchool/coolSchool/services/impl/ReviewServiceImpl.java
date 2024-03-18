@@ -1,7 +1,6 @@
 package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.enums.Role;
-import com.coolSchool.coolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.course.CourseNotFoundException;
 import com.coolSchool.coolSchool.exceptions.review.ReviewNotFoundException;
@@ -17,11 +16,9 @@ import com.coolSchool.coolSchool.repositories.ReviewRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
 import com.coolSchool.coolSchool.services.CourseService;
 import com.coolSchool.coolSchool.services.ReviewService;
-import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.util.List;
 import java.util.Objects;
@@ -63,26 +60,28 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewResponseDTO createReview(ReviewRequestDTO reviewDTO, PublicUserDTO loggedUser) {
-        System.out.println(loggedUser);
         if (loggedUser == null) {
             throw new AccessDeniedException(messageSource);
         }
-        try {
-            reviewDTO.setId(null);
-            userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(()-> new UserNotFoundException(messageSource));
-            Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(() -> new CourseNotFoundException(messageSource));
-            Review reviewRequestDTO = modelMapper.map(reviewDTO, Review.class);
-            Review review = reviewRepository.save(reviewRequestDTO);
-            updateCourseStars(course);
-            return modelMapper.map(review, ReviewResponseDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationBlogException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        reviewDTO.setId(null);
+        userRepository.findByIdAndDeletedFalse(reviewDTO.getUserId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        Course course = courseRepository.findByIdAndDeletedFalse(reviewDTO.getCourseId()).orElseThrow(() -> new CourseNotFoundException(messageSource));
+        Review reviewRequestDTO = modelMapper.map(reviewDTO, Review.class);
+        Review review = reviewRepository.save(reviewRequestDTO);
+
+        // After creating a new review - update the stars of the course
+        updateCourseStars(course);
+        return modelMapper.map(review, ReviewResponseDTO.class);
     }
 
+    /**
+     * Deletes a review.
+     *
+     * @param id         The ID of the review to be deleted.
+     * @param loggedUser The DTO representing the logged-in user.
+     * @throws ReviewNotFoundException If the review with the specified ID is not found.
+     * @throws AccessDeniedException   If the logged-in user is not authorized or does not have the permissions to delete the review.
+     */
     @Override
     public void deleteReview(Long id, PublicUserDTO loggedUser) {
         Optional<Review> review = reviewRepository.findByIdAndDeletedFalse(id);
@@ -90,8 +89,10 @@ public class ReviewServiceImpl implements ReviewService {
             if (loggedUser == null || !(Objects.equals(loggedUser.getId(), review.get().getUser().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
                 throw new AccessDeniedException(messageSource);
             }
+            // Soft delete
             review.get().setDeleted(true);
             reviewRepository.save(review.get());
+            // After deleting the review - update the course stars
             updateCourseStars(review.get().getCourse());
         } else {
             throw new ReviewNotFoundException(messageSource);

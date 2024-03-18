@@ -19,8 +19,10 @@ public class QuizAttemptTimer {
         this.quizAttemptRepository = quizAttemptRepository;
     }
 
-    @Scheduled(fixedDelay = 60000)
+    // Scheduled task to update quiz attempts
+    @Scheduled(fixedDelay = 60000) // Every minute
     public void updateQuizAttemptsTimeLeft() {
+        // Only not completed attempts
         List<QuizAttempt> quizAttempts = quizAttemptRepository.findByCompletedFalse();
         for (QuizAttempt attempt : quizAttempts) {
             LocalDateTime startTime = attempt.getStartTime();
@@ -32,12 +34,13 @@ public class QuizAttemptTimer {
             quizAttemptRepository.save(attempt);
 
             if (timeLeft <= 0) {
-                attempt.setCompleted(true);
+                attempt.setCompleted(true); // Completed attempt
                 quizAttemptRepository.save(attempt);
             }
         }
     }
 
+    // Calculate time elapsed since quiz attempt start
     private int calculateTimeElapsed(LocalDateTime startTime) {
         LocalDateTime currentTime = LocalDateTime.now();
         Duration duration = Duration.between(startTime, currentTime);

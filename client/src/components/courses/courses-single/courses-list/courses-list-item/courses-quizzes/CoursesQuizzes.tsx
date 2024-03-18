@@ -11,8 +11,11 @@ interface CoursesQuizzesProps {
   isOwner: boolean;
 }
 
+// The component that displays all of the course quizzes
 export default function CoursesQuizzes(props: CoursesQuizzesProps) {
   const { t } = useTranslation();
+
+  // Fetch quizzes on mount
   const { data: quizzes, get } = useFetch<IQuiz[]>(
     apiUrlsConfig.quizzes.getBySubsection(props.subsectionId),
     []

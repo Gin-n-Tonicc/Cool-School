@@ -24,38 +24,46 @@ import QuestionForm, {
 } from './question-form/QuestionForm';
 import QuizForm from './quiz-form/QuizForm';
 
+// The component that displays
+// and handles all of the other 3 forms (quiz, question, answer)
+// and is responsible for the way quiz data is stored and sent to the server
 export default function QuizCreate() {
   const { t } = useTranslation();
   const { courseId, subsectionId } = useParams();
-  const ref = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
+  const { user } = useAuthContext();
 
-  const { data: course } = useLinkState<ICourse>(
-    apiUrlsConfig.courses.getOne(courseId)
-  );
+  const ref = useRef<HTMLButtonElement>(null);
 
+  // Fetch subsection on mount
   const { data: subsection, response: subsectionResponse } =
     useFetch<ICourseSubsection>(
       apiUrlsConfig.courseSubsections.getById(subsectionId),
       []
     );
 
-  const { user } = useAuthContext();
+  // Prepare fetches
+  const { data: course } = useLinkState<ICourse>(
+    apiUrlsConfig.courses.getOne(courseId)
+  );
 
-  const [questionsAnswers, setQuestionsAnswers] = useState<
-    IQuestionAndAnswers[]
-  >([]);
-
-  const [questions, setQuestions] = useState<QuestionState>({});
-  const [answers, setAnswers] = useState<AnswerState>({});
   const { post, response: postQuizResponse } = useFetch<IQuiz>(
     apiUrlsConfig.quizzes.create
   );
+
+  // Prepare state to store all of the quiz data
+  const [questionsAnswers, setQuestionsAnswers] = useState<
+    IQuestionAndAnswers[]
+  >([]);
+  const [questions, setQuestions] = useState<QuestionState>({});
+  const [answers, setAnswers] = useState<AnswerState>({});
 
   const seedQuestionsAndAnswers = useCallback(() => {
     const questionsAndAnswers: IQuestionAndAnswers[] = [];
 
     for (const question of Object.values(questions)) {
+      // Find answers based on the custom question ID
+      // and map to the required type
       const filtered: IAnswer[] = Object.values(answers)
         .filter((x) => x.customQuestionId === question.customId)
         .map((x) => ({
@@ -65,6 +73,7 @@ export default function QuizCreate() {
           id: 0,
         }));
 
+      // Map question to the required type
       questionsAndAnswers.push({
         question: {
           marks: question.marks || -1,
@@ -76,9 +85,11 @@ export default function QuizCreate() {
       });
     }
 
+    // Update the state with (quiz, answers)
     setQuestionsAnswers(questionsAndAnswers);
   }, [questions, answers]);
 
+  // Seed questions and answers on mount and on question/answer change
   useEffect(() => {
     seedQuestionsAndAnswers();
   }, [seedQuestionsAndAnswers]);
@@ -95,6 +106,7 @@ export default function QuizCreate() {
     );
   }
 
+  // Handle quiz creation
   const onCreateFormSubmit = async (data: IQuiz) => {
     const body: IQuizData = {
       quizDTO: data,
@@ -107,6 +119,7 @@ export default function QuizCreate() {
     }
   };
 
+  // Get question data from child and add it to the current stored questions
   const onQuestionSubmit = (data: QuestionFormQuestion) => {
     if (data.description) {
       const description = data.description;
@@ -118,6 +131,7 @@ export default function QuizCreate() {
     }
   };
 
+  // Get answer data from child and add it to the current stored answers
   const onAnswerSubmit = (data: AnswerFormAnswer) => {
     if (data.text) {
       const text = data.text;

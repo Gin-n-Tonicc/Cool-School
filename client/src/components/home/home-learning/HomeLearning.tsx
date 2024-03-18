@@ -4,6 +4,7 @@ import { PagesEnum } from '../../../types/enums/PagesEnum';
 import '../styles/common_learning.scss';
 import learningImg from './images/learning_img.png';
 
+// The component that displays information about our learning features
 export default function HomeLearning() {
   const { t } = useTranslation();
 

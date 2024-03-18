@@ -1,3 +1,5 @@
+// Translation config file that allows us to add internationalization easily
+
 import translationBulgarian from './locales/bg/translation.json';
 import translationEnglish from './locales/en/translation.json';
 

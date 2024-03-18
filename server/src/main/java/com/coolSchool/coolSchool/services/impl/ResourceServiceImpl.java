@@ -3,7 +3,6 @@ package com.coolSchool.coolSchool.services.impl;
 import com.coolSchool.coolSchool.exceptions.courseSubsection.CourseSubsectionNotFoundException;
 import com.coolSchool.coolSchool.exceptions.files.FileNotFoundException;
 import com.coolSchool.coolSchool.exceptions.resource.ResourceNotFoundException;
-import com.coolSchool.coolSchool.exceptions.resource.ValidationResourceException;
 import com.coolSchool.coolSchool.models.dto.request.ResourceRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.ResourceResponseDTO;
 import com.coolSchool.coolSchool.models.entity.Resource;
@@ -11,12 +10,9 @@ import com.coolSchool.coolSchool.repositories.CourseSubsectionRepository;
 import com.coolSchool.coolSchool.repositories.FileRepository;
 import com.coolSchool.coolSchool.repositories.ResourceRepository;
 import com.coolSchool.coolSchool.services.ResourceService;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,15 +57,11 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public ResourceResponseDTO createResource(ResourceRequestDTO resourceDTO) {
-        try {
-            resourceDTO.setId(null);
-            fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(() -> new FileNotFoundException(messageSource));
-            courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
-            Resource resourceEntity = resourceRepository.save(modelMapper.map(resourceDTO, Resource.class));
-            return modelMapper.map(resourceEntity, ResourceResponseDTO.class);
-        } catch (ConstraintViolationException exception) {
-            throw new ValidationResourceException(exception.getConstraintViolations());
-        }
+        resourceDTO.setId(null);
+        fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(() -> new FileNotFoundException(messageSource));
+        courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
+        Resource resourceEntity = resourceRepository.save(modelMapper.map(resourceDTO, Resource.class));
+        return modelMapper.map(resourceEntity, ResourceResponseDTO.class);
     }
 
     @Override
@@ -79,29 +71,23 @@ public class ResourceServiceImpl implements ResourceService {
         if (existingResourceOptional.isEmpty()) {
             throw new ResourceNotFoundException(messageSource);
         }
-
-        fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(()-> new FileNotFoundException(messageSource));
+        // Check if this file and course actually exist
+        fileRepository.findByIdAndDeletedFalse(resourceDTO.getFileId()).orElseThrow(() -> new FileNotFoundException(messageSource));
         courseSubsectionRepository.findByIdAndDeletedFalse(resourceDTO.getSubsectionId()).orElseThrow(() -> new CourseSubsectionNotFoundException(messageSource));
 
         Resource existingResource = existingResourceOptional.get();
         modelMapper.map(resourceDTO, existingResource);
 
-        try {
-            existingResource.setId(id);
-            Resource updatedResource = resourceRepository.save(existingResource);
-            return modelMapper.map(updatedResource, ResourceResponseDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationResourceException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        existingResource.setId(id);
+        Resource updatedResource = resourceRepository.save(existingResource);
+        return modelMapper.map(updatedResource, ResourceResponseDTO.class);
     }
 
     @Override
     public void deleteResource(Long id) {
         Optional<Resource> resource = resourceRepository.findByIdAndDeletedFalse(id);
         if (resource.isPresent()) {
+            // Soft delete
             resource.get().setDeleted(true);
             resourceRepository.save(resource.get());
         } else {

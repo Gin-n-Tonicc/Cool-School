@@ -20,10 +20,13 @@ interface QuizFormProps {
   subsectionId: number;
 }
 
+// The component that displays
+// and handles the quiz form
 export default function QuizForm(props: QuizFormProps) {
   const { quizCreate } = useValidators();
   const { t } = useTranslation();
 
+  // Handle form
   const { handleSubmit, control } = useForm<QuizFormInputs>({
     defaultValues: {
       Title: '',
@@ -36,6 +39,7 @@ export default function QuizForm(props: QuizFormProps) {
     mode: 'onChange',
   });
 
+  // Handle form submit
   const onSubmit: SubmitHandler<QuizFormInputs> = (data) => {
     const quiz: IQuiz = {
       title: data.Title,
@@ -49,6 +53,7 @@ export default function QuizForm(props: QuizFormProps) {
       id: 0,
     };
 
+    // Pass data to the parent component
     props.onSubmit(quiz);
   };
 

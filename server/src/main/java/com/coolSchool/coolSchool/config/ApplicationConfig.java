@@ -20,6 +20,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Configuration class for defining beans related to application setup, such as ModelMapper, ObjectMapper,
+ * UserDetailsService, AuthenticationProvider, AuthenticationManager, PasswordEncoder, and RestTemplate.
+ */
 @Configuration
 @RequiredArgsConstructor
 @EnableAspectJAutoProxy
@@ -67,6 +71,7 @@ public class ApplicationConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

@@ -1,6 +1,6 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.*;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// Controller class for handling operations related to quizzes.
 @RestController
 @RequestMapping("/api/v1/quizzes")
 public class QuizController {
@@ -84,6 +85,8 @@ public class QuizController {
         return ResponseEntity.ok(quizResultDTO);
     }
 
+    // Automatically saves user progress for a quiz.
+    // In case the user unintentionally exits the test
     @PostMapping("/{quizId}/save-progress")
     public ResponseEntity<List<UserQuizProgressDTO>> autoSaveUserProgress(@PathVariable Long quizId, @RequestBody SaveUserProgressRequestDTO saveUserProgressRequestDTO, HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
@@ -91,27 +94,27 @@ public class QuizController {
         return ResponseEntity.ok(userProgresses);
     }
 
-    @GetMapping("/attempt/{quizAttemptId}")
+    @GetMapping("/attempt/{quizAttemptId}") // Retrieves details of a quiz attempt.
     public ResponseEntity<QuizAttemptDTO> getQuizAttemptDetails(@PathVariable Long quizAttemptId) {
         QuizAttemptDTO quizAttemptDTO = quizService.getQuizAttemptDetails(quizAttemptId);
         return new ResponseEntity<>(quizAttemptDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/all/attempts/{quizId}")
+    @GetMapping("/all/attempts/{quizId}") // Retrieves all attempts of a user in a quiz.
     public ResponseEntity<List<QuizAttemptDTO>> getAllUserAttemptsInAQuiz(@PathVariable Long quizId, HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
         List<QuizAttemptDTO> quizAttemptsDTO = quizService.getAllUserAttemptsInAQuiz(quizId, publicUserDTO);
         return new ResponseEntity<>(quizAttemptsDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/highest-scores")
+    @GetMapping("/highest-scores") // Retrieves the highest scores achieved by the current user in quizzes.
     public ResponseEntity<List<QuizAttemptDTO>> getUserHighestScoresInQuizzes(HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
         List<QuizAttemptDTO> highestScores = quizService.getAllUserHighestScoresInQuizzes(publicUserDTO.getId());
         return ResponseEntity.ok().body(highestScores);
     }
 
-    @GetMapping("/calculate-success-percentage")
+    @GetMapping("/calculate-success-percentage")  // Calculates the success percentage of quizzes for the current user.
     public ResponseEntity<List<UserCourseDTO>> calculateQuizSuccessPercentageForCurrentUser(HttpServletRequest httpServletRequest) {
         PublicUserDTO publicUserDTO = (PublicUserDTO) httpServletRequest.getAttribute(JwtAuthenticationFilter.userKey);
         List<UserCourseDTO> userCourseDTOs = quizService.calculateQuizSuccessPercentageForCurrentUser(publicUserDTO);

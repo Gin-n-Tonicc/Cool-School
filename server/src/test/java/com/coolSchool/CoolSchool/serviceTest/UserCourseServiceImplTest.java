@@ -3,6 +3,8 @@ package com.coolSchool.CoolSchool.serviceTest;
 import com.coolSchool.coolSchool.exceptions.userCourse.UserCourseNotFoundException;
 import com.coolSchool.coolSchool.models.dto.request.UserCourseRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.UserCourseResponseDTO;
+import com.coolSchool.coolSchool.models.entity.Course;
+import com.coolSchool.coolSchool.models.entity.User;
 import com.coolSchool.coolSchool.models.entity.UserCourse;
 import com.coolSchool.coolSchool.repositories.CourseRepository;
 import com.coolSchool.coolSchool.repositories.UserCourseRepository;
@@ -110,6 +112,59 @@ class UserCourseServiceImplTest {
 
         assertThrows(UserCourseNotFoundException.class, () -> userCourseService.deleteUserCourse(nonExistentUserCourseId));
     }
+    @Test
+    public void testCreateUserCourse_Success() {
+        UserCourseRequestDTO userCourseDTO = new UserCourseRequestDTO();
+        userCourseDTO.setUserId(1L);
+        userCourseDTO.setCourseId(1L);
+        User user = new User();
+        user.setId(1L);
+        Course course = new Course();
+        course.setId(1L);
 
+        when(userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId())).thenReturn(java.util.Optional.of(user));
+        when(courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId())).thenReturn(java.util.Optional.of(course));
+        when(userCourseRepository.existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId())).thenReturn(false);
+        when(userCourseRepository.save(any(UserCourse.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserCourseResponseDTO result = userCourseService.createUserCourse(userCourseDTO);
+
+        assertNotNull(result);
+        assertEquals(user.getId(), result.getUserId());
+
+        verify(userRepository, times(1)).findByIdAndDeletedFalse(userCourseDTO.getUserId());
+        verify(courseRepository, times(1)).findByIdAndDeletedFalse(userCourseDTO.getCourseId());
+        verify(userCourseRepository, times(1)).existsByUserIdAndCourseIdAndDeletedFalse(userCourseDTO.getUserId(), userCourseDTO.getCourseId());
+        verify(userCourseRepository, times(1)).save(any(UserCourse.class));
+    }
+    @Test
+    public void testUpdateUserCourse_Success() {
+        Long id = 1L;
+        UserCourseRequestDTO userCourseDTO = new UserCourseRequestDTO();
+        userCourseDTO.setUserId(1L);
+        userCourseDTO.setCourseId(1L);
+        UserCourse existingUserCourse = new UserCourse();
+        existingUserCourse.setId(id);
+        User user = new User();
+        user.setId(1L);
+        Course course = new Course();
+        course.setId(1L);
+
+        when(userCourseRepository.findByIdAndDeletedFalse(id)).thenReturn(Optional.of(existingUserCourse));
+        when(userRepository.findByIdAndDeletedFalse(userCourseDTO.getUserId())).thenReturn(java.util.Optional.of(user));
+        when(courseRepository.findByIdAndDeletedFalse(userCourseDTO.getCourseId())).thenReturn(java.util.Optional.of(course));
+        when(userCourseRepository.save(any(UserCourse.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserCourseResponseDTO result = userCourseService.updateUserCourse(id, userCourseDTO);
+
+        assertNotNull(result);
+        assertEquals(existingUserCourse.getId(), result.getId());
+        assertEquals(user.getId(), result.getUserId());
+
+        verify(userCourseRepository, times(1)).findByIdAndDeletedFalse(id);
+        verify(userRepository, times(1)).findByIdAndDeletedFalse(userCourseDTO.getUserId());
+        verify(courseRepository, times(1)).findByIdAndDeletedFalse(userCourseDTO.getCourseId());
+        verify(userCourseRepository, times(1)).save(any(UserCourse.class));
+    }
 }
 

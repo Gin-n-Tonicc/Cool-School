@@ -8,6 +8,7 @@ interface CoursesReviewsSingleProps {
   review: IReview;
 }
 
+// The component that displays a single course review
 export default function CoursesReviewsSingle({
   review,
 }: CoursesReviewsSingleProps) {
@@ -25,12 +26,14 @@ export default function CoursesReviewsSingle({
               </a>
             </h5>
             <div className="rating">
+              {/* Colored stars (given rating) */}
               {[...new Array(review.stars)].map((_) => (
                 <a key={uuidV4()}>
                   <img src={colorStar} alt="" />
                 </a>
               ))}
 
+              {/* Uncolored stars (remaining rating) */}
               {[...new Array(MAX_STARS - review.stars)].map((_) => (
                 <a key={uuidV4()}>
                   <img src={star} alt="" />

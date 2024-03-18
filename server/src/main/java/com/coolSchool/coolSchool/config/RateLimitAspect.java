@@ -14,9 +14,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class RateLimitAspect {
 
-    private ConcurrentHashMap<String, AtomicInteger> requestCounters = new ConcurrentHashMap<>();
-    private final int MAX_REQUESTS_PER_MINUTE = 10; // 10 requests per minute - /60000
+    private final int MAX_REQUESTS_PER_MINUTE = 10; // maximum requests per minute
     private final MessageSource messageSource;
+    private final ConcurrentHashMap<String, AtomicInteger> requestCounters = new ConcurrentHashMap<>();
 
     public RateLimitAspect(MessageSource messageSource) {
         this.messageSource = messageSource;
@@ -24,7 +24,7 @@ public class RateLimitAspect {
 
     @Before("@annotation(com.coolSchool.coolSchool.interfaces.RateLimited)")
     public void enforceRateLimit() {
-        String key = String.valueOf(System.currentTimeMillis() / 60000);
+        String key = String.valueOf(System.currentTimeMillis() / 60000); // 60000 is 1 minute
         AtomicInteger counter = requestCounters.computeIfAbsent(key, k -> new AtomicInteger(0));
 
         if (counter.incrementAndGet() > MAX_REQUESTS_PER_MINUTE) {

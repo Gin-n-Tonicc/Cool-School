@@ -5,7 +5,6 @@ import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogAlreadyLikedException;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotEnabledException;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
-import com.coolSchool.coolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.coolSchool.exceptions.category.CategoryNotFoundException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.common.BadRequestException;
@@ -27,15 +26,12 @@ import com.coolSchool.coolSchool.services.BlogService;
 import com.coolSchool.coolSchool.slack.SlackNotifier;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.validation.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,7 +53,6 @@ public class BlogServiceImpl implements BlogService {
     private final FrontendConfig frontendConfig;
 
 
-
     public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource, JavaMailSender emailSender, SlackNotifier slackNotifier, FrontendConfig frontendConfig) {
         this.blogRepository = blogRepository;
         this.modelMapper = modelMapper;
@@ -72,6 +67,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public BlogResponseDTO addLike(Long blogId, PublicUserDTO loggedUser) {
+        // Method to add a like to a blog post
         if (loggedUser != null) {
             Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new BlogNotFoundException(messageSource));
             User user = userRepository.findByIdAndDeletedFalse(loggedUser.getId()).orElseThrow(() -> new UserNotFoundException(messageSource));
@@ -87,12 +83,15 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<BlogResponseDTO> getAllBlogs(PublicUserDTO loggedUser) {
+        // Method to retrieve all blogs
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
+                // The ADMIN can see all the blogs
                 List<Blog> blogs = blogRepository.findAll();
                 return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
             }
         }
+        // The STUDENTS and TEACHERS can see only enables blogs
         List<Blog> blogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
@@ -100,7 +99,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
 
     public BlogResponseDTO getBlogById(Long id, PublicUserDTO loggedUser) {
-        Optional<Blog> optionalBlog = blogRepository.findById(id);
+        Optional<Blog> optionalBlog = Optional.ofNullable(blogRepository.findById(id).orElseThrow(() -> new BlogNotFoundException(messageSource)));
 
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
@@ -112,6 +111,7 @@ public class BlogServiceImpl implements BlogService {
         }
         if (optionalBlog.isPresent()) {
             if (!(optionalBlog.get().isEnabled())) {
+                //The blog is not enables by the ADMIN
                 throw new BlogNotEnabledException(messageSource);
             }
         }
@@ -123,23 +123,22 @@ public class BlogServiceImpl implements BlogService {
         if (loggedUser == null) {
             throw new AccessDeniedException(messageSource);
         }
-        try {
-            blogDTO.setId(null);
-            blogDTO.setCreated_at(LocalDateTime.now());
-            blogDTO.setOwnerId(loggedUser.getId());
-            blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
-            blogDTO.setPictureId(blogDTO.getPictureId());
-            blogDTO.setDeleted(false);
-            userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
-            categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
-            fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(() -> new FileNotFoundException(messageSource));
-            blogDTO.setCommentCount(0);
-            Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
 
-            return modelMapper.map(blogEntity, BlogResponseDTO.class);
-        } catch (ConstraintViolationException exception) {
-            throw new ValidationBlogException(exception.getConstraintViolations());
-        }
+        blogDTO.setId(null);
+        blogDTO.setCreated_at(LocalDateTime.now());
+        blogDTO.setOwnerId(loggedUser.getId());
+        blogDTO.setEnabled(loggedUser.getRole().equals(Role.ADMIN));
+        blogDTO.setPictureId(blogDTO.getPictureId());
+        blogDTO.setDeleted(false);
+        User owner = userRepository.findByIdAndDeletedFalse(blogDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
+        Category category = categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
+        fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(() -> new FileNotFoundException(messageSource));
+        blogDTO.setCommentCount(0);
+        Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
+
+        // Sends a Slack notification to the  ADMIN when a new blog is created
+        sendSlackNotification(blogDTO, category, owner, blogEntity.getId());
+        return modelMapper.map(blogEntity, BlogResponseDTO.class);
     }
 
     @Override
@@ -160,8 +159,8 @@ public class BlogServiceImpl implements BlogService {
         if (loggedUser.getRole().equals(Role.ADMIN)) {
             blogDTO.setEnabled(blogDTO.isEnabled());
             if (blogDTO.isEnabled()) {
+                // Send email to the owner of the blog when their blog is enabled, so they can see it
                 sendEnabledBlogEmailNotification(blogDTO.getOwnerId(), id);
-                sendSlackNotification(blogDTO, category, user, id);
             }
         } else {
             blogDTO.setEnabled(existingBlogOptional.get().isEnabled());
@@ -171,25 +170,20 @@ public class BlogServiceImpl implements BlogService {
         blogDTO.setCommentCount(existingBlog.getCommentCount());
         modelMapper.map(blogDTO, existingBlog);
 
-        try {
-            existingBlog.setId(id);
-            existingBlog.setCreated_at(existingBlog.getCreated_at());
+        existingBlog.setId(id);
+        existingBlog.setCreated_at(existingBlog.getCreated_at());
 
-            existingBlog.setPicture(file);
-            existingBlog.setCategoryId(category);
-            existingBlog.setOwnerId(user);
-            existingBlog.setLiked_users(userSet);
+        existingBlog.setPicture(file);
+        existingBlog.setCategoryId(category);
+        existingBlog.setOwnerId(user);
+        existingBlog.setLiked_users(userSet);
 
-            Blog updatedBlog = blogRepository.save(existingBlog);
-            return modelMapper.map(updatedBlog, BlogResponseDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationBlogException(validationException.getConstraintViolations());
-            }
-            throw exception;
-        }
+        Blog updatedBlog = blogRepository.save(existingBlog);
+        return modelMapper.map(updatedBlog, BlogResponseDTO.class);
     }
+
     public void sendEnabledBlogEmailNotification(Long ownerId, Long blogId) {
+        // Method to send an email notification when a blog is enabled
         User user = userRepository.findById(ownerId)
                 .orElseThrow(() -> new UserNotFoundException(messageSource));
 
@@ -204,7 +198,6 @@ public class BlogServiceImpl implements BlogService {
                 + "Take a look at: " + blogLink + "\n\n"
                 + "Best regards,\n"
                 + "Cool School Team!";
-
         sendEmail(recipientAddress, subject, content);
     }
 
@@ -213,6 +206,7 @@ public class BlogServiceImpl implements BlogService {
     public void deleteBlog(Long id, PublicUserDTO loggedUser) {
         Blog blog = blogRepository.findById(id).orElseThrow(() -> new BlogNotFoundException(messageSource));
 
+        //The blog can be deleted only from the ADMIN or from the owner of the blog
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), blog.getOwnerId().getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             throw new AccessDeniedException(messageSource);
         }
@@ -262,7 +256,7 @@ public class BlogServiceImpl implements BlogService {
         throw new BadRequestException(messageSource);
     }
 
-    private void sendEmail(String to, String subject, String text) {
+    public void sendEmail(String to, String subject, String text) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         try {
@@ -276,6 +270,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     private void sendSlackNotification(BlogDTO blogDTO, Category category, User user, Long id) {
+        // Sends a Slack notification to the  ADMIN when a new blog is created
         String message = "New blog created in Cool School:\n" +
                 "Title: " + blogDTO.getTitle() + "\n" +
                 "Author: " + user.getFirstname() + " " + user.getLastname() + "\n" +

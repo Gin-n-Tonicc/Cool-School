@@ -1,3 +1,4 @@
+import { MouseEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LanguageEnum } from '../../../../../types/enums/LanguageEnum';
 
@@ -6,12 +7,14 @@ interface LanguageChoiceProps {
   translationKey: string;
 }
 
+// The component that displays a single language and
+// handles it by changing the language for the whole application
 export default function LanguageChoice(props: LanguageChoiceProps) {
   const { t, i18n } = useTranslation();
 
-  const onClickLanguageChange = (e: any) => {
+  const onClickLanguageChange: MouseEventHandler<HTMLAnchorElement> = (e) => {
     e.preventDefault();
-    const language = e.currentTarget.getAttribute('data-value');
+    const language = e.currentTarget.getAttribute('data-value') || undefined;
     i18n.changeLanguage(language);
   };
 

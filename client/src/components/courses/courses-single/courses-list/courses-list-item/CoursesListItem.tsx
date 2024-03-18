@@ -22,6 +22,8 @@ interface CoursesListItemProps {
   course: ICourse;
 }
 
+// The component that displays a single
+// course subsection and handles a simple *R*D
 export default function CoursesListItem({
   subsection,
   isOwner,
@@ -32,11 +34,13 @@ export default function CoursesListItem({
 }: CoursesListItemProps) {
   const { t } = useTranslation();
 
+  // Fetch resources on mount
   const { get, data: resources } = useFetch<IResource[]>(
     apiUrlsConfig.resources.getBySubsection(subsection.id),
     []
   );
 
+  // Prepare fetch
   const { del, response: delResponse } = useFetch<IResource[]>(
     apiUrlsConfig.courseSubsections.delete(subsection.id)
   );
@@ -45,16 +49,21 @@ export default function CoursesListItem({
   const collapseId = `collapse${uuidV4()}`;
   const editCollapseId = `collapseEdit${uuidV4()}`;
 
+  // On subsection delete
   const handleDelete = async () => {
     if (
       !window.confirm(
-        `Are you sure you want to delete subsection '${subsection.title}'`
+        t('courses.subsection.delete.confirm', {
+          subsectionTitle: subsection.title,
+        })
       )
     ) {
       return;
     }
 
     await del();
+
+    // Update subsections
     if (delResponse.ok) {
       refreshSubsections();
     }
@@ -63,11 +72,14 @@ export default function CoursesListItem({
   return (
     <li className="justify-content-between d-flex flex-column">
       {isOwner && (
+        // Owner menu
         <div className="accordion" id="subControlAccordion">
           <div className="course-list-resource-control">
+            {/* Delete button */}
             <button className="btn_2 text-uppercase">
               <i onClick={handleDelete} className="fas fa-minus-circle"></i>
             </button>
+            {/* Edit button */}
             <button
               type="button"
               data-toggle="collapse"
@@ -78,6 +90,7 @@ export default function CoursesListItem({
               <i className="fas fa-pen"></i>
             </button>
           </div>
+          {/* Form to be shown after clicking on edit button */}
           <div
             id={editCollapseId}
             className="collapse"
@@ -96,6 +109,7 @@ export default function CoursesListItem({
       <div className="justify-content-between align-items-center d-flex">
         <p>{subsection.title}</p>
         {hasEnrolled && (
+          // Button 'Show more details'
           <button
             type="button"
             data-toggle="collapse"
@@ -108,6 +122,7 @@ export default function CoursesListItem({
         )}
       </div>
       {hasEnrolled && (
+        // The more detailed subsection information
         <div
           id={collapseId}
           className="collapse"
@@ -122,7 +137,7 @@ export default function CoursesListItem({
             <div>
               <div className="title-wrapper d-flex justify-content-between align-items-center">
                 <h5>{t('courses.quizzes')}</h5>
-
+                {/* Quiz create page */}
                 {isOwner && (
                   <Link
                     to={PagesEnum.QuizCreate.replace(
@@ -135,15 +150,18 @@ export default function CoursesListItem({
                   </Link>
                 )}
               </div>
+              {/* Display the course quizzes */}
               <CoursesQuizzes subsectionId={subsection.id} isOwner={isOwner} />
             </div>
 
             <div>
+              {/* Display courses create (if owner) */}
               <CoursesResourcesCreate
                 subsectionId={subsection.id}
                 refreshResources={refreshResources}
                 isOwner={isOwner}
               />
+              {/* Display course resources */}
               <ul className="list-group">
                 {resources?.map((x) => (
                   <CoursesResource

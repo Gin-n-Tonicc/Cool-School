@@ -12,23 +12,32 @@ interface CoursesRatingProps {
 }
 
 export const MAX_STARS = 5;
+
+// The component that displays and
+// handles the form for rating submission
 export default function CoursesRating(props: CoursesRatingProps) {
   const { t } = useTranslation();
   const { user } = useAuthContext();
   const [qualityStars, setQualityStars] = useState(0);
   const [punctualityStars, setPunctualityStars] = useState(0);
 
+  // Calculate the average star rating
+  // whenever the stars change
   const avgStarRating = useMemo(
     () => Math.floor((qualityStars + punctualityStars) / 2),
     [qualityStars, punctualityStars]
   );
 
+  // Prepare fetch
   const { post, response } = useFetch<any>(apiUrlsConfig.reviews.create);
 
+  // Handle form submit
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     const form = e.currentTarget;
+
+    // Extract the value from the feedback field
     const { feedback } = Object.fromEntries(new FormData(form));
 
     await post({
@@ -38,6 +47,7 @@ export default function CoursesRating(props: CoursesRatingProps) {
       courseId: props.courseId,
     });
 
+    // Reset the form and the component state
     if (response.ok) {
       setQualityStars(0);
       setPunctualityStars(0);

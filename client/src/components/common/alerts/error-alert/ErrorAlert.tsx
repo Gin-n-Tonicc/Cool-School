@@ -17,6 +17,7 @@ interface IErrorProps {
   errorTitle: string;
 }
 
+// The component that displays the exception alert
 function ExceptionError(props: IErrorProps) {
   return (
     <div className="col-sm-12">
@@ -42,6 +43,7 @@ function ExceptionError(props: IErrorProps) {
   );
 }
 
+// The component that displays the heads up alert
 function HeadsUpError(props: IErrorProps) {
   return (
     <div className="col-sm-12">
@@ -69,6 +71,7 @@ function HeadsUpError(props: IErrorProps) {
   );
 }
 
+// The component that displays the appropriate alert based on the type
 export default function ErrorAlert({
   unmountAfter,
   message,
@@ -78,16 +81,19 @@ export default function ErrorAlert({
   const { t } = useTranslation();
   const { deleteError } = useErrorContext();
 
+  // Delete alert after {n} seconds
   useEffect(() => {
     setTimeout(() => {
       deleteError(id);
     }, unmountAfter);
   }, [id, unmountAfter, deleteError]);
 
+  // On 'x' button click delete the error immediately
   const onClose = () => {
     deleteError(id);
   };
 
+  // Render alert based on type
   if (errorType === ErrorTypeEnum.EXCEPTION) {
     return (
       <ExceptionError

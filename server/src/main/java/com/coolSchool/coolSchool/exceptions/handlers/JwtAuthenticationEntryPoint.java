@@ -12,6 +12,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+/**
+ * JwtAuthenticationEntryPoint class is responsible for handling authentication errors
+ * that occur when attempting to access secured endpoints without proper authentication credentials.
+ * It sends a standardized error response back to the client with appropriate HTTP status code and error message.
+ */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
@@ -26,6 +31,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                          AuthenticationException e) throws IOException {
+        // Serialize the error response using ObjectMapper and write it to the HttpServletResponse
         ObjectMapperHelper
                 .writeExceptionToObjectMapper(
                         objectMapper,

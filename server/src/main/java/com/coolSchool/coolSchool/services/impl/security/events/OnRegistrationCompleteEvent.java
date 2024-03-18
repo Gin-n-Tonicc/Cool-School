@@ -5,6 +5,10 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.Locale;
 
+/**
+ * OnRegistrationCompleteEvent represents an event raised when a user completes registration.
+ * It carries information about the registered user, the application URL, and the locale.
+ */
 public class OnRegistrationCompleteEvent extends ApplicationEvent {
     private String appUrl;
     private Locale locale;

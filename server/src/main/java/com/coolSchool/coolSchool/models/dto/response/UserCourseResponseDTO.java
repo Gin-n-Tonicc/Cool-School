@@ -1,6 +1,5 @@
 package com.coolSchool.coolSchool.models.dto.response;
 
-import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.UserCourseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

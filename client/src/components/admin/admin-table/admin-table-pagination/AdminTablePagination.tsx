@@ -2,9 +2,11 @@ import { PaginationProps } from '../../../../hooks/usePagination';
 
 interface AdminTablePaginationProps extends PaginationProps {}
 
+// The component that displays the table pagination buttons
 export default function AdminTablePagination(props: AdminTablePaginationProps) {
   return (
     <ul className="pagination admin-pagination">
+      {/* Previous page button */}
       <li className="page-item">
         <a
           className="page-link"
@@ -14,6 +16,8 @@ export default function AdminTablePagination(props: AdminTablePaginationProps) {
           <span className="sr-only">Previous</span>
         </a>
       </li>
+
+      {/* Page number buttons */}
       {[...Array(props.pages)].map((_, i) => {
         const page = i + 1;
         let classNames = 'page-link';
@@ -31,6 +35,8 @@ export default function AdminTablePagination(props: AdminTablePaginationProps) {
           </li>
         );
       })}
+
+      {/* Next page button */}
       <li className="page-item">
         <a
           className="page-link"

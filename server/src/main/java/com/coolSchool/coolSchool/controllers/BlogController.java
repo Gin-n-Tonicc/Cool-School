@@ -1,13 +1,11 @@
 package com.coolSchool.coolSchool.controllers;
 
-import com.coolSchool.coolSchool.exceptions.AI.ErrorProcessingAIResponseException;
-import com.coolSchool.coolSchool.filters.JwtAuthenticationFilter;
+import com.coolSchool.coolSchool.exceptions.answer.filters.JwtAuthenticationFilter;
 import com.coolSchool.coolSchool.interfaces.RateLimited;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.CategoryDTO;
 import com.coolSchool.coolSchool.models.dto.request.BlogRequestDTO;
 import com.coolSchool.coolSchool.models.dto.response.BlogResponseDTO;
-import com.coolSchool.coolSchool.models.entity.Category;
 import com.coolSchool.coolSchool.services.AIAssistanceService;
 import com.coolSchool.coolSchool.services.BlogService;
 import com.coolSchool.coolSchool.services.CategoryService;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+// A controller class for handling blog-related operations.
 @RestController
 @RequestMapping("/api/v1/blogs")
 public class BlogController {
@@ -60,6 +59,7 @@ public class BlogController {
         return new ResponseEntity<>(cratedBlog, HttpStatus.CREATED);
     }
 
+    // Generate AI text for blog content. Based on given request
     @RateLimited
     @PostMapping("/generate/AI/text")
     public ResponseEntity<String> generateAIBlogContent(@RequestBody Map<String, String> requestBody) {
@@ -69,6 +69,7 @@ public class BlogController {
         return ResponseEntity.ok(extractedContent);
     }
 
+    // Uses AI assistance to analyze the content and suggest a category for the blog.
     @RateLimited
     @PostMapping("/recommend-category/AI")
     public ResponseEntity<CategoryDTO> recommendCategoryForBlog(@RequestBody Map<String, String> requestBody) throws JsonProcessingException {
@@ -95,16 +96,19 @@ public class BlogController {
         return ResponseEntity.ok("Blog with id: " + id + " has been deleted successfully!");
     }
 
+    // Retrieves blogs sorted by default (newest first).
     @GetMapping("/sort/default")
     public ResponseEntity<List<BlogResponseDTO>> getBlogsByNewest() {
         return ResponseEntity.ok(blogService.getBlogsByNewestFirst());
     }
 
+    // Retrieve blogs sorted by the number of likes.
     @GetMapping("/sort/likes")
     public ResponseEntity<List<BlogResponseDTO>> getBlogsByNumberOfLikes() {
         return ResponseEntity.ok(blogService.getBlogsByMostLiked());
     }
 
+    // Searches for blogs based on title, category, or both, with an optional sorting parameter.
     @GetMapping("/search/all")
     public ResponseEntity<List<BlogResponseDTO>> searchBlogs(@RequestParam("title") Optional<String> title, @RequestParam("category") Optional<String> category,
                                                              @RequestParam(name = "sort", required = false, defaultValue = "newest") String sort, HttpServletRequest httpServletRequest) {
@@ -134,7 +138,7 @@ public class BlogController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/mostRecent/{n}")
+    @GetMapping("/mostRecent/{n}") // Retrieves the most recent n blogs.
     public ResponseEntity<List<BlogResponseDTO>> getLastNRecentBlogs(@PathVariable("n") int n) {
         return ResponseEntity.ok(blogService.getLastNBlogs(n));
     }

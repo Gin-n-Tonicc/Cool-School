@@ -22,7 +22,6 @@
     background-position: left top;
     position: absolute;
     left: -134px;
-    bottom: -69px;
     @media #{$small_mobile} {
       position: inherit;
       left: 0;
@@ -267,7 +266,7 @@
     left: 0;
     bottom: -31px;
     right: -82px;
-    top: -30px;
+    top: 0;
     @media #{$small_mobile} {
       position: inherit;
       top: 0px;

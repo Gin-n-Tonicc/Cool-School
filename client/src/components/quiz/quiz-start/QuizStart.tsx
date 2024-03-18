@@ -11,6 +11,8 @@ import { IQuizAttempt } from '../../../types/interfaces/quizzes/IQuizAttempt';
 import QuizSingle from '../quiz-single/QuizSingle';
 import './QuizStart.scss';
 
+// The component that displays a
+// landing page of a single quiz
 export default function QuizStart() {
   const { t } = useTranslation();
   const [hasStarted, setHasStarted] = useState(false);
@@ -20,28 +22,34 @@ export default function QuizStart() {
   const { locale } = useLocaleContext();
 
   const { id } = useParams();
+
+  // Get quiz (from state or fetch)
   const { data } = useLinkState<IQuiz>(apiUrlsConfig.quizzes.getInfoById(id));
+
+  // Fetch quiz attempts on mount
   const { data: attempts, get } = useFetch<IQuizAttempt[]>(
     apiUrlsConfig.quizzes.getAttemptsById(id),
     []
   );
 
-  const ongoingAttempt = attempts?.find((x) => !x.completed) || null;
-
+  // Prepare fetch
   const { post, response } = useFetch<IQuizAttempt>(
     apiUrlsConfig.quizzes.take(id)
   );
 
-  const nowDate = new Date(Date.now());
   const startDate = new Date(`${data?.startTime}`);
   const endDate = new Date(`${data?.endTime}`);
+  const nowDate = new Date(Date.now());
 
-  const canStartQuiz = nowDate > startDate && startDate < endDate;
+  const canStartQuiz = nowDate > startDate && nowDate < endDate;
+  const ongoingAttempt = attempts?.find((x) => !x.completed) || null;
 
+  // On quiz start
   const startQuiz = async () => {
     let attempt = ongoingAttempt;
     let quizResult: IQuizAttempt;
 
+    // Create an attempt if an ongoing attempt is not found
     if (!attempt) {
       quizResult = await post();
 
@@ -50,18 +58,21 @@ export default function QuizStart() {
       }
     }
 
+    // Update state with correct attempt
     if (attempt) {
       setCurrentAttempt(attempt);
       setHasStarted(true);
     }
   };
 
+  // Start quiz finish, update state, wait for quiz to finish
   const onQuizFinish = async () => {
     const result = get();
     setHasStarted(false);
     await result;
   };
 
+  // Actual started quiz
   if (hasStarted && currentAttempt && data) {
     return (
       <QuizSingle
@@ -116,6 +127,7 @@ export default function QuizStart() {
             <div className="text-base font-semibold">
               {t('quizzes.start.percentage')}
             </div>
+            {/* Display each attempt data (completed, totalMarks, percentage) */}
             {attempts?.map((x) => (
               <Fragment key={x.id}>
                 <div className="text-sm">

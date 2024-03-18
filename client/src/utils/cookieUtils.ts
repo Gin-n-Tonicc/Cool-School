@@ -1,18 +1,12 @@
-import Cookies from 'js-cookie';
-import {
-  AUTH_COOKIE_KEY_JWT,
-  AUTH_COOKIE_KEY_REFRESH,
-} from '../constants/cookieConstants';
+// Util file that helps us handle cookies
 
-export const getJwtCookie = () => getCookie(AUTH_COOKIE_KEY_JWT);
-export const getRefreshCookie = () => getCookie(AUTH_COOKIE_KEY_REFRESH);
+import Cookies from 'js-cookie';
+
+const AUTH_COOKIE_KEY_JWT = 'COOL_SCHOOL_SESSION_JWT';
+const AUTH_COOKIE_KEY_REFRESH = 'COOL_SCHOOL_SESSION_REFRESH';
 
 export const deleteJwtCookie = () => deleteCookie(AUTH_COOKIE_KEY_JWT);
 export const deleteRefreshCookie = () => deleteCookie(AUTH_COOKIE_KEY_REFRESH);
-
-function getCookie(name: string) {
-  return Cookies.get(name);
-}
 
 function deleteCookie(name: string) {
   return Cookies.remove(name);

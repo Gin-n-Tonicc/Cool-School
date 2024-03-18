@@ -10,6 +10,7 @@ export type FormInputProps = {
   onFocus?: FocusEventHandler<HTMLInputElement>;
 } & UseControllerProps<any>;
 
+// Custom form input attached to the controller (form)
 export default function FormInput(props: FormInputProps) {
   const { field, fieldState } = useController(props);
 

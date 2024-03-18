@@ -4,6 +4,8 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import { PagesEnum } from '../../../types/enums/PagesEnum';
 import './HomeBanner.scss';
 
+// The component that displays our home banner and
+// changes button url based on if the user is authenticated or not
 export default function HomeBanner() {
   const { t } = useTranslation();
   const { isAuthenticated } = useAuthContext();

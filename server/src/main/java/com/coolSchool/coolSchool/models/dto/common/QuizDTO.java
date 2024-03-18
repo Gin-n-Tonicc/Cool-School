@@ -1,13 +1,11 @@
 package com.coolSchool.coolSchool.models.dto.common;
 
-import com.coolSchool.coolSchool.models.entity.Category;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Data

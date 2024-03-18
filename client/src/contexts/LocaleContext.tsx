@@ -9,6 +9,8 @@ type LocaleContextType = {
 
 const LocaleContext = createContext<LocaleContextType | null>(null);
 
+// The component that provides all of the children
+// with the necessary locale properties and functions
 export function LocaleProvider({ children }: PropsWithChildren) {
   const { i18n } = useTranslation();
 

@@ -8,8 +8,11 @@ import googleSvg from '../images/google.svg';
 import LoginForm from './login-form/LoginForm';
 import signInImage from './signin-image.jpg';
 
+// The component used to display the Login page
 export default function Login() {
   const { t } = useTranslation();
+
+  // Extract and pass redirectTo to the login form
   const redirectTo = useUrlSearchParam('redirect');
 
   return (

@@ -5,6 +5,7 @@ import useCourseCreateValidations from './validations/useCourseCreateValidations
 import useCourseSubsectionValidations from './validations/useCourseSubsectionValidations';
 import useQuizCreateValidations from './validations/useQuizCreateValidations';
 
+// The hook that groups all of the other validation error hooks into one
 export default function useValidators() {
   const commonValidations = useCommonValidations();
   const authValidations = useAuthValidations();

@@ -11,6 +11,8 @@ const allowedFileMediaTypes = [
   'application/msword',
 ];
 
+// The hook that construct validation for common form fields
+// with a message based on the user's selected language
 export default function useCommonValidations() {
   const { t } = useTranslation();
 

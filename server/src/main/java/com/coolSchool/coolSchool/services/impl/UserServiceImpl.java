@@ -2,7 +2,6 @@ package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.enums.Provider;
 import com.coolSchool.coolSchool.enums.Role;
-import com.coolSchool.coolSchool.exceptions.blog.ValidationBlogException;
 import com.coolSchool.coolSchool.exceptions.common.AccessDeniedException;
 import com.coolSchool.coolSchool.exceptions.user.UserCreateException;
 import com.coolSchool.coolSchool.exceptions.user.UserNotFoundException;
@@ -23,7 +22,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +35,15 @@ public class UserServiceImpl implements UserService {
     private final MessageSource messageSource;
     private final VerificationTokenRepository verificationTokenRepository;
 
+    /**
+     * Creates a new user based on the provided registration request.
+     *
+     * @param request The registration request containing user details.
+     * @return The created user.
+     * @throws UserCreateException             If there is an issue creating the user.
+     * @throws DataIntegrityViolationException If there is a data integrity violation while creating the user.
+     * @throws ConstraintViolationException    If there is a constraint violation while creating the user.
+     */
     @Override
     public User createUser(RegisterRequest request) {
         Role roleFromReq = request.getRole();
@@ -86,16 +93,8 @@ public class UserServiceImpl implements UserService {
         modelMapper.map(userDTO, userToUpdate);
         userToUpdate.setId(id);
 
-        try {
-            User updatedUser = userRepository.save(userToUpdate);
-            return modelMapper.map(updatedUser, AdminUserDTO.class);
-        } catch (TransactionException exception) {
-            if (exception.getRootCause() instanceof ConstraintViolationException validationException) {
-                throw new ValidationBlogException(validationException.getConstraintViolations());
-            }
-
-            throw exception;
-        }
+        User updatedUser = userRepository.save(userToUpdate);
+        return modelMapper.map(updatedUser, AdminUserDTO.class);
     }
 
 
@@ -111,11 +110,19 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    /**
+     * Processes the OAuth user obtained from the OAuth2 provider.
+     * If the user does not exist in the database, a new user is created based on the OAuth user details.
+     *
+     * @param oAuth2User The OAuth2 user obtained from the OAuth provider.
+     * @return The processed user.
+     */
     @Override
     public User processOAuthUser(CustomOAuth2User oAuth2User) {
         User user = userRepository.findByEmail(oAuth2User.getEmail()).orElse(null);
 
         if (user == null) {
+            // Default names after the user registers with OAUth2 and before they fill some other necessary information
             final String NAME_PLACEHOLDER = "CHANGE_NAME";
             final String DESCRIPTION_PLACEHOLDER = "CHANGE_THE_DESCRIPTION_PLEASE_CHANGE_THE_DESCRIPTION_PLEASEEE";
             final String ADDRESS_PLACEHOLDER = "CHANGE_ADDRESS";

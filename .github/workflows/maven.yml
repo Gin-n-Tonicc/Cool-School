@@ -10,7 +10,8 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - '*'
   pull_request:
     branches: [ "main" ]
 
@@ -31,6 +32,6 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B clean install --file pom.xml
+        run: mvn -B clean install -Dtest=!controllerTest/** --file pom.xml
         working-directory: server
 

@@ -10,6 +10,7 @@ import './Header.scss';
 import HeaderNavItem from './header-nav-item/HeaderNavItem';
 import LanguagePicker from './language-picker/LanguagePicker';
 
+// The component that displays all of the guests links
 function GuestLinks() {
   const { t } = useTranslation();
 
@@ -24,6 +25,9 @@ function GuestLinks() {
   );
 }
 
+// The component that displays all of the user common and condition links
+// changes based on if the user has finished oauth2 or not
+// changes based on if the user is teacher or is not a teacher
 function UserLinks(props: { isTeacher: boolean; hasFinishedOAuth2: boolean }) {
   const { t } = useTranslation();
 
@@ -53,6 +57,8 @@ function UserLinks(props: { isTeacher: boolean; hasFinishedOAuth2: boolean }) {
   );
 }
 
+// The component that displays all of the common links
+// and auth specific links (user or guest)
 function UserNav(props: {
   isAuthenticated: boolean;
   isTeacher: boolean;
@@ -71,41 +77,46 @@ function UserNav(props: {
   );
 }
 
+// The component that displays all of the admin links
 function AdminNav() {
+  const { t } = useTranslation();
+
   return (
     <ul className="navbar-nav align-items-center">
       <HeaderNavItem
-        text="Users"
+        text={t('admin.users')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.USERS}`}
       />
       <HeaderNavItem
-        text="Categories"
+        text={t('admin.categories')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.CATEGORIES}`}
       />
       <HeaderNavItem
-        text="Blogs"
+        text={t('admin.blogs')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.BLOGS}`}
       />
       <HeaderNavItem
-        text="Courses"
+        text={t('admin.courses')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.COURSES}`}
       />
       <HeaderNavItem
-        text="Subsections"
+        text={t('admin.subsections')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.SUBSECTIONS}`}
       />
       <HeaderNavItem
-        text="Resources"
+        text={t('admin.resources')}
         pathName={`${PagesEnum.Admin}/${AdminPagesEnum.RESOURCES}`}
       />
     </ul>
   );
 }
 
+// The component that decides which links to display (user, guest or admin)
 export default function Header() {
   const { user, isAuthenticated, hasFinishedOAuth2 } = useAuthContext();
   const location = useLocation();
 
+  // All the paths that require black coloured links
   const homeMenuPaths = useMemo(
     () =>
       [
@@ -129,6 +140,8 @@ export default function Header() {
     []
   );
 
+  // All the paths that include placeholders and
+  // require black coloured links
   const placeholderPaths = useMemo(
     () =>
       [PagesEnum.QuizStart, PagesEnum.QuizCreate].map((x) => {
@@ -141,6 +154,7 @@ export default function Header() {
   const isTeacher = RolesEnum.TEACHER === user.role;
   let headerClasses = 'main_menu ';
 
+  // Add classes for the color of the links
   if (
     homeMenuPaths.includes(location.pathname) ||
     placeholderPaths.some((x) => location.pathname.includes(x))

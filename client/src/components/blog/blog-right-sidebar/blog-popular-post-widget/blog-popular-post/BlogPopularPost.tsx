@@ -8,6 +8,7 @@ export interface BlogPopularPostProps {
   title: string;
 }
 
+// The component displays a single recent blog based on the passed props
 export default function BlogPopularPost(props: BlogPopularPostProps) {
   return (
     <div className="media post_item">

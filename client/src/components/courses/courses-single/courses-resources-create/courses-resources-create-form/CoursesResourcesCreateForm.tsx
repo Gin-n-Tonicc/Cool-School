@@ -21,12 +21,15 @@ type Inputs = {
   file: File[];
 };
 
+// The component that displays and handles
+// the courses resources create form
 export default function CoursesResourcesCreateForm(
   props: CoursesSubsectionCreateFormProps
 ) {
   const { t } = useTranslation();
   const { courseSubsection: validators } = useValidators();
 
+  // Handle form
   const {
     handleSubmit,
     watch,
@@ -44,11 +47,13 @@ export default function CoursesResourcesCreateForm(
 
   const values = watch();
 
+  // Figure out the choose file label
   const fileLabelText = useMemo(
     () => values.file[0]?.name || 'Choose resource file',
     [values.file]
   );
 
+  // Prepare fetch
   const { post, response } = useFetch<IResource>(
     apiUrlsConfig.resources.create
   );
@@ -57,7 +62,9 @@ export default function CoursesResourcesCreateForm(
     apiUrlsConfig.files.upload()
   );
 
+  // Handle form submit
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // Post the resource file first
     const fileFormData = new FormData();
     fileFormData.append('file', data.file[0]);
     const file = await filePost(fileFormData);
@@ -66,6 +73,8 @@ export default function CoursesResourcesCreateForm(
       return;
     }
 
+    // If successful file post
+    // Create the resource with the just created file
     const body = {
       name: data.Name.trim(),
       fileId: file.id,
@@ -74,6 +83,8 @@ export default function CoursesResourcesCreateForm(
 
     await post(body);
 
+    // After which
+    // update the resources and reset the form
     if (response.ok) {
       props.refreshResources();
       reset();

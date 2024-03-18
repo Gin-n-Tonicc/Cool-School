@@ -12,6 +12,7 @@ export interface HomeBlogCardProps {
   image: string;
 }
 
+// The component that displays a single most popular blog
 export default function HomeBlogCard(props: HomeBlogCardProps) {
   return (
     <div className="col-sm-6 col-lg-4 col-xl-4">
