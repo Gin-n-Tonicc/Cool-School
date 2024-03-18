@@ -9,8 +9,8 @@ export default function HomeLearningFeature() {
   return (
     <section className="advance_feature learning_part">
       <div className="container">
-        <div className="row align-items-sm-center align-items-xl-stretch">
-          <div className="col-md-6 col-lg-6">
+        <div className="row align-items-sm-center align-items-xl-stretch advance_feature_content_wrapper">
+          <div className="col-md-5 col-lg-5">
             <div className="learning_member_text">
               <h5>{t('home.personalized.progress')}</h5>
               <h2>{t('home.learning.environment')}</h2>
@@ -33,7 +33,7 @@ export default function HomeLearningFeature() {
               </div>
             </div>
           </div>
-          <div className="col-lg-6 col-md-6">
+          <div className="col-lg-7 col-md-7">
             <div className="learning_img">
               <img src={advanceFeatureImg} alt="" />
             </div>

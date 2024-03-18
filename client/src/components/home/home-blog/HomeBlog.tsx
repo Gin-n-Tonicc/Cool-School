@@ -26,7 +26,7 @@ export default function HomeBlog() {
             </div>
           </div>
         </div>
-        <div className="row">
+        <div className="row blog-cards-wrapper">
           {!loading && response.ok
             ? data?.map((x) => (
                 <HomeBlogCard
