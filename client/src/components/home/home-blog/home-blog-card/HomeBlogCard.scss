@@ -152,22 +152,24 @@
       border-top: 1px solid $border_color;
       padding-top: 20px;
       margin-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       li {
         display: inline-block;
         color: $font_4;
-        margin-right: 39px;
-        @media #{$small_mobile} {
-          margin-right: 10px;
-        }
-        @media #{$large_mobile} {
-          margin-right: 10px;
-        }
-        @media #{$tab_device} {
-          margin-right: 10px;
-        }
-        @media #{$medium_device} {
-          margin-right: 10px;
-        }
+        // @media #{$small_mobile} {
+        //   margin-right: 10px;
+        // }
+        // @media #{$large_mobile} {
+        //   margin-right: 10px;
+        // }
+        // @media #{$tab_device} {
+        //   margin-right: 10px;
+        // }
+        // @media #{$medium_device} {
+        //   margin-right: 10px;
+        // }
         span {
           margin-right: 10px;
         }

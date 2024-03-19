@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { PagesEnum } from '../../../../types/enums/PagesEnum';
 import './HomeBlogCard.scss';
@@ -14,6 +15,8 @@ export interface HomeBlogCardProps {
 
 // The component that displays a single most popular blog
 export default function HomeBlogCard(props: HomeBlogCardProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="col-sm-6 col-lg-4 col-xl-4 single-home-blog-wrapper">
       <div className="single-home-blog">
@@ -31,11 +34,11 @@ export default function HomeBlogCard(props: HomeBlogCardProps) {
             <ul>
               <li>
                 <span className="ti-comments"></span>
-                {props.totalComments} Comments
+                {props.totalComments} {t('blogs.comments')}
               </li>
               <li>
                 <span className="ti-heart"></span>
-                {props.totalLikes} Likes
+                {props.totalLikes} {t('blogs.likes')}
               </li>
             </ul>
           </div>
