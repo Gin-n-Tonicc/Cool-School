@@ -177,7 +177,8 @@ public class AIAssistanceServiceImpl implements AIAssistanceService {
     }
 
     public List<String> translateBlog(String title, String summary, String content) {
-        String context = "If the text is in English, translate it into Bulgarian. If the text is in Bulgarian, translate it into English ";
+        String context = "If the text is in English, translate it into Bulgarian. If the text is in Bulgarian, translate " +
+                "it into English. If you can't tell what language is a word, leave it as it is ";
         String inputText = title + "\n" + summary + "\n" + content;
 
         try {

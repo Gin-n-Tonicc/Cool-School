@@ -141,21 +141,13 @@ public class BlogServiceImpl implements BlogService {
 
         blogDTO.setLanguage(Language.valueOf(aiAssistanceService.identifyTheLanguage(blogDTO.getContent()).toUpperCase()));
 
-        System.out.println(blogDTO.getLanguage());
-        System.out.println(aiAssistanceService.translateBlog(blogDTO.getTitle(), blogDTO.getSummary(), blogDTO.getContent()));
-
-        List<String> aiResults = aiAssistanceService.translateBlog(blogDTO.getTitle(), blogDTO.getSummary(), blogDTO.getContent());
-        blogDTO.setTitle(aiResults.get(0));
-        blogDTO.setSummary(aiResults.get(1));
-        blogDTO.setContent(aiResults.get(2));
-
         Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
+        saveTheTranslatedBlog(blogEntity, blogDTO);
 
-        // Sends a Slack notification to the  ADMIN when a new blog is created
+//         Sends a Slack notification to the  ADMIN when a new blog is created
         sendSlackNotification(blogDTO, category, owner, blogEntity.getId());
         return modelMapper.map(blogEntity, BlogResponseDTO.class);
     }
-
     @Override
     public BlogResponseDTO updateBlog(Long id, BlogRequestDTO blogDTO, PublicUserDTO loggedUser) {
         Optional<Blog> existingBlogOptional = blogRepository.findById(id);
@@ -293,5 +285,17 @@ public class BlogServiceImpl implements BlogService {
                 "Read more: " + frontendConfig.getBaseUrl() + "/blog/" + id;
         slackNotifier.sendNotification(message);
     }
-
+    private void saveTheTranslatedBlog(Blog blogEntity, BlogDTO blogDTO){
+        if (blogEntity.getLanguage().equals(Language.ENGLISH)) {
+            blogDTO.setLanguage(Language.BULGARIAN);
+        } else {
+            blogDTO.setLanguage(Language.ENGLISH);
+        }
+        List<String> aiResults = aiAssistanceService.translateBlog(blogDTO.getTitle(), blogDTO.getSummary(), blogDTO.getContent());
+        blogDTO.setTitle(aiResults.get(0));
+        blogDTO.setSummary(aiResults.get(1));
+        blogDTO.setContent(aiResults.get(2));
+        blogDTO.setOriginalBlogId(blogEntity.getId());
+        blogRepository.save(modelMapper.map(blogDTO, Blog.class));
+    }
 }

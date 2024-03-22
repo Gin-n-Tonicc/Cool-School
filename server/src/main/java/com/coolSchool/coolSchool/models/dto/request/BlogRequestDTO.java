@@ -19,4 +19,5 @@ public class BlogRequestDTO extends BlogDTO {
     private Long ownerId;
     private Long categoryId;
     private Language language;
+    private Long originalBlogId;
 }

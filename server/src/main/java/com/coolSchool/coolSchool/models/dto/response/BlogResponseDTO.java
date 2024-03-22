@@ -22,4 +22,5 @@ public class BlogResponseDTO extends BlogDTO {
     private PublicUserDTO owner;
     private CategoryDTO category;
     private Language language;
+    private Long originalBlogId;
 }

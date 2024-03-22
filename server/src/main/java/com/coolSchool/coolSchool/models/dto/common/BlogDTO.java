@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.models.dto.common;
 
+import com.coolSchool.coolSchool.enums.Language;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,4 +19,6 @@ public class BlogDTO {
     private boolean isEnabled;
     private boolean isDeleted;
     private Integer commentCount;
+    private Language language;
+    private Long originalBlogId;
 }

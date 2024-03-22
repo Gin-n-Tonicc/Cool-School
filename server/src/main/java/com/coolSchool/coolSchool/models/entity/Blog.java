@@ -53,6 +53,7 @@ public class Blog {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Language language;
+    private Long originalBlogId;
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }
