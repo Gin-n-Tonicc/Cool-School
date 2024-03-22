@@ -7,6 +7,7 @@ import com.coolSchool.coolSchool.services.AIAssistanceService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -14,6 +15,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -171,6 +174,69 @@ public class AIAssistanceServiceImpl implements AIAssistanceService {
         }
         // Throw exception if no matching category is found
         throw new ErrorProcessingAIResponseException(messageSource);
+    }
+
+    public List<String> translateBlog(String title, String summary, String content) {
+        String context = "If the text is in English, translate it into Bulgarian. If the text is in Bulgarian, translate it into English ";
+        String inputText = title + "\n" + summary + "\n" + content;
+
+        try {
+            // Construct JSON payload using Jackson
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode requestNode = mapper.createObjectNode();
+            requestNode.put("model", "gpt-4-0125-preview");
+
+            ArrayNode messagesArray = mapper.createArrayNode();
+            ObjectNode messageNode = mapper.createObjectNode();
+            messageNode.put("role", "user");
+            messageNode.put("content", context + inputText);
+            messagesArray.add(messageNode);
+
+            requestNode.set("messages", messagesArray);
+
+            // Convert JSON payload to string
+            String requestBody = mapper.writeValueAsString(requestNode);
+
+            // Set up HTTP headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + apiKey);
+            HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+            // Make HTTP POST request
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(openAIEndpoint, requestEntity, String.class);
+
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                return Arrays.asList(extractContent(responseEntity.getBody()).split("\n"));
+            } else {
+                return Collections.singletonList("Error: " + responseEntity.getStatusCodeValue() + " - " + responseEntity.getBody());
+            }
+        } catch (Exception e) {
+            return Collections.singletonList("Exception occurred: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public String identifyTheLanguage(String inputText) {
+        String context = "Please in one word say in which language is this text: ";
+        String requestBody = "{\"model\": \"gpt-3.5-turbo\", \"messages\": [{\"role\": \"user\", \"content\": \"" + context + inputText + "\"}]}";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + apiKey);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<String> responseEntity = restTemplate.postForEntity(openAIEndpoint, requestEntity, String.class);
+
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                return extractContent(responseEntity.getBody());
+            } else {
+                return "Error: " + responseEntity.getStatusCodeValue() + " - " + responseEntity.getBody();
+            }
+        } catch (Exception e) {
+            return "Exception occurred: " + e.getMessage();
+        }
     }
 }
 

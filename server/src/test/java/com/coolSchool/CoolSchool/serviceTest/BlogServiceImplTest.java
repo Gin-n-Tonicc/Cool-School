@@ -117,7 +117,7 @@ public class BlogServiceImplTest {
             }
         };
         FrontendConfig frontendConfig = mock(FrontendConfig.class);
-        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource, emailSender, slackNotifier, frontendConfig);
+        blogService = new BlogServiceImpl(blogRepository, modelMapper, fileRepository, userRepository, categoryRepository, messageSource, emailSender, slackNotifier, frontendConfig, aiAssistanceService);
     }
 
     @Test

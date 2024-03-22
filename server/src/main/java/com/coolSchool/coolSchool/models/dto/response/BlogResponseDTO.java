@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.models.dto.response;
 
+import com.coolSchool.coolSchool.enums.Language;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
 import com.coolSchool.coolSchool.models.dto.common.BlogDTO;
 import com.coolSchool.coolSchool.models.dto.common.CategoryDTO;
@@ -20,4 +21,5 @@ public class BlogResponseDTO extends BlogDTO {
     private File picture;
     private PublicUserDTO owner;
     private CategoryDTO category;
+    private Language language;
 }

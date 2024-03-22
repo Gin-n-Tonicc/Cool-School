@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.models.entity;
 
+import com.coolSchool.coolSchool.enums.Language;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -49,6 +50,9 @@ public class Blog {
     private Category categoryId;
     private boolean isEnabled;
     private Integer commentCount;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Language language;
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 }

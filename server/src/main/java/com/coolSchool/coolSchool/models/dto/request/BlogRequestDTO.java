@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.models.dto.request;
 
+import com.coolSchool.coolSchool.enums.Language;
 import com.coolSchool.coolSchool.models.dto.common.BlogDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class BlogRequestDTO extends BlogDTO {
     private Long pictureId;
     private Long ownerId;
     private Long categoryId;
+    private Language language;
 }

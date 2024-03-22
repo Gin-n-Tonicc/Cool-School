@@ -1,6 +1,7 @@
 package com.coolSchool.coolSchool.services.impl;
 
 import com.coolSchool.coolSchool.config.FrontendConfig;
+import com.coolSchool.coolSchool.enums.Language;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogAlreadyLikedException;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotEnabledException;
@@ -22,6 +23,7 @@ import com.coolSchool.coolSchool.repositories.BlogRepository;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.repositories.FileRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.services.AIAssistanceService;
 import com.coolSchool.coolSchool.services.BlogService;
 import com.coolSchool.coolSchool.slack.SlackNotifier;
 import jakarta.mail.MessagingException;
@@ -51,9 +53,10 @@ public class BlogServiceImpl implements BlogService {
     private final JavaMailSender emailSender;
     private final SlackNotifier slackNotifier;
     private final FrontendConfig frontendConfig;
+    private final AIAssistanceService aiAssistanceService;
 
 
-    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource, JavaMailSender emailSender, SlackNotifier slackNotifier, FrontendConfig frontendConfig) {
+    public BlogServiceImpl(BlogRepository blogRepository, ModelMapper modelMapper, FileRepository fileRepository, UserRepository userRepository, CategoryRepository categoryRepository, MessageSource messageSource, JavaMailSender emailSender, SlackNotifier slackNotifier, FrontendConfig frontendConfig, AIAssistanceService aiAssistanceService) {
         this.blogRepository = blogRepository;
         this.modelMapper = modelMapper;
         this.fileRepository = fileRepository;
@@ -63,6 +66,7 @@ public class BlogServiceImpl implements BlogService {
         this.emailSender = emailSender;
         this.slackNotifier = slackNotifier;
         this.frontendConfig = frontendConfig;
+        this.aiAssistanceService = aiAssistanceService;
     }
 
     @Override
@@ -134,6 +138,17 @@ public class BlogServiceImpl implements BlogService {
         Category category = categoryRepository.findByIdAndDeletedFalse(blogDTO.getCategoryId()).orElseThrow(() -> new CategoryNotFoundException(messageSource));
         fileRepository.findByIdAndDeletedFalse(blogDTO.getPictureId()).orElseThrow(() -> new FileNotFoundException(messageSource));
         blogDTO.setCommentCount(0);
+
+        blogDTO.setLanguage(Language.valueOf(aiAssistanceService.identifyTheLanguage(blogDTO.getContent()).toUpperCase()));
+
+        System.out.println(blogDTO.getLanguage());
+        System.out.println(aiAssistanceService.translateBlog(blogDTO.getTitle(), blogDTO.getSummary(), blogDTO.getContent()));
+
+        List<String> aiResults = aiAssistanceService.translateBlog(blogDTO.getTitle(), blogDTO.getSummary(), blogDTO.getContent());
+        blogDTO.setTitle(aiResults.get(0));
+        blogDTO.setSummary(aiResults.get(1));
+        blogDTO.setContent(aiResults.get(2));
+
         Blog blogEntity = blogRepository.save(modelMapper.map(blogDTO, Blog.class));
 
         // Sends a Slack notification to the  ADMIN when a new blog is created

@@ -15,4 +15,8 @@ public interface AIAssistanceService {
     String buildPrompt(String blogContent, List<CategoryDTO> categories);
 
     CategoryDTO matchCategory(String aiResponse, List<CategoryDTO> categories);
+
+    List<String> translateBlog(String title, String summary, String content);
+
+    String identifyTheLanguage(String inputText);
 }
