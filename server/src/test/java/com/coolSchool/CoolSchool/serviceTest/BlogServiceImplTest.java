@@ -16,6 +16,7 @@ import com.coolSchool.coolSchool.repositories.BlogRepository;
 import com.coolSchool.coolSchool.repositories.CategoryRepository;
 import com.coolSchool.coolSchool.repositories.FileRepository;
 import com.coolSchool.coolSchool.repositories.UserRepository;
+import com.coolSchool.coolSchool.services.AIAssistanceService;
 import com.coolSchool.coolSchool.services.impl.BlogServiceImpl;
 import com.coolSchool.coolSchool.slack.SlackNotifier;
 import jakarta.mail.internet.MimeMessage;
@@ -62,6 +63,8 @@ public class BlogServiceImplTest {
     private SlackNotifier slackNotifier;
     @Mock
     private FrontendConfig frontendConfig;
+    @InjectMocks
+    private AIAssistanceService aiAssistanceService;
 
     @BeforeEach
     void setUp() {
