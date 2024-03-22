@@ -32,6 +32,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -148,6 +149,7 @@ public class BlogServiceImpl implements BlogService {
         sendSlackNotification(blogDTO, category, owner, blogEntity.getId());
         return modelMapper.map(blogEntity, BlogResponseDTO.class);
     }
+
     @Override
     public BlogResponseDTO updateBlog(Long id, BlogRequestDTO blogDTO, PublicUserDTO loggedUser) {
         Optional<Blog> existingBlogOptional = blogRepository.findById(id);
@@ -189,6 +191,7 @@ public class BlogServiceImpl implements BlogService {
         return modelMapper.map(updatedBlog, BlogResponseDTO.class);
     }
 
+    @Async
     public void sendEnabledBlogEmailNotification(Long ownerId, Long blogId) {
         // Method to send an email notification when a blog is enabled
         User user = userRepository.findById(ownerId)
@@ -276,6 +279,7 @@ public class BlogServiceImpl implements BlogService {
         }
     }
 
+    @Async
     private void sendSlackNotification(BlogDTO blogDTO, Category category, User user, Long id) {
         // Sends a Slack notification to the  ADMIN when a new blog is created
         String message = "New blog created in Cool School:\n" +
@@ -285,7 +289,9 @@ public class BlogServiceImpl implements BlogService {
                 "Read more: " + frontendConfig.getBaseUrl() + "/blog/" + id;
         slackNotifier.sendNotification(message);
     }
-    private void saveTheTranslatedBlog(Blog blogEntity, BlogDTO blogDTO){
+
+    @Async
+    private void saveTheTranslatedBlog(Blog blogEntity, BlogDTO blogDTO) {
         if (blogEntity.getLanguage().equals(Language.ENGLISH)) {
             blogDTO.setLanguage(Language.BULGARIAN);
         } else {
