@@ -1,5 +1,6 @@
 package com.coolSchool.coolSchool.services.impl;
 
+import com.coolSchool.coolSchool.enums.Language;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
 import com.coolSchool.coolSchool.exceptions.comment.CommentNotFoundException;
@@ -95,7 +96,7 @@ public class CommentServiceImpl implements CommentService {
             userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
 
             // Retrieve the blog for the comment and increment the comment count
-            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
+            blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId(), Language.ENGLISH).orElseThrow(() -> new BlogNotFoundException(messageSource));
             blog.setCommentCount(blog.getCommentCount() + 1);
             blogRepository.save(blog);
             Comment commentEntity = commentRepository.save(modelMapper.map(commentDTO, Comment.class));
@@ -117,7 +118,7 @@ public class CommentServiceImpl implements CommentService {
             throw new CommentNotFoundException(messageSource);
         }
         User user = userRepository.findByIdAndDeletedFalse(commentDTO.getOwnerId()).orElseThrow(() -> new UserNotFoundException(messageSource));
-        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
+        blogRepository.findByIdAndDeletedFalseIsEnabledTrue(commentDTO.getBlogId(), Language.ENGLISH).orElseThrow(() -> new BlogNotFoundException(messageSource));
         if (loggedUser == null || (!Objects.equals(loggedUser.getId(), user.getId()) && !(loggedUser.getRole().equals(Role.ADMIN)))) {
             // The comment can be updated only form its owner or the ADMIN
             throw new AccessDeniedException(messageSource);
@@ -140,7 +141,7 @@ public class CommentServiceImpl implements CommentService {
                 // The comment can be deleted only form its owner or the ADMIN
                 throw new AccessDeniedException(messageSource);
             }
-            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(comment.getBlogId().getId()).orElseThrow(() -> new BlogNotFoundException(messageSource));
+            Blog blog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(comment.getBlogId().getId(), Language.ENGLISH).orElseThrow(() -> new BlogNotFoundException(messageSource));
             blog.setCommentCount(blog.getCommentCount() - 1);
             blogRepository.save(blog);
             comment.setDeleted(true);

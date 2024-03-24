@@ -30,6 +30,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -37,10 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,12 +90,12 @@ public class BlogServiceImpl implements BlogService {
         if (loggedUser != null) {
             if (loggedUser.getRole().equals(Role.ADMIN)) {
                 // The ADMIN can see all the blogs
-                List<Blog> blogs = blogRepository.findAll();
+                List<Blog> blogs = blogRepository.findByLanguage(getLocaleLanguage());
                 return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
             }
         }
         // The STUDENTS and TEACHERS can see only enables blogs
-        List<Blog> blogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
+        List<Blog> blogs = blogRepository.findByLanguageAndDeletedFalseAndIsEnabledTrue(getLocaleLanguage());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
@@ -112,7 +110,7 @@ public class BlogServiceImpl implements BlogService {
             }
         }
         if (optionalBlog.isEmpty()) {
-            optionalBlog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id);
+            optionalBlog = blogRepository.findByIdAndDeletedFalseIsEnabledTrue(id, getLocaleLanguage());
         }
         if (optionalBlog.isPresent()) {
             if (!(optionalBlog.get().isEnabled())) {
@@ -227,38 +225,38 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<BlogResponseDTO> getBlogsByNewestFirst() {
-        List<Blog> blogs = blogRepository.findAllByNewestFirst();
+        List<Blog> blogs = blogRepository.findAllByNewestFirst(getLocaleLanguage());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
     public List<BlogResponseDTO> getBlogsByMostLiked() {
-        List<Blog> blogs = blogRepository.findAllByMostLiked();
+        List<Blog> blogs = blogRepository.findAllByMostLiked(getLocaleLanguage());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
     public List<BlogResponseDTO> searchBlogsByKeywordTitle(String keyword) {
-        List<Blog> blogs = blogRepository.searchByTitleContainingIgnoreCase(keyword.toLowerCase());
+        List<Blog> blogs = blogRepository.searchByTitleContainingIgnoreCase(keyword.toLowerCase(), getLocaleLanguage());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
     public List<BlogResponseDTO> searchBlogsByKeywordCategory(String keyword) {
-        List<Blog> blogs = blogRepository.findByCategoryIdName(keyword.toLowerCase());
+        List<Blog> blogs = blogRepository.findByCategoryIdName(keyword.toLowerCase(), getLocaleLanguage());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
     public List<BlogResponseDTO> searchBlogsByKeywordInTitleAndCategory(String keywordForTitle, String keywordForCategory) {
-        List<Blog> blogs = blogRepository.searchBlogsByKeywordInTitleAndCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase());
+        List<Blog> blogs = blogRepository.searchBlogsByKeywordInTitleAndCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase(), getLocaleLanguage());
         return blogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
     }
 
     @Override
     public List<BlogResponseDTO> getLastNBlogs(int n) {
         if (n >= 0) {
-            List<Blog> allBlogs = blogRepository.findByDeletedFalseAndIsEnabledTrue();
+            List<Blog> allBlogs = blogRepository.findByLanguageAndDeletedFalseAndIsEnabledTrue(getLocaleLanguage());
             List<Blog> sortedBlogs = allBlogs.stream().sorted((blog1, blog2) -> Long.compare(blog2.getId(), blog1.getId())).collect(Collectors.toList());
             List<Blog> lastNBlogs = sortedBlogs.subList(0, Math.min(n, sortedBlogs.size()));
             return lastNBlogs.stream().map(blog -> modelMapper.map(blog, BlogResponseDTO.class)).toList();
@@ -303,5 +301,11 @@ public class BlogServiceImpl implements BlogService {
         blogDTO.setContent(aiResults.get(2));
         blogDTO.setOriginalBlogId(blogEntity.getId());
         blogRepository.save(modelMapper.map(blogDTO, Blog.class));
+    }
+    private Language getLocaleLanguage() {
+        if (LocaleContextHolder.getLocale().getLanguage().equals("bg")) {
+            return Language.BULGARIAN;
+        }
+        return Language.ENGLISH;
     }
 }
