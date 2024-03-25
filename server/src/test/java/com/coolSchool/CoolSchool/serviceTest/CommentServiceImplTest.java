@@ -54,6 +54,7 @@ class CommentServiceImplTest {
     void setUp() {
         publicUserDTO = new PublicUserDTO(1L, "user", "user", "user@gmail.com", Role.USER, "description", false);
         modelMapper = new ModelMapper();
+        Locale.setDefault(Locale.ENGLISH);
         commentService = new CommentServiceImpl(commentRepository, modelMapper, userRepository, blogRepository, messageSource);
     }
 
@@ -76,7 +77,7 @@ class CommentServiceImplTest {
 
         when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(commentOptional);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.ENGLISH))).thenReturn(Optional.of(blog));
 
         assertDoesNotThrow(() -> commentService.deleteComment(commentId, publicUserDTO));
         assertTrue(comment.isDeleted());
@@ -127,7 +128,7 @@ class CommentServiceImplTest {
         comment.setOwnerId(user);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.ENGLISH))).thenReturn(Optional.of(blog));
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
         CommentResponseDTO result = commentService.createComment(commentDTO, publicUserDTO);
@@ -146,10 +147,10 @@ class CommentServiceImplTest {
         Blog blog = new Blog();
         blog.setId(1L);
         blog.setCommentCount(0);
-        blog.setLanguage(Language.BULGARIAN);
+        blog.setLanguage(Language.ENGLISH);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.ENGLISH))).thenReturn(Optional.of(blog));
         when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(existingCommentOptional);
         when(commentRepository.save(any(Comment.class))).thenReturn(existingComment);
 
@@ -192,7 +193,7 @@ class CommentServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.ENGLISH))).thenReturn(Optional.of(blog));
         when(commentRepository.save(any(Comment.class))).thenThrow(constraintViolationException);
 
         assertThrows(ConstraintViolationException.class, () -> commentService.createComment(commentDTO, publicUserDTO));
@@ -221,7 +222,7 @@ class CommentServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.ENGLISH))).thenReturn(Optional.of(blog));
         when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(existingCommentOptional);
         when(commentRepository.save(any(Comment.class))).thenThrow(constraintViolationException);
 
@@ -242,7 +243,7 @@ class CommentServiceImplTest {
         blog.setCommentCount(0);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.ENGLISH))).thenReturn(Optional.of(blog));
         when(commentRepository.save(any(Comment.class))).thenThrow(CommentNotFoundException.class);
 
         assertThrows(CommentNotFoundException.class, () -> commentService.createComment(commentDTO, publicUserDTO));
