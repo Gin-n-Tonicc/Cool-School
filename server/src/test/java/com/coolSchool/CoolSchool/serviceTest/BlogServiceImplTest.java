@@ -27,21 +27,27 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public class BlogServiceImplTest {
     PublicUserDTO publicUserDTO;
@@ -49,7 +55,6 @@ public class BlogServiceImplTest {
     private BlogServiceImpl blogService;
     @Mock
     private BlogRepository blogRepository;
-    private ModelMapper modelMapper;
     @Mock
     private FileRepository fileRepository;
     @Mock
@@ -66,11 +71,12 @@ public class BlogServiceImplTest {
     private FrontendConfig frontendConfig;
     @InjectMocks
     private AIAssistanceService aiAssistanceService;
-
+    @Autowired
+    private WebApplicationContext webApplicationContext;
     @BeforeEach
     void setUp() {
         publicUserDTO = new PublicUserDTO(1L, "user", "user", "user@gmail.com", Role.USER, "description", false);
-        modelMapper = new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         frontendConfig = new FrontendConfig();
         frontendConfig.setBaseUrl("http://example.com");
         blogRepository = mock(BlogRepository.class);
@@ -79,6 +85,7 @@ public class BlogServiceImplTest {
         userRepository = mock(UserRepository.class);
         categoryRepository = mock(CategoryRepository.class);
         messageSource = mock(MessageSource.class);
+        Locale.setDefault(Locale.ENGLISH);
         emailSender = new JavaMailSender() {
             @Override
             public MimeMessage createMimeMessage() {
@@ -137,7 +144,7 @@ public class BlogServiceImplTest {
     @Test
     void testGetBlogsByNewestFirstWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.findAllByNewestFirst(Language.BULGARIAN)).thenReturn(mockBlogs);
+        when(blogRepository.findAllByNewestFirst(Language.ENGLISH)).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogs = blogService.getBlogsByNewestFirst();
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
@@ -146,8 +153,8 @@ public class BlogServiceImplTest {
     @Test
     void testGetBlogsByMostLikedWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        // Assuming Language.ENGLISH has a String representation of "ENGLISH"
-        when(blogRepository.findAllByMostLiked(Language.BULGARIAN)).thenReturn(mockBlogs);
+
+        when(blogRepository.findAllByMostLiked(Language.ENGLISH)).thenReturn(mockBlogs);
 
         List<BlogResponseDTO> blogs = blogService.getBlogsByMostLiked();
 
@@ -158,7 +165,7 @@ public class BlogServiceImplTest {
     @Test
     void testSearchBlogsByKeywordTitleWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.searchByTitleContainingIgnoreCase(anyString(), eq(Language.BULGARIAN))).thenReturn(mockBlogs);
+        when(blogRepository.searchByTitleContainingIgnoreCase(anyString(), eq(Language.ENGLISH))).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogs = blogService.searchBlogsByKeywordTitle("keyword");
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
@@ -167,7 +174,7 @@ public class BlogServiceImplTest {
     @Test
     void testSearchBlogsByKeywordCategoryWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.findByCategoryIdName(anyString(), eq(Language.BULGARIAN))).thenReturn(mockBlogs);
+        when(blogRepository.findByCategoryIdName(anyString(), eq(Language.ENGLISH))).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogs = blogService.searchBlogsByKeywordCategory("category");
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
@@ -176,7 +183,7 @@ public class BlogServiceImplTest {
     @Test
     void testGetLastNBlogsWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.findByLanguageAndDeletedFalseAndIsEnabledTrue(Language.BULGARIAN)).thenReturn(mockBlogs);
+        when(blogRepository.findByLanguageAndDeletedFalseAndIsEnabledTrue(Language.ENGLISH)).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogs = blogService.getLastNBlogs(5);
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
@@ -235,7 +242,7 @@ public class BlogServiceImplTest {
                 new Blog()
         );
 
-        when(blogRepository.searchBlogsByKeywordInTitleAndCategory(eq(keywordForTitle.toLowerCase()), eq(keywordForCategory.toLowerCase()), eq(Language.BULGARIAN)))
+        when(blogRepository.searchBlogsByKeywordInTitleAndCategory(eq(keywordForTitle.toLowerCase()), eq(keywordForCategory.toLowerCase()), eq(Language.ENGLISH)))
                 .thenReturn(mockBlogs);
 
         List<BlogResponseDTO> result = blogService.searchBlogsByKeywordInTitleAndCategory(keywordForTitle, keywordForCategory);
