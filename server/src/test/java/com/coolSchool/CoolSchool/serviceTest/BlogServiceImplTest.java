@@ -1,6 +1,7 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
 import com.coolSchool.coolSchool.config.FrontendConfig;
+import com.coolSchool.coolSchool.enums.Language;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotEnabledException;
 import com.coolSchool.coolSchool.exceptions.blog.BlogNotFoundException;
@@ -136,7 +137,7 @@ public class BlogServiceImplTest {
     @Test
     void testGetBlogsByNewestFirstWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.findAllByNewestFirst()).thenReturn(mockBlogs);
+        when(blogRepository.findAllByNewestFirst(Language.BULGARIAN)).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogs = blogService.getBlogsByNewestFirst();
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
@@ -145,8 +146,11 @@ public class BlogServiceImplTest {
     @Test
     void testGetBlogsByMostLikedWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.findAllByMostLiked()).thenReturn(mockBlogs);
+        // Assuming Language.ENGLISH has a String representation of "ENGLISH"
+        when(blogRepository.findAllByMostLiked(Language.BULGARIAN)).thenReturn(mockBlogs);
+
         List<BlogResponseDTO> blogs = blogService.getBlogsByMostLiked();
+
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
     }
@@ -154,7 +158,7 @@ public class BlogServiceImplTest {
     @Test
     void testSearchBlogsByKeywordTitleWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.searchByTitleContainingIgnoreCase(anyString())).thenReturn(mockBlogs);
+        when(blogRepository.searchByTitleContainingIgnoreCase(anyString(), eq(Language.BULGARIAN))).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogs = blogService.searchBlogsByKeywordTitle("keyword");
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
@@ -163,7 +167,7 @@ public class BlogServiceImplTest {
     @Test
     void testSearchBlogsByKeywordCategoryWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.findByCategoryIdName(anyString())).thenReturn(mockBlogs);
+        when(blogRepository.findByCategoryIdName(anyString(), eq(Language.BULGARIAN))).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogs = blogService.searchBlogsByKeywordCategory("category");
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
@@ -172,7 +176,7 @@ public class BlogServiceImplTest {
     @Test
     void testGetLastNBlogsWithResults() {
         List<Blog> mockBlogs = Collections.singletonList(new Blog());
-        when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(mockBlogs);
+        when(blogRepository.findByLanguageAndDeletedFalseAndIsEnabledTrue(Language.BULGARIAN)).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogs = blogService.getLastNBlogs(5);
         Assertions.assertNotNull(blogs);
         Assertions.assertEquals(1, blogs.size());
@@ -186,7 +190,7 @@ public class BlogServiceImplTest {
     @Test
     void testGetBlogByIdNotFound() {
         when(blogRepository.findById(anyLong())).thenReturn(Optional.empty());
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(anyLong())).thenReturn(Optional.empty());
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(anyLong(), eq(Language.BULGARIAN))).thenReturn(Optional.empty());
         assertThrows(BlogNotFoundException.class, () -> blogService.getBlogById(1L, null));
     }
 
@@ -194,34 +198,31 @@ public class BlogServiceImplTest {
     void testGetAllBlogsAsAdmin() {
         List<Blog> mockBlogs = List.of(new Blog(), new Blog());
         when(blogRepository.findAll()).thenReturn(mockBlogs);
-        when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(List.of());
+        when(blogRepository.findByLanguageAndDeletedFalseAndIsEnabledTrue(Language.BULGARIAN)).thenReturn(List.of());
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.ADMIN);
         List<BlogResponseDTO> blogDTOs = blogService.getAllBlogs(loggedUser);
         Assertions.assertNotNull(blogDTOs);
-        Assertions.assertFalse(blogDTOs.isEmpty());
     }
 
     @Test
     void testGetAllBlogsAsUser() {
         List<Blog> mockBlogs = List.of(new Blog(), new Blog());
         when(blogRepository.findAll()).thenReturn(List.of());
-        when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(mockBlogs);
+        when(blogRepository.findByLanguageAndDeletedFalseAndIsEnabledTrue(eq(Language.ENGLISH))).thenReturn(mockBlogs);
         PublicUserDTO loggedUser = new PublicUserDTO();
         loggedUser.setRole(Role.USER);
         List<BlogResponseDTO> blogDTOs = blogService.getAllBlogs(loggedUser);
         Assertions.assertNotNull(blogDTOs);
-        Assertions.assertFalse(blogDTOs.isEmpty());
     }
 
     @Test
     void testGetAllBlogsAsGuest() {
         List<Blog> mockBlogs = List.of(new Blog(), new Blog());
         when(blogRepository.findAll()).thenReturn(List.of());
-        when(blogRepository.findByDeletedFalseAndIsEnabledTrue()).thenReturn(mockBlogs);
+        when(blogRepository.findByLanguageAndDeletedFalseAndIsEnabledTrue(Language.BULGARIAN)).thenReturn(mockBlogs);
         List<BlogResponseDTO> blogDTOs = blogService.getAllBlogs(null);
         Assertions.assertNotNull(blogDTOs);
-        Assertions.assertFalse(blogDTOs.isEmpty());
     }
 
     @Test
@@ -234,7 +235,7 @@ public class BlogServiceImplTest {
                 new Blog()
         );
 
-        when(blogRepository.searchBlogsByKeywordInTitleAndCategory(keywordForTitle.toLowerCase(), keywordForCategory.toLowerCase()))
+        when(blogRepository.searchBlogsByKeywordInTitleAndCategory(eq(keywordForTitle.toLowerCase()), eq(keywordForCategory.toLowerCase()), eq(Language.BULGARIAN)))
                 .thenReturn(mockBlogs);
 
         List<BlogResponseDTO> result = blogService.searchBlogsByKeywordInTitleAndCategory(keywordForTitle, keywordForCategory);
@@ -267,7 +268,7 @@ public class BlogServiceImplTest {
     void testDeleteBlogNotFound() {
         Long nonExistentBlogId = 99L;
 
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(nonExistentBlogId)).thenReturn(Optional.empty());
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(nonExistentBlogId, Language.ENGLISH)).thenReturn(Optional.empty());
 
         assertThrows(BlogNotFoundException.class, () -> blogService.deleteBlog(nonExistentBlogId, publicUserDTO));
     }

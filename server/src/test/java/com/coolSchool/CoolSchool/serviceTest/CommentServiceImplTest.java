@@ -1,5 +1,6 @@
 package com.coolSchool.CoolSchool.serviceTest;
 
+import com.coolSchool.coolSchool.enums.Language;
 import com.coolSchool.coolSchool.enums.Role;
 import com.coolSchool.coolSchool.exceptions.comment.CommentNotFoundException;
 import com.coolSchool.coolSchool.models.dto.auth.PublicUserDTO;
@@ -75,7 +76,7 @@ class CommentServiceImplTest {
 
         when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(commentOptional);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
 
         assertDoesNotThrow(() -> commentService.deleteComment(commentId, publicUserDTO));
         assertTrue(comment.isDeleted());
@@ -126,7 +127,7 @@ class CommentServiceImplTest {
         comment.setOwnerId(user);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
         CommentResponseDTO result = commentService.createComment(commentDTO, publicUserDTO);
@@ -145,9 +146,10 @@ class CommentServiceImplTest {
         Blog blog = new Blog();
         blog.setId(1L);
         blog.setCommentCount(0);
+        blog.setLanguage(Language.BULGARIAN);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
         when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(existingCommentOptional);
         when(commentRepository.save(any(Comment.class))).thenReturn(existingComment);
 
@@ -190,7 +192,7 @@ class CommentServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
         when(commentRepository.save(any(Comment.class))).thenThrow(constraintViolationException);
 
         assertThrows(ConstraintViolationException.class, () -> commentService.createComment(commentDTO, publicUserDTO));
@@ -219,7 +221,7 @@ class CommentServiceImplTest {
         ConstraintViolationException constraintViolationException = new ConstraintViolationException("Validation error", violations);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
         when(commentRepository.findByIdAndDeletedFalse(commentId)).thenReturn(existingCommentOptional);
         when(commentRepository.save(any(Comment.class))).thenThrow(constraintViolationException);
 
@@ -240,7 +242,7 @@ class CommentServiceImplTest {
         blog.setCommentCount(0);
 
         when(userRepository.findByIdAndDeletedFalse(any())).thenReturn(Optional.of(user));
-        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any())).thenReturn(Optional.of(blog));
+        when(blogRepository.findByIdAndDeletedFalseIsEnabledTrue(any(), eq(Language.BULGARIAN))).thenReturn(Optional.of(blog));
         when(commentRepository.save(any(Comment.class))).thenThrow(CommentNotFoundException.class);
 
         assertThrows(CommentNotFoundException.class, () -> commentService.createComment(commentDTO, publicUserDTO));
